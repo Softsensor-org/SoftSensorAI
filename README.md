@@ -8,27 +8,43 @@ A comprehensive collection of setup scripts for WSL development environment and 
 
 ```
 setup-scripts/
-├── setup_agents_global.sh     # One-time global agent configuration
-├── setup_agents_repo.sh       # Per-repository agent setup
-├── validate_agents.sh          # Audit script for checking agent configs
-├── repo_setup_wizard.sh        # Interactive repository setup wizard
-├── install_key_software_wsl.sh # Install essential WSL development tools
-├── install_ai_clis.sh          # Install AI CLI tools
-├── copy_windows_ssh_to_wsl.sh  # Copy SSH keys from Windows to WSL
-├── make_folders.sh             # Create standard project directory structure
-└── claude_user_defaults.sh     # Set Claude user defaults
+├── setup_all.sh                # Master setup script (auto-detects fresh/upgrade)
+├── setup_agents_global.sh      # One-time global agent configuration  
+├── setup_agents_repo.sh        # Per-repository agent setup
+├── validate_agents.sh           # Audit script for checking agent configs
+├── repo_setup_wizard.sh         # Interactive/non-interactive repo wizard
+├── install_key_software_wsl.sh  # Install dev tools + agent multipliers
+├── install_ai_clis.sh           # Install AI CLI tools
+├── copy_windows_ssh_to_wsl.sh   # Copy SSH keys from Windows to WSL
+├── make_folders.sh              # Create standard project directory structure
+├── claude_user_defaults.sh      # Set Claude user defaults
+├── tools/
+│   └── audit_setup_scripts.sh  # Shellcheck and lint validator
+├── .github/
+│   └── workflows/
+│       └── ci.yml               # GitHub Actions CI pipeline
+├── .pre-commit-config.yaml      # Pre-commit hooks configuration
+├── Makefile                     # Development automation
+└── LICENSE                      # MIT License
 ```
 
 ## 🚀 Quick Start
 
-### 1. Initial System Setup
+### 1. One-Command Setup
 
 ```bash
 # Clone this repository
-git clone <your-repo-url> ~/repos/setup-scripts
+git clone https://github.com/VivekLmd/setup-scripts.git ~/repos/setup-scripts
 cd ~/repos/setup-scripts
 
-# Install essential development tools
+# Run master setup (auto-detects fresh vs upgrade)
+./setup_all.sh
+```
+
+Or manually:
+
+```bash
+# Install essential development tools + agent multipliers
 ./install_key_software_wsl.sh
 
 # Install AI CLI tools
@@ -43,15 +59,32 @@ cd ~/repos/setup-scripts
 
 ### 2. Repository Setup
 
-For each new repository:
-
+#### Interactive Mode
 ```bash
-# Interactive wizard for cloning and setting up a repo
 ./repo_setup_wizard.sh
+```
 
-# Or manually set up agent files in an existing repo
+#### Non-Interactive Mode
+```bash
+# Clone and set up in one command
+./repo_setup_wizard.sh --non-interactive \
+  --org myorg \
+  --category backend \
+  --url git@github.com:user/repo.git \
+  --branch main
+```
+
+#### Manual Setup (existing repo)
+```bash
 cd /path/to/your/repo
-~/repos/setup-scripts/setup_agents_repo.sh
+~/repos/setup-scripts/setup_agents_repo.sh [OPTIONS]
+
+# Options:
+#   --force         Overwrite existing files
+#   --no-mcp        Skip MCP configuration
+#   --no-commands   Skip Claude commands
+#   --no-direnv     Skip direnv setup
+#   --no-gitignore  Skip .gitignore updates
 ```
 
 ### 3. Validation
@@ -104,11 +137,17 @@ GitHub Actions runs the same pre-commit checks on every push/PR.
   - `.claude/settings.json` - Claude permissions
   - `.claude/commands/` - Custom Claude commands
   - `.mcp.json` - MCP server configuration
+  - `.mcp.local.json.example` - Template for local MCP overrides
   - `.envrc` - Direnv configuration for auto-loading
+  - `.envrc.local.example` - Template for API keys
   - `.gitignore` - Updated with proper exclusions
 - **Options**:
   - `--force` - Overwrite existing files
   - `--template-dir DIR` - Use custom template directory
+  - `--no-mcp` - Skip MCP configuration
+  - `--no-commands` - Skip Claude commands
+  - `--no-direnv` - Skip direnv setup
+  - `--no-gitignore` - Skip .gitignore updates
 
 #### `validate_agents.sh`
 - **Purpose**: Audit all repositories for proper agent setup
@@ -121,7 +160,7 @@ GitHub Actions runs the same pre-commit checks on every push/PR.
 ### Development Environment
 
 #### `repo_setup_wizard.sh`
-- **Purpose**: Interactive wizard for repository setup
+- **Purpose**: Interactive/non-interactive repository setup wizard
 - **Features**:
   - Organized directory structure (`~/projects/org/category/repo`)
   - GitHub repository cloning (SSH/HTTPS)
@@ -129,13 +168,23 @@ GitHub Actions runs the same pre-commit checks on every push/PR.
   - Commit sanitizer hooks
   - Dependency bootstrapping
 - **Options**:
+  - `--non-interactive` - Run without prompts
+  - `--org ORG` - Organization name
+  - `--category CAT` - Category (backend/frontend/mobile/etc)
+  - `--url URL` - GitHub repository URL
+  - `--branch BRANCH` - Branch to clone
+  - `--name NAME` - Local repository name
   - `--lite` - Minimal setup (no hooks, scripts, bootstrap)
   - `--no-hooks` - Skip git hooks installation
   - `--no-scripts` - Skip helper scripts
   - `--no-bootstrap` - Skip dependency installation
 
 #### `install_key_software_wsl.sh`
-- **Installs**: ripgrep, fd-find, jq, yq, direnv, GitHub CLI, and more
+- **Installs**: 
+  - Core tools: ripgrep, fd-find, jq, yq, direnv, GitHub CLI
+  - Agent multipliers: mise (runtime manager), just (task runner), devcontainer CLI
+  - Package managers: pnpm, uv
+  - Cloud tools: AWS CLI, Azure CLI
 - **Purpose**: Essential tools for development and agent functionality
 
 #### `install_ai_clis.sh`
@@ -235,9 +284,21 @@ rg --version && jq --version && pnpm -v
 4. Maintain backwards compatibility
 5. Document new features in this README
 
+#### `setup_all.sh`
+- **Purpose**: Master setup script with mode detection
+- **Modes**:
+  - **Fresh**: Full installation for new systems
+  - **Upgrade**: Backs up and updates existing configurations
+- **Options**:
+  - `--fresh` - Force fresh installation
+  - `--upgrade` - Force upgrade mode
+  - `--skip-tools` - Skip tool installation
+  - `--skip-agents` - Skip agent configuration
+  - `--backup-only` - Only backup existing configs
+
 ## 📄 License
 
-[Your License Here]
+MIT License - See [LICENSE](LICENSE) file for details
 
 ## 🆘 Troubleshooting
 

@@ -81,6 +81,46 @@ log "Claude Code & Codex CLIs"
 npm -g ls @anthropic-ai/claude-code >/dev/null 2>&1 || npm install -g @anthropic-ai/claude-code
 npm -g ls @openai/codex >/dev/null 2>&1 || npm install -g @openai/codex || echo "Note: Codex CLI install failed; you can retry later."
 
+log "Agent Multiplier Tools"
+# mise (unified runtime manager)
+if ! command -v mise >/dev/null 2>&1; then
+  echo "Installing mise (runtime version manager)..."
+  curl https://mise.run | sh
+  echo 'eval "$(~/.local/bin/mise activate bash)"' >> ~/.bashrc
+  echo 'eval "$(~/.local/bin/mise activate zsh)"' >> ~/.zshrc 2>/dev/null || true
+else
+  echo "mise already installed"
+fi
+
+# just (command runner)
+if ! command -v just >/dev/null 2>&1; then
+  echo "Installing just (command runner)..."
+  # Download prebuilt binary
+  arch=$(uname -m)
+  if [ "$arch" = "x86_64" ]; then
+    just_arch="x86_64-unknown-linux-musl"
+  elif [ "$arch" = "aarch64" ]; then
+    just_arch="aarch64-unknown-linux-musl"
+  else
+    echo "Unsupported architecture for just: $arch"
+    just_arch=""
+  fi
+  if [ -n "$just_arch" ]; then
+    curl --proto '=https' --tlsv1.2 -sSf https://just.systems/install.sh | bash -s -- --to ~/.local/bin
+    echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
+  fi
+else
+  echo "just already installed"
+fi
+
+# devcontainer CLI
+if ! npm list -g @devcontainers/cli >/dev/null 2>&1; then
+  echo "Installing devcontainer CLI..."
+  npm install -g @devcontainers/cli
+else
+  echo "devcontainer CLI already installed"
+fi
+
 log "direnv hook"
 grep -qxF 'eval "$(direnv hook bash)"' ~/.bashrc || echo 'eval "$(direnv hook bash)"' >> ~/.bashrc
 
@@ -97,5 +137,8 @@ echo "  az version | head -n1 && az login"
 echo "  aws --version   && aws configure sso   # or export keys"
 echo "  node -v && pnpm -v && python3 --version && pipx --version"
 echo "  claude --help   && codex --help"
+echo "  mise --version  # Runtime version manager"
+echo "  just --version  # Command runner"
+echo "  devcontainer --version  # Dev container CLI"
 echo
 echo "Docker note: install Docker Desktop on Windows and enable WSL integration, then test with 'docker version' in WSL."

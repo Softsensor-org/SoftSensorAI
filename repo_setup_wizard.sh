@@ -5,23 +5,68 @@ warn(){ printf "\033[1;33m[warn]\033[0m %s\n" "$*"; }
 err(){ printf "\033[1;31m[err]\033[0m %s\n" "$*"; }
 has(){ command -v "$1" >/dev/null 2>&1; }
 
-LITE=0; NO_HOOKS=0; NO_SCRIPTS=0; NO_BOOTSTRAP=0
-# Non-interactive options
+# Parse command-line arguments
+LITE=0; NO_HOOKS=0; NO_SCRIPTS=0; NO_BOOTSTRAP=0; NON_INTERACTIVE=0
 ORG=""; CAT=""; GHURL_IN=""; BRANCH=""; RNAME=""
+
+show_help() {
+  cat <<EOF
+Usage: $0 [OPTIONS]
+
+Interactive wizard for cloning and setting up repositories with agent configurations.
+
+Options:
+  --non-interactive     Run without prompts (requires --org, --category, --url)
+  --org ORG            Organization name
+  --category CAT       Category (backend/frontend/mobile/infra/ml/ops/data/docs)
+  --cat CAT            Alias for --category
+  --url URL            GitHub repository URL (SSH or HTTPS)
+  --branch BRANCH      Branch to clone (optional)
+  --name NAME          Local repository name (optional, defaults to repo name)
+  --lite               Skip hooks, scripts, and bootstrap
+  --no-hooks           Skip git hooks installation
+  --no-scripts         Skip helper scripts
+  --no-bootstrap       Skip dependency installation
+  --help               Show this help message
+
+Examples:
+  # Interactive mode
+  $0
+
+  # Non-interactive clone
+  $0 --non-interactive --org myorg --category backend --url git@github.com:user/repo.git
+
+  # With all options
+  $0 --non-interactive --org acme --category frontend \\
+     --url https://github.com/acme/webapp --branch develop --name webapp-dev --lite
+EOF
+  exit 0
+}
+
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --lite) LITE=1; NO_HOOKS=1; NO_SCRIPTS=1; shift;;
     --no-hooks) NO_HOOKS=1; shift;;
     --no-scripts) NO_SCRIPTS=1; shift;;
     --no-bootstrap) NO_BOOTSTRAP=1; shift;;
+    --non-interactive) NON_INTERACTIVE=1; shift;;
     --org) ORG="$2"; shift 2;;
     --category|--cat) CAT="$2"; shift 2;;
     --url) GHURL_IN="$2"; shift 2;;
     --branch) BRANCH="$2"; shift 2;;
     --name) RNAME="$2"; shift 2;;
-    *) break;;
+    --help|-h) show_help;;
+    *) err "Unknown option: $1"; show_help;;
   esac
 done
+
+# Validate non-interactive mode
+if [[ $NON_INTERACTIVE -eq 1 ]]; then
+  if [[ -z "$ORG" || -z "$CAT" || -z "$GHURL_IN" ]]; then
+    err "Non-interactive mode requires --org, --category, and --url"
+    exit 1
+  fi
+fi
 
 require_tools(){
   local m=(); for t in git gh curl jq; do has "$t" || m+=("$t"); done
@@ -142,8 +187,8 @@ RC
 # main
 require_tools
 BASE="$HOME/projects"; ensure_dir "$BASE"
-mapfile -t ORGS < <(find "$BASE" -mindepth 1 -maxdepth 1 -type d -printf "%f\n" 2>/dev/null | sort)
 if [[ -z "$ORG" ]]; then
+  mapfile -t ORGS < <(find "$BASE" -mindepth 1 -maxdepth 1 -type d -printf "%f\n" 2>/dev/null | sort)
   if ((${#ORGS[@]}==0)); then warn "No orgs under $BASE."; read -rp "Enter new org slug (e.g., org1): " ORG
   else say "Choose an org"; ORG=$(select_menu "${ORGS[@]}" "Create new…"); [[ "$ORG" == "Create new…" ]] && read -rp "Enter new org slug: " ORG; fi
 fi
@@ -169,7 +214,18 @@ if [[ -z "${BRANCH:-}" ]]; then
 fi
 
 TARGET="$BASE/$ORG/$CAT/$RNAME"
-[ -e "$TARGET" ] && { warn "Path exists: $TARGET"; read -rp "Use anyway? (y/N): " C; [[ "${C,,}" == "y" ]] || { err "Abort."; exit 1; }; } || ensure_dir "$(dirname "$TARGET")"
+if [ -e "$TARGET" ]; then
+  if [[ $NON_INTERACTIVE -eq 1 ]]; then
+    err "Path exists: $TARGET (use --name to specify a different name)"
+    exit 1
+  else
+    warn "Path exists: $TARGET"
+    read -rp "Use anyway? (y/N): " C
+    [[ "${C,,}" == "y" ]] || { err "Abort."; exit 1; }
+  fi
+else
+  ensure_dir "$(dirname "$TARGET")"
+fi
 
 say "Cloning → $TARGET"
 if [ -n "${BRANCH:-}" ]; then git clone --branch "$BRANCH" --single-branch "$URL" "$TARGET"; else git clone "$URL" "$TARGET"; fi

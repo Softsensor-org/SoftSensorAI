@@ -12,6 +12,8 @@ FORCE=0
 TEMPLATE_DIR="$HOME/templates/agent-setup"
 NO_MCP=0
 NO_COMMANDS=0
+NO_DIRENV=0
+NO_GITIGNORE=0
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -31,15 +33,37 @@ while [[ $# -gt 0 ]]; do
       NO_COMMANDS=1
       shift
       ;;
+    --no-direnv)
+      NO_DIRENV=1
+      shift
+      ;;
+    --no-gitignore)
+      NO_GITIGNORE=1
+      shift
+      ;;
     --help)
-      echo "Usage: $0 [--force] [--template-dir DIR] [--no-mcp] [--no-commands]"
+      echo "Usage: $0 [OPTIONS]"
+      echo ""
+      echo "Set up AI agent configurations for a repository."
       echo ""
       echo "Options:"
-      echo "  --force        Overwrite existing files"
-      echo "  --template-dir Use custom template directory (default: ~/templates/agent-setup)"
-      echo "  --no-mcp       Skip writing MCP config files (.mcp.json, .mcp.local.json.example)"
-      echo "  --no-commands  Skip writing .claude/commands/* helper command files"
-      echo "  --help         Show this help message"
+      echo "  --force           Overwrite existing files"
+      echo "  --template-dir    Use custom template directory (default: ~/templates/agent-setup)"
+      echo "  --no-mcp          Skip MCP configuration (.mcp.json, .mcp.local.json.example)"
+      echo "  --no-commands     Skip Claude commands (.claude/commands/)"
+      echo "  --no-direnv       Skip direnv configuration (.envrc, .envrc.local.example)"
+      echo "  --no-gitignore    Skip .gitignore updates"
+      echo "  --help            Show this help message"
+      echo ""
+      echo "Examples:"
+      echo "  # Standard setup"
+      echo "  $0"
+      echo ""
+      echo "  # Force overwrite all files"
+      echo "  $0 --force"
+      echo ""
+      echo "  # Skip MCP if repo has its own configuration"
+      echo "  $0 --no-mcp --no-commands"
       exit 0
       ;;
     *)
@@ -203,8 +227,9 @@ MD
 fi
 
 # ---------- Direnv Configuration ----------
-echo ""
-echo "Setting up direnv configuration..."
+if [[ "$NO_DIRENV" -eq 0 ]]; then
+  echo ""
+  echo "Setting up direnv configuration..."
 
 write_if_absent ".envrc" <<'ENVRC'
 # Load Python virtual environment if present
@@ -244,10 +269,11 @@ export GITHUB_PAT=""
 # export AWS_SECRET_ACCESS_KEY=""
 EXAMPLE
 
-# Allow direnv if it's installed
-if command -v direnv >/dev/null 2>&1; then
-  direnv allow . 2>/dev/null || true
-  echo "  ✓ Direnv configured (run 'direnv allow' to activate)"
+  # Allow direnv if it's installed
+  if command -v direnv >/dev/null 2>&1; then
+    direnv allow . 2>/dev/null || true
+    echo "  ✓ Direnv configured (run 'direnv allow' to activate)"
+  fi
 fi
 
 # ---------- MCP Local Override Support ----------
@@ -275,8 +301,9 @@ echo "  ✓ Created .mcp.local.json.example (copy to .mcp.local.json for local o
 fi
 
 # ---------- Update .gitignore ----------
-echo ""
-echo "Updating .gitignore..."
+if [[ "$NO_GITIGNORE" -eq 0 ]]; then
+  echo ""
+  echo "Updating .gitignore..."
 
 # Check if .gitignore exists, create if not
 if [[ ! -f .gitignore ]]; then
@@ -336,6 +363,7 @@ for entry in "${GITIGNORE_ENTRIES[@]}"; do
     fi
   fi
 done
+fi
 
 # ---------- Sanity Checks ----------
 echo ""

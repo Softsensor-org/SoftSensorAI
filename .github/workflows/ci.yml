@@ -1,12 +1,51 @@
-name: ci
-on: [push, pull_request]
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
 jobs:
   lint:
+    name: Lint and Audit
     runs-on: ubuntu-latest
+    
     steps:
       - uses: actions/checkout@v4
+      
       - uses: actions/setup-python@v5
-        with: { python-version: '3.x' }
-      - run: pip install pre-commit
-      - run: pre-commit run --all-files
+        with:
+          python-version: '3.x'
+          
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y shellcheck
+          pip install pre-commit
+          
+      - name: Run pre-commit
+        run: pre-commit run --all-files --show-diff-on-failure
+        
+      - name: Run audit script
+        run: bash tools/audit_setup_scripts.sh
+        
+      - name: Check script syntax
+        run: make test
+        
+  security:
+    name: Security Checks
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Check for secrets
+        run: |
+          # Check for potential secrets or API keys
+          if grep -r "api[_-]key\|secret\|password\|token" --include="*.sh" . | grep -v "example\|template\|placeholder" | grep -v "^#"; then
+            echo "Potential secrets found!"
+            exit 1
+          fi
 
