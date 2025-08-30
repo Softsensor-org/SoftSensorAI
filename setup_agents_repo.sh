@@ -145,7 +145,20 @@ write_if_absent ".claude/settings.json" <<'JSON'
       "Bash(kubectl:*)", "Bash(helm:*)", "Bash(terraform:*)",
       "Bash(node:*)", "Bash(npm:*)", "Bash(pnpm:*)", "Bash(npx:*)",
       "Bash(pytest:*)", "Bash(python3:*)",
-      "Bash(gemini:*)", "Bash(grok:*)", "Bash(codex:*)", "Bash(openai:*)"
+      "Bash(gemini:*)", "Bash(grok:*)", "Bash(codex:*)", "Bash(openai:*)",
+      "Bash(just:*)", "Bash(mise:*)", "Bash(devcontainer:*)",
+      "Bash(newman:*)", "Bash(redocly:*)", "Bash(spectral:*)", "Bash(openapi-typescript:*)",
+      "Bash(rover:*)", "Bash(graphql-codegen:*)",
+      "Bash(dbt:*)", "Bash(sqlfluff:*)", "Bash(pgcli:*)", "Bash(sqlite-utils:*)",
+      "Bash(prisma:*)", "Bash(drizzle-kit:*)",
+      "Bash(dvc:*)", "Bash(wandb:*)", "Bash(mlflow:*)", "Bash(nbstripout:*)",
+      "Bash(trivy:*)", "Bash(semgrep:*)", "Bash(gitleaks:*)", "Bash(hadolint:*)",
+      "Bash(ruff:*)", "Bash(black:*)", "Bash(mypy:*)",
+      "Bash(commitlint:*)", "Bash(cz:*)",
+      "Bash(kustomize:*)", "Bash(kubectx:*)", "Bash(kubens:*)", "Bash(kind:*)",
+      "Bash(skaffold:*)", "Bash(tilt:*)",
+      "Bash(changeset:*)", "Bash(cloudflared:*)", "Bash(ngrok:*)",
+      "Bash(hyperfine:*)", "Bash(entr:*)", "Bash(watchexec:*)", "Bash(cookiecutter:*)"
     ],
     "ask": [
       "Bash(git push:*)",

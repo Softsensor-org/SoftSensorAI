@@ -8,24 +8,27 @@ A comprehensive collection of setup scripts for WSL development environment and 
 
 ```
 setup-scripts/
-├── setup_all.sh                # Master setup script (auto-detects fresh/upgrade)
-├── setup_agents_global.sh      # One-time global agent configuration  
-├── setup_agents_repo.sh        # Per-repository agent setup
-├── validate_agents.sh           # Audit script for checking agent configs
-├── repo_setup_wizard.sh         # Interactive/non-interactive repo wizard
-├── install_key_software_wsl.sh  # Install dev tools + agent multipliers
-├── install_ai_clis.sh           # Install AI CLI tools
-├── copy_windows_ssh_to_wsl.sh   # Copy SSH keys from Windows to WSL
-├── make_folders.sh              # Create standard project directory structure
-├── claude_user_defaults.sh      # Set Claude user defaults
+├── setup_all.sh                     # Master setup script (auto-detects fresh/upgrade)
+├── setup_agents_global.sh           # One-time global agent configuration  
+├── setup_agents_repo.sh             # Per-repository agent setup
+├── validate_agents.sh               # Audit script for checking agent configs
+├── repo_setup_wizard.sh             # Interactive/non-interactive repo wizard
+├── install_key_software_wsl.sh      # Install dev tools + agent multipliers
+├── install_productivity_extras.sh   # Advanced tooling for all stacks
+├── install_ai_clis.sh               # Install AI CLI tools
+├── copy_windows_ssh_to_wsl.sh       # Copy SSH keys from Windows to WSL
+├── make_folders.sh                  # Create standard project directory structure
+├── claude_user_defaults.sh          # Set Claude user defaults
+├── templates/
+│   └── justfile                     # Universal task runner template
 ├── tools/
-│   └── audit_setup_scripts.sh  # Shellcheck and lint validator
+│   └── audit_setup_scripts.sh      # Shellcheck and lint validator
 ├── .github/
 │   └── workflows/
-│       └── ci.yml               # GitHub Actions CI pipeline
-├── .pre-commit-config.yaml      # Pre-commit hooks configuration
-├── Makefile                     # Development automation
-└── LICENSE                      # MIT License
+│       └── ci.yml                   # GitHub Actions CI pipeline
+├── .pre-commit-config.yaml          # Pre-commit hooks configuration
+├── Makefile                         # Development automation
+└── LICENSE                          # MIT License
 ```
 
 ## 🚀 Quick Start
@@ -187,6 +190,18 @@ GitHub Actions runs the same pre-commit checks on every push/PR.
   - Cloud tools: AWS CLI, Azure CLI
 - **Purpose**: Essential tools for development and agent functionality
 
+#### `install_productivity_extras.sh`
+- **Purpose**: Advanced tooling for backend, frontend, DS/ML, and deployment
+- **Categories**:
+  - **API & Contracts**: OpenAPI/GraphQL toolchain, Newman
+  - **Databases**: dbt, sqlfluff, pgcli, Prisma/Drizzle
+  - **DS/ML**: DVC, W&B, MLflow, nbstripout
+  - **Security**: trivy, semgrep, gitleaks, hadolint, ruff/black/mypy
+  - **K8s Dev**: kind, kustomize, skaffold, tilt
+  - **Release**: changesets, cloudflared
+  - **QoL**: hyperfine, entr, watchexec, cookiecutter
+- **Run after**: `install_key_software_wsl.sh`
+
 #### `install_ai_clis.sh`
 - **Installs**: Claude, Gemini, Grok, Codex CLI tools
 - **Requires**: API keys for each service
@@ -202,6 +217,38 @@ GitHub Actions runs the same pre-commit checks on every push/PR.
 
 #### `claude_user_defaults.sh`
 - **Sets**: Default Claude user preferences
+
+## 🎯 Productivity Extras
+
+For advanced development scenarios, install the productivity extras:
+
+```bash
+./install_productivity_extras.sh
+```
+
+This adds powerful agent multipliers across all stacks:
+- **Reproducible environments**: mise + devcontainer ensure consistent toolchains
+- **Task automation**: just provides a universal command interface
+- **API development**: OpenAPI/GraphQL tools for contract-first development
+- **Data engineering**: dbt, DVC for analytics and ML pipelines
+- **Security scanning**: trivy, semgrep for shift-left security
+- **K8s development**: Local clusters and hot-reload with kind, tilt
+- **Quality tools**: Formatters, linters, type checkers for all languages
+
+### Using Justfile
+
+Copy the template justfile to your project:
+
+```bash
+cp ~/repos/setup-scripts/templates/justfile ./justfile
+
+# Common commands
+just          # Show available commands
+just install  # Install dependencies
+just test     # Run tests
+just lint     # Run linters
+just build    # Build project
+```
 
 ## 🔧 Configuration Files
 
