@@ -250,6 +250,59 @@ just lint     # Run linters
 just build    # Build project
 ```
 
+## 🔌 MCP (Model Context Protocol) Setup
+
+### Local MCP Server Configuration
+
+To run local MCP servers (e.g., for Postman, database connections, or custom tools):
+
+1. **Create `.mcp.local.json`** in your repository:
+```json
+{
+  "mcpServers": {
+    "postman": {
+      "type": "http",
+      "url": "http://localhost:3000/mcp",
+      "headers": {
+        "Authorization": "Bearer ${POSTMAN_API_KEY}"
+      }
+    },
+    "database": {
+      "type": "stdio",
+      "command": "/usr/local/bin/mcp-postgres",
+      "args": ["--connection-string", "${DATABASE_URL}"]
+    },
+    "custom": {
+      "type": "sse",
+      "url": "http://localhost:8080/events",
+      "env": {
+        "API_KEY": "${CUSTOM_API_KEY}"
+      }
+    }
+  }
+}
+```
+
+2. **Add credentials to `.envrc.local`**:
+```bash
+export POSTMAN_API_KEY="your-postman-api-key"
+export DATABASE_URL="postgresql://user:pass@localhost/dbname"
+export CUSTOM_API_KEY="your-custom-key"
+```
+
+3. **Merge local config** (automatic if using our setup):
+   - `.mcp.local.json` is gitignored
+   - Claude will read both `.mcp.json` and `.mcp.local.json`
+   - Local settings override global ones
+
+### Available MCP Servers
+
+- **GitHub**: Built-in via `.mcp.json`
+- **Atlassian**: Built-in via `.mcp.json`
+- **Postman**: Set up local server with Postman API
+- **Database**: Use MCP database adapters for PostgreSQL/MySQL
+- **Custom**: Build your own MCP server for internal tools
+
 ## 🔧 Configuration Files
 
 ### Global Configuration
