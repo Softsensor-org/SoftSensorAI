@@ -34,4 +34,4 @@ build/
 
 # Temporary files
 *.tmp
-*.bak
+*.baksetup_agents_repo.sh.bak.*

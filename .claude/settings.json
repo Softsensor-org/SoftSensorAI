@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Edit","MultiEdit","Read","Grep","Glob","LS",
+      "Bash(rg:*)","Bash(fd:*)","Bash(jq:*)","Bash(yq:*)","Bash(http:*)",
+      "Bash(gh:*)","Bash(aws:*)","Bash(az:*)","Bash(docker:*)",
+      "Bash(kubectl:*)","Bash(helm:*)","Bash(terraform:*)",
+      "Bash(node:*)","Bash(npm:*)","Bash(pnpm:*)","Bash(npx:*)",
+      "Bash(pytest:*)","Bash(python3:*)",
+      "Bash(gemini:*)","Bash(grok:*)","Bash(codex:*)","Bash(openai:*)"
+    ],
+    "ask": [
+      "Bash(git push:*)","Bash(docker push:*)","Bash(terraform apply:*)",
+      "Bash(aws s3 rm:*)","Bash(az group delete:*)","WebFetch"
+    ],
+    "deny": ["Read(./.env)","Read(./.env.*)","Read(./secrets/**)"],
+    "defaultMode": "acceptEdits"
+  }
+}

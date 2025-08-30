@@ -1,4 +1,63 @@
 #!/usr/bin/env bash
+# Upgrade: prompt scaffold + linter + /secure-fix + Makefile hooks + repo seeder refresh
+set -euo pipefail
+
+root="$(pwd)"
+[ -d .git ] || { echo "[err] Run from the repo root (must contain .git)"; exit 1; }
+
+backup() { [ -f "$1" ] && cp -a "$1" "$1.bak.$(date +%Y%m%d%H%M%S)"; }
+
+echo "==> 1) tools/prompt_lint.sh"
+mkdir -p tools
+cat > tools/prompt_lint.sh <<'EOS'
+#!/usr/bin/env bash
+# Lint a prompt file for required sections
+set -euo pipefail
+f="${1:-CLAUDE.md}"
+[ -f "$f" ] || { echo "[miss] $f not found"; exit 2; }
+need=("Role & Scope" "Tools" "Environment" "Loop" "Domain" "Safety" "Tone")
+miss=0
+for h in "${need[@]}"; do
+  grep -qE "^[#]{1,3}\s*${h}\b" "$f" || { echo "[MISS] $h in $f"; miss=1; }
+done
+[ $miss -eq 0 ] && echo "[ok] $f sections present"
+exit $miss
+EOS
+chmod +x tools/prompt_lint.sh
+
+echo "==> 2) Makefile hooks (append if missing)"
+if [ -f Makefile ]; then
+  grep -q '^prompt-audit:' Makefile || cat >> Makefile <<'EOM'
+
+# --- Prompt checks ---
+prompt-audit:
+	@bash tools/prompt_lint.sh CLAUDE.md || true
+	@[ -f .claude/commands/secure-fix.md ] && echo "[ok] /secure-fix present" || echo "[miss] .claude/commands/secure-fix.md"
+
+.PHONY: prompt-audit
+EOM
+else
+  cat > Makefile <<'EOM'
+.PHONY: audit fmt prompt-audit
+audit:
+	@echo "No audit pipeline yet. Running prompt-audit only."
+	@bash tools/prompt_lint.sh CLAUDE.md || true
+
+fmt:
+	@find . -type f -name "*.sh" -print0 | xargs -0 -n1 sh -c 'sed -i "s/\r$//" "$0"'
+
+prompt-audit:
+	@bash tools/prompt_lint.sh CLAUDE.md || true
+	@[ -f .claude/commands/secure-fix.md ] && echo "[ok] /secure-fix present" || echo "[miss] .claude/commands/secure-fix.md"
+EOM
+fi
+
+echo "==> 3) setup_agents_repo.sh (refresh to best-practice CLAUDE.md + /secure-fix)"
+if [ -f setup_agents_repo.sh ]; then
+  backup setup_agents_repo.sh
+fi
+cat > setup_agents_repo.sh <<'EOS'
+#!/usr/bin/env bash
 # setup_agents_repo.sh — seed per-repo agent files (best-practice scaffold)
 # Flags:
 #   --force         overwrite existing files
@@ -194,3 +253,8 @@ command -v jq >/dev/null 2>&1 && {
 }
 
 echo "Done."
+EOS
+chmod +x setup_agents_repo.sh
+
+echo "==> 4) Friendly reminder"
+echo "Run:  make prompt-audit   # or: bash tools/prompt_lint.sh CLAUDE.md"

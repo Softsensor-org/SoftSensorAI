@@ -48,3 +48,10 @@ install:
 	fi
 	@echo "✓ Tools installed"
 
+
+# --- Prompt checks ---
+prompt-audit:
+	@bash tools/prompt_lint.sh CLAUDE.md || true
+	@[ -f .claude/commands/secure-fix.md ] && echo "[ok] /secure-fix present" || echo "[miss] .claude/commands/secure-fix.md"
+
+.PHONY: prompt-audit
