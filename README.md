@@ -1,4 +1,6 @@
 # WSL & AI Agent Setup Scripts
+[![CI](https://github.com/VivekLmd/setup-scripts/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/VivekLmd/setup-scripts/actions/workflows/ci.yml)
+[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://pre-commit.com/)
 
 A comprehensive collection of setup scripts for WSL development environment and AI CLI agents (Claude, Gemini, Grok, Codex).
 

@@ -6,17 +6,27 @@ err(){ printf "\033[1;31m[err]\033[0m %s\n" "$*"; }
 has(){ command -v "$1" >/dev/null 2>&1; }
 
 LITE=0; NO_HOOKS=0; NO_SCRIPTS=0; NO_BOOTSTRAP=0
+# Non-interactive options
+ORG=""; CAT=""; GHURL_IN=""; BRANCH=""; RNAME=""
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --lite) LITE=1; NO_HOOKS=1; NO_SCRIPTS=1; shift;;
     --no-hooks) NO_HOOKS=1; shift;;
     --no-scripts) NO_SCRIPTS=1; shift;;
     --no-bootstrap) NO_BOOTSTRAP=1; shift;;
+    --org) ORG="$2"; shift 2;;
+    --category|--cat) CAT="$2"; shift 2;;
+    --url) GHURL_IN="$2"; shift 2;;
+    --branch) BRANCH="$2"; shift 2;;
+    --name) RNAME="$2"; shift 2;;
     *) break;;
   esac
 done
 
-require_tools(){ local m=(); for t in git gh curl jq; do has "$t" || m+=("$t"); done; ((${#m[@]})) && { err "Missing: ${m[*]}"; exit 1; }; }
+require_tools(){
+  local m=(); for t in git gh curl jq; do has "$t" || m+=("$t"); done
+  ((${#m[@]})) && { err "Missing required tools: ${m[*]}"; echo "Install with: ./install_key_software_wsl.sh"; exit 1; }
+}
 ensure_dir(){ mkdir -p "$1"; }
 to_ssh_url(){ local u="$1"; if [[ "$u" =~ ^https?://github\.com/([^/]+)/([^/]+?)(\.git)?$ ]]; then echo "git@github.com:${BASH_REMATCH[1]}/${BASH_REMATCH[2]}.git"; else echo "$u"; fi; }
 select_menu(){ local PS3="Select a number: "; select opt in "$@"; do [[ -n "$opt" ]] && { echo "$opt"; return; }; echo "Invalid. Try again."; done; }
@@ -95,7 +105,11 @@ SC
 bootstrap_env(){
   if [ -f package.json ]; then
     say "Installing Node deps"
-    if command -v pnpm >/dev/null 2>&1 && [ -f pnpm-lock.yaml ]; then pnpm install; else npm ci || npm install; fi
+    if [ -f pnpm-lock.yaml ]; then
+      if command -v pnpm >/dev/null 2>&1; then pnpm install; else err "pnpm required by pnpm-lock.yaml but not installed"; exit 1; fi
+    else
+      if command -v pnpm >/dev/null 2>&1; then pnpm install; else npm ci || npm install; fi
+    fi
   fi
   if [ -f requirements.txt ] || [ -f pyproject.toml ]; then
     say "Setting up Python venv (.venv)"
@@ -129,18 +143,30 @@ RC
 require_tools
 BASE="$HOME/projects"; ensure_dir "$BASE"
 mapfile -t ORGS < <(find "$BASE" -mindepth 1 -maxdepth 1 -type d -printf "%f\n" 2>/dev/null | sort)
-if ((${#ORGS[@]}==0)); then warn "No orgs under $BASE."; read -rp "Enter new org slug (e.g., org1): " ORG
-else say "Choose an org"; ORG=$(select_menu "${ORGS[@]}" "Create new…"); [[ "$ORG" == "Create new…" ]] && read -rp "Enter new org slug: " ORG; fi
+if [[ -z "$ORG" ]]; then
+  if ((${#ORGS[@]}==0)); then warn "No orgs under $BASE."; read -rp "Enter new org slug (e.g., org1): " ORG
+  else say "Choose an org"; ORG=$(select_menu "${ORGS[@]}" "Create new…"); [[ "$ORG" == "Create new…" ]] && read -rp "Enter new org slug: " ORG; fi
+fi
 SUBS=(backend frontend mobile infra ml ops data docs sandbox playground)
 for s in "${SUBS[@]}"; do ensure_dir "$BASE/$ORG/$s"; done
-say "Choose a category"; CAT=$(select_menu "${SUBS[@]}" "other")
-[[ "$CAT" == "other" ]] && read -rp "Custom category: " CAT && ensure_dir "$BASE/$ORG/$CAT"
+if [[ -z "$CAT" ]]; then
+  say "Choose a category"; CAT=$(select_menu "${SUBS[@]}" "other")
+  [[ "$CAT" == "other" ]] && read -rp "Custom category: " CAT && ensure_dir "$BASE/$ORG/$CAT"
+else
+  ensure_dir "$BASE/$ORG/$CAT"
+fi
 
-read -rp "GitHub URL (SSH or HTTPS): " GHURL_IN
+if [[ -z "$GHURL_IN" ]]; then
+  read -rp "GitHub URL (SSH or HTTPS): " GHURL_IN
+fi
 URL="$(to_ssh_url "$GHURL_IN")"
 DEF_NAME="$(basename -s .git "${URL##*:}")"
-read -rp "Local repo folder name [${DEF_NAME}]: " RNAME; RNAME="${RNAME:-$DEF_NAME}"
-read -rp "Branch to clone (optional): " BRANCH || true
+if [[ -z "$RNAME" ]]; then
+  read -rp "Local repo folder name [${DEF_NAME}]: " RNAME; RNAME="${RNAME:-$DEF_NAME}"
+fi
+if [[ -z "${BRANCH:-}" ]]; then
+  read -rp "Branch to clone (optional): " BRANCH || true
+fi
 
 TARGET="$BASE/$ORG/$CAT/$RNAME"
 [ -e "$TARGET" ] && { warn "Path exists: $TARGET"; read -rp "Use anyway? (y/N): " C; [[ "${C,,}" == "y" ]] || { err "Abort."; exit 1; }; } || ensure_dir "$(dirname "$TARGET")"

@@ -10,6 +10,8 @@ set -euo pipefail
 # Parse command line arguments
 FORCE=0
 TEMPLATE_DIR="$HOME/templates/agent-setup"
+NO_MCP=0
+NO_COMMANDS=0
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -21,12 +23,22 @@ while [[ $# -gt 0 ]]; do
       TEMPLATE_DIR="$2"
       shift 2
       ;;
+    --no-mcp)
+      NO_MCP=1
+      shift
+      ;;
+    --no-commands)
+      NO_COMMANDS=1
+      shift
+      ;;
     --help)
-      echo "Usage: $0 [--force] [--template-dir DIR]"
+      echo "Usage: $0 [--force] [--template-dir DIR] [--no-mcp] [--no-commands]"
       echo ""
       echo "Options:"
       echo "  --force        Overwrite existing files"
       echo "  --template-dir Use custom template directory (default: ~/templates/agent-setup)"
+      echo "  --no-mcp       Skip writing MCP config files (.mcp.json, .mcp.local.json.example)"
+      echo "  --no-commands  Skip writing .claude/commands/* helper command files"
       echo "  --help         Show this help message"
       exit 0
       ;;
@@ -63,8 +75,13 @@ echo ""
 
 # Create necessary directories
 echo "Creating directories..."
-mkdir -p .claude .claude/commands
-echo "  ✓ Created: .claude/ and .claude/commands/"
+mkdir -p .claude
+if [[ "$NO_COMMANDS" -eq 0 ]]; then
+  mkdir -p .claude/commands
+  echo "  ✓ Created: .claude/ and .claude/commands/"
+else
+  echo "  ✓ Created: .claude/ (skipping commands directory)"
+fi
 
 # ---------- CLAUDE.md - Repository-specific guardrails ----------
 echo ""
@@ -125,6 +142,7 @@ write_if_absent ".claude/settings.json" <<'JSON'
 JSON
 
 # ---------- .mcp.json - MCP server configuration ----------
+if [[ "$NO_MCP" -eq 0 ]]; then
 echo ""
 echo "Configuring MCP servers..."
 
@@ -142,8 +160,10 @@ write_if_absent ".mcp.json" <<'JSON'
   }
 }
 JSON
+fi
 
 # ---------- Claude commands ----------
+if [[ "$NO_COMMANDS" -eq 0 ]]; then
 echo ""
 echo "Setting up Claude commands..."
 
@@ -180,6 +200,7 @@ write_if_absent ".claude/commands/refactor-safe.md" <<'MD'
 4. Update tests if interface changed
 5. Show before/after comparison
 MD
+fi
 
 # ---------- Direnv Configuration ----------
 echo ""
@@ -230,6 +251,7 @@ if command -v direnv >/dev/null 2>&1; then
 fi
 
 # ---------- MCP Local Override Support ----------
+if [[ "$NO_MCP" -eq 0 ]]; then
 echo ""
 echo "Setting up MCP local override support..."
 
@@ -250,6 +272,7 @@ cat > .mcp.local.json.example <<'JSON'
 JSON
 
 echo "  ✓ Created .mcp.local.json.example (copy to .mcp.local.json for local overrides)"
+fi
 
 # ---------- Update .gitignore ----------
 echo ""
@@ -359,9 +382,9 @@ echo "Files created/updated:"
 echo "  • CLAUDE.md                   - Repository-specific Claude guardrails"
 echo "  • AGENTS.md                   - General agent directives"
 echo "  • .claude/settings.json       - Claude permissions and settings"
-echo "  • .mcp.json                   - MCP server configuration"
-echo "  • .mcp.local.json.example     - Template for local MCP overrides"
-echo "  • .claude/commands/           - Custom Claude commands"
+if [[ "$NO_MCP" -eq 0 ]]; then echo "  • .mcp.json                   - MCP server configuration"; fi
+if [[ "$NO_MCP" -eq 0 ]]; then echo "  • .mcp.local.json.example     - Template for local MCP overrides"; fi
+if [[ "$NO_COMMANDS" -eq 0 ]]; then echo "  • .claude/commands/           - Custom Claude commands"; fi
 echo "  • .envrc                      - Direnv configuration"
 echo "  • .envrc.local.example        - Template for local environment variables"
 echo "  • .gitignore                  - Updated with agent/build entries"
