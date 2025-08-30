@@ -1,0 +1,147 @@
+name: Security Review
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+  workflow_dispatch:
+  schedule:
+    - cron: '0 9 * * 1'  # Weekly on Mondays at 9am
+
+jobs:
+  security-scan:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+      
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          
+      - name: Install security tools
+        run: |
+          # Semgrep for SAST
+          pip install semgrep
+          
+          # Trivy for container/IaC scanning
+          wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
+          echo "deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main" | sudo tee -a /etc/apt/sources.list.d/trivy.list
+          sudo apt-get update && sudo apt-get install trivy -y
+          
+          # Gitleaks for secret detection
+          wget https://github.com/gitleaks/gitleaks/releases/latest/download/gitleaks_linux_x64.tar.gz
+          tar -xzf gitleaks_linux_x64.tar.gz
+          sudo mv gitleaks /usr/local/bin/
+          
+          # Hadolint for Dockerfile linting
+          wget -O /tmp/hadolint https://github.com/hadolint/hadolint/releases/latest/download/hadolint-Linux-x86_64
+          chmod +x /tmp/hadolint
+          sudo mv /tmp/hadolint /usr/local/bin/
+          
+      - name: Run Semgrep SAST
+        continue-on-error: true
+        run: |
+          semgrep --config=auto --json -o semgrep-results.json . || true
+          if [ -f semgrep-results.json ]; then
+            echo "::warning::Semgrep found issues. Check artifacts for details."
+          fi
+          
+      - name: Run Trivy filesystem scan
+        continue-on-error: true
+        run: |
+          trivy fs --security-checks vuln,config --format json -o trivy-results.json . || true
+          if [ -f trivy-results.json ]; then
+            echo "::warning::Trivy found vulnerabilities. Check artifacts for details."
+          fi
+          
+      - name: Run Gitleaks secret scan
+        continue-on-error: true
+        run: |
+          gitleaks detect --no-banner -v --report-format json --report-path gitleaks-results.json || true
+          if [ -f gitleaks-results.json ]; then
+            echo "::error::Gitleaks found exposed secrets!"
+          fi
+          
+      - name: Lint Dockerfiles
+        continue-on-error: true
+        run: |
+          find . -name "Dockerfile*" -type f | while read -r file; do
+            echo "Linting $file..."
+            hadolint "$file" --format json > "hadolint-$(basename $file).json" || true
+          done
+          
+      - name: Check shell scripts
+        continue-on-error: true
+        run: |
+          find . -name "*.sh" -type f | while read -r file; do
+            shellcheck -f json "$file" > "shellcheck-$(basename $file).json" 2>&1 || true
+          done
+          
+      - name: Generate security report
+        if: always()
+        run: |
+          cat > security-report.md <<'EOF'
+          # Security Review Report
+          
+          ## Summary
+          - Date: $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          - Branch: ${{ github.head_ref || github.ref_name }}
+          - Commit: ${{ github.sha }}
+          
+          ## Scan Results
+          EOF
+          
+          if [ -f semgrep-results.json ]; then
+            echo "### Semgrep SAST" >> security-report.md
+            echo '```json' >> security-report.md
+            jq -r '.results | length' semgrep-results.json >> security-report.md
+            echo ' issues found```' >> security-report.md
+          fi
+          
+          if [ -f trivy-results.json ]; then
+            echo "### Trivy Vulnerabilities" >> security-report.md
+            echo '```' >> security-report.md
+            jq -r '.Results[].Vulnerabilities | length' trivy-results.json | awk '{s+=$1} END {print s " vulnerabilities found"}' >> security-report.md
+            echo '```' >> security-report.md
+          fi
+          
+          if [ -f gitleaks-results.json ]; then
+            echo "### Secret Detection" >> security-report.md
+            echo '```' >> security-report.md
+            jq -r '. | length' gitleaks-results.json >> security-report.md
+            echo ' potential secrets found```' >> security-report.md
+          fi
+          
+      - name: Upload artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-results
+          path: |
+            *-results.json
+            security-report.md
+            
+      - name: Comment on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            if (fs.existsSync('security-report.md')) {
+              const report = fs.readFileSync('security-report.md', 'utf8');
+              github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: report
+              });
+            }

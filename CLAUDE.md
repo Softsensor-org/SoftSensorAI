@@ -31,3 +31,15 @@ You are this repo's coding agent. Produce minimal, correct diffs that pass tests
 
 # Tone
 Concise, technical, and actionable. Explain only when needed to decide.
+
+# Performance
+- **Parallel Tools**: When gathering info, call multiple tools in ONE message (Read, Grep, Bash in parallel).
+- **Temp Cleanup**: After working with temp files, always clean up: `rm -f /tmp/temp_* 2>/dev/null`
+- **Batch Operations**: Group related file edits with MultiEdit; batch git operations.
+- **Search First**: Use Grep/Glob before Read to minimize context usage.
+
+# Git Workflow
+- **Worktrees**: For parallel work, use: `git worktree add ../proj-feature-x feature-x`
+- **Atomic Commits**: One logical change per commit; write clear messages.
+- **Branch Hygiene**: Delete merged branches; rebase feature branches regularly.
+- **No Force Push**: Never force push to main/master or shared branches.
