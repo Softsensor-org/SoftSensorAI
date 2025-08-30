@@ -63,6 +63,24 @@ Check all repositories for proper agent configuration:
 ./validate_agents.sh ~/my-projects
 ```
 
+## 🧹 Repo Audit & CI
+
+Keep scripts consistent locally and in CI:
+
+```bash
+# One-shot local audit
+make audit
+
+# Normalize CRLF in shell scripts
+make fmt
+
+# (optional) pre-commit hooks
+pipx install pre-commit || pip install pre-commit
+pre-commit install && pre-commit run --all-files
+```
+
+GitHub Actions runs the same pre-commit checks on every push/PR.
+
 ## 📋 Script Descriptions
 
 ### Core Agent Setup
