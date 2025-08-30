@@ -96,3 +96,40 @@ stats-json:
 	@echo "✓ Stats written to stats.json"
 
 .PHONY: audit-json security-json stats stats-json
+
+# --- Codex CLI Integration ---
+codex-fix:
+	@if [ -f scripts/codex_sandbox.sh ]; then \
+		scripts/codex_sandbox.sh exec "lint, typecheck, unit tests; fix failures" --approval-mode auto-edit; \
+	elif command -v codex >/dev/null 2>&1; then \
+		codex exec "lint, typecheck, unit tests; fix failures" --approval-mode auto-edit; \
+	else \
+		echo "Codex not available. Install with: npm i -g @openai/codex"; \
+		exit 1; \
+	fi
+
+codex-fix-ci:
+	@if [ -f scripts/codex_sandbox.sh ]; then \
+		scripts/codex_sandbox.sh exec "run tests; if failing, apply minimal fixes until green; exit nonzero if still failing" --approval-mode auto-edit; \
+	elif command -v codex >/dev/null 2>&1; then \
+		codex exec "run tests; if failing, apply minimal fixes until green; exit nonzero if still failing" --approval-mode auto-edit; \
+	else \
+		echo "Codex not available in CI"; \
+		exit 1; \
+	fi
+
+codex-refactor:
+	@if [ -f scripts/codex_sandbox.sh ]; then \
+		scripts/codex_sandbox.sh exec "refactor for readability and performance; preserve all functionality" --approval-mode suggest; \
+	elif command -v codex >/dev/null 2>&1; then \
+		codex exec "refactor for readability and performance; preserve all functionality" --approval-mode suggest; \
+	else \
+		echo "Codex not available. Install with: npm i -g @openai/codex"; \
+		exit 1; \
+	fi
+
+codex-sandbox-test:
+	@echo "Testing Codex sandbox..."
+	@scripts/codex_sandbox.sh --version || echo "Sandbox test failed - check Docker installation"
+
+.PHONY: codex-fix codex-fix-ci codex-refactor codex-sandbox-test

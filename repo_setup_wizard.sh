@@ -6,7 +6,7 @@ err(){ printf "\033[1;31m[err]\033[0m %s\n" "$*"; }
 has(){ command -v "$1" >/dev/null 2>&1; }
 
 # Parse command-line arguments
-LITE=0; NO_HOOKS=0; NO_SCRIPTS=0; NO_BOOTSTRAP=0; NON_INTERACTIVE=0
+LITE=0; NO_HOOKS=0; NO_SCRIPTS=0; NO_BOOTSTRAP=0; NON_INTERACTIVE=0; WITH_CODEX=0
 ORG=""; CAT=""; GHURL_IN=""; BRANCH=""; RNAME=""
 
 show_help() {
@@ -27,6 +27,7 @@ Options:
   --no-hooks           Skip git hooks installation
   --no-scripts         Skip helper scripts
   --no-bootstrap       Skip dependency installation
+  --with-codex         Add Codex CLI integration (sandbox + Makefile targets)
   --help               Show this help message
 
 Examples:
@@ -49,6 +50,7 @@ while [[ $# -gt 0 ]]; do
     --no-hooks) NO_HOOKS=1; shift;;
     --no-scripts) NO_SCRIPTS=1; shift;;
     --no-bootstrap) NO_BOOTSTRAP=1; shift;;
+    --with-codex) WITH_CODEX=1; shift;;
     --non-interactive) NON_INTERACTIVE=1; shift;;
     --org) ORG="$2"; shift 2;;
     --category|--cat) CAT="$2"; shift 2;;
@@ -241,6 +243,74 @@ else
 fi
 [[ "$LITE" -eq 1 || "$NO_HOOKS" -eq 1 ]] || { say "Installing commit sanitizer hook"; install_commit_sanitizer; }
 [[ "$LITE" -eq 1 || "$NO_SCRIPTS" -eq 1 ]] || { say "Dropping helper scripts"; seed_helper_scripts; }
+
+# Add Codex integration if requested
+if [[ "$WITH_CODEX" -eq 1 ]]; then
+  say "Adding Codex CLI integration"
+  
+  # Copy sandbox script if available
+  if [ -f ~/setup/scripts/codex_sandbox.sh ]; then
+    mkdir -p scripts
+    cp ~/setup/scripts/codex_sandbox.sh scripts/
+    chmod +x scripts/codex_sandbox.sh
+    echo "  ✓ Added scripts/codex_sandbox.sh"
+  fi
+  
+  # Add Codex targets to Makefile
+  if [ -f Makefile ]; then
+    if ! grep -q "codex-fix:" Makefile; then
+      cat >> Makefile <<'MAKEFILE'
+
+# --- Codex CLI Integration ---
+codex-fix:
+	@if [ -f scripts/codex_sandbox.sh ]; then \
+		scripts/codex_sandbox.sh exec "lint, typecheck, unit tests; fix failures" --approval-mode auto-edit; \
+	elif command -v codex >/dev/null 2>&1; then \
+		codex exec "lint, typecheck, unit tests; fix failures" --approval-mode auto-edit; \
+	else \
+		echo "Codex not available. Install with: npm i -g @openai/codex"; \
+		exit 1; \
+	fi
+
+codex-refactor:
+	@codex exec "refactor for readability and performance" --approval-mode suggest
+
+.PHONY: codex-fix codex-refactor
+MAKEFILE
+      echo "  ✓ Added Codex targets to Makefile"
+    fi
+  else
+    # Create minimal Makefile with Codex targets
+    cat > Makefile <<'MAKEFILE'
+.PHONY: codex-fix codex-refactor
+
+codex-fix:
+	@if [ -f scripts/codex_sandbox.sh ]; then \
+		scripts/codex_sandbox.sh exec "lint, typecheck, unit tests; fix failures" --approval-mode auto-edit; \
+	elif command -v codex >/dev/null 2>&1; then \
+		codex exec "lint, typecheck, unit tests; fix failures" --approval-mode auto-edit; \
+	else \
+		echo "Codex not available. Install with: npm i -g @openai/codex"; \
+		exit 1; \
+	fi
+
+codex-refactor:
+	@codex exec "refactor for readability and performance" --approval-mode suggest
+MAKEFILE
+    echo "  ✓ Created Makefile with Codex targets"
+  fi
+  
+  # Update Claude permissions to include Codex
+  if [ -f .claude/settings.json ]; then
+    # Add Codex permissions if not already present
+    if ! grep -q "codex exec" .claude/settings.json; then
+      jq '.permissions.allow += ["Bash(codex exec:*)", "Bash(scripts/codex_sandbox.sh:*)"]' .claude/settings.json > .claude/settings.json.tmp && \
+        mv .claude/settings.json.tmp .claude/settings.json
+      echo "  ✓ Updated Claude permissions for Codex"
+    fi
+  fi
+fi
+
 [[ "$NO_BOOTSTRAP" -eq 1 ]] || { say "Bootstrapping deps"; bootstrap_env; }
 
 say "Done."

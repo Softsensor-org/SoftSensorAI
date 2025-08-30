@@ -1,0 +1,48 @@
+# OpenAI Codex CLI Configuration
+# Documentation: https://github.com/openai/codex
+
+# Model selection
+model: o4-mini                # o4 | o4-mini | o1 | o1-mini
+
+# Approval mode
+approvalMode: auto-edit        # suggest | auto-edit | full-auto
+#  - suggest: Show proposed changes, ask for confirmation
+#  - auto-edit: Apply changes automatically, show what was done
+#  - full-auto: Apply changes without showing (network blocked by default)
+
+# Notifications
+notify: true                   # Show desktop notifications on completion
+
+# Provider configuration (uncomment to use alternative)
+# provider: xai                # Use xAI instead of OpenAI
+# provider: gemini             # Use Google Gemini
+# provider: groq               # Use Groq
+# provider: mistral            # Use Mistral
+# provider: deepseek           # Use DeepSeek
+# provider: azure              # Use Azure OpenAI
+# provider: ollama             # Use local Ollama
+
+# Custom endpoints (if needed)
+# baseURL: https://api.x.ai/v1
+# baseURL: https://api.groq.com/openai/v1
+
+# Azure-specific config (if using Azure)
+# azureDeployment: my-deployment-name
+# azureApiVersion: 2024-02-01
+
+# Security settings
+# sandbox: docker              # Use Docker sandbox on Linux/WSL
+# allowNetwork: false          # Block network access in full-auto mode
+# allowExecute: true           # Allow command execution
+
+# Context settings
+# maxTokens: 128000            # Maximum context window
+# temperature: 0.2             # Lower = more deterministic (0.0-1.0)
+
+# Custom system prompt (advanced)
+# systemPrompt: |
+#   You are a senior software engineer focused on:
+#   - Writing clean, maintainable code
+#   - Following project conventions
+#   - Ensuring tests pass
+#   - Minimizing changes
