@@ -42,7 +42,8 @@
     "TEACH_MODE": "1",
     "VERBOSITY": "medium",
     "EXPLAIN_COMMANDS": "1",
-    "MAX_DIFF_SIZE": "100"
+    "MAX_DIFF_SIZE": "100",
+    "DEFAULT_COT": "cot-structured"
   },
   "description": "Beginner - New to repo & tools. Plan→Code→Test loop with verbose steps, strict guardrails."
 }

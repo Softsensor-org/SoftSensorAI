@@ -58,7 +58,9 @@
     "MAX_DIFF_SIZE": "500",
     "PARALLEL_TOOLS": "1",
     "SECURITY_TOOLS": "1",
-    "PERF_TOOLS": "1"
+    "PERF_TOOLS": "1",
+    "DEFAULT_COT": "cot-lite",
+    "parallel_hint": true
   },
   "description": "Level 2 - Intermediate. Security tools, DB migrations, performance testing, light refactors."
 }

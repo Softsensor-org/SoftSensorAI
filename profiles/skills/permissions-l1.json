@@ -47,7 +47,9 @@
     "VERBOSITY": "medium",
     "EXPLAIN_COMMANDS": "0",
     "MAX_DIFF_SIZE": "200",
-    "PARALLEL_TOOLS": "1"
+    "PARALLEL_TOOLS": "1",
+    "DEFAULT_COT": "cot-lite",
+    "parallel_hint": true
   },
   "description": "Level 1 - Junior dev. Can run tests, lints, basic scans. MCP-first, parallel safe ops."
 }

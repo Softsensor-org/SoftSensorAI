@@ -40,7 +40,9 @@
     "SECURITY_TOOLS": "1",
     "PERF_TOOLS": "1",
     "ARCHITECT_MODE": "1",
-    "RISK_FIRST": "1"
+    "RISK_FIRST": "1",
+    "DEFAULT_COT": "none",
+    "parallel_hint": true
   },
   "description": "Expert - Senior/lead. Objective-driven, terse, full tool graph. Focuses on risk/rollback."
 }
