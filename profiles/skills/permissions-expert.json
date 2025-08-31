@@ -1,0 +1,46 @@
+{
+  "permissions": {
+    "allow": [
+      "Edit",
+      "MultiEdit",
+      "Read",
+      "Write",
+      "NotebookEdit",
+      "TodoWrite",
+      "Task",
+      "Grep",
+      "Glob",
+      "LS",
+      "BashOutput",
+      "KillBash",
+      "Bash(*:*)"
+    ],
+    "ask": [
+      "WebFetch",
+      "Bash(terraform apply:*)",
+      "Bash(terraform destroy:*)",
+      "Bash(kubectl delete:*)",
+      "Bash(aws s3 rm --recursive:*)",
+      "Bash(az group delete:*)",
+      "Bash(gcloud projects delete:*)",
+      "Bash(DROP DATABASE:*)",
+      "Bash(rm -rf /:*)"
+    ],
+    "deny": [
+      "Read(./secrets/**)"
+    ],
+    "defaultMode": "fullAuto"
+  },
+  "env": {
+    "TEACH_MODE": "0",
+    "VERBOSITY": "minimal",
+    "EXPLAIN_COMMANDS": "0",
+    "MAX_DIFF_SIZE": "unlimited",
+    "PARALLEL_TOOLS": "1",
+    "SECURITY_TOOLS": "1",
+    "PERF_TOOLS": "1",
+    "ARCHITECT_MODE": "1",
+    "RISK_FIRST": "1"
+  },
+  "description": "Expert - Senior/lead. Objective-driven, terse, full tool graph. Focuses on risk/rollback."
+}
