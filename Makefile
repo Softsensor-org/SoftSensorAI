@@ -1,7 +1,7 @@
 # Setup Scripts Makefile
 # Automation for setup, auditing, and ticket generation
 
-.PHONY: help install setup audit tickets clean lint test
+.PHONY: help install setup audit tickets clean lint test docs-index
 .DEFAULT_GOAL := help
 
 # Colors for output
@@ -52,3 +52,7 @@ lint: ## Run shellcheck on scripts
 	@echo "$(CYAN)Running ShellCheck...$(NC)"
 	find . -name "*.sh" -exec shellcheck {} \; || true
 	@echo "$(GREEN)✓ Linting complete$(NC)"
+
+docs-index: ## List available documentation pages
+	@echo "$(CYAN)Documentation Index$(NC)"
+	@find docs -maxdepth 1 -type f -name "*.md" | sort | sed 's/^/ - /'

@@ -4,3 +4,12 @@
 - Conventional commits; PR checklist; link the ticket.
 - Add/adjust tests when behavior changes; keep coverage steady.
 - Respect `.envrc` (direnv) and **never** commit secrets.
+
+## Docs Index
+- docs/quickstart.md — one-command setup and first project
+- docs/repo-wizard.md — cloning and bootstrapping
+- docs/agent-commands.md — commands catalog (think-deep, map→reduce, prefill, improver)
+- docs/profiles.md — skill/phase profiles and env toggles
+- docs/system-prompts.md — layered system prompts and `system/active.md`
+- docs/ci.md — CI workflows and quality gates
+- docs/validation-troubleshooting.md — audits and common fixes
