@@ -22,6 +22,7 @@ help: ## Show this help message
 	@echo "  make clean                      # Clean up generated files"
 	@echo "  make test                       # Run syntax validation"
 	@echo "  make security-json              # Generate security report"
+	@echo "  make audit                      # Run audit script"
 
 install: ## Install DevPilot global configuration
 	@echo "$(CYAN)Installing DevPilot global setup...$(NC)"
@@ -61,6 +62,9 @@ test: ## Basic syntax check for core scripts
 	@bash -n setup/repo_wizard.sh
 	@bash -n validation/validate_agents.sh
 	@echo "$(GREEN)✓ Scripts have valid syntax$(NC)"
+
+test\:bats: ## Alias: run bats tests if available (CI compatibility)
+	@$(MAKE) test-bats
 
 fmt: ## Normalize CRLF line endings (portable)
 	@echo "$(CYAN)Normalizing line endings...$(NC)"
@@ -108,6 +112,9 @@ devcontainer-build: ## Build devcontainer image
 
 devcontainer-open: ## Open devcontainer shell
 	@devcontainer open --workspace-folder . || echo "Install @devcontainers/cli to use this"
+audit: ## Run repo audit script (lint/syntax/json/yaml checks)
+	@bash tools/audit_setup_scripts.sh || true
+
 
 doctor: ## Run environment checks and tips
 	@bash scripts/doctor.sh

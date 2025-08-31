@@ -6,7 +6,10 @@ ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
 cd "$ROOT"
 
 echo "== finding shell scripts =="
-mapfile -t SH < <(git ls-files | grep -E '\\.sh$|/bin/|/scripts/' || true)
+mapfile -t SH < <(git ls-files 2>/dev/null | grep -E '\\.sh$|/bin/|/scripts/' || true)
+if [ ${#SH[@]} -eq 0 ]; then
+  mapfile -t SH < <(find . -type f \( -name "*.sh" -o -path "*/bin/*" -o -path "*/scripts/*" \) -print | sort)
+fi
 printf "%s\n" "${SH[@]}" | sed 's/^/ - /' || true
 
 echo "== check executables have shebang =="
@@ -39,7 +42,10 @@ else
 fi
 
 echo "== JSON validity =="
-mapfile -t JSONS < <(git ls-files | grep -E '\\.json$|(^|/)\\.mcp\\.json$|(^|/)\\.claude/settings\\.json$' || true)
+mapfile -t JSONS < <(git ls-files 2>/dev/null | grep -E '\\.json$|(^|/)\\.mcp\\.json$|(^|/)\\.claude/settings\\.json$' || true)
+if [ ${#JSONS[@]} -eq 0 ]; then
+  mapfile -t JSONS < <(find . -type f -name "*.json" -print)
+fi
 for f in "${JSONS[@]}"; do
   jq -e type "$f" >/dev/null || { echo "[json] invalid: $f"; rc=1; }
 done
@@ -65,5 +71,5 @@ for f in "${req[@]}"; do
 done
 
 echo "== summary =="
+[ $missing -eq 0 ] || rc=1
 [ $rc -eq 0 ] && echo "OK" || echo "Issues found (see above)"; exit $rc
-
