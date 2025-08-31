@@ -26,6 +26,8 @@ Chain Types:
   backend     - 5-step backend feature implementation
   security    - 4-step security audit and fixes
   refactor    - 3-step code refactoring
+  document    - 3-step document/contract analysis
+  ml-pipeline - 5-step ML model development
   
 Task Name:
   Optional identifier for organizing outputs (default: task-TIMESTAMP)
@@ -59,6 +61,8 @@ declare -A CHAIN_STEPS
 CHAIN_STEPS[backend]="spec tests code verify pr"
 CHAIN_STEPS[security]="scan prioritize fix report"
 CHAIN_STEPS[refactor]="analyze refactor validate"
+CHAIN_STEPS[document]="extract email tone"
+CHAIN_STEPS[ml-pipeline]="profile features model evaluate errors"
 
 # Validate chain type
 if [[ -z "${CHAIN_STEPS[$CHAIN_TYPE]:-}" ]]; then
