@@ -4,6 +4,8 @@ Validate Config Across Projects
 ```bash
 ./validate_agents.sh               # defaults to ~/projects
 ./validate_agents.sh ~/my-workarea
+./validate_agents.sh --json ~/my-workarea   # machine-readable
+./validate_agents.sh --fix  ~/my-workarea   # auto-seed missing files (no overwrite)
 ```
 
 What It Checks

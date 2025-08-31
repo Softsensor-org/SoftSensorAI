@@ -29,6 +29,7 @@ Complete guides for getting started with DevPilot:
   - docs/system-prompts.md
   - docs/ci.md
   - docs/validation-troubleshooting.md
+  - docs/appendix.md
 
 ## 📁 DevPilot Structure
 
@@ -441,7 +442,7 @@ rg --version && jq --version && pnpm -v
 
 ## 📄 License
 
-MIT License - See [LICENSE](LICENSE) file for details
+Proprietary License - Copyright © 2024 Softsensor.AI - See [LICENSE](LICENSE) file for details
 
 ## 🆘 Troubleshooting
 

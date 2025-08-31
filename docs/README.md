@@ -12,6 +12,7 @@ This directory contains comprehensive guides to help you install, configure, and
 - **ci.md** - CI/CD integration and security gates
 - **devcontainer.md** - Development container setup
 - **validation-troubleshooting.md** - Common issues and solutions
+ - **appendix.md** - Strengths worth keeping and why
 
 ## 🚀 Getting Started
 
@@ -23,3 +24,4 @@ For comprehensive setup, the recommended reading order is:
 3. **repo-wizard.md** - Setting up your first project
 4. **agent-commands.md** - Available AI commands
 
+See also: **appendix.md** for key strengths to preserve.

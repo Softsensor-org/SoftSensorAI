@@ -215,41 +215,53 @@ if [[ $JSON_OUT -eq 0 ]]; then
 fi
 
 # Tool availability check
-echo "==> Tool Availability"
-echo "──────────────────────"
+TOOLS_JSON="{}"
+if [[ $JSON_OUT -eq 0 ]]; then
+  echo "==> Tool Availability"
+  echo "──────────────────────"
+fi
 
-check_tool() {
-  local tool="$1"
-  local name="${2:-$tool}"
-  if command -v "$tool" >/dev/null 2>&1; then
-    echo -e "${GREEN}[✓]${NC} $name: $(command -v "$tool")"
+tools=(rg fd jq pnpm direnv claude gemini grok codex)
+for t in "${tools[@]}"; do
+  if command -v "$t" >/dev/null 2>&1; then
+    [[ $JSON_OUT -eq 0 ]] && echo -e "${GREEN}[✓]${NC} $t: $(command -v "$t")"
+    if [[ $JSON_OUT -eq 1 ]]; then
+      TOOLS_JSON=$(echo "$TOOLS_JSON" | jq --arg k "$t" '. + {($k): true}')
+    fi
   else
-    echo -e "${YELLOW}[⚠]${NC} $name: not found"
+    [[ $JSON_OUT -eq 0 ]] && echo -e "${YELLOW}[⚠]${NC} $t: not found"
+    if [[ $JSON_OUT -eq 1 ]]; then
+      TOOLS_JSON=$(echo "$TOOLS_JSON" | jq --arg k "$t" '. + {($k): false}')
+    fi
   fi
-}
+done
 
-check_tool "rg" "ripgrep"
-check_tool "fd" "fd-find"
-check_tool "jq" "jq"
-check_tool "pnpm" "pnpm"
-check_tool "direnv" "direnv"
-check_tool "claude" "Claude CLI"
-check_tool "gemini" "Gemini CLI"
-check_tool "grok" "Grok CLI"
-check_tool "codex" "Codex CLI"
-
-echo ""
+[[ $JSON_OUT -eq 0 ]] && echo ""
 
 # Exit with error if there were failures
+if [[ $JSON_OUT -eq 1 ]]; then
+  # Emit JSON summary
+  repos_json=$(printf '%s\n' "${REPOS_JSON_ENTRIES[@]}" | jq -s '.')
+  jq -n --arg root "$ROOT" \
+    --argjson summary "$(jq -n --argjson total "$REPO_COUNT" --argjson ok "$OK_COUNT" --argjson need "$MISSING_COUNT" --argjson json_errors "$FAIL_COUNT" '{total:$total, ok:$ok, need_config:$need, json_errors:$json_errors}')" \
+    --argjson tools "$TOOLS_JSON" \
+    --argjson repos "$repos_json" \
+    '{root:$root, summary:$summary, tools:$tools, repos:$repos}'
+fi
+
 if [[ $MISSING_COUNT -gt 0 ]] || [[ $FAIL_COUNT -gt 0 ]]; then
-  echo -e "${YELLOW}Tip:${NC} To fix all repositories at once, run:"
-  echo "  find $ROOT -type d -name .git -print0 | while IFS= read -r -d '' g; do"
-  echo "    r=\"\${g%/.git}\""
-  echo "    echo \"Fixing \$r\""
-  echo "    (cd \"\$r\" && $SCRIPT_DIR/setup_agents_repo.sh --force)"
-  echo "  done"
+  if [[ $JSON_OUT -eq 0 ]]; then
+    echo -e "${YELLOW}Tip:${NC} To fix all repositories at once, run:"
+    echo "  find $ROOT -type d -name .git -print0 | while IFS= read -r -d '' g; do"
+    echo "    r=\"\${g%/.git}\""
+    echo "    echo \"Fixing \$r\""
+    echo "    (cd \"\$r\" && $SCRIPT_DIR/setup_agents_repo.sh --force)"
+    echo "  done"
+  fi
   exit 1
 else
-  echo -e "${GREEN}All repositories are properly configured!${NC}"
+  if [[ $JSON_OUT -eq 0 ]]; then
+    echo -e "${GREEN}All repositories are properly configured!${NC}"
+  fi
   exit 0
 fi
