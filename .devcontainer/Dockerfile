@@ -17,6 +17,12 @@ RUN curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh |
   && corepack enable \
   && corepack prepare pnpm@latest --activate
 
+# Install mise and apply pinned versions from .mise.toml (optional)
+ENV PATH="/root/.local/bin:${PATH}"
+RUN curl -fsSL https://mise.run | sh \
+  && echo 'eval "$(~/.local/bin/mise activate bash)"' >> /etc/bash.bashrc \
+  && ~/.local/bin/mise --version || true \
+  && ~/.local/bin/mise install || true
+
 ENV DEBIAN_FRONTEND=dialog
 CMD ["sleep","infinity"]
-

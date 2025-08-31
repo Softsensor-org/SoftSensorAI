@@ -33,6 +33,11 @@ jobs:
           make fmt
           make lint
 
+      - name: Print runtime versions
+        run: |
+          node -v || true
+          python3 --version || true
+
       - name: Prompt audit
         run: make prompt-audit
 

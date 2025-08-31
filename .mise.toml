@@ -1,0 +1,16 @@
+# mise configuration - Unified runtime versions for this repository
+# https://mise.jdx.dev/
+
+[tools]
+node = "lts"       # Latest LTS Node.js
+python = "3.11"    # Stable Python for scripts and tests
+
+[env]
+NODE_ENV = "development"
+PYTHONDONTWRITEBYTECODE = "1"
+
+[settings]
+asdf_compat = true
+legacy_version_file = true
+experimental = true
+verbose = false

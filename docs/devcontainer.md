@@ -10,14 +10,18 @@ What’s inside
 - Ubuntu base with: bash, curl/wget, jq, ripgrep, fd, direnv, shellcheck, make, bats
 - Node LTS via nvm + pnpm via corepack
 - Python 3 + venv + pip
+- mise runtime manager installed; applies versions from `.mise.toml` when present
 
 Use it
 ```bash
 devcontainer build --workspace-folder .
 devcontainer open --workspace-folder .
+
+# (optional) inside the container, ensure pinned runtimes are applied
+mise install
+node -v && python3 --version
 ```
 
 Templates for downstream repos
 - A richer template exists under `templates/.devcontainer/` with language/tool features.
 - Use `scripts/apply_profile.sh` to configure repos and copy templates as needed.
-
