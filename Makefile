@@ -1,135 +1,54 @@
-.PHONY: audit fmt lint test install help
+# Setup Scripts Makefile
+# Automation for setup, auditing, and ticket generation
 
-# Default target
-help:
-	@echo "Available targets:"
-	@echo "  audit    - Run comprehensive audit on all scripts"
-	@echo "  fmt      - Fix line endings and formatting issues"
-	@echo "  lint     - Run shellcheck on all scripts"
-	@echo "  test     - Run basic tests"
-	@echo "  install  - Install required tools"
-	@echo "  help     - Show this help message"
+.PHONY: help install setup audit tickets clean lint test
+.DEFAULT_GOAL := help
 
-audit:
-	@bash tools/audit_setup_scripts.sh
+# Colors for output
+CYAN := \033[0;36m
+GREEN := \033[0;32m
+YELLOW := \033[1;33m
+RED := \033[0;31m
+NC := \033[0m # No Color
 
-fmt:
-	@echo "==> Fixing line endings..."
-	@find . -type f -name "*.sh" -print0 | xargs -0 -n1 sh -c 'sed -i "s/\r$$//" "$$0"'
-	@echo "==> Making scripts executable..."
-	@find . -type f -name "*.sh" -not -path "./.git/*" -print0 | xargs -0 chmod +x
-	@echo "✓ Formatting complete"
-
-lint:
-	@if command -v shellcheck >/dev/null 2>&1; then \
-		echo "==> Running shellcheck..."; \
-		find . -type f -name "*.sh" -not -path "./.git/*" -print0 | xargs -0 shellcheck -S warning; \
-	else \
-		echo "shellcheck not installed. Run 'make install' first."; \
-		exit 1; \
-	fi
-
-test:
-	@echo "==> Running basic tests..."
-	@bash -n install_key_software_wsl.sh
-	@bash -n setup_agents_global.sh
-	@bash -n setup_agents_repo.sh
-	@bash -n repo_setup_wizard.sh
-	@bash -n validate_agents.sh
-	@echo "✓ All scripts have valid syntax"
-
-install:
-	@echo "==> Installing required tools..."
-	@if ! command -v shellcheck >/dev/null 2>&1; then \
-		sudo apt-get update && sudo apt-get install -y shellcheck; \
-	fi
-	@if ! command -v pre-commit >/dev/null 2>&1; then \
-		pip install --user pre-commit || pipx install pre-commit; \
-	fi
-	@echo "✓ Tools installed"
-
-
-# --- Prompt checks ---
-prompt-audit:
-	@bash tools/prompt_lint.sh CLAUDE.md || true
-	@[ -f .claude/commands/secure-fix.md ] && echo "[ok] /secure-fix present" || echo "[miss] .claude/commands/secure-fix.md"
-
-.PHONY: prompt-audit
-
-# --- Structured Output Targets ---
-audit-json:
-	@echo '{"timestamp":"'$$(date -u +"%Y-%m-%dT%H:%M:%SZ")'",' > audit-results.json
-	@echo '"shellcheck":' >> audit-results.json
-	@find . -type f -name "*.sh" -not -path "./.git/*" -print0 | \
-		xargs -0 shellcheck -f json >> audit-results.json 2>&1 || echo '[]' >> audit-results.json
-	@echo ',' >> audit-results.json
-	@echo '"file_count":'$$(find . -type f -name "*.sh" | wc -l)',' >> audit-results.json
-	@echo '"status":"complete"}' >> audit-results.json
-	@echo "✓ JSON audit results written to audit-results.json"
-
-security-json:
-	@echo '{"scan_date":"'$$(date -u +"%Y-%m-%dT%H:%M:%SZ")'",' > security-scan.json
-	@echo '"checks":{' >> security-scan.json
-	@echo '"secrets":'$$(gitleaks detect --no-banner --report-format json 2>/dev/null || echo '{"findings":0}')','  >> security-scan.json
-	@echo '"permissions":'$$(find . -type f -name "*.sh" -perm /111 | wc -l)',' >> security-scan.json
-	@echo '"sensitive_files":'$$(find . -name ".env*" -o -name "*secret*" -o -name "*token*" | wc -l) >> security-scan.json
-	@echo '}}' >> security-scan.json
-	@echo "✓ Security scan results written to security-scan.json"
-
-stats:
-	@echo "=== Repository Statistics ==="
-	@echo "Scripts: $$(find . -type f -name "*.sh" | wc -l)"
-	@echo "Lines of code: $$(find . -type f -name "*.sh" -exec cat {} \; | wc -l)"
-	@echo "Functions: $$(grep -h "^[[:space:]]*.*()[[:space:]]*{" **/*.sh 2>/dev/null | wc -l)"
-	@echo "TODOs: $$(grep -r "TODO\|FIXME" --include="*.sh" . | wc -l)"
+help: ## Show this help message
+	@echo "$(CYAN)Setup Scripts - Development Automation$(NC)"
 	@echo ""
-	@echo "=== File Breakdown ==="
-	@find . -type f -name "*.sh" -exec wc -l {} \; | sort -rn | head -10
+	@echo "$(YELLOW)Usage:$(NC)"
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  $(GREEN)%-15s$(NC) %s\n", $$1, $$2}'
+	@echo ""
+	@echo "$(YELLOW)Examples:$(NC)"
+	@echo "  make install                    # Install all tools globally"
+	@echo "  make setup repo=my-project     # Setup agent files for repo"
+	@echo "  make audit:full                # Run comprehensive audit"
+	@echo "  make tickets mode=BOTH         # Generate tickets in both formats"
 
-stats-json:
-	@echo '{' > stats.json
-	@echo '"scripts":'$$(find . -type f -name "*.sh" | wc -l)',' >> stats.json
-	@echo '"loc":'$$(find . -type f -name "*.sh" -exec cat {} \; | wc -l)',' >> stats.json
-	@echo '"functions":'$$(grep -h "^[[:space:]]*.*()[[:space:]]*{" **/*.sh 2>/dev/null | wc -l)',' >> stats.json
-	@echo '"todos":'$$(grep -r "TODO\|FIXME" --include="*.sh" . | wc -l) >> stats.json
-	@echo '}' >> stats.json
-	@echo "✓ Stats written to stats.json"
+install: ## Install global agent tools and dependencies
+	@echo "$(CYAN)Installing global agent setup...$(NC)"
+	./setup_agents_global.sh
+	@echo "$(GREEN)✓ Global setup complete$(NC)"
 
-.PHONY: audit-json security-json stats stats-json
+audit\:prompt: ## Open audit template for Claude Code
+	@echo "$(CYAN)Audit commands available:$(NC)"
+	@echo "  /audit-full    - Comprehensive 90-minute audit"
+	@echo "  /audit-quick   - Quick 20-minute scan"
+	@echo ""
+	@echo "$(YELLOW)Variables to customize:$(NC)"
+	@echo "  RUNTIMES: Node.js/Python/Go/etc"
+	@echo "  TARGET_ENV: Docker+k8s/Local/Cloud"
+	@echo "  KEY_CONCERNS: security, performance, reliability"
 
-# --- Codex CLI Integration ---
-codex-fix:
-	@if [ -f scripts/codex_sandbox.sh ]; then \
-		scripts/codex_sandbox.sh exec "lint, typecheck, unit tests; fix failures" --approval-mode auto-edit; \
-	elif command -v codex >/dev/null 2>&1; then \
-		codex exec "lint, typecheck, unit tests; fix failures" --approval-mode auto-edit; \
-	else \
-		echo "Codex not available. Install with: npm i -g @openai/codex"; \
-		exit 1; \
-	fi
+tickets: ## Generate tickets (usage: make tickets mode=BOTH)
+	@echo "$(CYAN)Generating tickets...$(NC)"
+	./scripts/generate_tickets.sh --mode $(or $(mode),GITHUB_MARKDOWN)
+	@echo "$(GREEN)✓ Tickets generated$(NC)"
 
-codex-fix-ci:
-	@if [ -f scripts/codex_sandbox.sh ]; then \
-		scripts/codex_sandbox.sh exec "run tests; if failing, apply minimal fixes until green; exit nonzero if still failing" --approval-mode auto-edit; \
-	elif command -v codex >/dev/null 2>&1; then \
-		codex exec "run tests; if failing, apply minimal fixes until green; exit nonzero if still failing" --approval-mode auto-edit; \
-	else \
-		echo "Codex not available in CI"; \
-		exit 1; \
-	fi
+clean: ## Clean up generated files
+	@echo "$(CYAN)Cleaning up...$(NC)"
+	rm -rf tickets/ temp/ *.log 2>/dev/null || true
+	@echo "$(GREEN)✓ Cleanup complete$(NC)"
 
-codex-refactor:
-	@if [ -f scripts/codex_sandbox.sh ]; then \
-		scripts/codex_sandbox.sh exec "refactor for readability and performance; preserve all functionality" --approval-mode suggest; \
-	elif command -v codex >/dev/null 2>&1; then \
-		codex exec "refactor for readability and performance; preserve all functionality" --approval-mode suggest; \
-	else \
-		echo "Codex not available. Install with: npm i -g @openai/codex"; \
-		exit 1; \
-	fi
-
-codex-sandbox-test:
-	@echo "Testing Codex sandbox..."
-	@scripts/codex_sandbox.sh --version || echo "Sandbox test failed - check Docker installation"
-
-.PHONY: codex-fix codex-fix-ci codex-refactor codex-sandbox-test
+lint: ## Run shellcheck on scripts  
+	@echo "$(CYAN)Running ShellCheck...$(NC)"
+	find . -name "*.sh" -exec shellcheck {} \; || true
+	@echo "$(GREEN)✓ Linting complete$(NC)"
