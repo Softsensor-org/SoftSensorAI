@@ -281,6 +281,143 @@ Emit:
 </variables>
 <why>1–3 bullets: what changed and why</why>
 MD
+
+# Additional patterns and task guides
+write_if_absent ".claude/commands/parallel-map.md" <<'MD'
+# Parallel Map (independent tasks)
+
+<plan>
+- List independent sub-tasks that can run in parallel.
+- For each, specify inputs, outputs, and the exact commands.
+- Define a merge step to combine results.
+</plan>
+
+<work>
+- Run parallel steps where safe; capture outputs/logs succinctly.
+</work>
+
+<merge>
+- Combine results; highlight conflicts and resolutions.
+</merge>
+
+<verify>
+- Re-run tests/lints; confirm acceptance checks.
+</verify>
+MD
+
+write_if_absent ".claude/commands/chain-step-skeleton.md" <<'MD'
+# Chain Step Skeleton
+
+<goal>
+- State the step’s objective in one sentence.
+</goal>
+
+<inputs>
+- Summarize handoff from previous step (IDs, files, notes).
+</inputs>
+
+<work>
+- Actions taken; commands; minimal changes with diffs.
+</work>
+
+<handoff>
+- What the next step needs (IDs, files, assumptions).
+</handoff>
+MD
+
+write_if_absent ".claude/commands/audit-full.md" <<'MD'
+# Full Audit (90 minutes max)
+
+<scope>
+- Code health, tests, security, performance, DX.
+</scope>
+
+<checks>
+- Lints/type/tests; security scans; coverage; bundle size; CI gates.
+</checks>
+
+<findings>
+- 3–7 findings ranked by impact/risk with evidence (file:line).
+</findings>
+
+<actions>
+- 3 quick wins, 3 medium, 1 big rock; include acceptance criteria.
+</actions>
+MD
+
+write_if_absent ".claude/commands/tickets-from-code.md" <<'MD'
+# Tickets From Code
+
+<input>
+- Paths/areas: {{PATHS}}
+</input>
+
+<tickets>
+- Generate concise tickets with title, context, acceptance, estimate.
+- Link files and risks; batch by epic.
+</tickets>
+MD
+
+write_if_absent ".claude/commands/architect-spike.md" <<'MD'
+# Architecture Spike
+
+<problem>
+- Define constraints, SLAs/SLOs, and success metrics.
+</problem>
+
+<options>
+- Compare 2–3 approaches (pros/cons, risks, costs).
+</options>
+
+<recommendation>
+- Pick 1; outline MVP plan and rollback.
+</recommendation>
+MD
+
+write_if_absent ".claude/commands/migration-plan.md" <<'MD'
+# Migration Plan
+
+<context>
+- Current vs target state; data shape; downtime budget.
+</context>
+
+<plan>
+- Backfill, dual writes/reads, cutover, verify, rollback.
+- Commands and checkpoints per phase.
+</plan>
+MD
+
+write_if_absent ".claude/commands/observability-pass.md" <<'MD'
+# Observability Pass
+
+<targets>
+- Services/modules; key transactions.
+</targets>
+
+<instrument>
+- Tracing, structured logs, metrics; SLIs.
+</instrument>
+
+<verify>
+- Local + CI checks; dashboards linked.
+</verify>
+MD
+
+write_if_absent ".claude/commands/api-contract-update.md" <<'MD'
+# API Contract Update
+
+<input>
+- OpenAPI/GraphQL files; breaking-change policy.
+</input>
+
+<changes>
+- Minimal diff to spec; regenerate clients; update tests.
+</changes>
+
+<verify>
+- Contract lint; codegen compiles; consumers tested.
+</verify>
+MD
 fi
 
 # ---------- .envrc (optional) ----------

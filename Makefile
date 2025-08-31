@@ -1,7 +1,7 @@
 # DevPilot Makefile
 # Automation for AI development platform setup, auditing, and ticket generation
 
-.PHONY: help install setup audit tickets clean lint test fmt docs-index prompt-audit security-json config-validate test-bats devcontainer-build devcontainer-open
+.PHONY: help install setup audit tickets clean lint test fmt docs-index prompt-audit security-json config-validate test-bats devcontainer-build devcontainer-open doctor
 .DEFAULT_GOAL := help
 
 # Colors for output
@@ -108,3 +108,6 @@ devcontainer-build: ## Build devcontainer image
 
 devcontainer-open: ## Open devcontainer shell
 	@devcontainer open --workspace-folder . || echo "Install @devcontainers/cli to use this"
+
+doctor: ## Run environment checks and tips
+	@bash scripts/doctor.sh

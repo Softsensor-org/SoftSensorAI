@@ -39,6 +39,38 @@ Prompt Improver
 - `.claude/commands/prompt-improver.md`
   - Upgrades rough prompts into production-grade ones with variables and output specs
 
+Parallel Map
+- `.claude/commands/parallel-map.md`
+  - Identify truly independent subtasks, run them in parallel, then merge results with a clear reduce step
+
+Chain Step Skeleton
+- `.claude/commands/chain-step-skeleton.md`
+  - Standard handoff structure for multi-step work (goal, inputs, work, handoff)
+
+Full Audit
+- `.claude/commands/audit-full.md`
+  - 90-minute audit outline with prioritized findings and actions
+
+Tickets From Code
+- `.claude/commands/tickets-from-code.md`
+  - Generate ticket backlog from code areas with acceptance and estimates
+
+Architecture Spike
+- `.claude/commands/architect-spike.md`
+  - Compare options and recommend an approach with rollback and success metrics
+
+Migration Plan
+- `.claude/commands/migration-plan.md`
+  - Plan backfill/dual-write/cutover/verify/rollback with commands and checkpoints
+
+Observability Pass
+- `.claude/commands/observability-pass.md`
+  - Add tracing/logs/metrics, define SLIs, and verify locally and in CI
+
+API Contract Update
+- `.claude/commands/api-contract-update.md`
+  - Update OpenAPI/GraphQL, regenerate clients, update tests, and validate contracts
+
 Skill-driven Availability
 - Beginner/Vibe: `prefill-structure`, `long-context-map-reduce`
 - L1: `think-deep` (budgeted)
@@ -47,4 +79,3 @@ Skill-driven Availability
 Environment Flags
 - `EXTENDED_THINKING=on|off`
 - `THINK_BUDGET_BULLETS=5` (or higher for expert)
-
