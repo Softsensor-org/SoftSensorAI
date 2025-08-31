@@ -28,8 +28,8 @@ show_help() {
   cat <<EOF
 Usage: $0 [OPTIONS]
 
-Automated setup script for WSL development environment with AI agents.
-Detects whether this is a fresh install or an upgrade.
+Automated setup script for development environments with AI agents.
+Auto-detects OS (WSL, Linux, macOS) and fresh vs upgrade.
 
 Options:
   --fresh       Force fresh installation mode
@@ -62,6 +62,7 @@ SKIP_TOOLS=0
 SKIP_AGENTS=0
 BACKUP_ONLY=0
 FORCE_MODE=""
+FORCE_OS=""
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -72,6 +73,14 @@ while [[ $# -gt 0 ]]; do
     --upgrade)
       FORCE_MODE="upgrade"
       shift
+      ;;
+    --os)
+      FORCE_OS="${2:-}"
+      case "$FORCE_OS" in
+        wsl|linux|macos) : ;;
+        *) err "Unknown --os value: ${FORCE_OS}. Use wsl|linux|macos"; exit 1;;
+      esac
+      shift 2
       ;;
     --skip-tools)
       SKIP_TOOLS=1
@@ -120,6 +129,55 @@ detect_mode() {
   fi
 }
 
+# Detect platform and choose installer
+platform=""
+detect_platform() {
+  if [[ -n "$FORCE_OS" ]]; then
+    platform="$FORCE_OS"
+    return
+  fi
+  # WSL if env var set or /proc/version mentions Microsoft
+  if [[ -n "${WSL_DISTRO_NAME:-}" ]] || grep -qi microsoft /proc/version 2>/dev/null; then platform="wsl"; return; fi
+  case "$(uname -s)" in
+    Darwin) platform="macos" ;;
+    Linux)  platform="linux" ;;
+    *)      platform="unknown" ;;
+  esac
+}
+
+install_tools_for_platform() {
+  detect_platform
+  case "$platform" in
+    wsl)
+      say "Detected WSL. Installing WSL key software..."
+      if [[ -f "$SCRIPT_DIR/install_key_software_wsl.sh" ]]; then
+        bash "$SCRIPT_DIR/install_key_software_wsl.sh"
+      else
+        warn "install_key_software_wsl.sh not found"
+      fi
+      ;;
+    linux)
+      say "Detected Linux. Installing cross-distro key software..."
+      if [[ -f "$SCRIPT_DIR/install_key_software_linux.sh" ]]; then
+        bash "$SCRIPT_DIR/install_key_software_linux.sh"
+      else
+        warn "install_key_software_linux.sh not found"
+      fi
+      ;;
+    macos)
+      say "Detected macOS. Installing Homebrew-based key software..."
+      if [[ -f "$SCRIPT_DIR/install_key_software_macos.sh" ]]; then
+        bash "$SCRIPT_DIR/install_key_software_macos.sh"
+      else
+        warn "install_key_software_macos.sh not found"
+      fi
+      ;;
+    *)
+      warn "Unknown platform. Skipping tool installation."
+      ;;
+  esac
+}
+
 # Backup existing configurations
 backup_configs() {
   say "Backing up existing configurations..."
@@ -154,11 +212,7 @@ run_fresh_install() {
   # 1. Install key software
   if [[ $SKIP_TOOLS -eq 0 ]]; then
     say "Installing essential development tools..."
-    if [[ -x "$SCRIPT_DIR/install_key_software_wsl.sh" ]]; then
-      "$SCRIPT_DIR/install_key_software_wsl.sh"
-    else
-      warn "install_key_software_wsl.sh not found or not executable"
-    fi
+    install_tools_for_platform
   fi
 
   # 2. Install AI CLIs
@@ -210,9 +264,7 @@ run_upgrade() {
   # 2. Update tools if needed
   if [[ $SKIP_TOOLS -eq 0 ]]; then
     say "Updating development tools..."
-    if [[ -x "$SCRIPT_DIR/install_key_software_wsl.sh" ]]; then
-      "$SCRIPT_DIR/install_key_software_wsl.sh"
-    fi
+    install_tools_for_platform
   fi
 
   # 3. Re-run global agent setup (preserves existing with --force flag)
@@ -268,6 +320,7 @@ main() {
   
   # Detect installation mode
   detect_mode
+  detect_platform
   
   if [[ $BACKUP_ONLY -eq 1 ]]; then
     backup_configs
@@ -278,8 +331,22 @@ main() {
   # Confirm with user
   echo ""
   echo "Mode: $MODE"
+  echo "Platform: ${platform:-unknown} (override with --os wsl|linux|macos)"
   echo ""
   
+  if [[ -z "$FORCE_OS" ]]; then
+    read -p "Use detected platform '${platform}'? (Y/n): " -n 1 -r choice
+    echo ""
+    if [[ $choice =~ ^[Nn]$ ]]; then
+      read -p "Enter platform [wsl/linux/macos]: " pf
+      case "$pf" in
+        wsl|linux|macos) platform="$pf" ;;
+        *) err "Invalid platform: $pf"; exit 1 ;;
+      esac
+      say "Using overridden platform: $platform"
+    fi
+  fi
+
   if [[ "$MODE" == "upgrade" ]]; then
     warn "This will backup and update your existing configuration."
   fi

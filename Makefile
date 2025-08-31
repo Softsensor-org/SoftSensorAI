@@ -53,6 +53,15 @@ lint: ## Run shellcheck on scripts
 	find . -name "*.sh" -exec shellcheck {} \; || true
 	@echo "$(GREEN)✓ Linting complete$(NC)"
 
+fmt: ## Normalize CRLF line endings (portable)
+	@echo "$(CYAN)Normalizing line endings...$(NC)"
+	@find . -type f -name "*.sh" -print0 | xargs -0 -n1 sh -c 'tmp="$$0.tmp"; tr -d "\r" < "$$0" > "$$tmp" && mv "$$tmp" "$$0"'
+	@echo "$(GREEN)✓ Formatting complete$(NC)"
+
+docs-index: ## List available documentation pages
+	@echo "$(CYAN)Documentation Index$(NC)"
+	@find docs -maxdepth 1 -type f -name "*.md" | sort | sed 's/^/ - /'
+
 docs-index: ## List available documentation pages
 	@echo "$(CYAN)Documentation Index$(NC)"
 	@find docs -maxdepth 1 -type f -name "*.md" | sort | sed 's/^/ - /'

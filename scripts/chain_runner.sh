@@ -2,6 +2,19 @@
 # Chain Runner - Execute multi-step chains with proper handoffs
 set -euo pipefail
 
+# Bash version guard (macOS default bash is 3.2). Re-exec with Homebrew bash if available.
+req_major=4
+cur_major=${BASH_VERSINFO[0]:-0}
+if [ "$cur_major" -lt "$req_major" ]; then
+  for brew_bash in /opt/homebrew/bin/bash /usr/local/bin/bash; do
+    if [ -x "$brew_bash" ]; then
+      exec "$brew_bash" "$0" "$@"
+    fi
+  done
+  echo "Error: bash >= ${req_major} required. Install with 'brew install bash' and retry." >&2
+  exit 1
+fi
+
 # Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'

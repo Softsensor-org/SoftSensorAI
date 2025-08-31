@@ -11,6 +11,10 @@ New in this repo
 - Prompt improver: turns rough asks into production-grade prompts
 - System prompt layering: global + repo + task merged into `system/active.md`
 
+Cross-platform installers
+- Linux (cross-distro): `./install_key_software_linux.sh`
+- macOS (Homebrew): `./install_key_software_macos.sh`
+
 Docs and Tutorials
 - See the docs directory for step-by-step guides:
   - docs/quickstart.md
@@ -50,14 +54,14 @@ setup-scripts/
 
 ## 🚀 Quick Start
 
-### 1. One-Command Setup
+### 1. One-Command Setup (WSL/Linux/macOS)
 
 ```bash
 # Clone this repository
 git clone https://github.com/VivekLmd/setup-scripts.git ~/repos/setup-scripts
 cd ~/repos/setup-scripts
 
-# Run master setup (auto-detects fresh vs upgrade)
+# Run master setup (auto-detects OS + fresh vs upgrade)
 ./setup_all.sh
 ```
 
@@ -106,6 +110,16 @@ cd /path/to/your/repo
 #   --no-direnv     Skip direnv setup
 #   --no-gitignore  Skip .gitignore updates
 ```
+
+### macOS Quick Install
+
+```bash
+cd ~/repos/setup-scripts
+./install_key_software_macos.sh    # install prerequisites via Homebrew
+./setup_agents_global.sh           # seed global configs + templates
+```
+
+Then use the Repo Wizard as below.
 
 ### 3. Validation
 
@@ -409,6 +423,7 @@ rg --version && jq --version && pnpm -v
 - **Options**:
   - `--fresh` - Force fresh installation
   - `--upgrade` - Force upgrade mode
+  - `--os <wsl|linux|macos>` - Force platform installer (overrides auto-detect)
   - `--skip-tools` - Skip tool installation
   - `--skip-agents` - Skip agent configuration
   - `--backup-only` - Only backup existing configs

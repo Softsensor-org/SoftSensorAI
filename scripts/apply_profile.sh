@@ -13,7 +13,24 @@ NC='\033[0m' # No Color
 SKILL="beginner"
 PHASE="mvp"
 TEACH_MODE=""
-SETUP_SCRIPTS_DIR="${SETUP_SCRIPTS_DIR:-$(dirname "$(dirname "$(realpath "$0")")")}"
+# Portable realpath resolution (macOS often lacks realpath)
+_resolve_realpath() {
+  if command -v realpath >/dev/null 2>&1; then
+    realpath "$1"
+  elif command -v python3 >/dev/null 2>&1; then
+    python3 - "$1" <<'PY'
+import os, sys
+print(os.path.realpath(sys.argv[1]))
+PY
+  elif command -v perl >/dev/null 2>&1; then
+    perl -MCwd=realpath -e 'print realpath($ARGV[0])' "$1"
+  else
+    (cd "$(dirname "$1")" 2>/dev/null && pwd)/"$(basename "$1")"
+  fi
+}
+
+_THIS="$(_resolve_realpath "$0" 2>/dev/null || echo "$0")"
+SETUP_SCRIPTS_DIR="${SETUP_SCRIPTS_DIR:-$(dirname "$(dirname "$_THIS")") }"
 
 # Usage
 usage() {
