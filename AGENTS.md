@@ -1,9 +1,10 @@
-# Codex / CLI Agent Directives
-- Start read-only (plan & inspect); switch to workspace-write once tests pass.
-- Prefer: `codex exec "lint, typecheck, unit tests; fix failures"`.
-- Conventional commits; PR checklist; link the ticket.
-- Add/adjust tests when behavior changes; keep coverage steady.
-- Respect `.envrc` (direnv) and **never** commit secrets.
+# DevPilot AI Agent Directives
+- **Learning-Aware**: Adapt guidance based on detected skill level and project phase
+- **Start Read-Only**: Plan & inspect first; switch to workspace-write once tests pass
+- **Quality First**: `codex exec "lint, typecheck, unit tests; fix failures"`
+- **Conventional Commits**: PR checklist; link tickets; respect graduation criteria
+- **Test Coverage**: Add/adjust tests when behavior changes; maintain coverage
+- **Security**: Respect `.envrc` (direnv) and **never** commit secrets
 
 ## Docs Index
 - docs/quickstart.md — one-command setup and first project

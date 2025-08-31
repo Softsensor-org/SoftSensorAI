@@ -2,11 +2,13 @@
 set -euo pipefail
 
 # ============================================================================
-# Global Agent Setup Script
+# DevPilot Global Agent Setup Script
 # Sets up configurations for all AI CLI agents (Claude, Gemini, Grok, Codex)
+# Part of DevPilot: Learning-aware AI development platform
 # Run this once during initial system setup
 # ============================================================================
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 echo "==> Setting up global agent configurations"
 
 # Create all necessary directories
@@ -67,16 +69,25 @@ cat > ~/.grok/user-settings.json <<'JSON'
 JSON
 
 # ---------- Codex Global Configuration ----------
-echo "  • Configuring Codex CLI"
-cat > ~/.codex/config.toml <<'TOML'
-# Global Codex configuration
-# Add MCP servers you run locally (stdio) if desired
-# Example:
-# [mcp_servers.github]
-# command = "/usr/local/bin/github-mcp-server"
-# args    = ["stdio"]
-# env     = { GITHUB_PERSONAL_ACCESS_TOKEN = "${GITHUB_PAT}" }
-TOML
+echo "  • Configuring Codex CLI (YAML)"
+mkdir -p ~/.codex
+if [ ! -f ~/.codex/config.yaml ]; then
+  cat > ~/.codex/config.yaml <<'YAML'
+# OpenAI Codex CLI Configuration
+model: o4-mini
+approvalMode: auto-edit
+notify: true
+
+# Sandbox settings
+# sandbox: docker
+YAML
+  echo "    ✓ Wrote ~/.codex/config.yaml"
+else
+  echo "    • Keeping existing ~/.codex/config.yaml"
+fi
+if [ -f ~/.codex/config.toml ]; then
+  echo "    ⚠ Found legacy ~/.codex/config.toml (YAML is preferred)."
+fi
 
 # ---------- Template Files for Repository Setup ----------
 echo "  • Creating repository template files"
@@ -174,4 +185,4 @@ echo "  • ~/.codex/config.toml          - Codex global settings"
 echo "  • ~/templates/agent-setup/      - Templates for repo setup"
 echo ""
 echo "To set up agents in a specific repository, run:"
-echo "  ~/setup/setup_agents_repo.sh"
+echo "  $SCRIPT_DIR/setup_agents_repo.sh"

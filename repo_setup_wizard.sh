@@ -1,9 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
-say(){ printf "\033[1;36m==> %s\033[0m\n" "$*"; }
-warn(){ printf "\033[1;33m[warn]\033[0m %s\n" "$*"; }
-err(){ printf "\033[1;31m[err]\033[0m %s\n" "$*"; }
-has(){ command -v "$1" >/dev/null 2>&1; }
+ say(){ printf "\033[1;36m==> %s\033[0m\n" "$*"; }
+ warn(){ printf "\033[1;33m[warn]\033[0m %s\n" "$*"; }
+ err(){ printf "\033[1;31m[err]\033[0m %s\n" "$*"; }
+ has(){ command -v "$1" >/dev/null 2>&1; }
+
+# Script directory (portable)
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Parse command-line arguments
 LITE=0; NO_HOOKS=0; NO_SCRIPTS=0; NO_BOOTSTRAP=0; NON_INTERACTIVE=0; WITH_CODEX=0
@@ -85,7 +88,7 @@ ensure_dir(){ mkdir -p "$1"; }
 to_ssh_url(){ local u="$1"; if [[ "$u" =~ ^https?://github\.com/([^/]+)/([^/]+?)(\.git)?$ ]]; then echo "git@github.com:${BASH_REMATCH[1]}/${BASH_REMATCH[2]}.git"; else echo "$u"; fi; }
 select_menu(){ local PS3="Select a number: "; select opt in "$@"; do [[ -n "$opt" ]] && { echo "$opt"; return; }; echo "Invalid. Try again."; done; }
 
-seed_defaults(){ ~/setup/agent_init_repo.sh --force 2>/dev/null || bash ~/setup/agent_init_repo.sh --force || true; }
+seed_defaults(){ "$SCRIPT_DIR/setup_agents_repo.sh" --force || true; }
 
 install_commit_sanitizer(){
   mkdir -p .githooks
@@ -241,13 +244,7 @@ if [ -n "${BRANCH:-}" ]; then git clone --branch "$BRANCH" --single-branch "$URL
 cd "$TARGET"
 
 say "Seeding repo defaults"
-# Use new unified repo agent setup script if available
-if [ -x ~/setup/setup_agents_repo.sh ]; then
-  ~/setup/setup_agents_repo.sh --force
-else
-  # Fallback to old method if new script not found
-  seed_defaults
-fi
+seed_defaults
 [[ "$LITE" -eq 1 || "$NO_HOOKS" -eq 1 ]] || { say "Installing commit sanitizer hook"; install_commit_sanitizer; }
 [[ "$LITE" -eq 1 || "$NO_SCRIPTS" -eq 1 ]] || { say "Dropping helper scripts"; seed_helper_scripts; }
 
@@ -256,9 +253,9 @@ if [[ "$WITH_CODEX" -eq 1 ]]; then
   say "Adding Codex CLI integration"
   
   # Copy sandbox script if available
-  if [ -f ~/setup/scripts/codex_sandbox.sh ]; then
+  if [ -f "$SCRIPT_DIR/scripts/codex_sandbox.sh" ]; then
     mkdir -p scripts
-    cp ~/setup/scripts/codex_sandbox.sh scripts/
+    cp "$SCRIPT_DIR/scripts/codex_sandbox.sh" scripts/
     chmod +x scripts/codex_sandbox.sh
     echo "  ✓ Added scripts/codex_sandbox.sh"
   fi

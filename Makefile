@@ -1,5 +1,5 @@
-# Setup Scripts Makefile
-# Automation for setup, auditing, and ticket generation
+# DevPilot Makefile
+# Automation for AI development platform setup, auditing, and ticket generation
 
 .PHONY: help install setup audit tickets clean lint test fmt docs-index prompt-audit security-json config-validate test-bats devcontainer-build devcontainer-open
 .DEFAULT_GOAL := help
@@ -12,21 +12,21 @@ RED := \033[0;31m
 NC := \033[0m # No Color
 
 help: ## Show this help message
-	@echo "$(CYAN)Setup Scripts - Development Automation$(NC)"
+	@echo "$(CYAN)DevPilot - AI Development Platform$(NC)"
 	@echo ""
 	@echo "$(YELLOW)Usage:$(NC)"
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  $(GREEN)%-15s$(NC) %s\n", $$1, $$2}'
 	@echo ""
 	@echo "$(YELLOW)Examples:$(NC)"
-	@echo "  make install                    # Install all tools globally"
-	@echo "  make setup repo=my-project     # Setup agent files for repo"
-	@echo "  make audit:full                # Run comprehensive audit"
-	@echo "  make tickets mode=BOTH         # Generate tickets in both formats"
+	@echo "  make install                    # Install DevPilot globally"
+	@echo "  make clean                      # Clean up generated files"
+	@echo "  make test                       # Run syntax validation"
+	@echo "  make security-json              # Generate security report"
 
-install: ## Install global agent tools and dependencies
-	@echo "$(CYAN)Installing global agent setup...$(NC)"
+install: ## Install DevPilot global configuration
+	@echo "$(CYAN)Installing DevPilot global setup...$(NC)"
 	./setup_agents_global.sh
-	@echo "$(GREEN)✓ Global setup complete$(NC)"
+	@echo "$(GREEN)✓ DevPilot global setup complete$(NC)"
 
 audit\:prompt: ## Open audit template for Claude Code
 	@echo "$(CYAN)Audit commands available:$(NC)"
@@ -52,6 +52,15 @@ lint: ## Run shellcheck on scripts
 	@echo "$(CYAN)Running ShellCheck...$(NC)"
 	find . -name "*.sh" -exec shellcheck {} \; || true
 	@echo "$(GREEN)✓ Linting complete$(NC)"
+
+test: ## Basic syntax check for core scripts
+	@echo "$(CYAN)Bash syntax checks$(NC)"
+	@bash -n setup_all.sh
+	@bash -n setup_agents_global.sh
+	@bash -n setup_agents_repo.sh
+	@bash -n repo_setup_wizard.sh
+	@bash -n validate_agents.sh
+	@echo "$(GREEN)✓ Scripts have valid syntax$(NC)"
 
 fmt: ## Normalize CRLF line endings (portable)
 	@echo "$(CYAN)Normalizing line endings...$(NC)"

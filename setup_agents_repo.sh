@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
-# setup_agents_repo.sh — seed per-repo agent files (best-practice scaffold)
+# setup_agents_repo.sh — DevPilot repository setup script
+# Configures AI agents and development tools for individual repositories
+# Part of DevPilot: Learning-aware AI development platform
+#
 # Flags:
 #   --force         overwrite existing files
 #   --no-mcp        skip writing .mcp.json
@@ -307,6 +310,42 @@ if [[ "$DO_GITIGNORE" -eq 1 ]]; then
   ensure_gitignore "dist/"
   ensure_gitignore "build/"
 fi
+
+# ---------- .trivyignore template ----------
+write_if_absent ".trivyignore" <<'IGN'
+# Trivy ignore file (optional)
+# List CVE IDs or patterns to suppress known, accepted vulnerabilities.
+# Keep this file reviewed; reference a ticket for each entry.
+
+# Examples:
+# CVE-2023-12345  # accepted until upstream library X is updated
+# CVE-2024-00001  # false positive on package Y in dev-only context
+
+# You can also ignore specific files/paths for config scans:
+# cmd/**/testdata/**
+IGN
+
+# ---------- .semgrepignore template ----------
+write_if_absent ".semgrepignore" <<'SEM'
+# Semgrep ignore file (optional)
+# Paths to exclude from scans. Keep this file reviewed.
+
+# Common directories
+node_modules/
+dist/
+build/
+.venv/
+coverage/
+.git/
+
+# Generated or vendor code (adjust as needed)
+vendor/
+*.min.js
+
+# Test data
+**/testdata/**
+**/__fixtures__/**
+SEM
 
 # ---------- Validate JSON ----------
 command -v jq >/dev/null 2>&1 && {

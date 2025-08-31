@@ -64,7 +64,9 @@ jobs:
         run: |
           # Multiple SAST tools
           pip install semgrep
-          semgrep --config=auto --severity=WARNING,ERROR --error --sarif -o semgrep.sarif
+          BASE="${{ vars.SEMGREP_BASELINE_REF }}"
+          if [ -n "$BASE" ]; then BASE_FLAG="--baseline-ref $BASE"; else BASE_FLAG=""; fi
+          semgrep --config=auto --severity=WARNING,ERROR --error $BASE_FLAG --sarif -o semgrep.sarif
       - name: Upload Semgrep SARIF
         uses: github/codeql-action/upload-sarif@v3
         with:
@@ -106,7 +108,8 @@ jobs:
           wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
           echo "deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main" | sudo tee /etc/apt/sources.list.d/trivy.list
           sudo apt-get update && sudo apt-get install trivy -y
-          trivy fs --exit-code 1 --severity HIGH,CRITICAL --ignore-unfixed .
+          if [ -f .trivyignore ]; then IGN="--ignorefile .trivyignore"; else IGN=""; fi
+          trivy fs --exit-code 1 --severity HIGH,CRITICAL --ignore-unfixed $IGN .
       
       - name: Dockerfile lint (fail on errors)
         if: hashFiles('Dockerfile') != ''
@@ -119,7 +122,8 @@ jobs:
         if: hashFiles('Dockerfile') != ''
         run: |
           docker build -t app:test .
-          trivy image --exit-code 1 --severity HIGH,CRITICAL --ignore-unfixed app:test
+          if [ -f .trivyignore ]; then IGN="--ignorefile .trivyignore"; else IGN=""; fi
+          trivy image --exit-code 1 --severity HIGH,CRITICAL --ignore-unfixed $IGN app:test
           
   performance-suite:
     runs-on: ubuntu-latest

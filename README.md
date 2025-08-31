@@ -1,22 +1,26 @@
-# WSL & AI Agent Setup Scripts
+# DevPilot - AI Development Platform
 [![CI](https://github.com/VivekLmd/setup-scripts/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/VivekLmd/setup-scripts/actions/workflows/ci.yml)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://pre-commit.com/)
 
-A comprehensive collection of setup scripts for WSL development environment and AI CLI agents (Claude, Gemini, Grok, Codex).
+**DevPilot** is a learning-aware AI development platform that adapts to your skill level and project phase. It provides comprehensive setup and configuration for AI coding assistants (Claude, Gemini, Grok, Codex) with progressive skill-based tooling and guardrails.
 
-New in this repo
-- Extended thinking (controlled): per-skill toggles and budgets
-- Long-context Map→Reduce command: chunked notes with citations and a reduce summary
-- Prefill structure and diff commands: consistent, diff-first outputs
-- Prompt improver: turns rough asks into production-grade prompts
-- System prompt layering: global + repo + task merged into `system/active.md`
+## ✨ DevPilot Features
+- **Learning-Aware Profiles**: 5 skill levels (vibe → beginner → l1 → l2 → expert) with progressive tooling
+- **Project Phase Management**: 4 phases (poc → mvp → beta → scale) with appropriate CI/CD gates
+- **Extended Thinking Controls**: Per-skill reasoning budgets and structured prompts
+- **Long-Context Management**: Map→Reduce commands for large codebase analysis
+- **Structured Output**: Prefill templates and diff-first workflows
+- **System Prompt Layering**: Composable global + repo + task prompt system
+- **Comprehensive Auditing**: Automated code analysis and ticket generation
+- **Cross-Platform Support**: WSL2, Linux, and macOS with unified tooling
 
-Cross-platform installers
-- Linux (cross-distro): `./install_key_software_linux.sh`
-- macOS (Homebrew): `./install_key_software_macos.sh`
+## 🚀 Quick Installation
+- **Linux/WSL**: `./install_key_software_linux.sh`
+- **macOS**: `./install_key_software_macos.sh`
+- **Universal**: `./setup_all.sh`
 
-Docs and Tutorials
-- See the docs directory for step-by-step guides:
+## 📚 Documentation
+Complete guides for getting started with DevPilot:
   - docs/quickstart.md
   - docs/repo-wizard.md
   - docs/agent-commands.md
@@ -26,10 +30,10 @@ Docs and Tutorials
   - docs/ci.md
   - docs/validation-troubleshooting.md
 
-## 📁 Repository Structure
+## 📁 DevPilot Structure
 
 ```
-setup-scripts/
+devpilot/
 ├── setup_all.sh                     # Master setup script (auto-detects fresh/upgrade)
 ├── setup_agents_global.sh           # One-time global agent configuration  
 ├── setup_agents_repo.sh             # Per-repository agent setup
@@ -430,6 +434,7 @@ rg --version && jq --version && pnpm -v
   - `--fresh` - Force fresh installation
   - `--upgrade` - Force upgrade mode
   - `--os <wsl|linux|macos>` - Force platform installer (overrides auto-detect)
+  - `--yes` - Non-interactive; skip confirmation prompts
   - `--skip-tools` - Skip tool installation
   - `--skip-agents` - Skip agent configuration
   - `--backup-only` - Only backup existing configs

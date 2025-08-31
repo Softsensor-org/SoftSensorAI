@@ -2,8 +2,9 @@
 set -euo pipefail
 
 # ============================================================================
-# Master Setup Script - Detects fresh vs upgrade mode
-# Orchestrates the entire setup process for WSL development environment
+# DevPilot Master Setup Script - Detects fresh vs upgrade mode
+# Orchestrates the entire AI development platform installation
+# Part of DevPilot: Learning-aware AI development platform
 # ============================================================================
 
 # Color codes
@@ -92,6 +93,10 @@ while [[ $# -gt 0 ]]; do
       ;;
     --backup-only)
       BACKUP_ONLY=1
+      shift
+      ;;
+    --yes|-y)
+      AUTO_YES=1
       shift
       ;;
     --help|-h)
@@ -351,12 +356,13 @@ main() {
     warn "This will backup and update your existing configuration."
   fi
   
-  read -p "Continue? (y/N): " -n 1 -r
-  echo ""
-  
-  if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-    say "Setup cancelled."
-    exit 1
+  if [[ "${AUTO_YES:-0}" -ne 1 ]]; then
+    read -p "Continue? (y/N): " -n 1 -r
+    echo ""
+    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+      say "Setup cancelled."
+      exit 1
+    fi
   fi
   
   # Run appropriate installation

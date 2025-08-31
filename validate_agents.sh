@@ -13,19 +13,52 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
-# Configuration
-ROOT="${1:-$HOME/projects}"
+# Configuration and args
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+JSON_OUT=0
+DO_FIX=0
+ROOT=""
+
+usage() {
+  cat <<EOF
+Usage: $0 [--json] [--fix] [root_directory]
+
+Validates agent configurations across all git repos under the root directory.
+
+Options:
+  --json   Output machine-readable JSON only
+  --fix    Auto-seed missing files using setup_agents_repo.sh (no overwrite)
+  --help   Show this help
+EOF
+}
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --json) JSON_OUT=1; shift ;;
+    --fix) DO_FIX=1; shift ;;
+    --help|-h) usage; exit 0 ;;
+    *) ROOT="${ROOT:-$1}"; shift ;;
+  esac
+done
+
+ROOT="${ROOT:-$HOME/projects}"
 FAIL_COUNT=0
 REPO_COUNT=0
 OK_COUNT=0
 MISSING_COUNT=0
 
-echo "==> Validating agent configurations under: $ROOT"
-echo ""
+if [[ $JSON_OUT -eq 0 ]]; then
+  echo "==> Validating agent configurations under: $ROOT"
+  echo ""
+fi
 
 # Check if root directory exists
 if [[ ! -d "$ROOT" ]]; then
-  echo -e "${RED}[ERROR]${NC} Directory not found: $ROOT"
+  if [[ $JSON_OUT -eq 1 ]]; then
+    echo '{"error":"root_not_found"}'
+  else
+    echo -e "${RED}[ERROR]${NC} Directory not found: $ROOT"
+  fi
   exit 1
 fi
 
@@ -42,12 +75,25 @@ OPTIONAL_FILES=(
   ".envrc"
   ".envrc.local"
   ".claude/commands/explore-plan-code-test.md"
-  ".claude/commands/fix-ci-failures.md"
+  ".claude/commands/think-deep.md"
+  ".claude/commands/long-context-map-reduce.md"
+  ".claude/commands/prefill-structure.md"
+  ".claude/commands/prefill-diff.md"
+  ".claude/commands/prompt-improver.md"
 )
 
 # Find all git repositories
-echo "Scanning for git repositories..."
-echo ""
+if [[ $JSON_OUT -eq 0 ]]; then
+  echo "Scanning for git repositories..."
+  echo ""
+fi
+
+if [[ $JSON_OUT -eq 1 && ! $(command -v jq) ]]; then
+  echo '{"error":"jq_required_for_json"}'
+  exit 2
+fi
+
+REPOS_JSON_ENTRIES=()
 
 while IFS= read -r -d '' git_dir; do
   REPO="${git_dir%/.git}"
@@ -100,54 +146,73 @@ while IFS= read -r -d '' git_dir; do
     fi
   fi
   
+  # Auto-fix if requested
+  if [[ $DO_FIX -eq 1 && $REPO_OK -ne 1 ]]; then
+    (cd "$REPO" && "$SCRIPT_DIR/setup_agents_repo.sh") || true
+    # Re-check
+    REPO_OK=1; MISSING_FILES=(); OPTIONAL_MISSING=(); INVALID_JSON=()
+    for file in "${REQUIRED_FILES[@]}"; do
+      [[ -f "$REPO/$file" ]] || { MISSING_FILES+=("$file"); REPO_OK=0; }
+    done
+    for file in "${OPTIONAL_FILES[@]}"; do
+      [[ -f "$REPO/$file" ]] || OPTIONAL_MISSING+=("$file")
+    done
+  fi
+
   # Report status
   if [[ $REPO_OK -eq 1 ]]; then
-    echo -e "${GREEN}[✓]${NC} $REPO_REL"
     OK_COUNT=$((OK_COUNT + 1))
-    
-    # Show optional missing files if any
-    if [[ ${#OPTIONAL_MISSING[@]} -gt 0 ]]; then
-      echo -e "    ${YELLOW}Optional missing:${NC} ${OPTIONAL_MISSING[*]}"
+    if [[ $JSON_OUT -eq 0 ]]; then
+      echo -e "${GREEN}[✓]${NC} $REPO_REL"
+      [[ ${#OPTIONAL_MISSING[@]} -gt 0 ]] && echo -e "    ${YELLOW}Optional missing:${NC} ${OPTIONAL_MISSING[*]}"
     fi
   else
-    echo -e "${RED}[✗]${NC} $REPO_REL"
     MISSING_COUNT=$((MISSING_COUNT + 1))
-    
-    # Show what's missing
-    if [[ ${#MISSING_FILES[@]} -gt 0 ]]; then
-      echo -e "    ${RED}Missing files:${NC} ${MISSING_FILES[*]}"
+    if [[ $JSON_OUT -eq 0 ]]; then
+      echo -e "${RED}[✗]${NC} $REPO_REL"
+      [[ ${#MISSING_FILES[@]} -gt 0 ]] && echo -e "    ${RED}Missing files:${NC} ${MISSING_FILES[*]}"
     fi
-    
-    # Show invalid JSON files
-    if [[ ${#INVALID_JSON[@]} -gt 0 ]]; then
+  fi
+
+  if [[ ${#INVALID_JSON[@]} -gt 0 ]]; then
+    FAIL_COUNT=$((FAIL_COUNT + 1))
+    if [[ $JSON_OUT -eq 0 ]]; then
       echo -e "    ${RED}Invalid JSON:${NC} ${INVALID_JSON[*]}"
-      FAIL_COUNT=$((FAIL_COUNT + 1))
     fi
-    
-    # Show optional missing files
-    if [[ ${#OPTIONAL_MISSING[@]} -gt 0 ]]; then
-      echo -e "    ${YELLOW}Optional missing:${NC} ${OPTIONAL_MISSING[*]}"
-    fi
-    
-    # Suggest fix
-    echo -e "    ${YELLOW}Fix with:${NC} cd \"$REPO\" && ~/setup/setup_agents_repo.sh"
+  fi
+
+  if [[ $JSON_OUT -eq 0 && $REPO_OK -ne 1 ]]; then
+    [[ ${#OPTIONAL_MISSING[@]} -gt 0 ]] && echo -e "    ${YELLOW}Optional missing:${NC} ${OPTIONAL_MISSING[*]}"
+    echo -e "    ${YELLOW}Fix with:${NC} cd \"$REPO\" && $SCRIPT_DIR/setup_agents_repo.sh --force"
+  fi
+
+  # Build JSON entry
+  if [[ $JSON_OUT -eq 1 ]]; then
+    mf_json=$(printf '%s\n' "${MISSING_FILES[@]:-}" | jq -R . | jq -s .)
+    of_json=$(printf '%s\n' "${OPTIONAL_MISSING[@]:-}" | jq -R . | jq -s .)
+    ij_json=$(printf '%s\n' "${INVALID_JSON[@]:-}" | jq -R . | jq -s .)
+    status_val=$([[ $REPO_OK -eq 1 ]] && echo ok || echo needs_config)
+    entry=$(jq -n --arg path "$REPO" --arg rel "$REPO_REL" --arg status "$status_val" \
+      --argjson missing "$mf_json" --argjson optional_missing "$of_json" --argjson invalid_json "$ij_json" \
+      '{path:$path, rel:$rel, status:$status, missing:$missing, optional_missing:$optional_missing, invalid_json:$invalid_json}')
+    REPOS_JSON_ENTRIES+=("$entry")
   fi
   
 done < <(find "$ROOT" -type d -name .git -print0 2>/dev/null)
 
 # Summary
-echo ""
-echo "==> Validation Summary"
-echo "───────────────────────"
-echo "Total repositories: $REPO_COUNT"
-echo -e "${GREEN}Properly configured:${NC} $OK_COUNT"
-echo -e "${RED}Need configuration:${NC} $MISSING_COUNT"
-
-if [[ $FAIL_COUNT -gt 0 ]]; then
-  echo -e "${RED}JSON errors:${NC} $FAIL_COUNT"
+if [[ $JSON_OUT -eq 0 ]]; then
+  echo ""
+  echo "==> Validation Summary"
+  echo "───────────────────────"
+  echo "Total repositories: $REPO_COUNT"
+  echo -e "${GREEN}Properly configured:${NC} $OK_COUNT"
+  echo -e "${RED}Need configuration:${NC} $MISSING_COUNT"
+  if [[ $FAIL_COUNT -gt 0 ]]; then
+    echo -e "${RED}JSON errors:${NC} $FAIL_COUNT"
+  fi
+  echo ""
 fi
-
-echo ""
 
 # Tool availability check
 echo "==> Tool Availability"
@@ -181,7 +246,7 @@ if [[ $MISSING_COUNT -gt 0 ]] || [[ $FAIL_COUNT -gt 0 ]]; then
   echo "  find $ROOT -type d -name .git -print0 | while IFS= read -r -d '' g; do"
   echo "    r=\"\${g%/.git}\""
   echo "    echo \"Fixing \$r\""
-  echo "    (cd \"\$r\" && ~/setup/setup_agents_repo.sh --force)"
+  echo "    (cd \"\$r\" && $SCRIPT_DIR/setup_agents_repo.sh --force)"
   echo "  done"
   exit 1
 else

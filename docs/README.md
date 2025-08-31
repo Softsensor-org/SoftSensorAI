@@ -1,15 +1,25 @@
-# Setup Scripts — Documentation
+# DevPilot Documentation
 
-This folder contains focused guides to help you install, configure, and use the WSL + AI agent setup.
+This directory contains comprehensive guides to help you install, configure, and use the DevPilot AI development platform.
 
-Contents
-- Quickstart: one command install and first steps — quickstart.md
-- Repo Wizard: cloning and bootstrapping a repo — repo-wizard.md
-- Claude Commands Catalog: prompts and when to use them — agent-commands.md
-- Profiles & Skill Levels: capabilities, toggles, and CI phases — profiles.md
-- System Prompt Layering: global + repo + task guidance — system-prompts.md
-- CI Integrations: quality gates, security scans, Codex-in-CI — ci.md
-- Validation & Troubleshooting: audits, common issues, fixes — validation-troubleshooting.md
+## 📖 Guide Overview
 
-If you only read one page, start with quickstart.md.
+- **quickstart.md** - One-command installation and first steps with DevPilot
+- **repo-wizard.md** - Repository cloning and automated configuration  
+- **agent-commands.md** - Complete catalog of available AI commands
+- **profiles.md** - Skill levels, project phases, and capability progression
+- **system-prompts.md** - Layered prompt system architecture
+- **ci.md** - CI/CD integration and security gates
+- **devcontainer.md** - Development container setup
+- **validation-troubleshooting.md** - Common issues and solutions
+
+## 🚀 Getting Started
+
+If you only read one page, start with **quickstart.md** for immediate setup.
+
+For comprehensive setup, the recommended reading order is:
+1. **quickstart.md** - Basic installation
+2. **profiles.md** - Understanding skill levels
+3. **repo-wizard.md** - Setting up your first project
+4. **agent-commands.md** - Available AI commands
 

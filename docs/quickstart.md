@@ -1,15 +1,19 @@
-# Quickstart
+# DevPilot Quickstart
 
-Goal: install tools, configure agents, and bootstrap your first repo.
+**Goal**: Install DevPilot, configure AI agents, and bootstrap your first project with skill-aware settings.
 
-Prerequisites
-- WSL (Ubuntu) or Linux shell
+## Prerequisites
+- WSL (Ubuntu), Linux, or macOS shell
 - Sudo access for package installs
 - API keys (optional now, recommended): `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `GEMINI_API_KEY`, `XAI_API_KEY`
 
-One-Command Setup
+## One-Command Setup
 ```bash
-cd ~/repos/setup-scripts
+# Clone DevPilot
+git clone https://github.com/VivekLmd/setup-scripts.git ~/repos/devpilot
+cd ~/repos/devpilot
+
+# Install everything
 ./setup_all.sh
 ```
 
