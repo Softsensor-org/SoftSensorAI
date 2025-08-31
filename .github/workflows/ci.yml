@@ -28,6 +28,24 @@ jobs:
       - name: Run pre-commit
         run: pre-commit run --all-files --show-diff-on-failure
         
+      - name: Make format and lint
+        run: |
+          make fmt
+          make lint
+
+      - name: Prompt audit
+        run: make prompt-audit
+
+      - name: Security JSON report
+        run: make security-json
+
+      - name: Upload security artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-scan
+          path: security-scan.json
+
       - name: Run audit script
         run: bash tools/audit_setup_scripts.sh
         
@@ -48,4 +66,3 @@ jobs:
             echo "Potential secrets found!"
             exit 1
           fi
-

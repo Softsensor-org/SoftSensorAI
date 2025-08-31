@@ -18,40 +18,23 @@ mkdir -p \
   ~/templates/agent-setup
 
 # ---------- Claude Global Configuration ----------
-echo "  • Configuring Claude CLI"
+echo "  • Configuring Claude CLI (minimal global permissions)"
 cat > ~/.claude/settings.json <<'JSON'
 {
   "permissions": {
     "allow": [
       "Edit", "MultiEdit", "Read", "Grep", "Glob", "LS",
-      "Bash(rg:*)", "Bash(fd:*)", "Bash(jq:*)", "Bash(yq:*)", "Bash(http:*)",
-      "Bash(gh:*)", "Bash(aws:*)", "Bash(az:*)", "Bash(docker:*)",
-      "Bash(kubectl:*)", "Bash(helm:*)", "Bash(terraform:*)",
-      "Bash(node:*)", "Bash(npm:*)", "Bash(pnpm:*)", "Bash(npx:*)",
-      "Bash(pytest:*)", "Bash(python3:*)",
-      "Bash(gemini:*)", "Bash(grok:*)", "Bash(codex:*)", "Bash(openai:*)",
-      "Bash(codex exec:*)", "Bash(scripts/codex_sandbox.sh:*)",
-      "Bash(just:*)", "Bash(mise:*)", "Bash(devcontainer:*)",
-      "Bash(newman:*)", "Bash(redocly:*)", "Bash(spectral:*)", "Bash(openapi-typescript:*)",
-      "Bash(rover:*)", "Bash(graphql-codegen:*)",
-      "Bash(dbt:*)", "Bash(sqlfluff:*)", "Bash(pgcli:*)", "Bash(sqlite-utils:*)",
-      "Bash(prisma:*)", "Bash(drizzle-kit:*)",
-      "Bash(dvc:*)", "Bash(wandb:*)", "Bash(mlflow:*)", "Bash(nbstripout:*)",
-      "Bash(trivy:*)", "Bash(semgrep:*)", "Bash(gitleaks:*)", "Bash(hadolint:*)",
-      "Bash(ruff:*)", "Bash(black:*)", "Bash(mypy:*)",
-      "Bash(commitlint:*)", "Bash(cz:*)",
-      "Bash(kustomize:*)", "Bash(kubectx:*)", "Bash(kubens:*)", "Bash(kind:*)",
-      "Bash(skaffold:*)", "Bash(tilt:*)",
-      "Bash(changeset:*)", "Bash(cloudflared:*)", "Bash(ngrok:*)",
-      "Bash(hyperfine:*)", "Bash(entr:*)", "Bash(watchexec:*)", "Bash(cookiecutter:*)"
+      "Bash(rg:*)", "Bash(fd:*)", "Bash(jq:*)", "Bash(yq:*)"
     ],
     "ask": [
+      "WebFetch",
+      "Bash(gh:*)",
       "Bash(git push:*)",
-      "Bash(docker push:*)",
-      "Bash(terraform apply:*)",
-      "Bash(aws s3 rm:*)",
-      "Bash(az group delete:*)",
-      "WebFetch"
+      "Bash(docker:*)",
+      "Bash(kubectl:*)",
+      "Bash(terraform:*)",
+      "Bash(aws:*)",
+      "Bash(az:*)"
     ],
     "deny": [
       "Read(./.env)",

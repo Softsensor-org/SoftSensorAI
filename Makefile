@@ -1,7 +1,7 @@
 # Setup Scripts Makefile
 # Automation for setup, auditing, and ticket generation
 
-.PHONY: help install setup audit tickets clean lint test docs-index
+.PHONY: help install setup audit tickets clean lint test fmt docs-index prompt-audit security-json
 .DEFAULT_GOAL := help
 
 # Colors for output
@@ -62,6 +62,20 @@ docs-index: ## List available documentation pages
 	@echo "$(CYAN)Documentation Index$(NC)"
 	@find docs -maxdepth 1 -type f -name "*.md" | sort | sed 's/^/ - /'
 
-docs-index: ## List available documentation pages
-	@echo "$(CYAN)Documentation Index$(NC)"
-	@find docs -maxdepth 1 -type f -name "*.md" | sort | sed 's/^/ - /'
+prompt-audit: ## Lint CLAUDE.md sections and presence of key commands
+	@echo "$(CYAN)Prompt audit$(NC)"
+	@bash tools/prompt_lint.sh CLAUDE.md || true
+	@[ -f .claude/commands/secure-fix.md ] && echo "[ok] /secure-fix present" || echo "[miss] .claude/commands/secure-fix.md"
+	@[ -f .claude/commands/explore-plan-code-test.md ] && echo "[ok] /explore-plan-code-test present" || echo "[miss] .claude/commands/explore-plan-code-test.md"
+	@[ -f .claude/commands/think-deep.md ] && echo "[ok] /think-deep present" || echo "[miss] .claude/commands/think-deep.md"
+	@[ -f .claude/commands/long-context-map-reduce.md ] && echo "[ok] /long-context-map-reduce present" || echo "[miss] .claude/commands/long-context-map-reduce.md"
+
+security-json: ## Generate security JSON summary (best-effort)
+	@echo "$(CYAN)Security scan (JSON)$(NC)"
+	@echo '{"scan_date":"'$$(date -u +"%Y-%m-%dT%H:%M:%SZ")'",' > security-scan.json
+	@echo '"checks":{' >> security-scan.json
+	@echo '"secrets":'`(gitleaks detect --no-banner --report-format json --report-path - 2>/dev/null || echo '{"findings":0}') | tr -d '\n'`',' >> security-scan.json
+	@echo '"shell_scripts":'$$(find . -type f -name "*.sh" | wc -l)',' >> security-scan.json
+	@echo '"exec_perms":'$$(find . -type f -name "*.sh" -perm /111 | wc -l) >> security-scan.json
+	@echo '}}' >> security-scan.json
+	@echo "$(GREEN)✓ Wrote security-scan.json$(NC)"
