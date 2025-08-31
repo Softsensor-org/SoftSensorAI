@@ -1,7 +1,7 @@
 # Setup Scripts Makefile
 # Automation for setup, auditing, and ticket generation
 
-.PHONY: help install setup audit tickets clean lint test fmt docs-index prompt-audit security-json
+.PHONY: help install setup audit tickets clean lint test fmt docs-index prompt-audit security-json config-validate test-bats devcontainer-build devcontainer-open
 .DEFAULT_GOAL := help
 
 # Colors for output
@@ -79,3 +79,23 @@ security-json: ## Generate security JSON summary (best-effort)
 	@echo '"exec_perms":'$$(find . -type f -name "*.sh" -perm /111 | wc -l) >> security-scan.json
 	@echo '}}' >> security-scan.json
 	@echo "$(GREEN)✓ Wrote security-scan.json$(NC)"
+
+config-validate: ## Validate repo configs against lightweight schemas
+	@echo "$(CYAN)Config validation$(NC)"
+	@bash tools/config_validate.sh || (echo "$(RED)Schema validation failed$(NC)" && exit 1)
+	@echo "$(GREEN)✓ Configs valid$(NC)"
+
+test-bats: ## Run bats tests if available
+	@echo "$(CYAN)Running bats tests$(NC)"
+	@if command -v bats >/dev/null 2>&1; then \
+		bats tests/bats || exit 1; \
+	else \
+		echo "bats not installed (skipping)"; \
+	fi
+
+devcontainer-build: ## Build devcontainer image
+	@echo "$(CYAN)Building devcontainer$(NC)"
+	@devcontainer build --workspace-folder . || echo "Install @devcontainers/cli to use this"
+
+devcontainer-open: ## Open devcontainer shell
+	@devcontainer open --workspace-folder . || echo "Install @devcontainers/cli to use this"

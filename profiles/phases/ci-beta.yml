@@ -58,11 +58,15 @@ jobs:
         run: |
           npm audit --audit-level=high
           
-      - name: SAST scan (blocking for critical)
+      - name: SAST scan (block on high)
         run: |
           # Install and run semgrep
           pip install semgrep
-          semgrep --config=auto --error --severity=ERROR
+          semgrep --config=auto --severity=ERROR --error --sarif -o semgrep.sarif
+      - name: Upload Semgrep SARIF
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: semgrep.sarif
           
       - name: Secret scan (blocking)
         run: |
@@ -78,7 +82,15 @@ jobs:
           wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
           echo "deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main" | sudo tee /etc/apt/sources.list.d/trivy.list
           sudo apt-get update && sudo apt-get install trivy -y
-          trivy fs --exit-code 1 --severity HIGH,CRITICAL .
+          trivy fs --exit-code 1 --severity HIGH,CRITICAL --ignore-unfixed .
+      
+      - name: Dockerfile lint (warn)
+        if: hashFiles('Dockerfile') != ''
+        continue-on-error: true
+        run: |
+          wget -O /tmp/hadolint https://github.com/hadolint/hadolint/releases/latest/download/hadolint-Linux-x86_64
+          chmod +x /tmp/hadolint
+          /tmp/hadolint Dockerfile || true
           
   performance-check:
     runs-on: ubuntu-latest

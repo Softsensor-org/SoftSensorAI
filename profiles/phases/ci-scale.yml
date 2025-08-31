@@ -60,11 +60,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      - name: Advanced SAST
+      - name: Advanced SAST (block on medium+)
         run: |
           # Multiple SAST tools
           pip install semgrep
-          semgrep --config=auto --error --severity=WARNING
+          semgrep --config=auto --severity=WARNING,ERROR --error --sarif -o semgrep.sarif
+      - name: Upload Semgrep SARIF
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: semgrep.sarif
           
           # CodeQL
           # Snyk
@@ -90,6 +94,32 @@ jobs:
           if [ -d "infrastructure" ]; then
             docker run --rm -v "$PWD":/src aquasec/tfsec /src
           fi
+      
+      - name: Secret scan (blocking)
+        run: |
+          wget -q https://github.com/gitleaks/gitleaks/releases/latest/download/gitleaks_linux_x64.tar.gz
+          tar -xzf gitleaks_linux_x64.tar.gz
+          ./gitleaks detect --no-banner --exit-code 1
+      
+      - name: Filesystem vuln scan (block on high+)
+        run: |
+          wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
+          echo "deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main" | sudo tee /etc/apt/sources.list.d/trivy.list
+          sudo apt-get update && sudo apt-get install trivy -y
+          trivy fs --exit-code 1 --severity HIGH,CRITICAL --ignore-unfixed .
+      
+      - name: Dockerfile lint (fail on errors)
+        if: hashFiles('Dockerfile') != ''
+        run: |
+          wget -O /tmp/hadolint https://github.com/hadolint/hadolint/releases/latest/download/hadolint-Linux-x86_64
+          chmod +x /tmp/hadolint
+          /tmp/hadolint Dockerfile
+      
+      - name: Image scan (block on high+)
+        if: hashFiles('Dockerfile') != ''
+        run: |
+          docker build -t app:test .
+          trivy image --exit-code 1 --severity HIGH,CRITICAL --ignore-unfixed app:test
           
   performance-suite:
     runs-on: ubuntu-latest

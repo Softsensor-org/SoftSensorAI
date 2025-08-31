@@ -25,7 +25,7 @@ PY
   elif command -v perl >/dev/null 2>&1; then
     perl -MCwd=realpath -e 'print realpath($ARGV[0])' "$1"
   else
-    (cd "$(dirname "$1")" 2>/dev/null && pwd)/"$(basename "$1")"
+    echo "$(cd "$(dirname "$1")" 2>/dev/null && pwd)/$(basename "$1")"
   fi
 }
 

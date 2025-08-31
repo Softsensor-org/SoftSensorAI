@@ -43,6 +43,7 @@ Create Your First Project
 # choose org/category and paste the GitHub URL
 
 # in the cloned repo
+# the wizard can apply a profile and ask for Beginner teach mode; if skipped:
 scripts/apply_profile.sh --skill beginner --phase mvp --teach-mode on
 ```
 
@@ -55,4 +56,3 @@ Next Steps
 - Read repo’s `CLAUDE.md` for guardrails
 - Explore commands in `.claude/commands/`
 - Use `system/active.md` as the layered system prompt if your CLI supports it
-

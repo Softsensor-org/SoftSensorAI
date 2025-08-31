@@ -36,6 +36,14 @@ jobs:
       - name: Prompt audit
         run: make prompt-audit
 
+      - name: Config validation
+        run: make config-validate
+
+      - name: Bats tests
+        run: |
+          sudo apt-get update && sudo apt-get install -y bats
+          make test:bats
+
       - name: Security JSON report
         run: make security-json
 

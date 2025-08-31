@@ -21,6 +21,7 @@ Docs and Tutorials
   - docs/repo-wizard.md
   - docs/agent-commands.md
   - docs/profiles.md
+  - docs/devcontainer.md
   - docs/system-prompts.md
   - docs/ci.md
   - docs/validation-troubleshooting.md
@@ -95,7 +96,10 @@ Or manually:
   --org myorg \
   --category backend \
   --url git@github.com:user/repo.git \
-  --branch main
+  --branch main \
+  --skill beginner \
+  --phase mvp \
+  --teach-mode on
 ```
 
 #### Manual Setup (existing repo)
@@ -374,6 +378,8 @@ cd ~/repos/setup-scripts
 ./repo_setup_wizard.sh
 # Choose organization, category, provide GitHub URL
 # Script clones repo and configures everything
+# In interactive mode, wizard can apply a profile and ask for Beginner teach mode.
+# It also prints GitHub repo secrets commands if API keys are missing.
 
 # 3. Work on the project
 cd ~/projects/myorg/backend/myrepo

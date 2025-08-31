@@ -19,6 +19,7 @@ Non-Interactive
 After Cloning
 ```bash
 cd ~/projects/<org>/<category>/<repo>
+# The wizard can apply a profile for you. If you skip that:
 scripts/apply_profile.sh --skill beginner --phase mvp --teach-mode on
 ```
 
@@ -35,3 +36,12 @@ Tips
 - `scripts/run_checks.sh` runs available lints/tests
 - Add Codex targets with `--with-codex` to the wizard if needed
 
+Beginner Teach Mode Prompt
+- In interactive mode, the wizard asks: “Beginner teach mode (guided, verbose CoT)? (Y/n)”
+- Your choice is persisted via `scripts/apply_profile.sh --teach-mode on|off`.
+- Extended thinking remains off by default; use `/think-deep` when needed.
+
+Secrets Guidance
+- If API keys are missing (e.g., `ANTHROPIC_API_KEY`, `OPENAI_API_KEY`), the wizard prints GitHub repo secrets commands.
+- With `gh` authenticated, you can optionally run `gh secret set <KEY>` interactively.
+- Placeholders are added to `.envrc.local.example`; remember to `direnv allow` when you set real values.

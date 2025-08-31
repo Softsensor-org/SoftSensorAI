@@ -13,7 +13,7 @@ Vibe (PM/non-eng)
 
 Beginner
 - Default mode: accept edits; safe shell subset
-- Env: `TEACH_MODE=1`, `EXTENDED_THINKING=off`, `THINK_BUDGET_BULLETS=5`
+- Env: `TEACH_MODE=1` (wizard prompts to toggle), `EXTENDED_THINKING=off`, `THINK_BUDGET_BULLETS=5`
 - Commands: `prefill-structure`, `long-context-map-reduce`
 
 L1 (Junior)
@@ -34,11 +34,20 @@ Expert
 Project Phases
 - POC: fastest iteration, gates advisory
 - MVP: lints/typecheck/unit tests required
-- Beta: coverage ≥ 60%, security gates, integrations
-- Scale: coverage ≥ 80%, SLOs, load/perf and reliability
+- Beta (security blocking):
+  - Secrets: gitleaks fail on any finding
+  - SAST: semgrep fail on HIGH (`--severity=ERROR`), SARIF uploaded
+  - Vuln: trivy fs fail on CRITICAL,HIGH (`--ignore-unfixed`)
+  - Dockerfile: hadolint warn only
+- Scale (stricter security):
+  - Secrets: gitleaks fail on any
+  - SAST: semgrep fail on MEDIUM+ (`--severity=WARNING,ERROR`), SARIF uploaded
+  - Vuln: trivy fs/image fail on CRITICAL,HIGH (`--ignore-unfixed`)
+  - Dockerfile: hadolint fail on errors
+  - IaC: tfsec (HIGH blocking recommended)
+  - Optional: Code scanning uploads and supply-chain checks
 
 Artifacts Created
 - `.claude/commands/` linked to skill-specific command sets
 - `.github/workflows/ci.yml` replaced with phase-specific workflow
 - `PROFILE.md` documents the active profile
-

@@ -8,6 +8,7 @@ has(){ command -v "$1" >/dev/null 2>&1; }
 # Parse command-line arguments
 LITE=0; NO_HOOKS=0; NO_SCRIPTS=0; NO_BOOTSTRAP=0; NON_INTERACTIVE=0; WITH_CODEX=0
 ORG=""; CAT=""; GHURL_IN=""; BRANCH=""; RNAME=""
+P_SKILL=""; P_PHASE=""; P_TEACH=""
 
 show_help() {
   cat <<EOF
@@ -28,6 +29,9 @@ Options:
   --no-scripts         Skip helper scripts
   --no-bootstrap       Skip dependency installation
   --with-codex         Add Codex CLI integration (sandbox + Makefile targets)
+  --skill LEVEL        Apply profile skill (vibe|beginner|l1|l2|expert)
+  --phase PHASE        Apply project phase (poc|mvp|beta|scale)
+  --teach-mode MODE    Beginner teach mode: on|off (overrides default)
   --help               Show this help message
 
 Examples:
@@ -57,6 +61,9 @@ while [[ $# -gt 0 ]]; do
     --url) GHURL_IN="$2"; shift 2;;
     --branch) BRANCH="$2"; shift 2;;
     --name) RNAME="$2"; shift 2;;
+    --skill) P_SKILL="$2"; shift 2;;
+    --phase) P_PHASE="$2"; shift 2;;
+    --teach-mode) P_TEACH="$2"; shift 2;;
     --help|-h) show_help;;
     *) err "Unknown option: $1"; show_help;;
   esac
@@ -312,6 +319,71 @@ MAKEFILE
 fi
 
 [[ "$NO_BOOTSTRAP" -eq 1 ]] || { say "Bootstrapping deps"; bootstrap_env; }
+
+# Apply profile (with Beginner teach-mode prompt in interactive mode)
+apply_profile_now="no"
+if [[ $NON_INTERACTIVE -eq 1 ]]; then
+  apply_profile_now="yes"
+else
+  read -rp "Apply a profile now? (Y/n): " ans
+  [[ -z "$ans" || "${ans,,}" == "y" ]] && apply_profile_now="yes"
+fi
+
+if [[ "$apply_profile_now" == "yes" ]]; then
+  skill="${P_SKILL:-beginner}"
+  phase="${P_PHASE:-mvp}"
+  teach="${P_TEACH:-}"
+
+  if [[ $NON_INTERACTIVE -eq 0 ]]; then
+    # If not specified, ask beginner teach-mode preference
+    if [[ -z "$teach" && "$skill" == "beginner" ]]; then
+      read -rp "Beginner teach mode (guided, verbose CoT)? (Y/n): " t
+      if [[ -z "$t" || "${t,,}" == "y" ]]; then teach="on"; else teach="off"; fi
+    fi
+  else
+    # Non-interactive default for beginner: teach on
+    if [[ -z "$teach" && "$skill" == "beginner" ]]; then teach="on"; fi
+  fi
+
+  cmd=(scripts/apply_profile.sh --skill "$skill" --phase "$phase")
+  [[ -n "$teach" ]] && cmd+=(--teach-mode "$teach")
+  say "Applying profile: skill=$skill phase=$phase teach=${teach:-auto}"
+  "${cmd[@]}"
+fi
+
+# Secrets guidance (print instructions and optional gh setup)
+MISSING_SECRETS=()
+for key in ANTHROPIC_API_KEY OPENAI_API_KEY GEMINI_API_KEY XAI_API_KEY GROQ_API_KEY; do
+  if [[ -z "${!key:-}" ]]; then MISSING_SECRETS+=("$key"); fi
+done
+if (( ${#MISSING_SECRETS[@]} > 0 )); then
+  say "Detected missing API keys: ${MISSING_SECRETS[*]}"
+  echo "Add GitHub repo secrets (recommended for CI and agents):"
+  echo "Repo: $(git config --get remote.origin.url | sed 's#.*/##;s/.git$//')"
+  echo "Commands:"
+  for s in "${MISSING_SECRETS[@]}"; do
+    echo "  gh secret set $s    # then paste the value when prompted"
+  done
+  echo "GitHub UI: Settings → Secrets and variables → Actions"
+  # Offer to run gh commands interactively
+  if has gh && [[ $NON_INTERACTIVE -eq 0 ]]; then
+    read -rp "Run gh secret set for these now? (y/N): " g
+    if [[ "${g,,}" == "y" ]]; then
+      for s in "${MISSING_SECRETS[@]}"; do
+        gh secret set "$s"
+      done
+    fi
+  fi
+  # Append to local example for reference
+  if [[ -d . ]]; then
+    if [[ ! -f .envrc.local.example ]]; then : > .envrc.local.example; fi
+    {
+      echo "# API keys (not committed)"
+      for s in "${MISSING_SECRETS[@]}"; do echo "export $s=..."; done
+    } >> .envrc.local.example
+    echo "  ✓ Added placeholders to .envrc.local.example"
+  fi
+fi
 
 say "Done."
 echo "Open in VS Code: code \"$TARGET\""
