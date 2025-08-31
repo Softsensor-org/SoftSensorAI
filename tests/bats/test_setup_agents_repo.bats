@@ -15,7 +15,7 @@ teardown() {
 }
 
 @test "seeder creates core files idempotently" {
-  run bash -lc "'$(pwd)/../../setup_agents_repo.sh' --force"
+  run bash -lc "'$(pwd)/../../setup/agents_repo.sh' --force"
   [ "$status" -eq 0 ]
   [ -f CLAUDE.md ]
   [ -f AGENTS.md ]
@@ -23,7 +23,7 @@ teardown() {
   [ -d .claude/commands ]
 
   # run again (idempotent)
-  run bash -lc "'$(pwd)/../../setup_agents_repo.sh'"
+  run bash -lc "'$(pwd)/../../setup/agents_repo.sh'"
   [ "$status" -eq 0 ]
 }
 

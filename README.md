@@ -15,8 +15,8 @@
 - **Cross-Platform Support**: WSL2, Linux, and macOS with unified tooling
 
 ## 🚀 Quick Installation
-- **Linux/WSL**: `./install_key_software_linux.sh`
-- **macOS**: `./install_key_software_macos.sh`
+- **Linux/WSL**: `./install/key_software_linux.sh`
+- **macOS**: `./install/key_software_macos.sh`
 - **Universal**: `./setup_all.sh`
 
 ## 📚 Documentation
@@ -36,15 +36,24 @@ Complete guides for getting started with DevPilot:
 ```
 devpilot/
 ├── setup_all.sh                     # Master setup script (auto-detects fresh/upgrade)
-├── setup_agents_global.sh           # One-time global agent configuration  
-├── setup_agents_repo.sh             # Per-repository agent setup
-├── validate_agents.sh               # Audit script for checking agent configs
-├── repo_setup_wizard.sh             # Interactive/non-interactive repo wizard
-├── install_key_software_wsl.sh      # Install dev tools + agent multipliers
+├── setup/
+│   ├── agents_global.sh             # One-time global agent configuration  
+│   ├── agents_repo.sh               # Per-repository agent setup
+│   ├── repo_wizard.sh               # Interactive/non-interactive repo wizard
+│   └── folders.sh                   # Create standard project directory structure
+├── install/
+│   ├── key_software_wsl.sh          # Install dev tools + agent multipliers
+│   ├── key_software_linux.sh        # Linux development tools
+│   ├── key_software_macos.sh        # macOS development tools
+│   ├── ai_clis.sh                   # Install AI CLI tools
+│   └── productivity_extras.sh       # Advanced tooling for all stacks
+├── validation/
+│   └── validate_agents.sh           # Audit script for checking agent configs
+├── utils/
 ├── install_productivity_extras.sh   # Advanced tooling for all stacks
 ├── install_ai_clis.sh               # Install AI CLI tools
 ├── copy_windows_ssh_to_wsl.sh       # Copy SSH keys from Windows to WSL
-├── make_folders.sh                  # Create standard project directory structure
+│   └── copy_windows_ssh_to_wsl.sh   # Copy SSH keys from Windows to WSL
 ├── claude_user_defaults.sh          # Set Claude user defaults
 ├── templates/
 │   └── justfile                     # Universal task runner template
@@ -75,29 +84,29 @@ Or manually:
 
 ```bash
 # Install essential development tools + agent multipliers
-./install_key_software_wsl.sh
+./install/key_software_wsl.sh
 
 # Install AI CLI tools
 ./install_ai_clis.sh
 
 # Set up global agent configurations (run once)
-./setup_agents_global.sh
+./setup/agents_global.sh
 
 # Create project directory structure
-./make_folders.sh
+./setup/folders.sh
 ```
 
 ### 2. Repository Setup
 
 #### Interactive Mode
 ```bash
-./repo_setup_wizard.sh
+./setup/repo_wizard.sh
 ```
 
 #### Non-Interactive Mode
 ```bash
 # Clone and set up in one command
-./repo_setup_wizard.sh --non-interactive \
+./setup/repo_wizard.sh --non-interactive \
   --org myorg \
   --category backend \
   --url git@github.com:user/repo.git \
@@ -110,7 +119,7 @@ Or manually:
 #### Manual Setup (existing repo)
 ```bash
 cd /path/to/your/repo
-~/repos/setup-scripts/setup_agents_repo.sh [OPTIONS]
+~/repos/setup-scripts/setup/agents_repo.sh [OPTIONS]
 
 # Options:
 #   --force         Overwrite existing files
@@ -124,8 +133,8 @@ cd /path/to/your/repo
 
 ```bash
 cd ~/repos/setup-scripts
-./install_key_software_macos.sh    # install prerequisites via Homebrew
-./setup_agents_global.sh           # seed global configs + templates
+./install/key_software_macos.sh    # install prerequisites via Homebrew
+./setup/agents_global.sh           # seed global configs + templates
 ```
 
 Then use the Repo Wizard as below.
@@ -135,10 +144,10 @@ Then use the Repo Wizard as below.
 Check all repositories for proper agent configuration:
 
 ```bash
-./validate_agents.sh
+./validation/validate_agents.sh
 
 # Or check a specific directory tree
-./validate_agents.sh ~/my-projects
+./validation/validate_agents.sh ~/my-projects
 ```
 
 ## 🧹 Repo Audit & CI
@@ -375,12 +384,12 @@ After running `setup_agents_repo.sh`:
 ```bash
 # 1. Initial setup (once per system)
 cd ~/repos/setup-scripts
-./install_key_software_wsl.sh
+./install/key_software_wsl.sh
 ./install_ai_clis.sh
-./setup_agents_global.sh
+./setup/agents_global.sh
 
 # 2. Set up a new project
-./repo_setup_wizard.sh
+./setup/repo_wizard.sh
 # Choose organization, category, provide GitHub URL
 # Script clones repo and configures everything
 # In interactive mode, wizard can apply a profile and ask for Beginner teach mode.
@@ -395,7 +404,7 @@ cd ~/projects/myorg/backend/myrepo
 
 # 5. Fix any misconfigured repos
 cd ~/projects/myorg/backend/broken-repo
-~/repos/setup-scripts/setup_agents_repo.sh --force
+~/repos/setup-scripts/setup/agents_repo.sh --force
 ```
 
 ## 🧪 Testing
@@ -448,7 +457,7 @@ Proprietary License - Copyright © 2024 Softsensor.AI - See [LICENSE](LICENSE) f
 
 ### Common Issues
 
-**Missing tools**: Run `./install_key_software_wsl.sh`
+**Missing tools**: Run `./install/key_software_wsl.sh`
 
 **Invalid JSON**: Check with `jq -e type <file>`
 
@@ -456,7 +465,7 @@ Proprietary License - Copyright © 2024 Softsensor.AI - See [LICENSE](LICENSE) f
 
 **API keys not loading**: Check `.envrc.local` and run `direnv allow`
 
-**Repos not configured**: Run `./validate_agents.sh` to identify and fix
+**Repos not configured**: Run `./validation/validate_agents.sh` to identify and fix
 
 ### Support
 

@@ -12,7 +12,7 @@ teardown() {
 }
 
 @test "validate_agents flags missing files" {
-  run bash -lc "cd setup-scripts && ./validate_agents.sh '$HOME/projects'"
+  run bash -lc "cd setup-scripts && ./validation/validate_agents.sh '$HOME/projects'"
   [ "$status" -ne 0 ]
 }
 

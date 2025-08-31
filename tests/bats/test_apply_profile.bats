@@ -8,7 +8,7 @@ setup() {
   pushd "$REPO" >/dev/null
   git init -q
   # seed minimal repo files
-  bash -lc "'$(pwd)/../../setup_agents_repo.sh' --force" || true
+  bash -lc "'$(pwd)/../../setup/agents_repo.sh' --force" || true
 }
 
 teardown() {

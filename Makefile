@@ -25,7 +25,7 @@ help: ## Show this help message
 
 install: ## Install DevPilot global configuration
 	@echo "$(CYAN)Installing DevPilot global setup...$(NC)"
-	./setup_agents_global.sh
+	./setup/agents_global.sh
 	@echo "$(GREEN)✓ DevPilot global setup complete$(NC)"
 
 audit\:prompt: ## Open audit template for Claude Code
@@ -56,10 +56,10 @@ lint: ## Run shellcheck on scripts
 test: ## Basic syntax check for core scripts
 	@echo "$(CYAN)Bash syntax checks$(NC)"
 	@bash -n setup_all.sh
-	@bash -n setup_agents_global.sh
-	@bash -n setup_agents_repo.sh
-	@bash -n repo_setup_wizard.sh
-	@bash -n validate_agents.sh
+	@bash -n setup/agents_global.sh
+	@bash -n setup/agents_repo.sh
+	@bash -n setup/repo_wizard.sh
+	@bash -n validation/validate_agents.sh
 	@echo "$(GREEN)✓ Scripts have valid syntax$(NC)"
 
 fmt: ## Normalize CRLF line endings (portable)

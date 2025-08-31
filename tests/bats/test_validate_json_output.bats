@@ -12,7 +12,7 @@ teardown() {
 }
 
 @test "validate_agents --json returns machine-readable JSON" {
-  run bash -lc "cd setup-scripts && ./validate_agents.sh --json '$HOME/projects' | jq -e type"
+  run bash -lc "cd setup-scripts && ./validation/validate_agents.sh --json '$HOME/projects' | jq -e type"
   [ "$status" -eq 0 ]
 }
 

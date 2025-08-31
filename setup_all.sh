@@ -156,7 +156,7 @@ install_tools_for_platform() {
     wsl)
       say "Detected WSL. Installing WSL key software..."
       if [[ -f "$SCRIPT_DIR/install_key_software_wsl.sh" ]]; then
-        bash "$SCRIPT_DIR/install_key_software_wsl.sh"
+        bash "$SCRIPT_DIR/install/key_software_wsl.sh"
       else
         warn "install_key_software_wsl.sh not found"
       fi
@@ -164,7 +164,7 @@ install_tools_for_platform() {
     linux)
       say "Detected Linux. Installing cross-distro key software..."
       if [[ -f "$SCRIPT_DIR/install_key_software_linux.sh" ]]; then
-        bash "$SCRIPT_DIR/install_key_software_linux.sh"
+        bash "$SCRIPT_DIR/install/key_software_linux.sh"
       else
         warn "install_key_software_linux.sh not found"
       fi
@@ -172,7 +172,7 @@ install_tools_for_platform() {
     macos)
       say "Detected macOS. Installing Homebrew-based key software..."
       if [[ -f "$SCRIPT_DIR/install_key_software_macos.sh" ]]; then
-        bash "$SCRIPT_DIR/install_key_software_macos.sh"
+        bash "$SCRIPT_DIR/install/key_software_macos.sh"
       else
         warn "install_key_software_macos.sh not found"
       fi
@@ -224,7 +224,7 @@ run_fresh_install() {
   if [[ $SKIP_AGENTS -eq 0 ]]; then
     say "Installing AI CLI tools..."
     if [[ -x "$SCRIPT_DIR/install_ai_clis.sh" ]]; then
-      "$SCRIPT_DIR/install_ai_clis.sh"
+      "$SCRIPT_DIR/install/ai_clis.sh"
     else
       warn "install_ai_clis.sh not found or not executable"
     fi
@@ -234,7 +234,7 @@ run_fresh_install() {
   if [[ $SKIP_AGENTS -eq 0 ]]; then
     say "Setting up global agent configurations..."
     if [[ -x "$SCRIPT_DIR/setup_agents_global.sh" ]]; then
-      "$SCRIPT_DIR/setup_agents_global.sh"
+      "$SCRIPT_DIR/setup/agents_global.sh"
     else
       warn "setup_agents_global.sh not found or not executable"
     fi
@@ -243,7 +243,7 @@ run_fresh_install() {
   # 4. Create project directory structure
   say "Creating project directory structure..."
   if [[ -x "$SCRIPT_DIR/make_folders.sh" ]]; then
-    "$SCRIPT_DIR/make_folders.sh"
+    "$SCRIPT_DIR/setup/folders.sh"
   else
     warn "make_folders.sh not found or not executable"
   fi
@@ -252,7 +252,7 @@ run_fresh_install() {
   if [[ -d "/mnt/c/Users" ]]; then
     say "Checking for Windows SSH keys..."
     if [[ -x "$SCRIPT_DIR/copy_windows_ssh_to_wsl.sh" ]]; then
-      "$SCRIPT_DIR/copy_windows_ssh_to_wsl.sh" || warn "SSH key copy failed or skipped"
+      "$SCRIPT_DIR/utils/copy_windows_ssh_to_wsl.sh" || warn "SSH key copy failed or skipped"
     fi
   fi
 
@@ -276,7 +276,7 @@ run_upgrade() {
   if [[ $SKIP_AGENTS -eq 0 ]]; then
     say "Updating global agent configurations..."
     if [[ -x "$SCRIPT_DIR/setup_agents_global.sh" ]]; then
-      "$SCRIPT_DIR/setup_agents_global.sh"
+      "$SCRIPT_DIR/setup/agents_global.sh"
     fi
   fi
 
@@ -299,19 +299,19 @@ show_next_steps() {
     echo "   gh auth login"
     echo ""
     echo "3. Clone your first repository:"
-    echo "   $SCRIPT_DIR/repo_setup_wizard.sh"
+    echo "   $SCRIPT_DIR/setup/repo_wizard.sh"
     echo ""
     echo "4. Validate your setup:"
-    echo "   $SCRIPT_DIR/validate_agents.sh"
+    echo "   $SCRIPT_DIR/validation/validate_agents.sh"
   else
     echo "1. Review backup directory:"
     echo "   ls -la $BACKUP_DIR"
     echo ""
     echo "2. Validate agent configurations:"
-    echo "   $SCRIPT_DIR/validate_agents.sh"
+    echo "   $SCRIPT_DIR/validation/validate_agents.sh"
     echo ""
     echo "3. Update existing repositories:"
-    echo "   cd <repo> && $SCRIPT_DIR/setup_agents_repo.sh --force"
+    echo "   cd <repo> && $SCRIPT_DIR/setup/agents_repo.sh --force"
   fi
   
   echo ""

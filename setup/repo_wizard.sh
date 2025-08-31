@@ -88,7 +88,7 @@ ensure_dir(){ mkdir -p "$1"; }
 to_ssh_url(){ local u="$1"; if [[ "$u" =~ ^https?://github\.com/([^/]+)/([^/]+?)(\.git)?$ ]]; then echo "git@github.com:${BASH_REMATCH[1]}/${BASH_REMATCH[2]}.git"; else echo "$u"; fi; }
 select_menu(){ local PS3="Select a number: "; select opt in "$@"; do [[ -n "$opt" ]] && { echo "$opt"; return; }; echo "Invalid. Try again."; done; }
 
-seed_defaults(){ "$SCRIPT_DIR/setup_agents_repo.sh" --force || true; }
+seed_defaults(){ "$SCRIPT_DIR/setup/agents_repo.sh" --force || true; }
 
 install_commit_sanitizer(){
   mkdir -p .githooks
