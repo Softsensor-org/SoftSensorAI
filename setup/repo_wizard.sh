@@ -12,6 +12,11 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 LITE=0; NO_HOOKS=0; NO_SCRIPTS=0; NO_BOOTSTRAP=0; NON_INTERACTIVE=0; WITH_CODEX=0
 ORG=""; CAT=""; GHURL_IN=""; BRANCH=""; RNAME=""
 P_SKILL=""; P_PHASE=""; P_TEACH=""
+# New planning flags
+BASE_DEFAULT="$HOME/projects"
+BASE="$BASE_DEFAULT"
+YES=0
+DRY=0
 
 show_help() {
   cat <<EOF
@@ -35,6 +40,9 @@ Options:
   --skill LEVEL        Apply profile skill (vibe|beginner|l1|l2|expert)
   --phase PHASE        Apply project phase (poc|mvp|beta|scale)
   --teach-mode MODE    Beginner teach mode: on|off (overrides default)
+  --base PATH          Base directory for repositories (default: ~/projects)
+  --yes, -y            Skip confirmation prompts
+  --dry-run, --plan-only Show plan without making changes
   --help               Show this help message
 
 Examples:
@@ -43,6 +51,13 @@ Examples:
 
   # Non-interactive clone
   $0 --non-interactive --org myorg --category backend --url git@github.com:user/repo.git
+
+  # Plan only (preview without changes)
+  $0 --plan-only --org myorg --category backend --url git@github.com:user/repo.git
+
+  # Custom base directory with auto-confirm
+  $0 --base ~/work --org acme --category frontend \\
+     --url https://github.com/acme/webapp --branch develop --name webapp-dev --yes
 
   # With all options
   $0 --non-interactive --org acme --category frontend \\
@@ -67,6 +82,9 @@ while [[ $# -gt 0 ]]; do
     --skill) P_SKILL="$2"; shift 2;;
     --phase) P_PHASE="$2"; shift 2;;
     --teach-mode) P_TEACH="$2"; shift 2;;
+    --base) BASE="${2:-$BASE_DEFAULT}"; shift 2;;
+    --yes|-y) YES=1; shift;;
+    --dry-run|--plan-only) DRY=1; shift;;
     --help|-h) show_help;;
     *) err "Unknown option: $1"; show_help;;
   esac
@@ -82,13 +100,85 @@ fi
 
 require_tools(){
   local m=(); for t in git gh curl jq; do has "$t" || m+=("$t"); done
-  ((${#m[@]})) && { err "Missing required tools: ${m[*]}"; echo "Install with: ./install_key_software_wsl.sh"; exit 1; }
+  ((${#m[@]})) && { err "Missing required tools: ${m[*]}"; echo "Install with: ./install/key_software_wsl.sh"; exit 1; }
 }
 ensure_dir(){ mkdir -p "$1"; }
 to_ssh_url(){ local u="$1"; if [[ "$u" =~ ^https?://github\.com/([^/]+)/([^/]+?)(\.git)?$ ]]; then echo "git@github.com:${BASH_REMATCH[1]}/${BASH_REMATCH[2]}.git"; else echo "$u"; fi; }
 select_menu(){ local PS3="Select a number: "; select opt in "$@"; do [[ -n "$opt" ]] && { echo "$opt"; return; }; echo "Invalid. Try again."; done; }
 
-seed_defaults(){ "$SCRIPT_DIR/setup/agents_repo.sh" --force || true; }
+seed_defaults(){ "$SCRIPT_DIR/agents_repo.sh" --force || true; }
+
+# Planning helper functions
+plan_tree() {
+  # prints the org/category/name path relative to BASE
+  printf "%s\n" "${BASE}/${ORG}/${CAT}/${RNAME}" | sed "s|^${HOME}|~|"
+}
+
+plan_files() {
+  # list of files the wizard/seeder will write
+  cat <<EOF
+- CLAUDE.md
+- .claude/settings.json
+- .mcp.json
+- .claude/commands/* (seeded)
+- AGENTS.md
+- .envrc (if enabled)
+- .gitignore (appends common entries)
+- .githooks/commit-msg (commit sanitizer) + hooksPath config
+- scripts/repo_analysis.sh, scripts/run_checks.sh, scripts/open_pr.sh
+EOF
+  [[ "$WITH_CODEX" -eq 1 ]] && echo "- Makefile (Codex targets) or scripts/codex_sandbox.sh"
+}
+
+plan_actions() {
+  cat <<EOF
+- Ensure base/org/category directories exist
+- Clone repository (branch: ${BRANCH:-default})
+- Seed agent guardrails and commands
+EOF
+  [[ "$LITE" -eq 0 && "$NO_HOOKS" -eq 0 ]] && echo "- Install commit-message sanitizer hook"
+  [[ "$LITE" -eq 0 && "$NO_SCRIPTS" -eq 0 ]] && echo "- Drop helper scripts"
+  [[ "$WITH_CODEX" -eq 1 ]] && echo "- Add Codex CLI integration"
+  [[ "$NO_BOOTSTRAP" -eq 0 ]] && cat <<EOF
+- Bootstrap dependencies:
+  • Node: pnpm install (or npm ci)
+  • Python: create .venv and install requirements/pyproject (if present)
+EOF
+}
+
+confirm_or_exit() {
+  local target_rel
+  target_rel="$(echo "${TARGET}" | sed "s|^${HOME}|~|")"
+
+  echo "================= PLAN SUMMARY ================="
+  echo "Base folder    : ${BASE}"
+  echo "Repo URL       : ${URL}"
+  echo "Org/Category   : ${ORG} / ${CAT}"
+  echo "Repo name      : ${RNAME}"
+  echo "Target path    : ${target_rel}"
+  echo
+  echo "It will perform:"
+  plan_actions
+  echo
+  echo "It will write/modify:"
+  plan_files
+  echo "================================================"
+
+  if [[ "$DRY" -eq 1 ]]; then
+    echo "[DRY-RUN] No changes will be made."
+    exit 0
+  fi
+
+  if [[ "$YES" -eq 1 ]]; then
+    return 0
+  fi
+
+  read -rp "Type the repo name (${RNAME}) to proceed, or anything else to cancel: " confirm
+  if [[ "$confirm" != "$RNAME" ]]; then
+    echo "Aborted."
+    exit 1
+  fi
+}
 
 install_commit_sanitizer(){
   mkdir -p .githooks
@@ -198,46 +288,73 @@ RC
 
 # main
 require_tools
-BASE="$HOME/projects"; ensure_dir "$BASE"
-if [[ -z "$ORG" ]]; then
+
+# Ensure/ask base location if not provided
+if [[ -z "${BASE:-}" || "${BASE}" = "/" ]]; then BASE="${BASE_DEFAULT}"; fi
+if [[ "$DRY" -eq 0 ]]; then
+  if [[ ! -d "$BASE" ]]; then
+    echo "Base folder does not exist: $BASE"
+    if [[ "$YES" -eq 1 || "$NON_INTERACTIVE" -eq 1 ]]; then
+      mkdir -p "$BASE"
+    else
+      read -rp "Create it now? [y/N]: " mkb
+      [[ "${mkb,,}" == "y" ]] && mkdir -p "$BASE" || { echo "Aborted."; exit 1; }
+    fi
+  fi
+  ensure_dir "$BASE"
+fi
+if [[ -z "$ORG" && "$DRY" -eq 0 ]]; then
   mapfile -t ORGS < <(find "$BASE" -mindepth 1 -maxdepth 1 -type d -printf "%f\n" 2>/dev/null | sort)
   if ((${#ORGS[@]}==0)); then warn "No orgs under $BASE."; read -rp "Enter new org slug (e.g., org1): " ORG
   else say "Choose an org"; ORG=$(select_menu "${ORGS[@]}" "Create new…"); [[ "$ORG" == "Create new…" ]] && read -rp "Enter new org slug: " ORG; fi
 fi
+[[ -z "$ORG" ]] && ORG="testorg"  # Default for dry-run
+
 SUBS=(backend frontend mobile infra ml ops data docs sandbox playground)
-for s in "${SUBS[@]}"; do ensure_dir "$BASE/$ORG/$s"; done
-if [[ -z "$CAT" ]]; then
+if [[ "$DRY" -eq 0 ]]; then
+  for s in "${SUBS[@]}"; do ensure_dir "$BASE/$ORG/$s"; done
+fi
+
+if [[ -z "$CAT" && "$DRY" -eq 0 ]]; then
   say "Choose a category"; CAT=$(select_menu "${SUBS[@]}" "other")
   [[ "$CAT" == "other" ]] && read -rp "Custom category: " CAT && ensure_dir "$BASE/$ORG/$CAT"
 else
-  ensure_dir "$BASE/$ORG/$CAT"
+  [[ -z "$CAT" ]] && CAT="backend"  # Default for dry-run
+  [[ "$DRY" -eq 0 ]] && ensure_dir "$BASE/$ORG/$CAT"
 fi
 
-if [[ -z "$GHURL_IN" ]]; then
+if [[ -z "$GHURL_IN" && "$DRY" -eq 0 ]]; then
   read -rp "GitHub URL (SSH or HTTPS): " GHURL_IN
 fi
+[[ -z "$GHURL_IN" ]] && GHURL_IN="git@github.com:test/repo.git"  # Default for dry-run
 URL="$(to_ssh_url "$GHURL_IN")"
 DEF_NAME="$(basename -s .git "${URL##*:}")"
-if [[ -z "$RNAME" ]]; then
+if [[ -z "$RNAME" && "$DRY" -eq 0 ]]; then
   read -rp "Local repo folder name [${DEF_NAME}]: " RNAME; RNAME="${RNAME:-$DEF_NAME}"
 fi
-if [[ -z "${BRANCH:-}" ]]; then
+[[ -z "$RNAME" ]] && RNAME="${RNAME:-$DEF_NAME}"
+if [[ -z "${BRANCH:-}" && "$DRY" -eq 0 ]]; then
   read -rp "Branch to clone (optional): " BRANCH || true
 fi
 
 TARGET="$BASE/$ORG/$CAT/$RNAME"
-if [ -e "$TARGET" ]; then
-  if [[ $NON_INTERACTIVE -eq 1 ]]; then
-    err "Path exists: $TARGET (use --name to specify a different name)"
-    exit 1
+if [[ "$DRY" -eq 0 ]]; then
+  if [ -e "$TARGET" ]; then
+    if [[ $NON_INTERACTIVE -eq 1 ]]; then
+      err "Path exists: $TARGET (use --name to specify a different name)"
+      exit 1
+    else
+      warn "Path exists: $TARGET"
+      read -rp "Use anyway? (y/N): " C
+      [[ "${C,,}" == "y" ]] || { err "Abort."; exit 1; }
+    fi
   else
-    warn "Path exists: $TARGET"
-    read -rp "Use anyway? (y/N): " C
-    [[ "${C,,}" == "y" ]] || { err "Abort."; exit 1; }
+    ensure_dir "$(dirname "$TARGET")"
   fi
-else
-  ensure_dir "$(dirname "$TARGET")"
 fi
+
+# show the plan and confirm before any change
+confirm_or_exit
 
 say "Cloning → $TARGET"
 if [ -n "${BRANCH:-}" ]; then git clone --branch "$BRANCH" --single-branch "$URL" "$TARGET"; else git clone "$URL" "$TARGET"; fi
@@ -253,9 +370,9 @@ if [[ "$WITH_CODEX" -eq 1 ]]; then
   say "Adding Codex CLI integration"
   
   # Copy sandbox script if available
-  if [ -f "$SCRIPT_DIR/scripts/codex_sandbox.sh" ]; then
+  if [ -f "$SCRIPT_DIR/../scripts/codex_sandbox.sh" ]; then
     mkdir -p scripts
-    cp "$SCRIPT_DIR/scripts/codex_sandbox.sh" scripts/
+    cp "$SCRIPT_DIR/../scripts/codex_sandbox.sh" scripts/
     chmod +x scripts/codex_sandbox.sh
     echo "  ✓ Added scripts/codex_sandbox.sh"
   fi

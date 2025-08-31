@@ -103,6 +103,24 @@ Or manually:
 ./setup/repo_wizard.sh
 ```
 
+#### Preview/Planning Mode
+**Preview first** - see what will be created without making changes:
+```bash
+# Using the wizard with --plan-only
+./setup/repo_wizard.sh --plan-only --org myorg --category backend \
+  --url git@github.com:user/repo.git --name myapp
+
+# Or use the standalone planner
+scripts/repo_plan.sh ~/projects myorg backend myapp git@github.com:user/repo.git
+```
+
+Customize location and skip prompts:
+```bash
+# Custom base directory with auto-confirm
+./setup/repo_wizard.sh --base ~/work --org myorg --category backend \
+  --url git@github.com:user/repo.git --yes
+```
+
 #### Non-Interactive Mode
 ```bash
 # Clone and set up in one command
@@ -211,8 +229,9 @@ GitHub Actions runs the same pre-commit checks on every push/PR.
 
 ### Development Environment
 
-#### `repo_setup_wizard.sh`
-- **Purpose**: Interactive/non-interactive repository setup wizard
+#### `repo_wizard.sh`
+- **Purpose**: Interactive/non-interactive repository setup wizard with planning preview
+- **New features**: `--plan-only` for dry-run preview, `--base` for custom location, `--yes` for auto-confirm
 - **Features**:
   - Organized directory structure (`~/projects/org/category/repo`)
   - GitHub repository cloning (SSH/HTTPS)
