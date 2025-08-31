@@ -3,7 +3,7 @@ set -euo pipefail
  say(){ printf "\033[1;36m==> %s\033[0m\n" "$*"; }
  warn(){ printf "\033[1;33m[warn]\033[0m %s\n" "$*"; }
  err(){ printf "\033[1;31m[err]\033[0m %s\n" "$*"; }
- has(){ command -v "$1" >/dev/null 2>&1; }
+has(){ command -v "$1" >/dev/null 2>&1; }
 
 # Script directory (portable)
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -66,6 +66,16 @@ EOF
   exit 0
 }
 
+# Ensure option has a following value
+need_value() {
+  local opt="$1"; shift || true
+  if [[ $# -lt 1 ]]; then
+    err "Missing value for ${opt}"
+    echo "Run with --help for usage"
+    exit 2
+  fi
+}
+
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --lite) LITE=1; NO_HOOKS=1; NO_SCRIPTS=1; shift;;
@@ -74,15 +84,15 @@ while [[ $# -gt 0 ]]; do
     --no-bootstrap) NO_BOOTSTRAP=1; shift;;
     --with-codex) WITH_CODEX=1; shift;;
     --non-interactive) NON_INTERACTIVE=1; shift;;
-    --org) ORG="$2"; shift 2;;
-    --category|--cat) CAT="$2"; shift 2;;
-    --url) GHURL_IN="$2"; shift 2;;
-    --branch) BRANCH="$2"; shift 2;;
-    --name) RNAME="$2"; shift 2;;
-    --skill) P_SKILL="$2"; shift 2;;
-    --phase) P_PHASE="$2"; shift 2;;
-    --teach-mode) P_TEACH="$2"; shift 2;;
-    --base) BASE="${2:-$BASE_DEFAULT}"; shift 2;;
+    --org) need_value "$1" ${2-}; ORG="$2"; shift 2;;
+    --category|--cat) need_value "$1" ${2-}; CAT="$2"; shift 2;;
+    --url) need_value "$1" ${2-}; GHURL_IN="$2"; shift 2;;
+    --branch) need_value "$1" ${2-}; BRANCH="$2"; shift 2;;
+    --name) need_value "$1" ${2-}; RNAME="$2"; shift 2;;
+    --skill) need_value "$1" ${2-}; P_SKILL="$2"; shift 2;;
+    --phase) need_value "$1" ${2-}; P_PHASE="$2"; shift 2;;
+    --teach-mode) need_value "$1" ${2-}; P_TEACH="$2"; shift 2;;
+    --base) need_value "$1" ${2-}; BASE="${2:-$BASE_DEFAULT}"; shift 2;;
     --yes|-y) YES=1; shift;;
     --dry-run|--plan-only) DRY=1; shift;;
     --help|-h) show_help;;
@@ -99,8 +109,20 @@ if [[ $NON_INTERACTIVE -eq 1 ]]; then
 fi
 
 require_tools(){
-  local m=(); for t in git gh curl jq; do has "$t" || m+=("$t"); done
-  ((${#m[@]})) && { err "Missing required tools: ${m[*]}"; echo "Install with: ./install/key_software_wsl.sh"; exit 1; }
+  # In plan-only mode, only git is required; full run needs gh, curl, jq as well
+  local tools=()
+  if [[ "${DRY:-0}" -eq 1 ]]; then
+    tools=(git)
+  else
+    tools=(git gh curl jq)
+  fi
+  local m=(); local t
+  for t in "${tools[@]}"; do has "$t" || m+=("$t"); done
+  if ((${#m[@]})); then
+    err "Missing required tools: ${m[*]}"
+    echo "Install with: ./install_key_software_wsl.sh (WSL) or ./install_key_software_linux.sh / ./install_key_software_macos.sh"
+    exit 1
+  fi
 }
 ensure_dir(){ mkdir -p "$1"; }
 to_ssh_url(){ local u="$1"; if [[ "$u" =~ ^https?://github\.com/([^/]+)/([^/]+?)(\.git)?$ ]]; then echo "git@github.com:${BASH_REMATCH[1]}/${BASH_REMATCH[2]}.git"; else echo "$u"; fi; }
@@ -287,6 +309,7 @@ RC
 }
 
 # main
+say "Repo Setup Wizard"
 require_tools
 
 # Ensure/ask base location if not provided
