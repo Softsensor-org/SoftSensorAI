@@ -99,6 +99,16 @@ Concise, technical, and actionable. Explain only when needed to decide.
 ## Thinking controls
 - For hard steps, do a brief step-by-step *thinking* section before the answer; keep it concise and separate using <thinking/> and <answer/> tags.
 - Prefer *guided* or *structured* thinking (explicit steps and tags) over generic "think more" prompts.
+
+## Long-context hygiene
+- Summarize before quoting; prefer citations (file:line) over long excerpts.
+- Cap quotes to what’s necessary; avoid re-pasting unchanged large blocks.
+- Use IDs for chunks (e.g., [A], [B]) and reference them in the summary.
+
+## Formatting preferences (additional)
+- If asked for Markdown tickets: use the provided skeleton exactly.
+- If asked for CSV: return one table; headers first row; quote fields with commas/newlines.
+- Match the prompt’s style (bullets vs prose). For JSON requests: valid JSON only (no prose).
 MD
 
 # ---------- .claude/settings.json ----------
@@ -182,6 +192,91 @@ Run: lints/tests and re-run the relevant security tool. If anything fails, fix a
 - Diff
 - Command outputs (trimmed)
 - Next steps (follow-ups / tickets)
+MD
+
+write_if_absent ".claude/commands/think-deep.md" <<'MD'
+# Extended Thinking (controlled)
+Use this only if the task is complex or ambiguous. Keep it tight.
+
+<thinking>
+- List ≤ {{THINK_BUDGET_BULLETS|5}} key uncertainties, edge cases, risks.
+- Compare 2–3 options; pick 1 with rationale (one-liner).
+- Note success metrics / acceptance checks you'll prove.
+</thinking>
+
+<answer>
+Now execute the Plan→Code→Test loop with minimal diffs. Show the unified diff and the exact commands run.
+</answer>
+
+Rules:
+- If EXTENDED_THINKING=off, skip <thinking> and proceed.
+- Never include secrets; remove any temp files you create.
+MD
+
+write_if_absent ".claude/commands/long-context-map-reduce.md" <<'MD'
+# Long-Context Map→Reduce
+
+<input>
+{{BIG_CONTEXT_OR_PATH_LIST}}
+</input>
+
+Plan
+- Split input into logical chunks (modules/files/sections). Emit an ID + title for each.
+- MAP: For each chunk, produce a <note id="..."> with key facts, risks, and citations (file:line).
+- REDUCE: Merge notes: dedupe, rank by severity/impact, produce a <summary> with:
+  - Top risks/opportunities (bullets with citations)
+  - Open questions (what info would materially change the answer)
+  - Next actions (commands/PRs)
+
+Output order
+<notes> ...multiple <note id="X">…</note> … </notes>
+<summary> …merged view… </summary>
+MD
+
+write_if_absent ".claude/commands/prefill-structure.md" <<'MD'
+# Prefill Structure
+Assistant (prefill this, then continue):
+
+<thinking></thinking>
+<plan></plan>
+<work></work>
+<verify></verify>
+<next></next>
+
+User: Continue and fill each block. Keep <thinking> ≤ 5 bullets.
+MD
+
+write_if_absent ".claude/commands/prefill-diff.md" <<'MD'
+# Prefill Diff
+Assistant (prefill):
+
+```diff
+@@ Planned minimal diff @@
+```
+
+User: Replace the fenced block with an actual unified diff. Then list the exact commands you ran.
+MD
+
+write_if_absent ".claude/commands/prompt-improver.md" <<'MD'
+# Prompt Improver
+
+<input>
+{{RAW_PROMPT}}
+</input>
+
+Rewrite into a production-grade prompt with:
+- System/User separation
+- Variables as {{LIKE_THIS}}, with a "Variables" block listing defaults
+- Output spec with headings/tables/JSON as appropriate
+- Guardrails (no secrets, minimal diffs, exact commands)
+- A "Test run" example with sample values (one-liner each)
+
+Emit:
+<improved_prompt>…final prompt text…</improved_prompt>
+<variables>
+- NAME: default + notes
+</variables>
+<why>1–3 bullets: what changed and why</why>
 MD
 fi
 

@@ -4,6 +4,23 @@
 
 A comprehensive collection of setup scripts for WSL development environment and AI CLI agents (Claude, Gemini, Grok, Codex).
 
+New in this repo
+- Extended thinking (controlled): per-skill toggles and budgets
+- Long-context Map→Reduce command: chunked notes with citations and a reduce summary
+- Prefill structure and diff commands: consistent, diff-first outputs
+- Prompt improver: turns rough asks into production-grade prompts
+- System prompt layering: global + repo + task merged into `system/active.md`
+
+Docs and Tutorials
+- See the docs directory for step-by-step guides:
+  - docs/quickstart.md
+  - docs/repo-wizard.md
+  - docs/agent-commands.md
+  - docs/profiles.md
+  - docs/system-prompts.md
+  - docs/ci.md
+  - docs/validation-troubleshooting.md
+
 ## 📁 Repository Structure
 
 ```
@@ -417,3 +434,13 @@ MIT License - See [LICENSE](LICENSE) file for details
 ### Support
 
 For issues or questions, please open an issue in this repository.
+
+## 📚 Additional Documentation
+
+- Quick Start: docs/quickstart.md
+- Repo Wizard Tutorial: docs/repo-wizard.md
+- Commands Catalog (Claude): docs/agent-commands.md
+- Profiles & Skill Levels: docs/profiles.md
+- System Prompt Layering: docs/system-prompts.md
+- CI Integrations: docs/ci.md
+- Validation & Troubleshooting: docs/validation-troubleshooting.md

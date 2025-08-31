@@ -49,7 +49,9 @@
     "MAX_DIFF_SIZE": "200",
     "PARALLEL_TOOLS": "1",
     "DEFAULT_COT": "cot-lite",
-    "parallel_hint": true
+    "parallel_hint": true,
+    "EXTENDED_THINKING": "off",
+    "THINK_BUDGET_BULLETS": "5"
   },
   "description": "Level 1 - Junior dev. Can run tests, lints, basic scans. MCP-first, parallel safe ops."
 }

@@ -42,7 +42,9 @@
     "ARCHITECT_MODE": "1",
     "RISK_FIRST": "1",
     "DEFAULT_COT": "none",
-    "parallel_hint": true
+    "parallel_hint": true,
+    "EXTENDED_THINKING": "on",
+    "THINK_BUDGET_BULLETS": "7"
   },
   "description": "Expert - Senior/lead. Objective-driven, terse, full tool graph. Focuses on risk/rollback."
 }

@@ -43,7 +43,9 @@
     "VERBOSITY": "medium",
     "EXPLAIN_COMMANDS": "1",
     "MAX_DIFF_SIZE": "100",
-    "DEFAULT_COT": "cot-structured"
+    "DEFAULT_COT": "cot-structured",
+    "EXTENDED_THINKING": "off",
+    "THINK_BUDGET_BULLETS": "5"
   },
   "description": "Beginner - New to repo & tools. Plan→Code→Test loop with verbose steps, strict guardrails."
 }

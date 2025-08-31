@@ -60,7 +60,9 @@
     "SECURITY_TOOLS": "1",
     "PERF_TOOLS": "1",
     "DEFAULT_COT": "cot-lite",
-    "parallel_hint": true
+    "parallel_hint": true,
+    "EXTENDED_THINKING": "on",
+    "THINK_BUDGET_BULLETS": "5"
   },
   "description": "Level 2 - Intermediate. Security tools, DB migrations, performance testing, light refactors."
 }

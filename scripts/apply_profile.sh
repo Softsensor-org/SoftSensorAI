@@ -462,7 +462,28 @@ EOF
 
 echo "  ✓ Created PROFILE.md"
 
-# 5. Summary
+# 5. System prompt layering
+echo -e "${BLUE}5. System prompt layering...${NC}"
+mkdir -p system
+if [ -f "$SETUP_SCRIPTS_DIR/templates/system/00-global.md" ]; then
+  cp -n "$SETUP_SCRIPTS_DIR/templates/system/00-global.md" system/00-global.md || true
+fi
+if [ -f "$SETUP_SCRIPTS_DIR/templates/system/10-repo.md" ]; then
+  cp -n "$SETUP_SCRIPTS_DIR/templates/system/10-repo.md" system/10-repo.md || true
+fi
+if [ -f "$SETUP_SCRIPTS_DIR/templates/system/20-task.md" ] && [ ! -f system/20-task.md ]; then
+  cp "$SETUP_SCRIPTS_DIR/templates/system/20-task.md" system/20-task.md || true
+fi
+{
+  [ -f system/00-global.md ] && cat system/00-global.md || true
+  echo
+  [ -f system/10-repo.md ] && cat system/10-repo.md || true
+  echo
+  [ -f system/20-task.md ] && cat system/20-task.md || true
+} > system/active.md
+echo "  ✓ Wrote system/active.md"
+
+# 6. Summary
 echo ""
 echo -e "${GREEN}=== Profile Applied Successfully ===${NC}"
 echo ""
@@ -478,7 +499,7 @@ echo "  2. Check graduation criteria to advance"
 echo "  3. Run 'scripts/profile_show.sh' to see current status"
 echo ""
 
-# 6. Git ignore entries
+# 7. Git ignore entries
 if [ -f .gitignore ]; then
   grep -q "PROFILE.md" .gitignore || echo "PROFILE.md" >> .gitignore
   grep -q ".claude/settings.json.backup" .gitignore || echo ".claude/settings.json.backup" >> .gitignore
