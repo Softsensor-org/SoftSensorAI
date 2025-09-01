@@ -281,27 +281,182 @@ DevPilot adapts to your PROJECT's maturity:
 | **beta** | Getting ready for users | Full testing, staging deploys |
 | **scale** | Production with real users | Complete CI/CD, careful changes |
 
-## 🛠️ Advanced Features
+## 🧠 AI Command System - Your Productivity Multiplier
+
+DevPilot provides **60+ specialized AI commands** that transform how Claude, Cursor, and other AI assistants work. These aren't just prompts - they're battle-tested workflows that ensure consistent, high-quality outputs.
+
+### How Commands Work
+
+When you type `/command-name` in Claude or Cursor, it loads a structured prompt that:
+1. Sets the right context and constraints
+2. Defines clear success criteria
+3. Specifies exact output format
+4. Includes validation steps
+
+### Command Categories
 
 <details>
-<summary><b>Pre-configured AI Commands</b> (30+ commands)</summary>
+<summary><b>🤔 Thinking & Analysis Commands</b></summary>
 
-Once installed, your AI assistants have access to powerful commands:
+Deep reasoning and problem-solving:
+- `/think-hard` - Extended analysis with decision matrices
+- `/think-deep` - Step-by-step reasoning chains
+- `/cot-structured` - Chain-of-thought with structured output
+- `/explore-plan-code-test` - Full SDLC cycle
 
-**Thinking & Analysis:**
-- `/think-hard` - Deep reasoning with structured output
-- `/explore-plan-code-test` - Full development cycle
-- `/security-review` - Security vulnerability analysis
-
-**Development:**
-- `/backend-feature` - API endpoint scaffolding
-- `/test-driven` - TDD workflow
-- `/refactor-complex` - Intelligent refactoring
-
-**Automation:**
-- `/tickets-from-code` - Generate JIRA/GitHub issues
-- `/chain-runner` - Multi-step task automation
+Example usage:
+```
+You: /think-hard Should we use microservices or monolith?
+Claude: [Provides detailed analysis with trade-offs, risks, recommendations]
+```
 </details>
+
+<details>
+<summary><b>🔧 Development Pattern Commands</b></summary>
+
+19 specialized patterns for common tasks:
+- `/backend-feature` - API endpoint with tests
+- `/frontend-feature` - Component-first UI development
+- `/bug-fix` - Test-first debugging
+- `/safe-refactor` - Behavior-preserving restructuring
+- `/test-first` - TDD workflow
+- `/api-contract` - OpenAPI/GraphQL schemas
+- `/sql-migration` - Safe database changes
+- `/data-pipeline` - ETL workflows
+- `/ml-experiment` - Reproducible ML experiments
+- `/performance-pass` - Profiling and optimization
+
+Example:
+```
+You: /backend-feature Add user authentication endpoint
+Claude: [Creates tests → implements endpoint → validates → creates PR]
+```
+</details>
+
+<details>
+<summary><b>🔒 Security & Quality Commands</b></summary>
+
+Security and code quality:
+- `/security-review` - Comprehensive vulnerability scan
+- `/secure-fix` - Security-focused fixes
+- `/audit-full` - Complete codebase audit
+- `/audit-quick` - Rapid quality check
+- `/pr-self-review` - Pre-submission checklist
+
+Example:
+```
+You: /security-review
+Claude: [Scans for OWASP Top 10, checks dependencies, reviews auth]
+```
+</details>
+
+<details>
+<summary><b>🔗 Multi-Step Chain Commands</b></summary>
+
+Complex workflows broken into steps:
+
+**Backend Chain** (5 steps):
+1. `/backend-1-spec` - Define requirements
+2. `/backend-2-tests` - Write tests first
+3. `/backend-3-code` - Implement feature
+4. `/backend-4-verify` - Validate everything
+5. `/backend-5-pr` - Create pull request
+
+**Security Chain** (4 steps):
+1. `/security-1-scan` - Identify vulnerabilities
+2. `/security-2-prioritize` - Risk assessment
+3. `/security-3-fix` - Apply fixes
+4. `/security-4-report` - Generate report
+
+**ML Chain** (5 steps):
+1. `/ml-1-profile` - Data profiling
+2. `/ml-2-features` - Feature engineering
+3. `/ml-3-model` - Model training
+4. `/ml-4-evaluate` - Performance metrics
+5. `/ml-5-errors` - Error analysis
+
+Example:
+```
+You: Run the backend chain for payment processing
+Claude: Starting step 1 of 5... [Guides through entire workflow]
+```
+</details>
+
+<details>
+<summary><b>📋 Ticket & Documentation Commands</b></summary>
+
+Project management:
+- `/tickets-from-code` - Generate JIRA/GitHub issues from code
+- `/tickets-quick-scan` - Rapid backlog creation
+- `/ticket-quality-gates` - Define acceptance criteria
+- `/release-changelog` - Generate release notes
+- `/postmortem` - Incident analysis template
+
+Example:
+```
+You: /tickets-from-code
+Claude: [Analyzes code, generates prioritized tickets with estimates]
+```
+</details>
+
+<details>
+<summary><b>🚀 Automation Commands</b></summary>
+
+Task automation:
+- `/chain-runner` - Execute multi-step workflows
+- `/parallel-map` - Parallel task processing
+- `/long-context-map-reduce` - Handle large codebases
+
+Example:
+```
+You: /parallel-map Update all test files
+Claude: [Processes multiple files simultaneously]
+```
+</details>
+
+### How to Use Commands
+
+**In Claude/Cursor:**
+1. Type `/` to see available commands
+2. Select or type the command name
+3. The AI loads the specialized prompt
+4. You get consistent, high-quality outputs
+
+**View command details:**
+```bash
+# See all available commands
+ls ~/.claude/commands/
+
+# Read a specific command
+cat ~/.claude/commands/think-hard.md
+
+# List pattern commands
+ls ~/.claude/commands/patterns/
+
+# Use pattern selector for interactive choice
+scripts/pattern_selector.sh
+```
+
+### Why These Commands Matter
+
+1. **Consistency**: Same high-quality output every time
+2. **Best Practices**: Encoded expertise from senior developers
+3. **Speed**: No need to write detailed prompts
+4. **Learning**: Each command teaches better development practices
+5. **Customizable**: Modify commands to fit your workflow
+
+### Creating Custom Commands
+
+Add your own commands:
+```bash
+# Create in your project
+echo "Your custom prompt" > .claude/commands/my-command.md
+
+# Or globally
+echo "Your custom prompt" > ~/.claude/commands/my-command.md
+```
+
+## 🛠️ Advanced Features
 
 <details>
 <summary><b>Development Tools Installed</b></summary>
