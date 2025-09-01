@@ -1,0 +1,28 @@
+{
+  "active_personas": [
+  "backend-developer",
+  "data-scientist"
+],
+  "combined": true,
+  "focus": [
+  "API",
+  "Database",
+  "Performance",
+  "Testing",
+  "development",
+  "optimization"
+],
+  "commands": [
+  "api-design",
+  "database-optimize",
+  "load-test",
+  "test-coverage"
+],
+  "permissions": {
+  "allow": [
+    "Bash(npm test:*)\nBash(jest:*)\nBash(pytest:*)\nBash(curl:*)\nBash(httpie:*)",
+    "Bash(python:*)\nBash(python3:*)\nBash(jupyter:*)\nBash(ipython:*)\nBash(conda:*)\nBash(pip:*)\nBash(nvidia-smi:*)\nBash(gpustat:*)\nBash(htop:*)\nBash(top:*)\nBash(ps:*)\nBash(kill:*)\nBash(pkill:*)\nBash(tensorboard:*)\nBash(mlflow:*)\nBash(dvc:*)\nBash(wandb:*)\nBash(ray:*)\nBash(dask:*)\nBash(spark-submit:*)\nBash(hadoop:*)\nBash(kubectl:*)\nBash(docker:*)\nRead\nWrite\nEdit\nMultiEdit\nNotebookEdit\nWebSearch\nWebFetch"
+  ],
+  "deny": []
+}
+}

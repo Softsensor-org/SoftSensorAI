@@ -1,0 +1,64 @@
+{
+  "persona": "data-scientist",
+  "display_name": "Data Scientist",
+  "description": "Optimized for ML/AI workflows, GPU computing, and data pipelines",
+  "permissions": {
+    "allow": [
+      "Bash(python:*)",
+      "Bash(python3:*)",
+      "Bash(jupyter:*)",
+      "Bash(ipython:*)",
+      "Bash(conda:*)",
+      "Bash(pip:*)",
+      "Bash(nvidia-smi:*)",
+      "Bash(gpustat:*)",
+      "Bash(htop:*)",
+      "Bash(top:*)",
+      "Bash(ps:*)",
+      "Bash(kill:*)",
+      "Bash(pkill:*)",
+      "Bash(tensorboard:*)",
+      "Bash(mlflow:*)",
+      "Bash(dvc:*)",
+      "Bash(wandb:*)",
+      "Bash(ray:*)",
+      "Bash(dask:*)",
+      "Bash(spark-submit:*)",
+      "Bash(hadoop:*)",
+      "Bash(kubectl:*)",
+      "Bash(docker:*)",
+      "Read",
+      "Write",
+      "Edit",
+      "MultiEdit",
+      "NotebookEdit",
+      "WebSearch",
+      "WebFetch"
+    ],
+    "block": [
+      "Bash(rm -rf /)",
+      "Bash(dd if=/dev/zero)",
+      "Bash(:(){ :|:& };:)"
+    ]
+  },
+  "environment": {
+    "EXPLAIN_GPU_OPS": "true",
+    "EXPLAIN_PARALLELIZATION": "true",
+    "MONITOR_MEMORY": "true",
+    "PROFILE_COMPUTE": "true",
+    "TEACH_MODE": "data-science"
+  },
+  "default_commands": [
+    "gpu-optimize",
+    "parallel-explain",
+    "memory-profile",
+    "data-pipeline-audit",
+    "model-train-monitor",
+    "experiment-track",
+    "process-impact-analysis"
+  ],
+  "system_prompts": {
+    "optimization_explainer": "When optimizing code, always explain:\n1. GPU utilization changes (CUDA cores, memory bandwidth)\n2. Parallelization strategy (data parallel vs model parallel)\n3. Memory impact (GPU VRAM, system RAM, shared memory)\n4. Process dependencies and kill impacts\n5. Distributed computing implications",
+    "data_science_focus": "Focus on:\n- Vectorization opportunities\n- Batch processing optimizations\n- GPU kernel efficiency\n- Memory pinning and transfers\n- Distributed training strategies\n- Checkpointing and recovery"
+  }
+}

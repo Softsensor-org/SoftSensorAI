@@ -1,51 +1,59 @@
 {
   "permissions": {
     "allow": [
-      "Edit",
-      "Read",
-      "Write",
-      "Grep",
-      "Glob",
-      "LS",
-      "Bash(rg:*)",
+      "Bash(eslint:*)",
+      "Bash(fd:*)",
+      "Bash(gh:*)",
+      "Bash(git:*)",
+      "Bash(http:*)",
+      "Bash(jest:*)",
       "Bash(jq:*)",
-      "Bash(pnpm:*)",
+      "Bash(node:*)",
+      "Bash(npm test:*)\nBash(jest:*)\nBash(pytest:*)\nBash(curl:*)\nBash(httpie:*)",
       "Bash(npm:*)",
+      "Bash(npx:*)",
+      "Bash(pnpm:*)",
+      "Bash(prettier:*)",
       "Bash(pytest:*)",
       "Bash(python:*)",
-      "Bash(node:*)",
-      "Bash(http:*)",
-      "Bash(git add:*)",
-      "Bash(git commit:*)",
-      "Bash(git status:*)",
-      "Bash(git diff:*)"
+      "Bash(python:*)\nBash(python3:*)\nBash(jupyter:*)\nBash(ipython:*)\nBash(conda:*)\nBash(pip:*)\nBash(nvidia-smi:*)\nBash(gpustat:*)\nBash(htop:*)\nBash(top:*)\nBash(ps:*)\nBash(kill:*)\nBash(pkill:*)\nBash(tensorboard:*)\nBash(mlflow:*)\nBash(dvc:*)\nBash(wandb:*)\nBash(ray:*)\nBash(dask:*)\nBash(spark-submit:*)\nBash(hadoop:*)\nBash(kubectl:*)\nBash(docker:*)\nRead\nWrite\nEdit\nMultiEdit\nNotebookEdit\nWebSearch\nWebFetch",
+      "Bash(rg:*)",
+      "Bash(semgrep:*)",
+      "Bash(yq:*)",
+      "Edit",
+      "Glob",
+      "Grep",
+      "LS",
+      "MultiEdit",
+      "Read",
+      "Write"
     ],
     "ask": [
       "WebFetch",
       "Bash(docker:*)",
       "Bash(kubectl:*)",
       "Bash(terraform:*)",
-      "Bash(git push:*)",
-      "Bash(rm -rf:*)",
-      "Bash(aws:*)",
-      "Bash(az:*)"
+      "Bash(git push --force:*)",
+      "Bash(rm -rf /*)",
+      "Bash(aws s3 rm:*)",
+      "Bash(az group delete:*)"
     ],
     "deny": [
-      "Read(./.env)",
-      "Read(./.env.*)",
       "Read(./secrets/**)",
-      "Bash(sudo:*)"
+      "Bash(sudo rm -rf /*)"
     ],
     "defaultMode": "acceptEdits"
   },
   "env": {
     "TEACH_MODE": "1",
     "VERBOSITY": "medium",
-    "EXPLAIN_COMMANDS": "1",
-    "MAX_DIFF_SIZE": "100",
-    "DEFAULT_COT": "cot-structured",
+    "EXPLAIN_COMMANDS": "0",
+    "MAX_DIFF_SIZE": "200",
+    "DEFAULT_COT": "cot-lite",
     "EXTENDED_THINKING": "off",
-    "THINK_BUDGET_BULLETS": "5"
+    "THINK_BUDGET_BULLETS": "5",
+    "PARALLEL_TOOLS": "1",
+    "parallel_hint": true
   },
-  "description": "Beginner - New to repo & tools. Plan→Code→Test loop with verbose steps, strict guardrails."
+  "description": "Level 1 - Junior dev. Can run tests, lints, basic scans. MCP-first, parallel safe ops."
 }

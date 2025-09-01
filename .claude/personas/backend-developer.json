@@ -1,0 +1,9 @@
+{
+  "persona": "backend-developer",
+  "display_name": "Backend Developer",
+  "focus": ["API development", "Database optimization", "Testing", "Performance"],
+  "permissions": {
+    "allow": ["Bash(npm test:*)", "Bash(jest:*)", "Bash(pytest:*)", "Bash(curl:*)", "Bash(httpie:*)"]
+  },
+  "commands": ["api-design", "database-optimize", "test-coverage", "load-test"]
+}

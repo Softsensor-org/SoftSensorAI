@@ -1,1 +1,0 @@
-/home/vivek/repos/setup-scripts/.claude/commands/sets/beginner/explore-plan-code-test.md

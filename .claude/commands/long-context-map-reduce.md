@@ -1,1 +1,0 @@
-/home/vivek/repos/setup-scripts/.claude/commands/sets/beginner/long-context-map-reduce.md

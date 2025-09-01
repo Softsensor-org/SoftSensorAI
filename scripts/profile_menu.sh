@@ -38,7 +38,8 @@ show_current_profile() {
 
 # Function to select persona
 select_persona() {
-  echo -e "${BLUE}${BOLD}Select Your Persona:${NC}"
+  echo -e "${BLUE}${BOLD}Select Your Persona(s):${NC}"
+  echo -e "${YELLOW}Note: You can combine multiple personas for this repository${NC}"
   echo
   echo -e "${CYAN}═══ Developer Personas ═══${NC}"
   echo
@@ -65,10 +66,13 @@ select_persona() {
   echo "   For: UI/UX design and prototyping"
   echo "   Focus: Mockups, user flows, accessibility"
   echo
-  echo -e "${MAGENTA}6)${NC} ${BOLD}Custom${NC} ⚙️"
+  echo -e "${MAGENTA}6)${NC} ${BOLD}Multiple Personas${NC} 🎭"
+  echo "   Combine multiple roles (e.g., DS + Backend)"
+  echo
+  echo -e "${MAGENTA}7)${NC} ${BOLD}Custom${NC} ⚙️"
   echo "   Configure your own combination"
   echo
-  read -p "Enter choice (1-6): " persona_choice
+  read -p "Enter choice (1-7): " persona_choice
 
   case $persona_choice in
     1) PERSONA="developer"; select_developer_level ;;
@@ -76,7 +80,14 @@ select_persona() {
     3) PERSONA="data-scientist"; SKILL="l2" ;;
     4) PERSONA="product-manager"; SKILL="vibe" ;;
     5) PERSONA="designer"; SKILL="vibe" ;;
-    6) PERSONA="custom"; select_custom_config ;;
+    6)
+      # Launch persona manager for multiple personas
+      echo -e "${CYAN}Launching Persona Manager for multiple roles...${NC}"
+      "$SCRIPT_DIR/persona_manager.sh"
+      PERSONA="multiple"
+      SKILL="custom"
+      ;;
+    7) PERSONA="custom"; select_custom_config ;;
     *)
       echo -e "${RED}Invalid choice. Using 'developer' as default.${NC}"
       PERSONA="developer"
