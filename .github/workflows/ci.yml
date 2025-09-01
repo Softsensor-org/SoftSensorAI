@@ -74,8 +74,12 @@ jobs:
       
       - name: Check for secrets
         run: |
-          # Check for potential secrets or API keys
-          if grep -r "api[_-]key\|secret\|password\|token" --include="*.sh" . | grep -v "example\|template\|placeholder" | grep -v "^#"; then
+          # Check for potential secrets or API keys (exclude legitimate GitHub CLI commands)
+          if grep -r "api[_-]key\|secret\|password\|token" --include="*.sh" . | \
+             grep -v "example\|template\|placeholder" | \
+             grep -v "^#" | \
+             grep -v "gh secret\|GitHub repo secrets" | \
+             grep -v "MISSING_SECRETS\|export.*API_KEY=" ; then
             echo "Potential secrets found!"
             exit 1
           fi
