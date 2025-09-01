@@ -226,10 +226,10 @@ analyze_repo() {
 
     echo -e "\n=== Security Files ==="
     ls -la .env* 2>/dev/null || echo "No .env files"
-    find . -name "*secret*" -o -name "*credential*" | head -10
+    find . -type f \( -iname "*secret*" -o -iname "*credential*" \) | head -10
 
     echo -e "\n=== Test Coverage ==="
-    find . -type f -name "*.test.*" -o -name "*.spec.*" | wc -l
+    find . -type f \( -name "*.test.*" -o -name "*.spec.*" \) | wc -l
 
     echo -e "\n=== Dependencies ==="
     [ -f package.json ] && jq '.dependencies | keys | length' package.json
