@@ -29,7 +29,33 @@ jobs:
           git diff --unified=1 --minimal --no-color origin/${{ github.base_ref }}...HEAD > artifacts/pr.diff || true
           LINES=$(wc -l < artifacts/pr.diff || echo 0)
           if [ "$LINES" -gt 6000 ]; then head -n 6000 artifacts/pr.diff > artifacts/pr.head && mv artifacts/pr.head artifacts/pr.diff; fi
+
+          # Analyze risk if tool exists
+          RISK_PRELUDE=""
+          if [ -f tools/diff_risk.sh ]; then
+            RISK_TAGS=$(bash tools/diff_risk.sh artifacts/pr.diff tags 2>/dev/null || echo "")
+            echo "Risk analysis: $RISK_TAGS"
+
+            if [ -n "$RISK_TAGS" ]; then
+              # Build risk-aware prelude based on tags
+              RISK_PRELUDE="RISK: "
+              if echo "$RISK_TAGS" | grep -q "level:critical"; then
+                RISK_PRELUDE="${RISK_PRELUDE}⛔ CRITICAL changes detected. "
+              elif echo "$RISK_TAGS" | grep -q "level:high"; then
+                RISK_PRELUDE="${RISK_PRELUDE}🔴 HIGH risk changes. "
+              fi
+
+              # Add specific risk warnings
+              echo "$RISK_TAGS" | grep -q "risk:auth" && RISK_PRELUDE="${RISK_PRELUDE}Auth flows modified - check for bypasses. "
+              echo "$RISK_TAGS" | grep -q "risk:db" && RISK_PRELUDE="${RISK_PRELUDE}Database changes - verify migrations. "
+              echo "$RISK_TAGS" | grep -q "risk:payment" && RISK_PRELUDE="${RISK_PRELUDE}Payment code - audit thoroughly. "
+              echo "$RISK_TAGS" | grep -q "risk:security" && RISK_PRELUDE="${RISK_PRELUDE}Security-sensitive - check vulnerabilities. "
+              echo "$RISK_TAGS" | grep -q "risk:api" && RISK_PRELUDE="${RISK_PRELUDE}API changes - verify compatibility. "
+            fi
+          fi
+
           {
+            [ -n "$RISK_PRELUDE" ] && echo "$RISK_PRELUDE"
             echo "ROLE: Senior code reviewer. Produce concise, file-scoped bullets with suggested changes."
             echo "HINT: If diff seems truncated, outline issues file-by-file; ask for a follow-up on specific files."
             echo "DIFF:"; cat artifacts/pr.diff

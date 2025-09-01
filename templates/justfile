@@ -491,7 +491,15 @@ review-pre-pr BASE="main":
   @mkdir -p artifacts
   @git fetch --no-tags origin {{BASE}} --depth=1
   @git diff --unified=1 --minimal --no-color origin/{{BASE}}...HEAD | head -6000 > artifacts/review_diff.patch
-  @echo "ROLE: Senior reviewer. File-scoped bullets with fixes." > artifacts/review_prompt.txt
+  @# Risk analysis
+  @if [ -f tools/diff_risk.sh ]; then \
+    RISK_TAGS=$$(bash tools/diff_risk.sh artifacts/review_diff.patch tags 2>/dev/null); \
+    [ -n "$$RISK_TAGS" ] && echo "⚠️  Risk detected: $$RISK_TAGS"; \
+    echo "RISK: $$RISK_TAGS" > artifacts/review_prompt.txt; \
+  else \
+    : > artifacts/review_prompt.txt; \
+  fi
+  @echo "ROLE: Senior reviewer. File-scoped bullets with fixes." >> artifacts/review_prompt.txt
   @echo "DIFF:" >> artifacts/review_prompt.txt
   @cat artifacts/review_diff.patch >> artifacts/review_prompt.txt
   @if command -v claude >/dev/null; then \
@@ -513,7 +521,19 @@ review-local BASE="main":
     @mkdir -p artifacts
     @git fetch --no-tags origin {{BASE}} --depth=1 2>/dev/null || true
     @git diff --unified=1 --minimal --no-color origin/{{BASE}}...HEAD | head -6000 > artifacts/review_diff.patch
-    @echo "ROLE: Senior reviewer. Bulleted, file-scoped suggestions." > artifacts/review_prompt.txt
+    @# Risk analysis if tool exists
+    @if [ -f tools/diff_risk.sh ]; then \
+        RISK_TAGS=$$(bash tools/diff_risk.sh artifacts/review_diff.patch tags 2>/dev/null); \
+        if [ -n "$$RISK_TAGS" ]; then \
+            echo "Risk analysis: $$RISK_TAGS"; \
+            echo "RISK: $$RISK_TAGS" > artifacts/review_prompt.txt; \
+        else \
+            : > artifacts/review_prompt.txt; \
+        fi; \
+    else \
+        : > artifacts/review_prompt.txt; \
+    fi
+    @echo "ROLE: Senior reviewer. Bulleted, file-scoped suggestions." >> artifacts/review_prompt.txt
     @echo "DIFF:" >> artifacts/review_prompt.txt
     @cat artifacts/review_diff.patch >> artifacts/review_prompt.txt
     @if command -v claude >/dev/null; then \
