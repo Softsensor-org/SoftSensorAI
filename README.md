@@ -27,21 +27,37 @@ Transform how you work with AI coding assistants. DevPilot automatically configu
 - Internet connection for tool downloads
 - 2GB free disk space
 
-## 🤔 Why DevPilot?
+## 🚀 What DevPilot Actually Unlocks
 
-**Without DevPilot:**
-- Manually configure each AI tool for every project
-- Copy-paste the same instructions repeatedly
-- No consistency across projects
-- Dependencies installed differently each time
-- AI doesn't understand your project structure
+### Concrete Gains (Measurable Impact)
 
-**With DevPilot:**
-- One command sets up everything
-- AI automatically knows your skill level
-- Projects organized in `~/projects/work/backend/my-api`
-- Dependencies detected and installed automatically
-- Consistent AI behavior across all your projects
+| **Pain Today** | **DevPilot Capability** | **Typical Impact** |
+|----------------|------------------------|-------------------|
+| Inconsistent AI prompts per dev | Single prompt stack (`system/active.md`) | ↓ variance, fewer "why did it say that?" moments |
+| Spinning up a repo takes hours | Repo wizard + profiles/phases | **60-90 min → 10-15 min** |
+| Backlog grooming is slow/subjective | `/tickets-from-code` → strict JSON/CSV | **2-3 hrs PM time → 10-15 min** |
+| Long PRs stall reviews | AI PR reviewer (CLI-first, neutral if absent) | First pass in **~1-2 min**, humans focus on hard bits |
+| Security posture unclear | Phase gates (gitleaks/semgrep/trivy) | **Faster triage**, **fewer regressions** at Beta+ |
+| Knowledge is tribal | SOP commands with acceptance criteria | **Better handoffs**, faster onboarding |
+
+### What You Can Do Now (That You Couldn't Before)
+
+- **Turn any codebase into an actionable plan** in one shot with `/tickets-from-code`
+- **Make architecture reviews reproducible** with `/architect-spike`
+- **Digest 10k-line diffs/logs** with `/long-context-map-reduce`
+- **Enforce maturity, not opinions** - Beta repos block HIGH/CRIT vulns automatically
+- **Run AI reviews in CI without secrets** - Stock CLIs, neutral fallback
+- **Onboard juniors at senior velocity** - Commands encode senior expectations
+
+### Why DevPilot vs "Just Using CLIs"
+
+1. **Deterministic org-wide AI behavior** - One canonical system file across Claude/Codex/Gemini/Grok
+2. **Policy-as-code** - Profiles & Phases change commands and CI gates automatically
+3. **SOP-grade commands** - Not ad-hoc prompting but repeatable processes with "done" checks
+4. **CLI-first, zero-secrets CI** - AI reviews without API keys in repos
+5. **Scaled onboarding** - Seed dozens of repos identically in minutes
+6. **Evidence & auditability** - All outputs materialized under `artifacts/` for compliance
+7. **Cross-provider portability** - Switch providers with no process change
 
 ## 👀 What You Get
 
@@ -903,13 +919,31 @@ python3 -m ensurepip  # Python
 - Run `scripts/apply_profile.sh` to reapply configuration
 
 ### Getting Help
-- Check existing issues: [GitHub Issues](https://github.com/VivekLmd/setup-scripts/issues)
+- Check existing issues: [GitHub Issues](https://github.com/Softsensor-org/DevPilot/issues)
 - Review the [validation script](validation/validate_agents.sh) output
 - Run diagnostics: `~/devpilot/scripts/diagnose.sh`
 
+## 📚 Essential Reading
+
+### Getting Started
+- **[Day in the Life Guide](tutorials/day-in-the-life.md)** - See real before/after scenarios
+- **[Quick Start This Week](tutorials/quick-start-this-week.md)** - Start seeing value in 5 days
+- **[Benefits & ROI](docs/BENEFITS.md)** - Detailed metrics and cost savings
+
+### Deep Dives
+- **[Security Guide](docs/SECURITY.md)** - Comprehensive security practices
+- **[Architecture](docs/ARCHITECTURE.md)** - System design and decisions
+- **[AI Command System](docs/AI_COMMAND_SYSTEM.md)** - How commands work
+- **[Power Tools](docs/POWER_TOOLS.md)** - Advanced features
+
+### Team Resources
+- **[Team Onboarding](docs/CLI_FIRST_PHILOSOPHY.md)** - CLI-first approach explained
+- **[Contribution Guide](CONTRIBUTING.md)** - How to contribute
+- **[Code of Conduct](CODE_OF_CONDUCT.md)** - Community standards
+
 ## 🤝 Support & Feedback
 
-- **Report Issues**: [GitHub Issues](https://github.com/VivekLmd/setup-scripts/issues)
+- **Report Issues**: [GitHub Issues](https://github.com/Softsensor-org/DevPilot/issues)
 - **Feature Requests**: Create an issue with [Feature Request] tag
 - **Questions**: Open a discussion in the Issues tab
 - **Star the repo** if it helps your productivity!
