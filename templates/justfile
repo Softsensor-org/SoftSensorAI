@@ -468,7 +468,7 @@ after-clone:
 repo-review:
     @mkdir -p artifacts
     @./scripts/pack_context.sh 2>/dev/null || true
-    @just fmt 2>/dev/null || true; just lint 2>/dev/null || true; just test-unit -k smoke 2>/dev/null || true
+    @just format 2>/dev/null || true; just lint 2>/dev/null || true; just test-unit -k smoke 2>/dev/null || true
     @gitleaks detect -r artifacts/gitleaks.json 2>/dev/null || true
     @semgrep ci --json --output artifacts/semgrep.json 2>/dev/null || true
     @trivy fs --scanners vuln,secret,config -f json -o artifacts/trivy.json . 2>/dev/null || true
@@ -490,7 +490,7 @@ review-pre-pr BASE="main":
   @echo "🔍 Running pre-PR review against {{BASE}}..."
   @mkdir -p artifacts
   @git fetch --no-tags origin {{BASE}} --depth=1
-  @git diff --unified=1 --minimal --no-color origin/{{BASE}}...HEAD > artifacts/review_diff.patch
+  @git diff --unified=1 --minimal --no-color origin/{{BASE}}...HEAD | head -6000 > artifacts/review_diff.patch
   @echo "ROLE: Senior reviewer. File-scoped bullets with fixes." > artifacts/review_prompt.txt
   @echo "DIFF:" >> artifacts/review_prompt.txt
   @cat artifacts/review_diff.patch >> artifacts/review_prompt.txt
@@ -512,7 +512,7 @@ review-pre-pr BASE="main":
 review-local BASE="main":
     @mkdir -p artifacts
     @git fetch --no-tags origin {{BASE}} --depth=1 2>/dev/null || true
-    @git diff --unified=1 --minimal --no-color origin/{{BASE}}...HEAD > artifacts/review_diff.patch
+    @git diff --unified=1 --minimal --no-color origin/{{BASE}}...HEAD | head -6000 > artifacts/review_diff.patch
     @echo "ROLE: Senior reviewer. Bulleted, file-scoped suggestions." > artifacts/review_prompt.txt
     @echo "DIFF:" >> artifacts/review_prompt.txt
     @cat artifacts/review_diff.patch >> artifacts/review_prompt.txt
@@ -605,6 +605,7 @@ tickets-old:
 alias t := test
 alias l := lint
 alias f := format
+alias fmt := format
 alias b := build
 alias r := run
 alias d := dev

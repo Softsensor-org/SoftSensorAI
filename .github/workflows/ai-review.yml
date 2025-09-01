@@ -1,167 +1,72 @@
-name: AI PR Review
-
+name: ai-review
 on:
   pull_request:
-    types: [opened, synchronize, reopened]
-
-concurrency:
-  group: ai-review-${{ github.event.pull_request.number }}-${{ github.sha }}
-  cancel-in-progress: true
+    types: [opened, synchronize, reopened, ready_for_review, labeled]
 
 jobs:
-  ai-review:
-    runs-on: ubuntu-latest
-    continue-on-error: true # Non-blocking - won't fail PR
-    # Only run if enabled via repository variable or has ai-review label
+  review:
     if: >-
       ${{
         vars.AI_REVIEW_ENABLED == 'true' ||
         contains(join(github.event.pull_request.labels.*.name, ','), 'ai-review')
       }}
-
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      contents: read
+    concurrency:
+      group: ai-review-${{ github.event.pull_request.number }}-${{ github.sha }}
+      cancel-in-progress: true
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0 # Get full history for diff
 
-      - name: Fetch base branch
+      - name: Ensure base ref is available
         run: git fetch --no-tags origin ${{ github.base_ref }} --depth=1
 
-      - name: Setup system prompt
+      - name: Build prompt from PR diff (cap at 6000 lines)
         run: |
-          mkdir -p system
-          # Create minimal system prompt if not exists
-          if [ ! -f system/active.md ]; then
-            cat > system/active.md <<'EOF'
-          You are a code reviewer. Review the following diff for:
-          - Security issues (credentials, SQL injection, XSS, etc.)
-          - Performance problems (n+1 queries, memory leaks, etc.)
-          - Bugs (null checks, race conditions, logic errors)
-          - Best practices violations
-          Be concise. Focus on actionable issues only.
-          EOF
-          fi
+          mkdir -p artifacts
+          git diff --unified=1 --minimal --no-color origin/${{ github.base_ref }}...HEAD > artifacts/pr.diff || true
+          LINES=$(wc -l < artifacts/pr.diff || echo 0)
+          if [ "$LINES" -gt 6000 ]; then head -n 6000 artifacts/pr.diff > artifacts/pr.head && mv artifacts/pr.head artifacts/pr.diff; fi
+          {
+            echo "ROLE: Senior code reviewer. Produce concise, file-scoped bullets with suggested changes."
+            echo "HINT: If diff seems truncated, outline issues file-by-file; ask for a follow-up on specific files."
+            echo "DIFF:"; cat artifacts/pr.diff
+          } > artifacts/review_prompt.txt
 
-      - name: Get PR diff
+      - name: Try CLIs (codex→claude→gemini→grok), neutral if absent
+        id: run_cli
+        env:
+          AI_MODEL_CLAUDE: ${{ vars.AI_MODEL_CLAUDE || 'claude-3-7-sonnet-20250219' }}
+          AI_MODEL_CODEX: ${{ vars.AI_MODEL_CODEX  || 'codex-latest' }}
+          AI_MODEL_GEMINI: ${{ vars.AI_MODEL_GEMINI || 'gemini-1.5-pro-latest' }}
+          AI_MODEL_GROK: ${{ vars.AI_MODEL_GROK   || 'grok-2-latest' }}
         run: |
-          git diff origin/${{ github.base_ref }}...HEAD > pr.diff
-          echo "Diff size: $(wc -l < pr.diff) lines"
-
-      - name: AI Review (CLI-first, neutral fallback)
-        id: review
-        run: |
-          # This workflow uses installed CLIs only - no API keys needed
-          # It exits successfully even if no CLI is found (neutral)
-
-          review_output=""
-          cli_used=""
-
-          # Function to try each CLI
-          try_cli() {
-            local cmd="$1"
-            local name="$2"
-            echo "Checking for $name CLI..."
-            if command -v $cmd >/dev/null 2>&1; then
-              echo "✓ Found $name CLI"
-              cli_used="$name"
-              return 0
-            fi
-            return 1
-          }
-
-          # Try Claude
-          if try_cli "claude" "Claude"; then
-            review_output=$(claude --system-prompt system/active.md \
-              "Review this PR diff for security, performance, and bugs. Be concise." < pr.diff 2>/dev/null || echo "")
-
-          # Try Codex
-          elif try_cli "codex" "Codex"; then
-            review_output=$(codex exec --system-file system/active.md \
-              --prompt "Review this PR diff for security, performance, and bugs. Be concise." \
-              --input-file pr.diff 2>/dev/null || echo "")
-
-          # Try Gemini
-          elif try_cli "gemini" "Gemini"; then
-            review_output=$(gemini generate --model gemini-1.5-pro-latest \
-              --system-file system/active.md \
-              --prompt "Review this PR diff for security, performance, and bugs. Be concise." \
-              --input-file pr.diff 2>/dev/null || echo "")
-
-          # Try Grok
-          elif try_cli "grok" "Grok"; then
-            review_output=$(grok chat \
-              --system "$(cat system/active.md)" \
-              --prompt "Review this PR diff for security, performance, and bugs. Be concise." \
-              < pr.diff 2>/dev/null || echo "")
-
+          set -euo pipefail
+          if [ ! -f tools/ai_shim.sh ]; then echo "::notice::tools/ai_shim.sh missing; skipping (neutral)."; exit 0; fi
+          bash tools/ai_shim.sh --provider codex  --model "$AI_MODEL_CODEX"  --prompt-file artifacts/review_prompt.txt > artifacts/review_raw.txt 2> artifacts/review_codex.err || true
+          [ -s artifacts/review_raw.txt ] || bash tools/ai_shim.sh --provider claude --model "$AI_MODEL_CLAUDE" --prompt-file artifacts/review_prompt.txt > artifacts/review_raw.txt 2> artifacts/review_claude.err || true
+          [ -s artifacts/review_raw.txt ] || bash tools/ai_shim.sh --provider gemini --model "$AI_MODEL_GEMINI" --prompt-file artifacts/review_prompt.txt > artifacts/review_raw.txt 2> artifacts/review_gemini.err || true
+          [ -s artifacts/review_raw.txt ] || bash tools/ai_shim.sh --provider grok   --model "$AI_MODEL_GROK"   --prompt-file artifacts/review_prompt.txt > artifacts/review_raw.txt 2> artifacts/review_grok.err   || true
+          if [ -s artifacts/review_raw.txt ]; then
+            echo "found_output=true" >> $GITHUB_OUTPUT
           else
-            echo "ℹ️ No AI CLI available (claude/codex/gemini/grok)"
-            echo "This is fine - AI review is optional."
-            echo "To enable: install any supported CLI locally on the runner"
-            exit 0  # Neutral exit - don't fail the workflow
+            echo "::notice::No AI CLI produced output; skipping (neutral)."
+            exit 0
           fi
 
-          # Save review output
-          if [ -n "$review_output" ]; then
-            echo "$review_output" > review.md
-            echo "cli_used=$cli_used" >> $GITHUB_OUTPUT
-            echo "has_review=true" >> $GITHUB_OUTPUT
-          else
-            echo "No review generated"
-            echo "has_review=false" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Post review comment
-        if: steps.review.outputs.has_review == 'true'
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const fs = require('fs');
-            const review = fs.readFileSync('review.md', 'utf8');
-            const cli = '${{ steps.review.outputs.cli_used }}';
-
-            const body = `## 🤖 AI Review (${cli})\n\n${review}\n\n---\n*This is an automated review. Please verify suggestions before implementing.*`;
-
-            // Check if we already commented on this SHA
-            const { data: comments } = await github.rest.issues.listComments({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
-            });
-
-            const existingComment = comments.find(c =>
-              c.user.login === 'github-actions[bot]' &&
-              c.body.includes('🤖 AI Review')
-            );
-
-            if (existingComment) {
-              // Update existing comment
-              await github.rest.issues.updateComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                comment_id: existingComment.id,
-                body: body
-              });
-            } else {
-              // Create new comment
-              await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: context.issue.number,
-                body: body
-              });
-            }
-
-      - name: Summary
-        if: always()
+      - name: De-duplicate per commit
+        if: steps.run_cli.outputs.found_output == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          if [ "${{ steps.review.outputs.has_review }}" == "true" ]; then
-            echo "✅ AI review posted using ${{ steps.review.outputs.cli_used }}"
-          else
-            echo "ℹ️ AI review skipped (no CLI available or no output)"
+          mark="<!-- ai-review:${{ github.sha }} -->"
+          printf "%s\n\n%s\n" "$mark" "$(cat artifacts/review_raw.txt)" > artifacts/review_comment.md
+          # If a comment with this mark already exists, skip
+          if gh pr view ${{ github.event.pull_request.number }} --json comments \
+               --jq '.comments[].body | select(contains("'"$mark"'"))' | grep -q .; then
+            echo "::notice::Already commented for this commit; skipping."
+            exit 0
           fi
-          echo ""
-          echo "To enable AI reviews:"
-          echo "1. Set AI_REVIEW_ENABLED=true in repository variables, OR"
-          echo "2. Add 'ai-review' label to the PR"
-          echo "3. Ensure a supported CLI is installed on the runner"
+          gh pr comment ${{ github.event.pull_request.number }} --body-file artifacts/review_comment.md

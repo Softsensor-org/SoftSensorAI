@@ -1,0 +1,134 @@
+#!/usr/bin/env bash
+# DevPilot meta-CLI: beautiful defaults for init, tickets, and review.
+set -euo pipefail
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+SHIM="$ROOT/tools/ai_shim.sh"
+ART="$ROOT/artifacts"
+mkdir -p "$ART"
+
+say() { printf "%s\n" "$*"; }
+have(){ command -v "$1" >/dev/null 2>&1; }
+
+pick_cli() {
+  # Prefer anthropic, then codex, gemini, grok
+  for p in anthropic codex gemini grok; do
+    if have "$p"; then echo "$p"; return; fi
+  done
+  echo ""
+}
+
+cmd_init() {
+  say "▸ Running doctor …"
+  if [[ -x "$ROOT/scripts/doctor.sh" ]]; then "$ROOT/scripts/doctor.sh" || true; fi
+  say "▸ Applying defaults (skill=l1, phase=mvp) …"
+  if [[ -x "$ROOT/scripts/apply_profile.sh" ]]; then "$ROOT/scripts/apply_profile.sh" --skill l1 --phase mvp || true; fi
+  say "▸ Building system/active.md …"
+  if [[ -x "$ROOT/scripts/system_build.sh" ]]; then "$ROOT/scripts/system_build.sh" || true; fi
+  say "▸ Quick repo review …"
+  if grep -q '^repo-review:' "$ROOT/Justfile" 2>/dev/null; then just repo-review || true; fi
+  say
+  say "✅ Ready. Next:"
+  say "  1) dp tickets   # structured backlog (JSON/CSV)"
+  say "  2) dp review    # AI review of your local diff"
+  say "  3) just dev     # your project's dev server (if defined)"
+}
+
+build_tickets_prompt() {
+  local out="$ART/tickets_prompt.txt"
+  if [[ -f "$ROOT/.claude/commands/tickets-from-code.md" ]]; then
+    cat "$ROOT/.claude/commands/tickets-from-code.md" > "$out"
+  else
+    cat > "$out" <<'EOF'
+ROLE: Senior engineer. Produce a prioritized backlog as strict JSON (see schema in docs).
+SCOPE: entire repo; include security, tests, docs, observability.
+OUTPUT: JSON only (no markdown), then I will convert to CSV.
+EOF
+  fi
+  echo "$out"
+}
+
+extract_json() {
+  # Pull JSON object from noisy model output
+  awk 'BEGIN{in=0} /^[[:space:]]*{/ && !in {in=1} in{print}' | \
+  awk 'BEGIN{c=0} {print; for(i=1;i<=length($0);i++){ch=substr($0,i,1); if(ch=="{")c++; else if(ch=="}")c--;}} END{exit c!=0}'
+}
+
+cmd_tickets() {
+  local sys="$ROOT/system/active.md"
+  [[ -f "$sys" ]] || { say "error: $sys not found. Run dp init."; exit 1; }
+  local prompt; prompt="$(build_tickets_prompt)"
+  local raw="$ART/tickets_raw.txt" json="$ART/tickets.json" csv="$ART/tickets.csv"
+  : > "$raw"
+
+  say "▸ Generating tickets (CLI fallback: codex→claude→gemini→grok) …"
+  # Try providers via shim; neutral if none exist
+  "$SHIM" --provider codex  --model "${AI_MODEL_CODEX:-codex-latest}"             --prompt-file "$prompt" > "$raw" 2> "$ART/tickets_codex.err"  || true
+  [[ -s "$raw" ]] || "$SHIM" --provider claude --model "${AI_MODEL_CLAUDE:-claude-3-7-sonnet-20250219}" --prompt-file "$prompt" > "$raw" 2> "$ART/tickets_claude.err" || true
+  [[ -s "$raw" ]] || "$SHIM" --provider gemini --model "${AI_MODEL_GEMINI:-gemini-1.5-pro-latest}"     --prompt-file "$prompt" > "$raw" 2> "$ART/tickets_gemini.err" || true
+  [[ -s "$raw" ]] || "$SHIM" --provider grok   --model "${AI_MODEL_GROK:-grok-2-latest}"               --prompt-file "$prompt" > "$raw" 2> "$ART/tickets_grok.err"   || true
+
+  if [[ ! -s "$raw" ]]; then
+    say "ℹ️  No AI CLI produced output. Install anthropic/codex/gemini/grok CLIs or run in CI with those CLIs."
+    exit 0
+  fi
+  if extract_json < "$raw" > "$json"; then
+    jq -r '
+      .tickets[]
+      | [
+          .id, .title, .type, .priority, .effort,
+          (.labels // [] | join("|")), (.assignee // ""),
+          (.dependencies // [] | join("|")),
+          (.notes // "" | gsub("[\r\n]+";" ")),
+          (.acceptance_criteria // [] | join("; "))
+        ] | @csv
+    ' "$json" > "$csv" || true
+    say "✅ Wrote:"
+    say "   - $json"
+    [[ -s "$csv" ]] && say "   - $csv"
+  else
+    say "⚠️  Could not find valid JSON in model output. Try a smaller scope or a different CLI."
+    exit 0
+  fi
+}
+
+cmd_review() {
+  local sys="$ROOT/system/active.md"
+  [[ -f "$sys" ]] || { say "error: $sys not found. Run dp init."; exit 1; }
+  local base="${BASE_BRANCH:-main}"
+  git fetch --no-tags origin "$base" --depth=1 || true
+  git diff --unified=1 --minimal --no-color "origin/$base"...HEAD > "$ART/review_diff.patch" || true
+  local lines; lines=$(wc -l < "$ART/review_diff.patch" || echo 0)
+  if [[ "$lines" -gt 6000 ]]; then head -n 6000 "$ART/review_diff.patch" > "$ART/review_diff.patch.head" && mv "$ART/review_diff.patch.head" "$ART/review_diff.patch"; fi
+  {
+    echo "ROLE: Senior code reviewer. Produce concise, file-scoped bullets with suggested changes."
+    echo "HINT: If diff seems truncated, outline issues file-by-file; ask for a follow-up on specific files as needed."
+    echo "DIFF:"; cat "$ART/review_diff.patch"
+  } > "$ART/review_prompt.txt"
+
+  "$SHIM" --provider claude --model "${AI_MODEL_CLAUDE:-claude-3-7-sonnet-20250219}" --prompt-file "$ART/review_prompt.txt" > "$ART/review_local.txt" 2> "$ART/review_claude.err" || true
+  [[ -s "$ART/review_local.txt" ]] || "$SHIM" --provider codex  --model "${AI_MODEL_CODEX:-codex-latest}"             --prompt-file "$ART/review_prompt.txt" > "$ART/review_local.txt" 2> "$ART/review_codex.err"  || true
+  [[ -s "$ART/review_local.txt" ]] || "$SHIM" --provider gemini --model "${AI_MODEL_GEMINI:-gemini-1.5-pro-latest}"     --prompt-file "$ART/review_prompt.txt" > "$ART/review_local.txt" 2> "$ART/review_gemini.err" || true
+  [[ -s "$ART/review_local.txt" ]] || "$SHIM" --provider grok   --model "${AI_MODEL_GROK:-grok-2-latest}"               --prompt-file "$ART/review_prompt.txt" > "$ART/review_local.txt" 2> "$ART/review_grok.err"   || true
+
+  if [[ -s "$ART/review_local.txt" ]]; then
+    say "✅ Wrote: $ART/review_local.txt"
+  else
+    say "ℹ️  No AI CLI produced output. Install an AI CLI to use dp review."
+  fi
+}
+
+case "${1:-}" in
+  init)   shift; cmd_init "$@";;
+  tickets)shift; cmd_tickets "$@";;
+  review) shift; cmd_review "$@";;
+  -h|--help|"")
+    cat <<'HELP'
+DevPilot meta-CLI
+  dp init      # doctor → profile(mvp/l1) → build system → quick repo review
+  dp tickets   # structured backlog (JSON → CSV), CLI-first, strict schema
+  dp review    # local AI review of your diff (neutral if no CLIs)
+Env: AI_MODEL_* override model names; TIMEOUT_SECS limits long runs
+HELP
+    ;;
+  *) echo "unknown subcommand: $1" >&2; exit 2;;
+esac
