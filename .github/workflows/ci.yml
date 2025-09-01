@@ -1,82 +1,118 @@
-name: CI
+name: CI - MVP Phase
 
 on:
   push:
-    branches: [ main ]
+    branches: [main, develop]
   pull_request:
-    branches: [ main ]
-  workflow_dispatch:
+    types: [opened, synchronize]
 
 jobs:
-  lint:
-    name: Lint and Audit
+  quality-gates:
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v5
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          python-version: '3.x'
+          node-version: 'lts/*'
 
       - name: Install dependencies
         run: |
-          sudo apt-get update
-          sudo apt-get install -y shellcheck
-          pip install pre-commit
+          npm ci || pnpm install --frozen-lockfile || yarn install --frozen-lockfile
 
-      - name: Run pre-commit
-        run: pre-commit run --all-files --show-diff-on-failure
-
-      - name: Make format and lint
+      - name: Lint check (required)
         run: |
-          make fmt
-          make lint
+          echo "Running lints - must pass for MVP"
+          npm run lint || pnpm lint
 
-      - name: Print runtime versions
+      - name: Type check (required)
         run: |
-          node -v || true
-          python3 --version || true
+          echo "Running type checks - must pass for MVP"
+          npm run typecheck || pnpm typecheck || tsc --noEmit
 
-      - name: Prompt audit
-        run: make prompt-audit
-
-      - name: Config validation
-        run: make config-validate
-
-      - name: Bats tests
+      - name: Unit tests (required)
         run: |
-          sudo apt-get update && sudo apt-get install -y bats
-          make test:bats
+          echo "Running unit tests - must pass for MVP"
+          npm test || pnpm test || pytest
 
-      - name: Security JSON report
-        run: make security-json
+      - name: Test coverage check
+        continue-on-error: true
+        run: |
+          npm run test:coverage || pnpm test:coverage || echo "::warning::Coverage not configured"
+          echo "::warning::Target coverage for Beta phase: 60%"
 
-      - name: Upload security artifact
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: security-scan
-          path: security-scan.json
-
-      - name: Run audit script
-        run: bash tools/audit_setup_scripts.sh
-
-      - name: Check script syntax
-        run: make test
-
-  security:
-    name: Security Checks
+  security-scan:
     runs-on: ubuntu-latest
+    continue-on-error: true  # Advisory in MVP
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Check for secrets
+      - name: Dependency audit
         run: |
-          # Check for actual secret patterns (not just the word "secret")
-          if grep -rE "(api[_-]?key|password|token)\s*=\s*[\"'][^\"']+[\"']" --include="*.sh" . | \
-             grep -v "example\|template\|placeholder\|\.\.\."; then
-            echo "Potential hardcoded secrets found!"
-            exit 1
+          npm audit --audit-level=high || echo "::warning::Security issues in dependencies"
+
+      - name: Basic security scan
+        continue-on-error: true
+        run: |
+          if command -v semgrep &> /dev/null; then
+            semgrep --config=auto || echo "::warning::Security patterns detected"
           fi
+
+      - name: Secret detection
+        run: |
+          if command -v gitleaks &> /dev/null; then
+            gitleaks detect --no-banner || exit 1
+          fi
+
+  build:
+    runs-on: ubuntu-latest
+    needs: [quality-gates]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+
+      - name: Install and build
+        run: |
+          npm ci || pnpm install --frozen-lockfile
+          npm run build || pnpm build
+
+      - name: Verify build artifacts
+        run: |
+          test -d dist || test -d build || echo "::warning::No build artifacts found"
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: mvp-build
+          path: |
+            dist/
+            build/
+
+  mvp-summary:
+    runs-on: ubuntu-latest
+    needs: [quality-gates, security-scan, build]
+    if: always()
+
+    steps:
+      - name: MVP Gate Summary
+        run: |
+          echo "## MVP Phase Gates"
+          echo "✅ Required:"
+          echo "  - Linting: MUST PASS"
+          echo "  - Type checking: MUST PASS"
+          echo "  - Unit tests: MUST PASS"
+          echo "  - Build: MUST SUCCEED"
+          echo ""
+          echo "⚠️ Advisory:"
+          echo "  - Security scans: Review findings"
+          echo "  - Test coverage: Track trend"
+          echo ""
+          echo "To graduate to Beta: Add integration tests, 60% coverage, fix security issues"

@@ -1,19 +1,51 @@
 {
   "permissions": {
     "allow": [
-      "Edit","MultiEdit","Read","Grep","Glob","LS",
-      "Bash(rg:*)","Bash(fd:*)","Bash(jq:*)","Bash(yq:*)","Bash(http:*)",
-      "Bash(gh:*)","Bash(aws:*)","Bash(az:*)","Bash(docker:*)",
-      "Bash(kubectl:*)","Bash(helm:*)","Bash(terraform:*)",
-      "Bash(node:*)","Bash(npm:*)","Bash(pnpm:*)","Bash(npx:*)",
-      "Bash(pytest:*)","Bash(python3:*)",
-      "Bash(gemini:*)","Bash(grok:*)","Bash(codex:*)","Bash(openai:*)"
+      "Edit",
+      "Read",
+      "Write",
+      "Grep",
+      "Glob",
+      "LS",
+      "Bash(rg:*)",
+      "Bash(jq:*)",
+      "Bash(pnpm:*)",
+      "Bash(npm:*)",
+      "Bash(pytest:*)",
+      "Bash(python:*)",
+      "Bash(node:*)",
+      "Bash(http:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)"
     ],
     "ask": [
-      "Bash(git push:*)","Bash(docker push:*)","Bash(terraform apply:*)",
-      "Bash(aws s3 rm:*)","Bash(az group delete:*)","WebFetch"
+      "WebFetch",
+      "Bash(docker:*)",
+      "Bash(kubectl:*)",
+      "Bash(terraform:*)",
+      "Bash(git push:*)",
+      "Bash(rm -rf:*)",
+      "Bash(aws:*)",
+      "Bash(az:*)"
     ],
-    "deny": ["Read(./.env)","Read(./.env.*)","Read(./secrets/**)"],
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(./secrets/**)",
+      "Bash(sudo:*)"
+    ],
     "defaultMode": "acceptEdits"
-  }
+  },
+  "env": {
+    "TEACH_MODE": "1",
+    "VERBOSITY": "medium",
+    "EXPLAIN_COMMANDS": "1",
+    "MAX_DIFF_SIZE": "100",
+    "DEFAULT_COT": "cot-structured",
+    "EXTENDED_THINKING": "off",
+    "THINK_BUDGET_BULLETS": "5"
+  },
+  "description": "Beginner - New to repo & tools. Plan→Code→Test loop with verbose steps, strict guardrails."
 }

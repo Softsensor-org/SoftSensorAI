@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# Simple wrapper for profile configuration
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# If no arguments, launch interactive menu
+if [ $# -eq 0 ]; then
+  exec "$SCRIPT_DIR/profile_menu.sh"
+else
+  # Pass arguments to apply_profile.sh
+  exec "$SCRIPT_DIR/apply_profile.sh" "$@"
+fi

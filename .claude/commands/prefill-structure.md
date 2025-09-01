@@ -1,0 +1,1 @@
+/home/vivek/repos/setup-scripts/.claude/commands/sets/beginner/prefill-structure.md

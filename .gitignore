@@ -35,3 +35,5 @@ build/
 # Temporary files
 *.tmp
 *.baksetup_agents_repo.sh.bak.*
+PROFILE.md
+.claude/settings.json.backup

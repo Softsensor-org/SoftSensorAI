@@ -310,8 +310,54 @@ RC
   fi
 }
 
+# Function to check if we're in an existing repo
+check_existing_repo() {
+  if [ -d ".git" ] || [ -f "package.json" ] || [ -f "requirements.txt" ] || [ -f "pyproject.toml" ]; then
+    return 0
+  fi
+  return 1
+}
+
 # main
 say "Repo Setup Wizard"
+
+# Check if we're in an existing repository
+if check_existing_repo && [ "$NON_INTERACTIVE" -eq 0 ]; then
+  warn "You appear to be in an existing project directory"
+  echo "Current directory: $(pwd)"
+  echo ""
+  echo "Options:"
+  echo "  1) Setup agent configs for THIS existing project"
+  echo "  2) Clone a NEW repository (continue with wizard)"
+  echo "  3) Exit"
+  echo ""
+  read -p "Choose option (1-3): " existing_choice
+
+  case "$existing_choice" in
+    1)
+      # Launch existing repo setup
+      if [ -f "$SCRIPT_DIR/existing_repo_setup.sh" ]; then
+        exec "$SCRIPT_DIR/existing_repo_setup.sh"
+      else
+        err "Existing repo setup script not found"
+        exit 1
+      fi
+      ;;
+    2)
+      # Continue with normal flow
+      say "Continuing with new repository setup..."
+      ;;
+    3)
+      say "Exiting..."
+      exit 0
+      ;;
+    *)
+      err "Invalid choice"
+      exit 1
+      ;;
+  esac
+fi
+
 say "Checking required tools..."
 require_tools
 say "✓ All required tools found"
@@ -332,9 +378,38 @@ if [[ "$DRY" -eq 0 ]]; then
 fi
 if [[ -z "$ORG" && "$DRY" -eq 0 ]]; then
   say "Scanning for existing organizations..."
-  mapfile -t ORGS < <(find "$BASE" -mindepth 1 -maxdepth 1 -type d -printf "%f\n" 2>/dev/null | sort)
-  if ((${#ORGS[@]}==0)); then warn "No orgs under $BASE."; read -rp "Enter new org slug (e.g., org1): " ORG
-  else say "Choose an org"; ORG=$(select_menu "${ORGS[@]}" "Create new…"); [[ "$ORG" == "Create new…" ]] && read -rp "Enter new org slug: " ORG; fi
+  if [ -d "$BASE" ]; then
+    mapfile -t ORGS < <(find "$BASE" -mindepth 1 -maxdepth 1 -type d -printf "%f\n" 2>/dev/null | sort)
+  else
+    ORGS=()
+  fi
+
+  # Add option for existing directory setup
+  if ((${#ORGS[@]}==0)); then
+    warn "No orgs under $BASE."
+    echo "Options:"
+    echo "  1) Enter new organization name"
+    echo "  2) Setup existing project (different location)"
+    read -p "Choose (1-2): " org_choice
+
+    if [ "$org_choice" = "2" ]; then
+      if [ -f "$SCRIPT_DIR/existing_repo_setup.sh" ]; then
+        exec "$SCRIPT_DIR/existing_repo_setup.sh"
+      fi
+    else
+      read -rp "Enter new org slug (e.g., org1): " ORG
+    fi
+  else
+    say "Choose an org"
+    ORG=$(select_menu "${ORGS[@]}" "Create new…" "Setup existing repo")
+    if [[ "$ORG" == "Setup existing repo" ]]; then
+      if [ -f "$SCRIPT_DIR/existing_repo_setup.sh" ]; then
+        exec "$SCRIPT_DIR/existing_repo_setup.sh"
+      fi
+    elif [[ "$ORG" == "Create new…" ]]; then
+      read -rp "Enter new org slug: " ORG
+    fi
+  fi
 fi
 [[ -z "$ORG" ]] && ORG="testorg"  # Default for dry-run
 

@@ -30,7 +30,7 @@ PY
 }
 
 _THIS="$(_resolve_realpath "$0" 2>/dev/null || echo "$0")"
-SETUP_SCRIPTS_DIR="${SETUP_SCRIPTS_DIR:-$(dirname "$(dirname "$_THIS")") }"
+SETUP_SCRIPTS_DIR="${SETUP_SCRIPTS_DIR:-$(dirname "$(dirname "$_THIS")")}"
 
 # Usage
 usage() {
@@ -61,6 +61,12 @@ EOF
 
   exit 0
 }
+
+# Check if no arguments provided - launch interactive menu
+if [ $# -eq 0 ]; then
+  # Launch interactive menu
+  exec "$(dirname "$0")/profile_menu.sh"
+fi
 
 # Parse arguments
 while [[ $# -gt 0 ]]; do
