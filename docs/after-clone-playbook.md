@@ -394,9 +394,157 @@ just artifacts-all &
 wait
 ```
 
+## 6) Quick Alignment Questions (Optional)
+
+Answer these 6 questions to instantly tailor all commands to your specific repo:
+
+### Quick Setup Interview
+
+```bash
+# Run this to generate a custom configuration
+cat > .devpilot/alignment.yml << 'EOF'
+# Answer these 6 questions for instant customization:
+
+1. Primary goal (next 2-4 weeks)?
+   goal: feature        # Options: feature|hardening|research
+
+2. Stack & runtime(s)?
+   stack: "Node/TypeScript"
+   runtime: "containerized"  # Options: local|containerized|serverless
+
+3. Current phase & gates?
+   phase: mvp           # Options: poc|mvp|beta|scale
+   gates:
+     - "coverage >= 60%"
+     - "no HIGH vulns"
+
+4. Security posture?
+   security:
+     secrets_blocking: true
+     sast_threshold: HIGH     # Options: LOW|MEDIUM|HIGH|CRITICAL
+     vuln_threshold: HIGH
+
+5. Domain modules?
+   modules: []          # Options: [ocr_cv, robotics, notebooks, ml_ops, data_eng]
+
+6. CI has AI CLIs?
+   ci_ai_cli: false     # Set true if runner has claude/codex/gemini/grok
+EOF
+
+# Generate custom Justfile based on answers
+./scripts/generate_custom_justfile.sh .devpilot/alignment.yml > Justfile.custom
+```
+
+### Example Configurations
+
+**Feature Development (Startup)**
+
+```yaml
+goal: feature
+stack: "Node/React"
+runtime: "containerized"
+phase: mvp
+gates: ["tests pass", "no secrets"]
+security:
+  secrets_blocking: true
+  sast_threshold: HIGH
+modules: []
+ci_ai_cli: false
+```
+
+**ML/Data Project**
+
+```yaml
+goal: research
+stack: "Python/PyTorch"
+runtime: "local+gpu"
+phase: poc
+gates: ["notebooks run", "data validated"]
+security:
+  secrets_blocking: true
+  sast_threshold: MEDIUM
+modules: [notebooks, ml_ops, data_eng]
+ci_ai_cli: true
+```
+
+**Production Hardening**
+
+```yaml
+goal: hardening
+stack: "Go/K8s"
+runtime: "containerized"
+phase: scale
+gates: ["coverage >= 80%", "no MEDIUM+ vulns", "load tests pass"]
+security:
+  secrets_blocking: true
+  sast_threshold: MEDIUM
+  vuln_threshold: MEDIUM
+modules: []
+ci_ai_cli: true
+```
+
+### Auto-Generated Commands
+
+Based on your answers, we'll customize:
+
+- **Ticket generation** - Focus areas (features vs tech debt vs security)
+- **Review prompts** - Emphasis (correctness vs performance vs security)
+- **Test requirements** - Coverage thresholds and test types
+- **Security gates** - What blocks vs warns
+- **CI/CD config** - What runs automatically
+
+### Unified CLI Wrapper (dp)
+
+Create a simple wrapper for consistent commands across teams:
+
+```bash
+#!/usr/bin/env bash
+# Save as bin/dp and chmod +x bin/dp
+
+DEVPILOT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+
+case "$1" in
+  tickets)
+    just tickets
+    ;;
+  review-local|review)
+    just review-local "${2:-main}"
+    ;;
+  repo-review|scan)
+    just repo-review
+    ;;
+  setup)
+    # Load alignment if exists
+    if [[ -f .devpilot/alignment.yml ]]; then
+      echo "Loading custom alignment..."
+      ./scripts/apply_alignment.sh .devpilot/alignment.yml
+    else
+      echo "Run alignment questions first:"
+      echo "  dp align"
+    fi
+    ;;
+  align)
+    # Interactive alignment
+    ./scripts/alignment_wizard.sh
+    ;;
+  *)
+    echo "Usage: dp {tickets|review|scan|setup|align}"
+    ;;
+esac
+```
+
+Now your team can use:
+
+- `dp align` - Run the 6 questions wizard
+- `dp tickets` - Generate backlog
+- `dp review` - Pre-PR review
+- `dp scan` - Full repo analysis
+- `dp setup` - Apply custom configuration
+
 ## See Also
 
 - [Quick Start Guide](QUICK_START.md) - Initial setup
 - [Profiles & Phases](profiles.md) - Customizing skill/phase
 - [DPRS](dprs.md) - Understanding readiness scores
 - [CI Integration](ci.md) - Automating reviews
+- [Project Profiles](../README.md#project-profiles) - YAML-based customization

@@ -1,0 +1,192 @@
+#!/usr/bin/env bash
+# DevPilot unified CLI wrapper
+# Provides consistent interface across all projects
+
+set -euo pipefail
+
+# Colors
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+# Find project root (has .git or Justfile)
+find_project_root() {
+    local dir="$PWD"
+    while [[ "$dir" != "/" ]]; do
+        if [[ -d "$dir/.git" ]] || [[ -f "$dir/Justfile" ]]; then
+            echo "$dir"
+            return 0
+        fi
+        dir="$(dirname "$dir")"
+    done
+    echo "$PWD"
+}
+
+PROJECT_ROOT="$(find_project_root)"
+cd "$PROJECT_ROOT"
+
+# Check for Justfile
+if [[ ! -f "Justfile" ]]; then
+    echo -e "${YELLOW}No Justfile found. Creating one...${NC}"
+    if [[ -f "$HOME/devpilot/templates/justfile" ]]; then
+        cp "$HOME/devpilot/templates/justfile" Justfile
+        echo -e "${GREEN}✓ Created Justfile from template${NC}"
+    else
+        echo -e "${RED}Error: No Justfile template found${NC}"
+        echo "Run: ~/devpilot/setup/existing_repo_setup.sh"
+        exit 1
+    fi
+fi
+
+# Main command router
+case "${1:-help}" in
+    tickets|t)
+        echo -e "${BLUE}Generating tickets from codebase...${NC}"
+        just tickets
+        ;;
+
+    review|r)
+        BASE="${2:-main}"
+        echo -e "${BLUE}Reviewing changes against $BASE...${NC}"
+        just review-local BASE="$BASE"
+        ;;
+
+    scan|repo-review|rr)
+        echo -e "${BLUE}Running repository review...${NC}"
+        just repo-review
+        ;;
+
+    pr|pre-pr)
+        BASE="${2:-main}"
+        echo -e "${BLUE}Running pre-PR review against $BASE...${NC}"
+        just review-pre-pr BASE="$BASE"
+        ;;
+
+    security|sec)
+        echo -e "${BLUE}Running security scan...${NC}"
+        just security-quick
+        ;;
+
+    dprs|score)
+        echo -e "${BLUE}Calculating DPRS score...${NC}"
+        if [[ -f "scripts/dprs.sh" ]]; then
+            ./scripts/dprs.sh
+        else
+            ~/devpilot/scripts/dprs.sh
+        fi
+        ;;
+
+    setup)
+        # Load alignment if exists
+        if [[ -f ".devpilot/alignment.yml" ]]; then
+            echo -e "${BLUE}Loading custom alignment...${NC}"
+            if [[ -f "scripts/apply_alignment.sh" ]]; then
+                ./scripts/apply_alignment.sh .devpilot/alignment.yml
+            else
+                echo -e "${YELLOW}Alignment file found but no apply script${NC}"
+            fi
+        else
+            echo -e "${YELLOW}No alignment file found. Run: dp align${NC}"
+        fi
+        ;;
+
+    align)
+        echo -e "${BLUE}Starting alignment wizard...${NC}"
+        if [[ -f "scripts/alignment_wizard.sh" ]]; then
+            ./scripts/alignment_wizard.sh
+        else
+            # Simple inline alignment
+            mkdir -p .devpilot
+            cat > .devpilot/alignment.yml << 'EOF'
+# DevPilot Alignment Configuration
+# Edit these values to customize your setup
+
+1. Primary goal (next 2-4 weeks)?
+   goal: feature        # Options: feature|hardening|research
+
+2. Stack & runtime(s)?
+   stack: "Node/TypeScript"
+   runtime: "containerized"  # Options: local|containerized|serverless
+
+3. Current phase & gates?
+   phase: mvp           # Options: poc|mvp|beta|scale
+   gates:
+     - "tests pass"
+     - "no HIGH vulns"
+
+4. Security posture?
+   security:
+     secrets_blocking: true
+     sast_threshold: HIGH     # Options: LOW|MEDIUM|HIGH|CRITICAL
+     vuln_threshold: HIGH
+
+5. Domain modules?
+   modules: []          # Options: [ocr_cv, robotics, notebooks, ml_ops, data_eng]
+
+6. CI has AI CLIs?
+   ci_ai_cli: false     # Set true if runner has claude/codex/gemini/grok
+EOF
+            echo -e "${GREEN}✓ Created .devpilot/alignment.yml${NC}"
+            echo "Edit this file then run: dp setup"
+        fi
+        ;;
+
+    after-clone|ac)
+        echo -e "${BLUE}Running after-clone playbook...${NC}"
+        just after-clone
+        ;;
+
+    info|status)
+        echo -e "${BLUE}Project Status:${NC}"
+        echo "Repository: $(basename "$PROJECT_ROOT")"
+        echo "Branch: $(git branch --show-current 2>/dev/null || echo 'not a git repo')"
+        if [[ -f "scripts/profile_show.sh" ]]; then
+            ./scripts/profile_show.sh
+        fi
+        if [[ -f ".devpilot/alignment.yml" ]]; then
+            echo -e "${GREEN}✓ Custom alignment configured${NC}"
+        fi
+        ;;
+
+    help|h|--help|-h)
+        cat << EOF
+${GREEN}dp - DevPilot CLI${NC}
+
+${BLUE}Usage:${NC}
+    dp <command> [options]
+
+${BLUE}Core Commands:${NC}
+    tickets, t          Generate tickets from codebase
+    review, r [BASE]    Review changes against base branch (default: main)
+    scan, rr            Run full repository review
+    pr, pre-pr [BASE]   Pre-PR review against base branch
+    security, sec       Quick security scan
+    dprs, score         Calculate DPRS readiness score
+
+${BLUE}Setup Commands:${NC}
+    align              Configure project alignment (6 questions)
+    setup              Apply alignment configuration
+    after-clone, ac    Run complete after-clone playbook
+    info, status       Show project status
+
+${BLUE}Examples:${NC}
+    dp tickets                 # Generate backlog
+    dp review                  # Review changes vs main
+    dp review develop          # Review changes vs develop
+    dp scan                    # Full repo analysis
+    dp pr                      # Pre-PR review
+    dp align                   # Configure for your project
+
+${BLUE}Documentation:${NC}
+    https://github.com/Softsensor-org/DevPilot
+EOF
+        ;;
+
+    *)
+        echo -e "${RED}Unknown command: $1${NC}"
+        echo "Run: dp help"
+        exit 1
+        ;;
+esac
