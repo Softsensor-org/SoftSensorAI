@@ -1,81 +1,102 @@
-# Claude Commands Catalog
+# 🤖 AI Agent Commands Registry
 
-The following commands are seeded into repos to standardize workflows.
+Auto-generated index of all available AI assistant commands.
 
-Explore → Plan → Code → Test
-- `.claude/commands/explore-plan-code-test.md`
-  - Explore: Summarize in bullets, list impacted files
-  - Plan: Acceptance checks and exact commands (lint, typecheck, tests)
-  - Code: Minimal diff, unified diff only
-  - Test: Run checks and iterate until green
+> **Note:** This file is auto-generated. Do not edit manually. Run
+> `scripts/generate_command_registry.sh` to update.
 
-Secure Fix
-- `.claude/commands/secure-fix.md`
-  - Run optional security tools (semgrep, trivy, gitleaks, hadolint) when available
-  - Choose a high-value, low-risk fix and verify
+## Command Categories
 
-Extended Thinking (controlled)
-- `.claude/commands/think-deep.md`
-  - Uses `EXTENDED_THINKING` and `THINK_BUDGET_BULLETS` from profile env
-  - If off, skip the <thinking> section
-  - Output includes a small structured thinking block then normal Plan→Code→Test
+- [🧠 Thinking & Analysis](#-thinking--analysis)
+- [🔒 Security](#-security)
+- [📋 Ticket Management](#-ticket-management)
+- [🔍 Code Auditing](#-code-auditing)
+- [🔄 Processing & Workflows](#-processing--workflows)
 
-Long-Context Map→Reduce
-- `.claude/commands/long-context-map-reduce.md`
-  - Split big inputs (files, docs, logs) into chunks with IDs
-  - MAP: Produce <note id="…"> blocks with key facts + citations (file:line)
-  - REDUCE: Merge and rank into a <summary> with risks, questions, and next actions
+---
 
-Prefill Structure
-- `.claude/commands/prefill-structure.md`
-  - Pre-shapes the response with `<thinking/><plan/><work/><verify/><next/>`
-  - Keep thinking to ≤ 5 bullets
+## 🧠 Thinking & Analysis
 
-Prefill Diff
-- `.claude/commands/prefill-diff.md`
-  - Forces a unified diff response and explicit commands run
+| Command           | Description                    |
+| ----------------- | ------------------------------ |
+| `/cot-lite`       | Chain of Thought - Lite        |
+| `/cot-structured` | Chain of Thought - Structured  |
+| `/think-deep`     | Extended Thinking (controlled) |
+| `/think-hard`     | Think Hard                     |
 
-Prompt Improver
-- `.claude/commands/prompt-improver.md`
-  - Upgrades rough prompts into production-grade ones with variables and output specs
+## 🔒 Security
 
-Parallel Map
-- `.claude/commands/parallel-map.md`
-  - Identify truly independent subtasks, run them in parallel, then merge results with a clear reduce step
+| Command            | Description     |
+| ------------------ | --------------- |
+| `/secure-fix`      | Goal            |
+| `/security-review` | Security Review |
 
-Chain Step Skeleton
-- `.claude/commands/chain-step-skeleton.md`
-  - Standard handoff structure for multi-step work (goal, inputs, work, handoff)
+## 📋 Ticket Management
 
-Full Audit
-- `.claude/commands/audit-full.md`
-  - 90-minute audit outline with prioritized findings and actions
+| Command                 | Description                            |
+| ----------------------- | -------------------------------------- |
+| `/ticket-quality-gates` | Ticket Quality Gates Checklist         |
+| `/tickets-from-code`    | Command: tickets-from-code (CLI‑first) |
+| `/tickets-from-diff`    | Command: tickets-from-diff (CLI‑first) |
+| `/tickets-quick-scan`   | Quick Scan → Tickets (20 minutes)      |
 
-Tickets From Code
-- `.claude/commands/tickets-from-code.md`
-  - Generate ticket backlog from code areas with acceptance and estimates
+## 🔍 Code Auditing
 
-Architecture Spike
-- `.claude/commands/architect-spike.md`
-  - Compare options and recommend an approach with rollback and success metrics
+| Command        | Description                               |
+| -------------- | ----------------------------------------- |
+| `/audit-full`  | Full Repo Audit (chain-ready, structured) |
+| `/audit-quick` | Quick Scan (20 minutes, surgical)         |
 
-Migration Plan
-- `.claude/commands/migration-plan.md`
-  - Plan backfill/dual-write/cutover/verify/rollback with commands and checkpoints
+## 🔄 Processing & Workflows
 
-Observability Pass
-- `.claude/commands/observability-pass.md`
-  - Add tracing/logs/metrics, define SLIs, and verify locally and in CI
+| Command                | Description              |
+| ---------------------- | ------------------------ |
+| `/chain-step-skeleton` | Step <N> of <M> — <TASK> |
+| `/parallel-map`        | Parallel Map → Reduce    |
 
-API Contract Update
-- `.claude/commands/api-contract-update.md`
-  - Update OpenAPI/GraphQL, regenerate clients, update tests, and validate contracts
+---
 
-Skill-driven Availability
-- Beginner/Vibe: `prefill-structure`, `long-context-map-reduce`
-- L1: `think-deep` (budgeted)
-- L2/Expert: `think-deep` (on, larger budget)
+## Command Details
 
-Environment Flags
-- `EXTENDED_THINKING=on|off`
-- `THINK_BUDGET_BULLETS=5` (or higher for expert)
+### Using Commands
+
+Commands are invoked by typing the slash command in your AI assistant:
+
+```
+/command-name
+```
+
+Some commands accept parameters or context:
+
+```
+/tickets-from-diff HEAD~3
+/security-review path/to/file.py
+```
+
+### Command Files
+
+Each command is defined in a markdown file under `.claude/commands/`. The file structure:
+
+1. **Description** - First line describes the command
+2. **Instructions** - Detailed steps for the AI to follow
+3. **Examples** - Usage examples (optional)
+4. **Parameters** - Accepted parameters (optional)
+
+### Adding New Commands
+
+1. Create a new `.md` file in `.claude/commands/`
+2. Follow the existing command structure
+3. Run `scripts/generate_command_registry.sh` to update this registry
+
+### Command Naming Convention
+
+- Use kebab-case: `think-hard`, `security-review`
+- Be descriptive but concise
+- Group related commands with common prefixes:
+  - `tickets-*` for ticket operations
+  - `audit-*` for code auditing
+  - `think-*` for analysis modes
+
+---
+
+_Generated on $(date -u +"%Y-%m-%d %H:%M:%S UTC")_

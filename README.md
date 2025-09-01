@@ -345,6 +345,20 @@ cd your-project
 scripts/apply_profile.sh --skill expert --phase scale
 ```
 
+### AI PR Review (Optional)
+
+Enable automatic AI-powered PR reviews without API keys:
+
+```bash
+# Set repository variable for all PRs
+gh variable set AI_REVIEW_ENABLED --body true
+
+# Or add label to specific PRs
+gh pr edit 123 --add-label ai-review
+```
+
+See [CI Integrations](docs/ci.md#ai-pr-review-setup) for details.
+
 ## 🎯 Skill Levels Explained
 
 DevPilot adapts to YOUR experience level:

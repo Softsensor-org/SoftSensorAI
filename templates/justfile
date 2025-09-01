@@ -443,6 +443,18 @@ info:
   @echo "Rust: $(rustc --version 2>/dev/null || echo 'not installed')"
   @git rev-parse --short HEAD 2>/dev/null || echo "Not a git repository"
 
+# Generate AI command registry
+commands:
+  #!/usr/bin/env bash
+  set -euo pipefail
+  if [ -f "scripts/generate_command_registry.sh" ]; then
+    ./scripts/generate_command_registry.sh
+    echo "✓ Command registry updated: docs/agent-commands.md"
+  else
+    echo "Command registry generator not found"
+    echo "Run: curl -sL https://raw.githubusercontent.com/Softsensor-org/DevPilot/main/scripts/generate_command_registry.sh > scripts/generate_command_registry.sh"
+  fi
+
 # Review local changes with AI
 review-local:
   #!/usr/bin/env bash
