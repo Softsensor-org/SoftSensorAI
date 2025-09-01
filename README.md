@@ -337,6 +337,9 @@ What this does:
 
 ## 📖 For Daily Use
 
+> **🚀 New!** Check out the [After Clone Playbook](docs/after-clone-playbook.md) for a complete
+> 10-minute repo review workflow
+
 ### Commands You'll Use Most Often
 
 | Command                           | What it does               | When to use               |
