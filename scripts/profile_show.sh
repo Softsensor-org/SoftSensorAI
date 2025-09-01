@@ -204,13 +204,15 @@ show_activity() {
 
   # Check for test results
   if [ -f "coverage/coverage-summary.json" ]; then
-    local coverage=$(grep -oP '"pct":\K[0-9.]+' coverage/coverage-summary.json | head -1)
+    local coverage
+    coverage=$(grep -oP '"pct":\K[0-9.]+' coverage/coverage-summary.json | head -1)
     echo "  Test coverage: ${coverage}%"
   fi
 
   # Check CI status
   if [ -f ".github/workflows/ci.yml" ]; then
-    local ci_phase=$(grep "^name:" .github/workflows/ci.yml | grep -oP 'CI - \K\w+' | tr '[:upper:]' '[:lower:]')
+    local ci_phase
+    ci_phase=$(grep "^name:" .github/workflows/ci.yml | grep -oP 'CI - \K\w+' | tr '[:upper:]' '[:lower:]')
     echo "  CI configured for: $ci_phase phase"
   fi
 }
