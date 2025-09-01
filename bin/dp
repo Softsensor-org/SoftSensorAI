@@ -113,6 +113,13 @@ cmd_review() {
   local sys="$ROOT/system/active.md"
   [[ -f "$sys" ]] || { say "error: $sys not found. Run dp init."; exit 1; }
   local base="${BASE_BRANCH:-main}"
+  local with_preview="${1:-}"
+
+  # Check for preview flag
+  if [[ "$with_preview" == "--preview" ]]; then
+    say "▸ Review will include preview logs"
+  fi
+
   git fetch --no-tags origin "$base" --depth=1 || true
   git diff --unified=1 --minimal --no-color "origin/$base"...HEAD > "$ART/review_diff.patch" || true
   local lines; lines=$(wc -l < "$ART/review_diff.patch" || echo 0)
@@ -145,9 +152,32 @@ cmd_review() {
     fi
   fi
 
+  # Collect preview logs if requested
+  local preview_context=""
+  if [[ "$with_preview" == "--preview" ]]; then
+    say "▸ Collecting preview logs..."
+    if [[ -x "$ROOT/tools/preview_logs.sh" ]]; then
+      preview_context=$("$ROOT/tools/preview_logs.sh" 200 context 2>/dev/null || echo "")
+    elif docker ps -q -f "name=preview-" > /dev/null 2>&1; then
+      preview_context=$(docker logs preview-app-local --tail=200 2>&1 | grep -E "(ERROR|WARN|Exception)" | tail -50 || echo "")
+    fi
+
+    if [[ -n "$preview_context" ]]; then
+      say "▸ Found preview context (errors/warnings will be included)"
+    fi
+  fi
+
   {
     [[ -n "$risk_prelude" ]] && echo -e "$risk_prelude"
     echo "ROLE: Senior code reviewer. Produce concise, file-scoped bullets with suggested changes."
+    if [[ -n "$preview_context" ]]; then
+      echo "CONTEXT: Preview environment is running. Review logs for runtime issues."
+      echo ""
+      echo "=== PREVIEW LOGS ==="
+      echo "$preview_context" | head -50
+      echo "=== END LOGS ==="
+      echo ""
+    fi
     echo "HINT: If diff seems truncated, outline issues file-by-file; ask for a follow-up on specific files as needed."
     echo "DIFF:"; cat "$ART/review_diff.patch"
   } > "$ART/review_prompt.txt"
@@ -223,10 +253,18 @@ case "${1:-}" in
   -h|--help|"")
     cat <<'HELP'
 DevPilot meta-CLI
-  dp init      # doctor → profile → build system → quick repo review
-  dp project   # create/show devpilot.project.yml (zero-friction defaults)
-  dp tickets   # structured backlog (JSON → CSV), CLI-first, strict schema
-  dp review    # local AI review of your diff (neutral if no CLIs)
+  dp init              # doctor → profile → build system → quick repo review
+  dp project           # create/show devpilot.project.yml (zero-friction defaults)
+  dp tickets           # structured backlog (JSON → CSV), CLI-first, strict schema
+  dp review            # local AI review of your diff (neutral if no CLIs)
+  dp review --preview  # review with preview environment logs for context
+
+Commands via just:
+  just preview         # start preview environment (Docker Compose)
+  just preview-logs    # view preview logs
+  just preview-stop    # stop preview environment
+  just review-preview  # AI review with full preview context
+
 Env: AI_MODEL_* override model names; TIMEOUT_SECS limits long runs
 HELP
     ;;

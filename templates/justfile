@@ -274,6 +274,150 @@ security:
   echo "✓ Security scan complete"
 
 # ============================================================================
+# Preview & Testing
+# ============================================================================
+
+# Start preview environment (Docker Compose)
+preview ID="local":
+  #!/usr/bin/env bash
+  set -euo pipefail
+  echo "🚀 Starting preview environment (ID: {{ID}})..."
+
+  # Check for compose file
+  if [ ! -f "compose.preview.yml" ] && [ ! -f "docker-compose.preview.yml" ]; then
+    echo "Creating compose.preview.yml from template..."
+    if [ -f "$HOME/setup-scripts/templates/compose.preview.yml" ]; then
+      cp "$HOME/setup-scripts/templates/compose.preview.yml" compose.preview.yml
+    else
+      echo "⚠️  No preview compose file found. Creating minimal..."
+      cat > compose.preview.yml <<'EOF'
+  version: '3.8'
+  services:
+    app:
+      build: .
+      ports: ["8080:3000"]
+      environment:
+        NODE_ENV: preview
+      volumes:
+        - ./:/app:ro
+        - preview-logs:/logs
+  volumes:
+    preview-logs:
+  EOF
+    fi
+  fi
+
+  # Set preview ID for isolation
+  export PREVIEW_ID="{{ID}}"
+  export PREVIEW_PORT="${PREVIEW_PORT:-8080}"
+
+  # Start services
+  docker-compose -f compose.preview.yml up -d --build
+
+  # Wait for health
+  echo "⏳ Waiting for services to be healthy..."
+  sleep 5
+
+  # Show status
+  docker-compose -f compose.preview.yml ps
+
+  echo ""
+  echo "✅ Preview ready at: http://localhost:${PREVIEW_PORT}"
+  echo ""
+  echo "Commands:"
+  echo "  just preview-logs     # View logs"
+  echo "  just preview-stop     # Stop preview"
+  echo "  just preview-test     # Run tests against preview"
+  echo "  just review-preview   # AI review with preview context"
+
+# View preview logs
+preview-logs ID="local" TAIL="100":
+  @echo "📋 Preview logs (last {{TAIL}} lines)..."
+  @docker-compose -f compose.preview.yml logs --tail={{TAIL}} 2>/dev/null || docker logs preview-app-{{ID}} --tail={{TAIL}} 2>&1
+
+# Stop preview environment
+preview-stop ID="local":
+  @echo "🛑 Stopping preview environment..."
+  @PREVIEW_ID={{ID}} docker-compose -f compose.preview.yml down -v
+  @echo "✅ Preview stopped"
+
+# Run tests against preview
+preview-test ID="local":
+  #!/usr/bin/env bash
+  set -euo pipefail
+  echo "🧪 Running tests against preview..."
+
+  PREVIEW_URL="http://localhost:${PREVIEW_PORT:-8080}"
+
+  # Basic health check
+  if curl -f "$PREVIEW_URL/health" 2>/dev/null; then
+    echo "✅ Health check passed"
+  else
+    echo "❌ Health check failed"
+    exit 1
+  fi
+
+  # Run smoke tests if available
+  if [ -f "tests/smoke.sh" ]; then
+    PREVIEW_URL="$PREVIEW_URL" ./tests/smoke.sh
+  elif command -v npm >/dev/null && [ -f "package.json" ]; then
+    PREVIEW_URL="$PREVIEW_URL" npm run test:preview || true
+  elif command -v pytest >/dev/null && [ -d "tests" ]; then
+    PREVIEW_URL="$PREVIEW_URL" pytest tests/preview -v || true
+  fi
+
+  echo "✅ Preview tests complete"
+
+# AI review with preview context
+review-preview BASE="main":
+  #!/usr/bin/env bash
+  set -euo pipefail
+  echo "🔍 AI review with preview context..."
+
+  mkdir -p artifacts
+
+  # Get diff
+  git diff --unified=1 --minimal --no-color origin/{{BASE}}...HEAD | head -6000 > artifacts/review_diff.patch
+
+  # Get preview logs (last 200 lines for context)
+  echo "📋 Collecting preview logs..."
+  docker-compose -f compose.preview.yml logs --tail=200 > artifacts/preview.log 2>&1 || \
+    docker logs preview-app-local --tail=200 > artifacts/preview.log 2>&1 || \
+    echo "No preview logs available" > artifacts/preview.log
+
+  # Risk analysis
+  RISK_TAGS=""
+  if [ -f tools/diff_risk.sh ]; then
+    RISK_TAGS=$(bash tools/diff_risk.sh artifacts/review_diff.patch tags 2>/dev/null || echo "")
+    [ -n "$RISK_TAGS" ] && echo "⚠️  Risk: $RISK_TAGS"
+  fi
+
+  # Build prompt with preview context
+  {
+    [ -n "$RISK_TAGS" ] && echo "RISK: $RISK_TAGS"
+    echo "ROLE: Senior reviewer with preview environment context."
+    echo ""
+    echo "PREVIEW LOGS (last 200 lines):"
+    tail -50 artifacts/preview.log || echo "No logs"
+    echo ""
+    echo "DIFF:"
+    cat artifacts/review_diff.patch
+  } > artifacts/review_prompt.txt
+
+  # Run AI review
+  if command -v claude >/dev/null; then
+    claude --system-prompt system/active.md --input-file artifacts/review_prompt.txt > artifacts/review_preview.txt
+  elif command -v codex >/dev/null; then
+    codex exec --system-file system/active.md --input-file artifacts/review_prompt.txt > artifacts/review_preview.txt
+  else
+    echo "No AI CLI found"
+    exit 1
+  fi
+
+  echo "✅ Review saved to artifacts/review_preview.txt"
+  head -50 artifacts/review_preview.txt
+
+# ============================================================================
 # Build & Deploy
 # ============================================================================
 

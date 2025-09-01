@@ -1,0 +1,164 @@
+# DevPilot Preview Environment
+# Minimal skeleton for PR preview and testing
+# Usage: docker-compose -f compose.preview.yml up
+
+version: "3.8"
+
+services:
+  # Web application (adapt to your stack)
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: ${BUILD_TARGET:-development}
+    image: ${PROJECT_NAME:-app}:preview-${PREVIEW_ID:-local}
+    container_name: preview-app-${PREVIEW_ID:-local}
+    ports:
+      - "${PREVIEW_PORT:-8080}:${APP_PORT:-3000}"
+    environment:
+      NODE_ENV: preview
+      LOG_LEVEL: debug
+      DATABASE_URL: postgres://user:pass@db:5432/preview_db
+      REDIS_URL: redis://cache:6379
+      # Add your app-specific env vars
+      API_URL: ${API_URL:-http://localhost:8080}
+      PREVIEW_MODE: "true"
+      PREVIEW_ID: ${PREVIEW_ID:-local}
+    volumes:
+      # Mount source for hot reload in preview
+      - ./src:/app/src:ro
+      - ./public:/app/public:ro
+      # Persist logs for analysis
+      - preview-logs:/app/logs
+    depends_on:
+      - db
+      - cache
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:${APP_PORT:-3000}/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - preview-net
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+        labels: "preview,app"
+
+  # Database (minimal for preview)
+  db:
+    image: postgres:15-alpine
+    container_name: preview-db-${PREVIEW_ID:-local}
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: preview_db
+      POSTGRES_HOST_AUTH_METHOD: trust
+    volumes:
+      # Optional: seed data for preview
+      # - ./scripts/seed.sql:/docker-entrypoint-initdb.d/seed.sql:ro
+      - preview-db-data:/var/lib/postgresql/data
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    networks:
+      - preview-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "2"
+
+  # Cache (Redis)
+  cache:
+    image: redis:7-alpine
+    container_name: preview-cache-${PREVIEW_ID:-local}
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - preview-cache:/data
+    networks:
+      - preview-net
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "2"
+
+  # Mock external services (for isolated testing)
+  mock-api:
+    image: mockoon/cli:latest
+    container_name: preview-mock-${PREVIEW_ID:-local}
+    command: ["--data", "/data/mock-api.json", "--port", "3001"]
+    volumes:
+      - ./mocks/api.json:/data/mock-api.json:ro
+    ports:
+      - "${MOCK_PORT:-3001}:3001"
+    networks:
+      - preview-net
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "2"
+
+  # Log aggregator (for review context)
+  logs:
+    image: busybox:latest
+    container_name: preview-logs-${PREVIEW_ID:-local}
+    command: |
+      sh -c "
+        mkdir -p /logs
+        while true; do
+          echo '[Preview] Collecting logs...' >> /logs/preview.log
+          docker logs preview-app-${PREVIEW_ID:-local} --tail 100 2>&1 >> /logs/app.log || true
+          docker logs preview-db-${PREVIEW_ID:-local} --tail 50 2>&1 >> /logs/db.log || true
+          sleep 30
+        done
+      "
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - preview-logs:/logs
+    networks:
+      - preview-net
+    depends_on:
+      - app
+
+networks:
+  preview-net:
+    driver: bridge
+    name: preview-network-${PREVIEW_ID:-local}
+
+volumes:
+  preview-db-data:
+    name: preview-db-${PREVIEW_ID:-local}
+  preview-cache:
+    name: preview-cache-${PREVIEW_ID:-local}
+  preview-logs:
+    name: preview-logs-${PREVIEW_ID:-local}
+
+# Health check aggregation
+x-healthcheck: &default-healthcheck
+  interval: 30s
+  timeout: 10s
+  retries: 3
+
+# Common logging config
+x-logging: &default-logging
+  driver: "json-file"
+  options:
+    max-size: "10m"
+    max-file: "3"
+    labels: "preview"
