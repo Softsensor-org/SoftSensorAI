@@ -212,6 +212,9 @@ cd /path/to/your/project
 for p in software-architect backend-developer devops-engineer; do
   ~/devpilot/scripts/persona_manager.sh add $p
 done
+
+# Check what got configured
+scripts/profile_show.sh
 ```
 
 #### Option B: New Repository (Clone and Setup)
@@ -221,6 +224,10 @@ If you need to clone a repository first:
 ```bash
 # Run the interactive wizard
 ~/devpilot/setup/repo_wizard.sh
+
+# After setup completes, verify your configuration
+cd /path/to/cloned/project
+scripts/profile_show.sh
 ```
 
 > **Note**: AI review features require a CLI to be installed (claude, codex, gemini, or grok). If no
@@ -353,6 +360,13 @@ Once set up, these commands work automatically:
 - `/test-driven` - Write tests first, then code
 - `/security-review` - Check for vulnerabilities
 - `/refactor-complex` - Restructure messy code
+
+**How it works under the hood:**
+
+```
+system/active.md    → Sets baseline behavior (skill level, phase)
+.claude/commands/*  → Specialized prompts for each command
+```
 
 ### Setting Up Projects
 
