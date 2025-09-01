@@ -5,7 +5,7 @@ set -euo pipefail
 # Pass through whichever API keys are set
 envs=()
 [ -n "${OPENAI_API_KEY:-}" ] && envs+=(-e OPENAI_API_KEY)
-[ -n "${XAI_API_KEY:-}" ] && envs+=(-e XAI_API_KEY -e XAI_BASE_URL=${XAI_BASE_URL:-https://api.x.ai/v1})
+[ -n "${XAI_API_KEY:-}" ] && envs+=(-e XAI_API_KEY -e "XAI_BASE_URL=${XAI_BASE_URL:-https://api.x.ai/v1}")
 [ -n "${GROQ_API_KEY:-}" ] && envs+=(-e GROQ_API_KEY)
 [ -n "${GEMINI_API_KEY:-}" ] && envs+=(-e GEMINI_API_KEY)
 [ -n "${ANTHROPIC_API_KEY:-}" ] && envs+=(-e ANTHROPIC_API_KEY)
