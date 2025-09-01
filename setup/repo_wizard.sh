@@ -469,7 +469,58 @@ MAKEFILE
   fi
 fi
 
-[[ "$NO_BOOTSTRAP" -eq 1 ]] || { say "Bootstrapping project dependencies..."; bootstrap_env; say "✓ Dependencies installed"; }
+if [[ "$NO_BOOTSTRAP" -ne 1 ]]; then
+  say "Bootstrapping project dependencies..."
+
+  # Track what we find and install
+  deps_found=()
+  deps_installed=()
+
+  if [ -f package.json ]; then
+    deps_found+=("Node.js (package.json)")
+    if [ -f pnpm-lock.yaml ]; then
+      deps_found+=("pnpm lockfile")
+    fi
+  fi
+
+  if [ -f requirements.txt ] || [ -f pyproject.toml ]; then
+    if [ -f requirements.txt ]; then
+      deps_found+=("Python (requirements.txt)")
+    fi
+    if [ -f pyproject.toml ]; then
+      deps_found+=("Python (pyproject.toml)")
+    fi
+  fi
+
+  if [ ${#deps_found[@]} -gt 0 ]; then
+    say "  Found: ${deps_found[*]}"
+  else
+    say "  No dependency files found (package.json, requirements.txt, pyproject.toml)"
+  fi
+
+  # Run the bootstrap
+  bootstrap_env
+
+  # Report what was installed
+  if [ -f package.json ]; then
+    if [ -f node_modules/.package-lock.json ] || [ -f node_modules/.modules.yaml ]; then
+      deps_installed+=("Node modules")
+    fi
+  fi
+
+  if [ -d .venv ]; then
+    deps_installed+=("Python venv")
+    if [ -f .envrc ]; then
+      deps_installed+=("direnv config")
+    fi
+  fi
+
+  if [ ${#deps_installed[@]} -gt 0 ]; then
+    say "✓ Dependencies installed: ${deps_installed[*]}"
+  else
+    say "✓ Dependencies check complete (no installations needed)"
+  fi
+fi
 
 # Apply profile (with Beginner teach-mode prompt in interactive mode)
 apply_profile_now="no"
@@ -481,22 +532,63 @@ else
 fi
 
 if [[ "$apply_profile_now" == "yes" ]]; then
-  skill="${P_SKILL:-beginner}"
-  phase="${P_PHASE:-mvp}"
+  # Use provided values or prompt interactively
+  skill="${P_SKILL:-}"
+  phase="${P_PHASE:-}"
   teach="${P_TEACH:-}"
 
   if [[ $NON_INTERACTIVE -eq 0 ]]; then
+    # Interactive mode: prompt for skill if not provided
+    if [[ -z "$skill" ]]; then
+      echo ""
+      say "Select skill level:"
+      echo "  1) vibe      - Vibecoding: minimal structure, maximum freedom"
+      echo "  2) beginner  - Learning mode with detailed guidance"
+      echo "  3) l1        - Junior developer level"
+      echo "  4) l2        - Mid-level developer"
+      echo "  5) expert    - Senior developer, minimal hand-holding"
+      read -rp "Enter choice (1-5) [2]: " choice
+      case "${choice:-2}" in
+        1) skill="vibe";;
+        2) skill="beginner";;
+        3) skill="l1";;
+        4) skill="l2";;
+        5) skill="expert";;
+        *) skill="beginner"; warn "Invalid choice, defaulting to beginner";;
+      esac
+    fi
+
+    # Interactive mode: prompt for phase if not provided
+    if [[ -z "$phase" ]]; then
+      echo ""
+      say "Select project phase:"
+      echo "  1) poc    - Proof of concept, rapid prototyping"
+      echo "  2) mvp    - Minimum viable product"
+      echo "  3) beta   - Beta testing, stabilization"
+      echo "  4) scale  - Production, scaling focus"
+      read -rp "Enter choice (1-4) [2]: " choice
+      case "${choice:-2}" in
+        1) phase="poc";;
+        2) phase="mvp";;
+        3) phase="beta";;
+        4) phase="scale";;
+        *) phase="mvp"; warn "Invalid choice, defaulting to mvp";;
+      esac
+    fi
+
     # If not specified, ask beginner teach-mode preference
     if [[ -z "$teach" && "$skill" == "beginner" ]]; then
       read -rp "Beginner teach mode (guided, verbose CoT)? (Y/n): " t
       if [[ -z "$t" || "${t,,}" == "y" ]]; then teach="on"; else teach="off"; fi
     fi
   else
-    # Non-interactive default for beginner: teach on
+    # Non-interactive defaults
+    skill="${skill:-beginner}"
+    phase="${phase:-mvp}"
     if [[ -z "$teach" && "$skill" == "beginner" ]]; then teach="on"; fi
   fi
 
-  cmd=(scripts/apply_profile.sh --skill "$skill" --phase "$phase")
+  cmd=("$SCRIPT_DIR/../scripts/apply_profile.sh" --skill "$skill" --phase "$phase")
   [[ -n "$teach" ]] && cmd+=(--teach-mode "$teach")
   say "Applying profile: skill=$skill phase=$phase teach=${teach:-auto}..."
   "${cmd[@]}"
