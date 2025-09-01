@@ -81,7 +81,7 @@ RUN wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor -o /usr/shar
 # Python development tools
 RUN pipx install ruff black mypy pytest poetry
 
-# Node development tools  
+# Node development tools
 RUN npm install -g \
     typescript \
     @types/node \
