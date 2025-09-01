@@ -37,10 +37,45 @@ trivy fs --scanners vuln,secret,config -f json -o artifacts/trivy.json . || true
 
 ## 2) AI-Powered Analysis
 
-```bash
-# Generate actionable tickets from codebase
-./scripts/generate_tickets.sh --quick                   # → artifacts/tickets.json
+### Generate Tickets (Turn Code into Plan)
 
+```bash
+# Method 1: Using generate_tickets.sh (recommended)
+./scripts/generate_tickets.sh --quick --output artifacts  # → artifacts/tickets.json
+
+# Method 2: Manual CLI approach
+# Use the seeded command as INPUT; point system to system/active.md
+cat .claude/commands/tickets-from-code.md > artifacts/tickets_prompt.txt
+
+# Pick your installed CLI (fallback chain: claude → codex → gemini → grok)
+# Claude CLI
+claude --system-prompt system/active.md \
+  --input-file artifacts/tickets_prompt.txt > artifacts/tickets.json
+
+# OR Codex CLI
+codex exec --system-file system/active.md \
+  --input-file artifacts/tickets_prompt.txt > artifacts/tickets.json
+
+# OR Gemini CLI
+gemini generate --model gemini-1.5-pro-latest \
+  --system-file system/active.md \
+  --prompt-file artifacts/tickets_prompt.txt > artifacts/tickets.json
+
+# OR Grok CLI
+grok chat --system "$(cat system/active.md)" \
+  --input-file artifacts/tickets_prompt.txt > artifacts/tickets.json
+
+# Convert JSON to CSV for import/triage
+jq -r '.tickets[] | [
+  .id,.title,.type,.priority,.effort,
+  (.labels//[]|join("|")), (.assignee//""), (.dependencies//[]|join("|")),
+  (.notes//""|gsub("[\r\n]+";" ")), (.acceptance_criteria//[]|join("; "))
+] | @csv' artifacts/tickets.json > artifacts/tickets.csv
+```
+
+### Other Analysis Tools
+
+```bash
 # Get DPRS score for maturity assessment
 ./scripts/dprs.sh                                       # → artifacts/dprs.md
 
