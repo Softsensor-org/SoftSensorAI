@@ -22,49 +22,73 @@ Transform how you work with AI coding assistants. DevPilot automatically configu
 
 ## 👀 What You Get
 
-After running DevPilot on your project:
+DevPilot works at two levels:
 
+### 1️⃣ Global Setup (One-time, on YOUR computer)
+After running `setup_all.sh`, you get:
+```
+Your Home Directory:
+├── ~/.claude/           # Global Claude settings
+├── ~/.gemini/           # Global Gemini settings
+├── ~/devpilot/          # DevPilot tools & wizards
+│   ├── setup/           # Project setup wizards
+│   ├── scripts/         # Helper scripts
+│   └── templates/       # Reusable templates
+└── /usr/local/bin/      # Installed tools: ripgrep, jq, gh, etc.
+```
+
+### 2️⃣ Per-Project Setup (For EACH project)
+After running `repo_wizard.sh` on a project:
 ```
 your-project/
-├── CLAUDE.md           # AI understands your project
+├── CLAUDE.md           # AI understands THIS project
 ├── AGENTS.md           # Consistent AI behavior
 ├── .claude/
-│   ├── settings.json   # Permissions configured
+│   ├── settings.json   # Project-specific permissions
 │   └── commands/       # 30+ powerful commands like /think-hard
 ├── scripts/
 │   ├── apply_profile.sh    # Change skill level anytime
 │   └── run_checks.sh        # Automated quality checks
-└── (your code, now AI-ready)
+└── (your existing code, now AI-ready)
 ```
 
-Your AI assistants will:
-- Know if you're a beginner (teach mode) or expert (full power)
-- Understand if you're prototyping (move fast) or in production (be careful)
-- Have access to the right tools for your skill level
-- Follow consistent patterns across all your projects
+## 🚀 Getting Started
 
-## 🚀 Installation (First-Time Setup)
-
-**Step 1:** Get DevPilot (2 minutes)
+### Step 1: Install DevPilot Globally (One-time only!)
 ```bash
+# This installs tools on YOUR computer, not in any project
 git clone https://github.com/VivekLmd/setup-scripts.git ~/devpilot
 cd ~/devpilot
 ./setup_all.sh
 ```
 
-**Step 2:** Set up your first project
+What this does:
+- ✅ Installs development tools (ripgrep, jq, GitHub CLI, etc.)
+- ✅ Creates global AI configurations in your home directory
+- ✅ Sets up the DevPilot toolkit for future use
+- ❌ Does NOT touch any of your projects
+- ❌ Does NOT clone any repositories
+
+### Step 2: Set Up Each Project (Run for every project)
 ```bash
+# This sets up a SPECIFIC project with AI configurations
 ~/devpilot/setup/repo_wizard.sh
 ```
 
-The wizard will ask you 5 simple questions:
-1. GitHub repo URL → `https://github.com/you/your-project`
-2. Organization → `work` (or personal/learning)
-3. Category → `backend` (or frontend/mobile/etc)
-4. Your skill level → `2` (for beginner - it will show all options)
-5. Project phase → `2` (for MVP - it will show all options)
+The wizard will:
+1. Ask for GitHub repo URL → Clone it for you
+2. Ask for organization → Organize it in `~/projects/work/backend/`
+3. Ask for category → Keep similar projects together
+4. Ask your skill level → Configure AI for your experience
+5. Ask project phase → Configure for POC vs production
 
-**That's it!** Your project is cloned, organized, and AI-ready.
+What this does:
+- ✅ Clones YOUR project from GitHub
+- ✅ Adds AI configuration files to THAT project
+- ✅ Installs THAT project's dependencies (npm, pip, etc.)
+- ✅ Sets up git hooks for THAT project
+- ❌ Does NOT affect other projects
+- ❌ Does NOT change global settings
 
 ## 📖 For Daily Use
 
