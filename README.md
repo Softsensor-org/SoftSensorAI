@@ -62,12 +62,44 @@ cd ~/devpilot
 ./setup_all.sh
 ```
 
+**What gets installed:**
+
+Essential Development Tools:
+- `git` - Version control
+- `gh` - GitHub CLI for PR/issue management
+- `curl`, `wget` - Download tools
+- `ripgrep` (rg) - Ultra-fast code search
+- `fd` - Fast file finder
+- `jq` - JSON processor
+- `yq` - YAML processor
+- `fzf` - Fuzzy finder for interactive selection
+- `direnv` - Auto-load project environments
+- `mise` - Manage Python/Node/Ruby versions
+
+AI Agent Configurations:
+- Claude settings and commands
+- Gemini configurations
+- Grok settings
+- Codex integration
+
 What this does:
-- ✅ Installs development tools (ripgrep, jq, GitHub CLI, etc.)
-- ✅ Creates global AI configurations in your home directory
-- ✅ Sets up the DevPilot toolkit for future use
+- ✅ Installs ALL the tools above globally
+- ✅ Creates AI configurations in ~/.claude, ~/.gemini, etc.
+- ✅ Sets up the DevPilot toolkit in ~/devpilot
 - ❌ Does NOT touch any of your projects
 - ❌ Does NOT clone any repositories
+
+**You'll see prompts like:**
+```
+==> Installing core dependencies...
+  ✓ git (already installed)
+  ✓ GitHub CLI (installing...)
+  ✓ ripgrep (installing...)
+==> Setting up AI agents...
+  ✓ Claude configuration
+  ✓ Gemini configuration
+==> Setup complete! Next: run repo_wizard.sh for your projects
+```
 
 ### Step 2: Set Up Each Project (Run for every project)
 ```bash
@@ -101,21 +133,59 @@ The wizard will ask you:
 
 5. **Project phase** → `2` for MVP (shows all options)
 
+**What you'll actually see when running the wizard:**
+```
+==> Repo Setup Wizard
+==> Enter repository URL: https://github.com/acme/api-gateway
+==> Select organization:
+  1) org1
+  2) org2
+  3) work
+  4) personal
+  5) learning
+  Or type a custom name: 3
+==> Select category:
+  1) backend
+  2) frontend
+  3) mobile
+  4) infra
+  5) ml
+  6) data
+  Or type a custom name: 1
+==> Cloning repository → ~/projects/work/backend/api-gateway
+==> Bootstrapping project dependencies...
+  Found: Node.js (package.json)
+  ✓ Dependencies installed: Node modules
+==> Select skill level:
+  1) vibe      - Vibecoding: minimal structure, maximum freedom
+  2) beginner  - Learning mode with detailed guidance
+  3) l1        - Junior developer level
+  4) l2        - Mid-level developer
+  5) expert    - Senior developer, minimal hand-holding
+Enter choice (1-5) [2]: 3
+==> Select project phase:
+  1) poc    - Proof of concept, rapid prototyping
+  2) mvp    - Minimum viable product
+  3) beta   - Beta testing, stabilization
+  4) scale  - Production, scaling focus
+Enter choice (1-4) [2]: 2
+==> Applying profile: skill=l1 phase=mvp...
+✓ Profile applied
+✓ Setup complete!
+```
+
 **Where your project ends up:**
 ```
 ~/projects/
 ├── work/
 │   ├── backend/
-│   │   ├── api-gateway/      # If you chose work + backend
-│   │   └── user-service/
+│   │   ├── api-gateway/      # Your cloned project
+│   │   └── user-service/     # Another project
 │   └── frontend/
 │       └── admin-dashboard/
-├── personal/
-│   └── mobile/
-│       └── fitness-app/       # If you chose personal + mobile
-└── learning/
-    └── ml/
-        └── pytorch-tutorial/  # If you chose learning + ml
+└── personal/
+    └── mobile/
+        └── fitness-app/
 ```
 
 What this does:
@@ -128,24 +198,43 @@ What this does:
 
 ## 📖 For Daily Use
 
+### Commands You'll Use Most Often
+
+| Command | What it does | When to use |
+|---------|--------------|-------------|
+| `~/devpilot/setup/repo_wizard.sh` | Set up a new project | Starting work on any repo |
+| `scripts/apply_profile.sh` | Change skill/phase | Your experience changes |
+| `rg "search term"` | Lightning-fast code search | Finding code patterns |
+| `fd filename` | Fast file search | Locating files |
+| `gh pr create` | Create pull request | Ready to merge |
+| `gh issue create` | Create GitHub issue | Tracking bugs/features |
+
+### In Your AI Assistant (Claude/Cursor)
+
+Once set up, these commands work automatically:
+- `/think-hard` - Deep analysis of complex problems
+- `/explore-plan-code-test` - Full feature development
+- `/backend-feature` - Generate API endpoints
+- `/test-driven` - Write tests first, then code
+- `/security-review` - Check for vulnerabilities
+- `/refactor-complex` - Restructure messy code
+
 ### Setting Up New Projects
 ```bash
 ~/devpilot/setup/repo_wizard.sh
-# Answer the prompts, everything else is automatic
+# You'll see these prompts:
+# > Enter GitHub URL: https://github.com/you/project
+# > Select organization (1-5): 3  [for 'work']
+# > Select category (1-6): 1      [for 'backend']
+# > Select skill level (1-5): 2   [for 'beginner']
+# > Select project phase (1-4): 2 [for 'mvp']
 ```
 
-### Changing Your Skill Level
+### Changing Settings Later
 ```bash
 cd your-project
 scripts/apply_profile.sh --skill expert --phase production
 ```
-
-### Quick Reference
-| Command | What it does |
-|---------|--------------|
-| `~/devpilot/setup/repo_wizard.sh` | Set up a new project |
-| `scripts/apply_profile.sh` | Change skill/phase settings |
-| `~/devpilot/validation/validate_agents.sh` | Check all projects are configured |
 
 ## 🎯 Skill Levels Explained
 
