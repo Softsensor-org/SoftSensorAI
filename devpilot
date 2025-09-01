@@ -58,6 +58,7 @@ EOF
 case "${1:-}" in
     doctor)
         shift
+        echo -e "${GREEN}Running system diagnostics...${NC}"
         exec "$DEVPILOT_ROOT/scripts/doctor.sh" "$@"
         ;;
 
