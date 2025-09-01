@@ -13,46 +13,102 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Detect package manager
+        id: detect-pm
+        run: |
+          if [ -f pnpm-lock.yaml ]; then
+            echo "manager=pnpm" >> $GITHUB_OUTPUT
+            echo "command=pnpm" >> $GITHUB_OUTPUT
+            echo "lockfile=pnpm-lock.yaml" >> $GITHUB_OUTPUT
+            echo "cache-path=~/.pnpm-store" >> $GITHUB_OUTPUT
+          elif [ -f yarn.lock ]; then
+            echo "manager=yarn" >> $GITHUB_OUTPUT
+            echo "command=yarn" >> $GITHUB_OUTPUT
+            echo "lockfile=yarn.lock" >> $GITHUB_OUTPUT
+            echo "cache-path=.yarn/cache" >> $GITHUB_OUTPUT
+          elif [ -f package-lock.json ]; then
+            echo "manager=npm" >> $GITHUB_OUTPUT
+            echo "command=npm" >> $GITHUB_OUTPUT
+            echo "lockfile=package-lock.json" >> $GITHUB_OUTPUT
+            echo "cache-path=~/.npm" >> $GITHUB_OUTPUT
+          else
+            echo "manager=npm" >> $GITHUB_OUTPUT
+            echo "command=npm" >> $GITHUB_OUTPUT
+            echo "lockfile=package.json" >> $GITHUB_OUTPUT
+            echo "cache-path=~/.npm" >> $GITHUB_OUTPUT
+          fi
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 'lts/*'
+          node-version: "lts/*"
+          cache: ${{ steps.detect-pm.outputs.manager }}
+
+      - name: Setup pnpm (if needed)
+        if: steps.detect-pm.outputs.manager == 'pnpm'
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.detect-pm.outputs.cache-path }}
+          key:
+            ${{ runner.os }}-${{ steps.detect-pm.outputs.manager }}-${{ hashFiles(format('**/{0}',
+            steps.detect-pm.outputs.lockfile)) }}
+          restore-keys: |
+            ${{ runner.os }}-${{ steps.detect-pm.outputs.manager }}-
 
       - name: Install dependencies
         run: |
-          npm ci || pnpm install --frozen-lockfile || yarn install --frozen-lockfile
+          if [ "${{ steps.detect-pm.outputs.manager }}" = "pnpm" ]; then
+            pnpm install --frozen-lockfile
+          elif [ "${{ steps.detect-pm.outputs.manager }}" = "yarn" ]; then
+            yarn install --frozen-lockfile
+          elif [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm install
+          fi
 
       - name: Lint check (required)
         run: |
           echo "Running lints - must pass for MVP"
-          npm run lint || pnpm lint
+          ${{ steps.detect-pm.outputs.command }} run lint
 
       - name: Type check (required)
         run: |
           echo "Running type checks - must pass for MVP"
-          npm run typecheck || pnpm typecheck || tsc --noEmit
+          ${{ steps.detect-pm.outputs.command }} run typecheck || npx tsc --noEmit
 
       - name: Unit tests (required)
         run: |
           echo "Running unit tests - must pass for MVP"
-          npm test || pnpm test || pytest
+          ${{ steps.detect-pm.outputs.command }} test || pytest
 
       - name: Test coverage check
         continue-on-error: true
         run: |
-          npm run test:coverage || pnpm test:coverage || echo "::warning::Coverage not configured"
+          ${{ steps.detect-pm.outputs.command }} run test:coverage || echo "::warning::Coverage not configured"
           echo "::warning::Target coverage for Beta phase: 60%"
 
   security-scan:
     runs-on: ubuntu-latest
-    continue-on-error: true  # Advisory in MVP
+    continue-on-error: true # Advisory in MVP
 
     steps:
       - uses: actions/checkout@v4
 
       - name: Dependency audit
         run: |
-          npm audit --audit-level=high || echo "::warning::Security issues in dependencies"
+          if [ "${{ steps.detect-pm.outputs.manager }}" = "pnpm" ]; then
+            pnpm audit --audit-level=high || echo "::warning::Security issues in dependencies"
+          elif [ "${{ steps.detect-pm.outputs.manager }}" = "yarn" ]; then
+            yarn audit --level high || echo "::warning::Security issues in dependencies"
+          else
+            npm audit --audit-level=high || echo "::warning::Security issues in dependencies"
+          fi
 
       - name: Basic security scan
         continue-on-error: true
@@ -77,12 +133,25 @@ jobs:
       - name: Setup environment
         uses: actions/setup-node@v4
         with:
-          node-version: 'lts/*'
+          node-version: "lts/*"
+          cache: ${{ needs.quality-gates.outputs.package-manager }}
 
       - name: Install and build
         run: |
-          npm ci || pnpm install --frozen-lockfile
-          npm run build || pnpm build
+          # Reuse package manager detection from quality-gates
+          if [ -f pnpm-lock.yaml ]; then
+            pnpm install --frozen-lockfile
+            pnpm build
+          elif [ -f yarn.lock ]; then
+            yarn install --frozen-lockfile
+            yarn build
+          elif [ -f package-lock.json ]; then
+            npm ci
+            npm run build
+          else
+            npm install
+            npm run build
+          fi
 
       - name: Verify build artifacts
         run: |

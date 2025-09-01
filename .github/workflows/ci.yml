@@ -13,26 +13,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install shellcheck
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y shellcheck
+      - name: Setup shellcheck
+        uses: ludeeus/action-shellcheck@2.0.0
+        with:
+          version: v0.9.0
 
       - name: Run shellcheck on all shell scripts
         run: |
           echo "Running shellcheck on all shell scripts..."
-          failed=0
-          while IFS= read -r -d '' file; do
-            echo "Checking: $file"
-            if ! shellcheck --severity=warning "$file"; then
-              failed=1
-            fi
-          done < <(find . -type f -name "*.sh" -print0)
-
-          if [ "$failed" -eq 1 ]; then
-            echo "❌ Shellcheck found issues"
-            exit 1
-          fi
+          shopt -s globstar nullglob
+          shellcheck --severity=warning **/*.sh || exit 1
           echo "✅ All shell scripts passed shellcheck"
 
   validate-scripts:
@@ -70,10 +60,23 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Setup Python for yamllint
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Cache yamllint
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-yamllint-${{ hashFiles('**/requirements*.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-yamllint-
+            ${{ runner.os }}-pip-
+
       - name: Install yamllint
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y yamllint
+        run: pip install yamllint==1.33.0
 
       - name: Lint YAML files
         run: |
@@ -97,14 +100,28 @@ jobs:
 
   markdown-lint:
     runs-on: ubuntu-latest
-    continue-on-error: true  # Advisory only
+    continue-on-error: true # Advisory only
 
     steps:
       - uses: actions/checkout@v4
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "lts/*"
+          cache: "npm"
+
+      - name: Cache markdownlint
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-npm-markdownlint-${{ hashFiles('**/package*.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-markdownlint-
+            ${{ runner.os }}-npm-
+
       - name: Install markdownlint
-        run: |
-          sudo npm install -g markdownlint-cli
+        run: npm install -g markdownlint-cli@0.38.0
 
       - name: Lint Markdown files
         run: |
@@ -116,6 +133,14 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Cache apt packages
+        uses: actions/cache@v4
+        with:
+          path: /var/cache/apt/archives
+          key: ${{ runner.os }}-apt-${{ hashFiles('**/ci.yml') }}
+          restore-keys: |
+            ${{ runner.os }}-apt-
 
       - name: Install test dependencies
         run: |
@@ -158,7 +183,7 @@ jobs:
 
   security-scan:
     runs-on: ubuntu-latest
-    continue-on-error: true  # Advisory
+    continue-on-error: true # Advisory
 
     steps:
       - uses: actions/checkout@v4

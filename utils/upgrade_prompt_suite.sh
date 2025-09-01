@@ -43,7 +43,7 @@ audit:
 	@bash tools/prompt_lint.sh CLAUDE.md || true
 
 fmt:
-	@find . -type f -name "*.sh" -print0 | xargs -0 -n1 sh -c 'sed -i'\'''\'' -e "s/\r$//" "$0"'
+	@find . -type f -name "*.sh" -print0 | xargs -0 -n1 sh -c 'sed -i'\'''\'' -e "s/\r$//" "$$0"'
 
 prompt-audit:
 	@bash tools/prompt_lint.sh CLAUDE.md || true

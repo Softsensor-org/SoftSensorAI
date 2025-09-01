@@ -1,0 +1,50 @@
+# Dependencies
+node_modules/
+.venv/
+vendor/
+
+# Build outputs
+dist/
+build/
+*.min.js
+*.min.css
+
+# Package manager files
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+
+# Generated files
+coverage/
+.nyc_output/
+*.log
+
+# Large data files
+*.csv
+*.tsv
+
+# Binary files
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.ico
+*.pdf
+
+# Git
+.git/
+.gitignore
+
+# CI/CD (let yamllint handle these)
+# .github/workflows/*.yml
+# .gitlab-ci.yml
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*~
+
+# System files
+.DS_Store
+Thumbs.db

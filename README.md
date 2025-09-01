@@ -2,12 +2,16 @@
 
 [![CI](https://github.com/Softsensor-org/DevPilot/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Softsensor-org/DevPilot/actions/workflows/ci.yml)
 
-Transform how you work with AI coding assistants. DevPilot automatically configures Claude, Codex, Gemini, Grok, and Copilot for your skill level and project needs - with full parity across all platforms.
+Transform how you work with AI coding assistants. DevPilot automatically configures Claude, Codex,
+Gemini, Grok, and Copilot for your skill level and project needs - with full parity across all
+platforms.
 
 ## 🆕 Latest Features
 
-- **🎯 Multi-Persona System** - Combine multiple AI personas (Data Scientist, Software Architect, etc.)
-- **🎮 GPU Detection & Optimization** - Automatic NVIDIA/AMD/Apple Silicon detection with ML insights
+- **🎯 Multi-Persona System** - Combine multiple AI personas (Data Scientist, Software Architect,
+  etc.)
+- **🎮 GPU Detection & Optimization** - Automatic NVIDIA/AMD/Apple Silicon detection with ML
+  insights
 - **🤖 AI Frameworks** - One-command installation of LangChain, AutoGen, CrewAI
 - **🔒 Checksum Verification** - Secure downloads with SHA256/SHA1/MD5 verification
 - **🧪 Sandboxed Execution** - Safe execution environment for AI-generated code
@@ -15,6 +19,7 @@ Transform how you work with AI coding assistants. DevPilot automatically configu
 ## 📋 System Requirements
 
 **Supported Systems:**
+
 - ✅ **Linux** (Ubuntu 20.04+, Debian, Fedora, Arch)
 - ✅ **macOS** (Intel & Apple Silicon)
 - ✅ **Windows** (via WSL2)
@@ -22,6 +27,7 @@ Transform how you work with AI coding assistants. DevPilot automatically configu
 - ✅ **Cloud IDEs** (Gitpod, Cloud9, Coder)
 
 **Prerequisites:**
+
 - `bash` 4.0+ (check with `bash --version`)
 - `git` 2.0+ (check with `git --version`)
 - Internet connection for tool downloads
@@ -31,14 +37,14 @@ Transform how you work with AI coding assistants. DevPilot automatically configu
 
 ### Concrete Gains (Measurable Impact)
 
-| **Pain Today** | **DevPilot Capability** | **Typical Impact** |
-|----------------|------------------------|-------------------|
-| Inconsistent AI prompts per dev | Single prompt stack (`system/active.md`) | ↓ variance, fewer "why did it say that?" moments |
-| Spinning up a repo takes hours | Repo wizard + profiles/phases | **60-90 min → 10-15 min** |
-| Backlog grooming is slow/subjective | `/tickets-from-code` → strict JSON/CSV | **2-3 hrs PM time → 10-15 min** |
-| Long PRs stall reviews | AI PR reviewer (CLI-first, neutral if absent) | First pass in **~1-2 min**, humans focus on hard bits |
-| Security posture unclear | Phase gates (gitleaks/semgrep/trivy) | **Faster triage**, **fewer regressions** at Beta+ |
-| Knowledge is tribal | SOP commands with acceptance criteria | **Better handoffs**, faster onboarding |
+| **Pain Today**                      | **DevPilot Capability**                       | **Typical Impact**                                    |
+| ----------------------------------- | --------------------------------------------- | ----------------------------------------------------- |
+| Inconsistent AI prompts per dev     | Single prompt stack (`system/active.md`)      | ↓ variance, fewer "why did it say that?" moments      |
+| Spinning up a repo takes hours      | Repo wizard + profiles/phases                 | **60-90 min → 10-15 min**                             |
+| Backlog grooming is slow/subjective | `/tickets-from-code` → strict JSON/CSV        | **2-3 hrs PM time → 10-15 min**                       |
+| Long PRs stall reviews              | AI PR reviewer (CLI-first, neutral if absent) | First pass in **~1-2 min**, humans focus on hard bits |
+| Security posture unclear            | Phase gates (gitleaks/semgrep/trivy)          | **Faster triage**, **fewer regressions** at Beta+     |
+| Knowledge is tribal                 | SOP commands with acceptance criteria         | **Better handoffs**, faster onboarding                |
 
 ### What You Can Do Now (That You Couldn't Before)
 
@@ -51,7 +57,8 @@ Transform how you work with AI coding assistants. DevPilot automatically configu
 
 ### Why DevPilot vs "Just Using CLIs"
 
-1. **Deterministic org-wide AI behavior** - One canonical system file across Claude/Codex/Gemini/Grok
+1. **Deterministic org-wide AI behavior** - One canonical system file across
+   Claude/Codex/Gemini/Grok
 2. **Policy-as-code** - Profiles & Phases change commands and CI gates automatically
 3. **SOP-grade commands** - Not ad-hoc prompting but repeatable processes with "done" checks
 4. **CLI-first, zero-secrets CI** - AI reviews without API keys in repos
@@ -64,7 +71,9 @@ Transform how you work with AI coding assistants. DevPilot automatically configu
 DevPilot works at two levels:
 
 ### 1️⃣ Global Setup (One-time, on YOUR computer)
+
 After running `setup_all.sh`, you get:
+
 ```
 Your Home Directory:
 ├── ~/.claude/           # Global Claude settings
@@ -77,7 +86,9 @@ Your Home Directory:
 ```
 
 ### 2️⃣ Per-Project Setup (For EACH project)
+
 After running `repo_wizard.sh` on a project:
+
 ```
 your-project/
 ├── CLAUDE.md           # AI understands THIS project
@@ -94,6 +105,7 @@ your-project/
 ## 🚀 Getting Started
 
 ### Step 1: Install DevPilot Globally (One-time only!)
+
 ```bash
 # This installs tools on YOUR computer, not in any project
 git clone https://github.com/Softsensor-org/DevPilot.git ~/devpilot
@@ -104,6 +116,7 @@ cd ~/devpilot
 **What gets installed:**
 
 Essential Development Tools:
+
 - `git` - Version control
 - `gh` - GitHub CLI for PR/issue management
 - `curl`, `wget` - Download tools
@@ -116,18 +129,21 @@ Essential Development Tools:
 - `mise` - Manage Python/Node/Ruby versions
 
 AI Agent Configurations:
+
 - Claude settings and commands
 - Gemini configurations
 - Grok settings
 - Codex integration with sandboxed execution
 
 AI Development Environment:
+
 - GPU detection (NVIDIA CUDA, AMD ROCm, Apple Silicon)
 - AI frameworks (LangChain, AutoGen, CrewAI)
 - Vector databases (ChromaDB, FAISS)
 - Secure package verification
 
 What this does:
+
 - ✅ Installs ALL the tools above globally
 - ✅ Creates AI configurations in ~/.claude, ~/.gemini, etc.
 - ✅ Sets up the DevPilot toolkit in ~/devpilot
@@ -135,6 +151,7 @@ What this does:
 - ❌ Does NOT clone any repositories
 
 **You'll see prompts like:**
+
 ```
 ==> Installing core dependencies...
   ✓ git (already installed)
@@ -174,12 +191,17 @@ If you need to clone a repository first:
 ~/devpilot/setup/repo_wizard.sh
 ```
 
+> **Note**: AI review features require a CLI to be installed (claude, codex, gemini, or grok). If no
+> CLI is found, the workflow will exit neutrally without failing your CI.
+
 The wizard will ask you:
 
 1. **GitHub repo URL** → `https://github.com/you/your-project`
+
    - It will clone this for you
 
 2. **Organization** → Choose or create:
+
    - `1) org1` - Default organization
    - `2) org2` - Secondary organization
    - `3) work` - Professional projects
@@ -188,6 +210,7 @@ The wizard will ask you:
    - Or type your own: `client-name`, `startup`, etc.
 
 3. **Category** → Choose or create:
+
    - `1) backend` - API services, servers
    - `2) frontend` - Web apps, UIs
    - `3) mobile` - iOS/Android apps
@@ -201,6 +224,7 @@ The wizard will ask you:
 5. **Project phase** → `2` for MVP (shows all options)
 
 **What you'll actually see when running the wizard:**
+
 ```
 ==> Repo Setup Wizard
 ==> Enter repository URL: https://github.com/acme/api-gateway
@@ -242,6 +266,7 @@ Enter choice (1-4) [2]: 2
 ```
 
 **Where your project ends up:**
+
 ```
 ~/projects/
 ├── work/
@@ -256,6 +281,7 @@ Enter choice (1-4) [2]: 2
 ```
 
 What this does:
+
 - ✅ Clones YOUR project to an organized location
 - ✅ Adds AI configuration files to THAT project
 - ✅ Auto-detects and installs dependencies:
@@ -274,18 +300,21 @@ What this does:
 
 ### Commands You'll Use Most Often
 
-| Command | What it does | When to use |
-|---------|--------------|-------------|
-| `~/devpilot/setup/repo_wizard.sh` | Set up a new project | Starting work on any repo |
-| `scripts/apply_profile.sh` | Change skill/phase | Your experience changes |
-| `rg "search term"` | Lightning-fast code search | Finding code patterns |
-| `fd filename` | Fast file search | Locating files |
-| `gh pr create` | Create pull request | Ready to merge |
-| `gh issue create` | Create GitHub issue | Tracking bugs/features |
+| Command                           | What it does               | When to use               |
+| --------------------------------- | -------------------------- | ------------------------- |
+| `~/devpilot/setup/repo_wizard.sh` | Set up a new project       | Starting work on any repo |
+| `scripts/apply_profile.sh`        | Change skill/phase         | Your experience changes   |
+| `just review-local`               | AI review of your changes  | Before opening PR         |
+| `just tickets`                    | Generate tickets from code | Planning sprint work      |
+| `rg "search term"`                | Lightning-fast code search | Finding code patterns     |
+| `fd filename`                     | Fast file search           | Locating files            |
+| `gh pr create`                    | Create pull request        | Ready to merge            |
+| `gh issue create`                 | Create GitHub issue        | Tracking bugs/features    |
 
 ### In Your AI Assistant (Claude/Cursor)
 
 Once set up, these commands work automatically:
+
 - `/think-hard` - Deep analysis of complex problems
 - `/explore-plan-code-test` - Full feature development
 - `/backend-feature` - Generate API endpoints
@@ -296,60 +325,64 @@ Once set up, these commands work automatically:
 ### Setting Up Projects
 
 **For existing repos (most teams):**
+
 ```bash
 cd your-project
 ~/devpilot/setup/existing_repo_setup.sh --skill l2 --phase beta
 ```
 
 **For new repos (need to clone):**
+
 ```bash
 ~/devpilot/setup/repo_wizard.sh
 # Prompts: URL, organization, category, skill, phase
 ```
 
 ### Changing Settings Later
+
 ```bash
 cd your-project
-scripts/apply_profile.sh --skill expert --phase production
+scripts/apply_profile.sh --skill expert --phase scale
 ```
 
 ## 🎯 Skill Levels Explained
 
 DevPilot adapts to YOUR experience level:
 
-| Level | Who it's for | What changes |
-|-------|--------------|--------------|
-| **vibe** | Exploring, experimenting | No restrictions, maximum freedom |
-| **beginner** | Learning to code | AI teaches you, explains everything |
-| **l1** | Junior developer | Structured patterns, safety rails |
-| **l2** | Mid-level developer | More tools, CI/CD access |
-| **expert** | Senior developer | Full power, all tools available |
+| Level        | Who it's for             | What changes                        |
+| ------------ | ------------------------ | ----------------------------------- |
+| **vibe**     | Exploring, experimenting | No restrictions, maximum freedom    |
+| **beginner** | Learning to code         | AI teaches you, explains everything |
+| **l1**       | Junior developer         | Structured patterns, safety rails   |
+| **l2**       | Mid-level developer      | More tools, CI/CD access            |
+| **expert**   | Senior developer         | Full power, all tools available     |
 
 ## 📈 Project Phases Explained
 
 DevPilot adapts to your PROJECT's maturity:
 
-| Phase | When to use | What changes |
-|-------|-------------|--------------|
-| **poc** | Just started, exploring ideas | Move fast, break things OK |
-| **mvp** | Building core features | Basic testing, simple CI |
-| **beta** | Getting ready for users | Full testing, staging deploys |
-| **scale** | Production with real users | Complete CI/CD, careful changes |
+| Phase     | When to use                   | What changes                    |
+| --------- | ----------------------------- | ------------------------------- |
+| **poc**   | Just started, exploring ideas | Move fast, break things OK      |
+| **mvp**   | Building core features        | Basic testing, simple CI        |
+| **beta**  | Getting ready for users       | Full testing, staging deploys   |
+| **scale** | Production with real users    | Complete CI/CD, careful changes |
 
 ## 🎭 AI Personas - Specialized Expertise
 
-DevPilot's **Multi-Persona System** lets you activate specialized AI personalities that understand domain-specific best practices. You can combine multiple personas for comprehensive assistance.
+DevPilot's **Multi-Persona System** lets you activate specialized AI personalities that understand
+domain-specific best practices. You can combine multiple personas for comprehensive assistance.
 
 ### Available Personas
 
-| Persona | Specialization | Key Features |
-|---------|---------------|--------------|
-| **data-scientist** | ML/AI Development | GPU optimization, distributed training, process impact analysis |
-| **software-architect** | System Design | Architecture reviews, scalability patterns, performance audits |
-| **backend-developer** | API Development | CRUD operations, authentication, database optimization |
-| **frontend-developer** | UI/UX Development | Component design, state management, accessibility |
-| **devops-engineer** | Infrastructure | CI/CD, monitoring, deployment automation |
-| **security-engineer** | Security | Vulnerability scanning, authentication, encryption |
+| Persona                | Specialization    | Key Features                                                    |
+| ---------------------- | ----------------- | --------------------------------------------------------------- |
+| **data-scientist**     | ML/AI Development | GPU optimization, distributed training, process impact analysis |
+| **software-architect** | System Design     | Architecture reviews, scalability patterns, performance audits  |
+| **backend-developer**  | API Development   | CRUD operations, authentication, database optimization          |
+| **frontend-developer** | UI/UX Development | Component design, state management, accessibility               |
+| **devops-engineer**    | Infrastructure    | CI/CD, monitoring, deployment automation                        |
+| **security-engineer**  | Security          | Vulnerability scanning, authentication, encryption              |
 
 ### Managing Personas
 
@@ -365,24 +398,26 @@ DevPilot's **Multi-Persona System** lets you activate specialized AI personaliti
 
 Quick setup for common project types:
 
-| Project Type | Personas to Add | One-Line Setup |
-|-------------|-----------------|----------------|
-| **Backend API** | architect, backend, devops | `for p in software-architect backend-developer devops-engineer; do ~/devpilot/scripts/persona_manager.sh add $p; done` |
-| **Microservices** | architect, backend, devops, security | `for p in software-architect backend-developer devops-engineer security-engineer; do ~/devpilot/scripts/persona_manager.sh add $p; done` |
-| **ML/Data Science** | data-scientist, backend, devops | `for p in data-scientist backend-developer devops-engineer; do ~/devpilot/scripts/persona_manager.sh add $p; done` |
-| **Full Stack App** | frontend, backend, devops | `for p in frontend-developer backend-developer devops-engineer; do ~/devpilot/scripts/persona_manager.sh add $p; done` |
-| **Infrastructure** | devops, security, architect | `for p in devops-engineer security-engineer software-architect; do ~/devpilot/scripts/persona_manager.sh add $p; done` |
+| Project Type        | Personas to Add                      | One-Line Setup                                                                                                                           |
+| ------------------- | ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| **Backend API**     | architect, backend, devops           | `for p in software-architect backend-developer devops-engineer; do ~/devpilot/scripts/persona_manager.sh add $p; done`                   |
+| **Microservices**   | architect, backend, devops, security | `for p in software-architect backend-developer devops-engineer security-engineer; do ~/devpilot/scripts/persona_manager.sh add $p; done` |
+| **ML/Data Science** | data-scientist, backend, devops      | `for p in data-scientist backend-developer devops-engineer; do ~/devpilot/scripts/persona_manager.sh add $p; done`                       |
+| **Full Stack App**  | frontend, backend, devops            | `for p in frontend-developer backend-developer devops-engineer; do ~/devpilot/scripts/persona_manager.sh add $p; done`                   |
+| **Infrastructure**  | devops, security, architect          | `for p in devops-engineer security-engineer software-architect; do ~/devpilot/scripts/persona_manager.sh add $p; done`                   |
 
 ### Persona-Specific Commands
 
 Each persona adds specialized commands:
 
 **Data Scientist:**
+
 - `/gpu-optimize` - Optimize code for GPU execution
 - `/parallel-explain` - Explain parallelization strategies
 - `/process-impact` - Analyze process termination impact
 
 **Software Architect:**
+
 - `/architecture-review` - Review system design
 - `/performance-audit` - Identify bottlenecks
 - `/scalability-assessment` - Evaluate scaling strategies
@@ -390,41 +425,46 @@ Each persona adds specialized commands:
 ### Full Codex Integration
 
 Codex has complete parity with Claude, including:
+
 - Same persona system and configurations
 - Repository-specific settings
 - Sandboxed execution for safety
 - Unified command structure
 
-See [Codex Integration Guide](docs/CODEX_INTEGRATION.md) and [Multi-Persona Guide](docs/MULTI_PERSONA_GUIDE.md) for details.
+See [Codex Integration Guide](docs/CODEX_INTEGRATION.md) and
+[Multi-Persona Guide](docs/MULTI_PERSONA_GUIDE.md) for details.
 
 ## 🔒 CI/CD Security Gates by Phase
 
 Quick reference for what gets enforced at each project phase:
 
-| Security Tool | POC | MVP | Beta | Scale |
-|--------------|-----|-----|------|-------|
-| **Unit Tests** | Optional | Required | Required | Required |
-| **Linting** | Optional | Required | Required | Required |
-| **Coverage** | None | None | ≥ 60% | ≥ 80% |
-| **Gitleaks** (secrets) | None | Advisory | **Blocks any** | **Blocks any** |
-| **Semgrep** (SAST) | None | Advisory | **Blocks HIGH+** | **Blocks MEDIUM+** |
-| **Trivy** (containers) | None | Advisory | **Blocks CRITICAL/HIGH** | **Blocks all** |
-| **License Check** | None | None | Check | **Enforce** |
-| **Dependency Audit** | None | Advisory | **Blocks HIGH+** | **Blocks all** |
+| Security Tool          | POC      | MVP      | Beta                     | Scale              |
+| ---------------------- | -------- | -------- | ------------------------ | ------------------ |
+| **Unit Tests**         | Optional | Required | Required                 | Required           |
+| **Linting**            | Optional | Required | Required                 | Required           |
+| **Coverage**           | None     | None     | ≥ 60%                    | ≥ 80%              |
+| **Gitleaks** (secrets) | None     | Advisory | **Blocks any**           | **Blocks any**     |
+| **Semgrep** (SAST)     | None     | Advisory | **Blocks HIGH+**         | **Blocks MEDIUM+** |
+| **Trivy** (containers) | None     | Advisory | **Blocks CRITICAL/HIGH** | **Blocks all**     |
+| **License Check**      | None     | None     | Check                    | **Enforce**        |
+| **Dependency Audit**   | None     | Advisory | **Blocks HIGH+**         | **Blocks all**     |
 
 **CI Pipeline Behavior:**
+
 - **Default CI** (this repo): Light validation - shellcheck, basic tests
 - **Phase CI** (your projects): Full security gates activated by `apply_profile.sh`
 - Run `scripts/apply_profile.sh --phase beta` to install strict CI with blocking gates
 
 **Managing Legacy Issues:**
+
 - Set `SEMGREP_BASELINE_REF` repo variable to suppress pre-existing findings
 - Create `.trivyignore` file to suppress known/accepted CVEs
 - Use `scripts/apply_profile.sh --phase beta` to change enforcement level
 
 ## 🚀 AI Development Environment
 
-DevPilot now includes comprehensive AI/ML development support with GPU acceleration and secure package management.
+DevPilot now includes comprehensive AI/ML development support with GPU acceleration and secure
+package management.
 
 ### GPU Detection & Optimization
 
@@ -436,6 +476,7 @@ DevPilot automatically detects your GPU hardware and optimizes installations:
 - **CPU Fallback** - Optimized CPU builds when no GPU detected
 
 The setup script automatically detects your hardware:
+
 ```bash
 ./setup_all.sh
 # Output: Detected GPU: NVIDIA: RTX 4090 (CUDA 12.1)
@@ -450,6 +491,7 @@ Install a complete AI development stack with one command:
 ```
 
 Includes:
+
 - **LLM APIs**: OpenAI, Anthropic, Groq, Mistral
 - **Frameworks**: LangChain, AutoGen, CrewAI, LangGraph
 - **ML Tools**: PyTorch, Transformers, scikit-learn
@@ -471,11 +513,14 @@ See [Security Guide](docs/SECURITY.md#checksum-verification) for details.
 
 ## 🧠 AI Command System - Your Productivity Multiplier
 
-DevPilot provides **60+ specialized AI commands** that transform how Claude, Cursor, and other AI assistants work. These aren't just prompts - they're battle-tested workflows that ensure consistent, high-quality outputs.
+DevPilot provides **60+ specialized AI commands** that transform how Claude, Cursor, and other AI
+assistants work. These aren't just prompts - they're battle-tested workflows that ensure consistent,
+high-quality outputs.
 
 ### How Commands Work
 
 When you type `/command-name` in Claude or Cursor, it loads a structured prompt that:
+
 1. Sets the right context and constraints
 2. Defines clear success criteria
 3. Specifies exact output format
@@ -487,22 +532,26 @@ When you type `/command-name` in Claude or Cursor, it loads a structured prompt 
 <summary><b>🤔 Thinking & Analysis Commands</b></summary>
 
 Deep reasoning and problem-solving:
+
 - `/think-hard` - Extended analysis with decision matrices
 - `/think-deep` - Step-by-step reasoning chains
 - `/cot-structured` - Chain-of-thought with structured output
 - `/explore-plan-code-test` - Full SDLC cycle
 
 Example usage:
+
 ```
 You: /think-hard Should we use microservices or monolith?
 Claude: [Provides detailed analysis with trade-offs, risks, recommendations]
 ```
+
 </details>
 
 <details>
 <summary><b>🔧 Development Pattern Commands</b></summary>
 
 19 specialized patterns for common tasks:
+
 - `/backend-feature` - API endpoint with tests
 - `/frontend-feature` - Component-first UI development
 - `/bug-fix` - Test-first debugging
@@ -515,16 +564,19 @@ Claude: [Provides detailed analysis with trade-offs, risks, recommendations]
 - `/performance-pass` - Profiling and optimization
 
 Example:
+
 ```
 You: /backend-feature Add user authentication endpoint
 Claude: [Creates tests → implements endpoint → validates → creates PR]
 ```
+
 </details>
 
 <details>
 <summary><b>🔒 Security & Quality Commands</b></summary>
 
 Security and code quality:
+
 - `/security-review` - Comprehensive vulnerability scan
 - `/secure-fix` - Security-focused fixes
 - `/audit-full` - Complete codebase audit
@@ -532,10 +584,12 @@ Security and code quality:
 - `/pr-self-review` - Pre-submission checklist
 
 Example:
+
 ```
 You: /security-review
 Claude: [Scans for OWASP Top 10, checks dependencies, reviews auth]
 ```
+
 </details>
 
 <details>
@@ -544,6 +598,7 @@ Claude: [Scans for OWASP Top 10, checks dependencies, reviews auth]
 Complex workflows broken into steps:
 
 **Backend Chain** (5 steps):
+
 1. `/backend-1-spec` - Define requirements
 2. `/backend-2-tests` - Write tests first
 3. `/backend-3-code` - Implement feature
@@ -551,12 +606,14 @@ Complex workflows broken into steps:
 5. `/backend-5-pr` - Create pull request
 
 **Security Chain** (4 steps):
+
 1. `/security-1-scan` - Identify vulnerabilities
 2. `/security-2-prioritize` - Risk assessment
 3. `/security-3-fix` - Apply fixes
 4. `/security-4-report` - Generate report
 
 **ML Chain** (5 steps):
+
 1. `/ml-1-profile` - Data profiling
 2. `/ml-2-features` - Feature engineering
 3. `/ml-3-model` - Model training
@@ -564,16 +621,19 @@ Complex workflows broken into steps:
 5. `/ml-5-errors` - Error analysis
 
 Example:
+
 ```
 You: Run the backend chain for payment processing
 Claude: Starting step 1 of 5... [Guides through entire workflow]
 ```
+
 </details>
 
 <details>
 <summary><b>📋 Ticket & Documentation Commands</b></summary>
 
 Project management:
+
 - `/tickets-from-code` - Generate JIRA/GitHub issues from code
 - `/tickets-quick-scan` - Rapid backlog creation
 - `/ticket-quality-gates` - Define acceptance criteria
@@ -581,36 +641,43 @@ Project management:
 - `/postmortem` - Incident analysis template
 
 Example:
+
 ```
 You: /tickets-from-code
 Claude: [Analyzes code, generates prioritized tickets with estimates]
 ```
+
 </details>
 
 <details>
 <summary><b>🚀 Automation Commands</b></summary>
 
 Task automation:
+
 - `/chain-runner` - Execute multi-step workflows
 - `/parallel-map` - Parallel task processing
 - `/long-context-map-reduce` - Handle large codebases
 
 Example:
+
 ```
 You: /parallel-map Update all test files
 Claude: [Processes multiple files simultaneously]
 ```
+
 </details>
 
 ### How to Use Commands
 
 **In Claude/Cursor:**
+
 1. Type `/` to see available commands
 2. Select or type the command name
 3. The AI loads the specialized prompt
 4. You get consistent, high-quality outputs
 
 **View command details:**
+
 ```bash
 # See all available commands
 ls ~/.claude/commands/
@@ -636,6 +703,7 @@ scripts/pattern_selector.sh
 ### Creating Custom Commands
 
 Add your own commands:
+
 ```bash
 # Create in your project
 echo "Your custom prompt" > .claude/commands/my-command.md
@@ -650,6 +718,7 @@ echo "Your custom prompt" > ~/.claude/commands/my-command.md
 <summary><b>Development Tools Installed</b></summary>
 
 **Core Tools:**
+
 - `ripgrep`, `fd` - Lightning-fast search
 - `jq`, `yq` - JSON/YAML processing
 - `GitHub CLI` - Repository management
@@ -659,6 +728,7 @@ echo "Your custom prompt" > ~/.claude/commands/my-command.md
 **Optional Productivity Extras:**
 
 Install additional tools based on your needs:
+
 ```bash
 # Install ALL productivity extras (takes ~10 minutes)
 ~/devpilot/install/productivity_extras.sh
@@ -671,6 +741,7 @@ Install additional tools based on your needs:
 ```
 
 What each category includes:
+
 - **API**: OpenAPI Generator, GraphQL CLI, Postman CLI, Newman
 - **Data**: dbt, sqlfluff, pgcli, DVC, MLflow, Weights & Biases
 - **Security**: trivy, semgrep, gitleaks, hadolint
@@ -683,6 +754,7 @@ What each category includes:
 <summary><b>Command-Line Options</b></summary>
 
 Skip the interactive prompts:
+
 ```bash
 ~/devpilot/setup/repo_wizard.sh \
   --url git@github.com:you/repo.git \
@@ -693,16 +765,19 @@ Skip the interactive prompts:
 ```
 
 For existing projects (without cloning):
+
 ```bash
 cd /your/existing/project
 ~/devpilot/scripts/apply_profile.sh --skill expert --phase scale
 ```
+
 </details>
 
 <details>
 <summary><b>Project Organization</b></summary>
 
 DevPilot organizes your projects intelligently:
+
 ```
 ~/projects/
 ├── work/              # Professional projects
@@ -713,6 +788,7 @@ DevPilot organizes your projects intelligently:
 ├── learning/          # Tutorials
 └── opensource/        # Contributions
 ```
+
 </details>
 
 ## 📚 Configuration Files
@@ -721,11 +797,13 @@ DevPilot organizes your projects intelligently:
 <summary><b>What gets installed where</b></summary>
 
 **Global (Home Directory):**
+
 - `~/.claude/settings.json` - Claude global settings
 - `~/.gemini/settings.json` - Gemini configuration
 - `~/templates/agent-setup/` - Reusable templates
 
 **Per Repository:**
+
 - `CLAUDE.md` - Project-specific AI instructions
 - `AGENTS.md` - General agent directives
 - `.claude/settings.json` - Repository permissions
@@ -738,6 +816,7 @@ DevPilot organizes your projects intelligently:
 DevPilot includes many advanced tools not covered above:
 
 ### Diagnostics & Health Checks
+
 ```bash
 # Check your entire environment setup
 ~/devpilot/scripts/doctor.sh
@@ -753,6 +832,7 @@ scripts/profile_show.sh
 ```
 
 ### Skill Progression
+
 ```bash
 # Track your progress toward next skill level
 scripts/graduate.sh
@@ -765,6 +845,7 @@ scripts/graduate.sh advance     # Graduate to next level
 ```
 
 ### Project Planning & Analysis
+
 ```bash
 # IMPORTANT: Preview setup without making changes (dry run)
 ~/devpilot/scripts/repo_plan.sh ~/projects work backend my-api https://github.com/you/api
@@ -784,6 +865,7 @@ scripts/detect_stack.sh
 ```
 
 ### Task Automation
+
 ```bash
 # Chain multiple commands together
 scripts/chain_runner.sh "task1.yaml"
@@ -795,6 +877,7 @@ scripts/pattern_selector.sh
 ```
 
 ### Git Worktree Management
+
 ```bash
 # Manage multiple branches simultaneously
 ~/devpilot/tools/worktree_helper.sh add feature-branch
@@ -805,6 +888,7 @@ scripts/pattern_selector.sh
 ### Templates & Scaffolding
 
 DevPilot includes templates for:
+
 - **Justfile**: Task runner configuration with pre-defined recipes
 - **CLAUDE.md**: AI instruction templates for different project types
 - **.devcontainer**: VS Code container configurations
@@ -813,6 +897,7 @@ DevPilot includes templates for:
 - **CI/CD**: GitHub Actions workflows for testing and security
 
 Access templates:
+
 ```bash
 ls ~/devpilot/templates/
 cp ~/devpilot/templates/justfile ./
@@ -823,6 +908,7 @@ cp ~/devpilot/.github/workflows/security-review.yml .github/workflows/
 ```
 
 ### AI CLI Tools
+
 ```bash
 # Install additional AI command-line tools
 ~/devpilot/install/ai_clis.sh
@@ -838,6 +924,7 @@ scripts/codex_sandbox.sh
 ```
 
 ### Language-Specific Stacks
+
 ```bash
 # Install entire language ecosystems
 ~/devpilot/install/stacks.sh --with-api   # API development stack
@@ -852,6 +939,7 @@ scripts/codex_sandbox.sh
 DevPilot works seamlessly in containerized environments:
 
 ### GitHub Codespaces
+
 ```bash
 # In your Codespace terminal
 git clone https://github.com/VivekLmd/setup-scripts.git ~/devpilot
@@ -860,7 +948,9 @@ cd ~/devpilot
 ```
 
 ### VS Code Dev Containers
+
 Add to `.devcontainer/devcontainer.json`:
+
 ```json
 {
   "postCreateCommand": "git clone https://github.com/VivekLmd/setup-scripts.git ~/devpilot && ~/devpilot/setup_all.sh",
@@ -872,6 +962,7 @@ Add to `.devcontainer/devcontainer.json`:
 ```
 
 ### Docker
+
 ```dockerfile
 FROM ubuntu:22.04
 RUN apt-get update && apt-get install -y git curl
@@ -884,18 +975,21 @@ RUN cd /devpilot && ./setup_all.sh
 ### Common Issues
 
 **"Command not found" after installation**
+
 ```bash
 # Reload your shell configuration
 source ~/.bashrc  # or ~/.zshrc for Zsh
 ```
 
 **"Permission denied" errors**
+
 ```bash
 # Some tools need sudo for global installation
 sudo ~/devpilot/install/key_software_$(uname -s | tr '[:upper:]' '[:lower:]').sh
 ```
 
 **Wizard can't find apply_profile.sh**
+
 ```bash
 # Pull latest fixes
 cd ~/devpilot
@@ -903,6 +997,7 @@ git pull origin main
 ```
 
 **Dependencies not installing**
+
 ```bash
 # Check your package manager is working
 which npm   # For Node projects
@@ -914,11 +1009,13 @@ python3 -m ensurepip  # Python
 ```
 
 **AI commands not working in Claude/Cursor**
+
 - Ensure `.claude/commands/` exists in your project
 - Check `.claude/settings.json` has proper permissions
 - Run `scripts/apply_profile.sh` to reapply configuration
 
 ### Getting Help
+
 - Check existing issues: [GitHub Issues](https://github.com/Softsensor-org/DevPilot/issues)
 - Review the [validation script](validation/validate_agents.sh) output
 - Run diagnostics: `~/devpilot/scripts/diagnose.sh`
@@ -926,18 +1023,21 @@ python3 -m ensurepip  # Python
 ## 📚 Essential Reading
 
 ### Getting Started
+
 - **[DevPilot Overview (PDF)](docs/DevPilot.pdf)** - Comprehensive platform overview and strategy
 - **[Day in the Life Guide](tutorials/day-in-the-life.md)** - See real before/after scenarios
 - **[Quick Start This Week](tutorials/quick-start-this-week.md)** - Start seeing value in 5 days
 - **[Benefits & ROI](docs/BENEFITS.md)** - Detailed metrics and cost savings
 
 ### Deep Dives
+
 - **[Security Guide](docs/SECURITY.md)** - Comprehensive security practices
 - **[Architecture](docs/ARCHITECTURE.md)** - System design and decisions
 - **[AI Command System](docs/AI_COMMAND_SYSTEM.md)** - How commands work
 - **[Power Tools](docs/POWER_TOOLS.md)** - Advanced features
 
 ### Team Resources
+
 - **[Team Onboarding](docs/CLI_FIRST_PHILOSOPHY.md)** - CLI-first approach explained
 - **[Contribution Guide](CONTRIBUTING.md)** - How to contribute
 - **[Code of Conduct](CODE_OF_CONDUCT.md)** - Community standards

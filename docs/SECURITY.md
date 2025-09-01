@@ -3,6 +3,7 @@
 Best practices and security features in DevPilot for safe AI development.
 
 ## Table of Contents
+
 - [Overview](#overview)
 - [Checksum Verification](#checksum-verification)
 - [API Key Management](#api-key-management)
@@ -24,7 +25,8 @@ DevPilot implements multiple layers of security to protect your development envi
 
 ### Why Checksum Verification?
 
-Checksum verification ensures downloaded files haven't been tampered with or corrupted during transfer.
+Checksum verification ensures downloaded files haven't been tampered with or corrupted during
+transfer.
 
 ### Basic Usage
 
@@ -51,12 +53,14 @@ download_and_verify <url> <output_file> [checksum] [algorithm]
 ```
 
 Parameters:
+
 - `url`: Download URL
 - `output_file`: Where to save the file
 - `checksum`: Expected checksum (optional, warns if missing)
 - `algorithm`: Hash algorithm (default: sha256)
 
 Example:
+
 ```bash
 # Download with SHA256 verification
 download_and_verify \
@@ -74,6 +78,7 @@ verify_checksum <file> <expected_checksum> [algorithm]
 ```
 
 Example:
+
 ```bash
 # Verify a file you already have
 if verify_checksum "installer.sh" "abc123..." "sha256"; then
@@ -125,6 +130,7 @@ Where to find checksums for popular tools:
 4. **GPG Signatures**: Some projects provide `.asc` files for GPG verification
 
 Example for real tools:
+
 ```bash
 # Node.js checksums
 curl -O https://nodejs.org/dist/latest/SHASUMS256.txt
@@ -314,6 +320,15 @@ python -u -B -I script.py  # Unbuffered, no bytecode, isolated mode
 ```
 
 ## Security Scanning
+
+DevPilot's automated security features:
+
+- **Tool versions pinned** for reproducibility (Semgrep 1.45.0, Trivy 0.48.1, Gitleaks 8.18.1)
+- **SARIF uploads** make findings visible in GitHub Security tab
+- **Automated issue creation** tracks security debt
+- **Non-blocking reviews** don't fail PRs, just inform
+
+View all scan results in your repo's Security tab after each PR.
 
 ### Code Scanning
 
@@ -595,4 +610,4 @@ Before deploying AI applications:
 
 ---
 
-*Security is an ongoing process, not a destination. Stay vigilant and keep learning.*
+_Security is an ongoing process, not a destination. Stay vigilant and keep learning._

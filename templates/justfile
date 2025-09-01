@@ -142,9 +142,9 @@ run *ARGS:
 
 # Run all tests
 test:
-  @just test:unit
-  @just test:integration || true
-  @just test:e2e || true
+  @just test-unit
+  @just test-integration || true
+  @just test-e2e || true
 
 # Run unit tests
 test-unit:
@@ -442,6 +442,69 @@ info:
   @echo "Go: $(go version 2>/dev/null || echo 'not installed')"
   @echo "Rust: $(rustc --version 2>/dev/null || echo 'not installed')"
   @git rev-parse --short HEAD 2>/dev/null || echo "Not a git repository"
+
+# Review local changes with AI
+review-local:
+  #!/usr/bin/env bash
+  set -euo pipefail
+  echo "Generating PR diff for AI review..."
+  git diff origin/main...HEAD > /tmp/pr.diff
+
+  # Try CLIs in order
+  if command -v claude >/dev/null; then
+    claude --system-prompt "Review this diff for bugs, security issues, and improvements" < /tmp/pr.diff
+  elif command -v codex >/dev/null; then
+    codex exec --system "Review this diff" --input-file /tmp/pr.diff
+  elif command -v gemini >/dev/null; then
+    gemini generate --system "Review this diff" --input-file /tmp/pr.diff
+  elif command -v grok >/dev/null; then
+    grok chat --system "Review this diff" < /tmp/pr.diff
+  else
+    echo "No AI CLI found. Install claude, codex, gemini, or grok"
+    exit 1
+  fi
+
+# Generate tickets from codebase
+tickets:
+  #!/usr/bin/env bash
+  set -euo pipefail
+  echo "Analyzing codebase and generating tickets..."
+
+  # Create output directory
+  mkdir -p tickets
+
+  # Build analysis prompt (use command file if exists, else default)
+  prompt="/tmp/ticket-prompt.md"
+  if [ -f .claude/commands/tickets-from-code.md ]; then
+    cp .claude/commands/tickets-from-code.md "$prompt"
+  else
+    echo "Analyze this codebase and generate tickets in JSON format:" > "$prompt"
+    echo '{"tickets": [{"id": "PROJ-001", "title": "...", "type": "bug|feature|chore", "priority": "P0-P3", "effort": "XS-XL"}]}' >> "$prompt"
+    find . -type f \( -name "*.js" -o -name "*.ts" -o -name "*.py" \) | head -20 >> "$prompt"
+  fi
+
+  # Try CLIs using system/active.md as system prompt and command as input
+  out="tickets/tickets.json"
+  if command -v claude >/dev/null; then
+    claude --system-prompt system/active.md --input-file "$prompt" > "$out"
+  elif command -v codex >/dev/null; then
+    codex exec --system-file system/active.md --input-file "$prompt" > "$out"
+  elif command -v gemini >/dev/null; then
+    gemini generate --system-file system/active.md --prompt-file "$prompt" > "$out"
+  elif command -v grok >/dev/null; then
+    grok chat --system "$(cat system/active.md 2>/dev/null || echo 'Generate tickets')" --input-file "$prompt" > "$out"
+  else
+    echo "No AI CLI found. Install claude, codex, gemini, or grok"
+    exit 1
+  fi
+
+  # Convert JSON to CSV
+  if [ -s "$out" ] && jq -e . "$out" >/dev/null 2>&1; then
+    jq -r '.tickets[] | [.id, .title, .type, .priority, .effort] | @csv' "$out" > tickets/backlog.csv
+    echo "✓ Generated tickets: tickets/backlog.csv"
+  else
+    echo "Failed to generate valid JSON"
+  fi
 
 # Aliases for common commands
 alias t := test

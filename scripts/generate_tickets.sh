@@ -41,8 +41,9 @@ Examples:
   $0 --mode BOTH --concerns "security, performance" --runtimes "Node.js"
 
 Output:
-  - tickets/backlog.md       (GitHub Markdown format)
-  - tickets/backlog.csv      (Jira CSV format)
+  - tickets/tickets.json     (Raw JSON output from AI)
+  - tickets/backlog.csv      (CSV format for import)
+  - tickets/backlog.md       (Markdown format)
   - tickets/quick-wins.md    (Low-effort, high-impact items)
   - tickets/pr-plan.md       (Top PRs to open first)
 
@@ -213,7 +214,7 @@ analyze_repo() {
 
   {
     echo "=== Repository Structure ==="
-    find . -type f -name "*.json" -o -name "*.yml" -o -name "*.yaml" | head -20
+    find . -type f \( -name "*.json" -o -name "*.yml" -o -name "*.yaml" \) | head -20
 
     echo -e "\n=== Languages Detected ==="
     find . -type f \( -name "*.js" -o -name "*.ts" -o -name "*.py" -o -name "*.go" \) | \
@@ -308,9 +309,44 @@ generate_tickets() {
         (.acceptance_criteria // [] | join("; "))
       ] | @csv' "$json" > "$csv" 2>/dev/null || true
 
+      # Generate Markdown versions
+      jq -r '
+        "# Backlog\n\n" +
+        ( .tickets
+          | map("* " + .id + " — " + .title + " (" + .priority + "/" + .effort + ")")
+          | join("\n")
+        )
+      ' "$json" > "$OUTPUT_DIR/backlog.md" 2>/dev/null || true
+
+      # Generate quick wins (low effort, high priority)
+      jq -r '
+        "# Quick Wins\n\n" +
+        ( .tickets
+          | map(select(.effort == "XS" or .effort == "S"))
+          | map(select(.priority == "P0" or .priority == "P1"))
+          | map("* " + .id + " — " + .title)
+          | join("\n")
+        )
+      ' "$json" > "$OUTPUT_DIR/quick-wins.md" 2>/dev/null || true
+
+      # Generate PR plan (first 5 high priority items)
+      jq -r '
+        "# PR Plan\n\n" +
+        "Top tickets to implement first:\n\n" +
+        ( .tickets
+          | sort_by(.priority)
+          | .[0:5]
+          | map("1. " + .id + " — " + .title + "\n   - Priority: " + .priority + "\n   - Effort: " + .effort)
+          | join("\n\n")
+        )
+      ' "$json" > "$OUTPUT_DIR/pr-plan.md" 2>/dev/null || true
+
       echo -e "${GREEN}✓ Generated $(jq '.tickets | length' "$json") tickets${NC}"
       echo "  JSON: $json"
       echo "  CSV: $csv"
+      echo "  Markdown: $OUTPUT_DIR/backlog.md"
+      echo "  Quick wins: $OUTPUT_DIR/quick-wins.md"
+      echo "  PR plan: $OUTPUT_DIR/pr-plan.md"
     else
       echo -e "${YELLOW}Output generated but not valid JSON${NC}"
       echo "  Raw output: $out"

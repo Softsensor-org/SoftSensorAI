@@ -4,17 +4,28 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
 
+concurrency:
+  group: ai-review-${{ github.event.pull_request.number }}-${{ github.sha }}
+  cancel-in-progress: true
+
 jobs:
   ai-review:
     runs-on: ubuntu-latest
-    continue-on-error: true  # Non-blocking - won't fail PR
-    # Only run if enabled via repository variable
-    if: ${{ vars.AI_REVIEW_ENABLED == 'true' || github.event.pull_request.labels.*.name contains 'ai-review' }}
+    continue-on-error: true # Non-blocking - won't fail PR
+    # Only run if enabled via repository variable or has ai-review label
+    if: >-
+      ${{
+        vars.AI_REVIEW_ENABLED == 'true' ||
+        contains(join(github.event.pull_request.labels.*.name, ','), 'ai-review')
+      }}
 
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Get full history for diff
+          fetch-depth: 0 # Get full history for diff
+
+      - name: Fetch base branch
+        run: git fetch --no-tags origin ${{ github.base_ref }} --depth=1
 
       - name: Setup system prompt
         run: |

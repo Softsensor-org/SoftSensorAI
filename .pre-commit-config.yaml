@@ -1,4 +1,5 @@
 repos:
+  # Basic file fixes
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.6.0
     hooks:
@@ -8,14 +9,41 @@ repos:
         args: [--fix=lf]
       - id: check-executables-have-shebangs
       - id: check-json
+      - id: check-yaml
+      - id: check-merge-conflict
+      - id: detect-private-key
+
+  # Shell script formatting
+  - repo: https://github.com/scop/pre-commit-shfmt
+    rev: v3.8.0-1
+    hooks:
+      - id: shfmt
+        args: ["-i", "2", "-ci", "-sr"]
+        # -i 2: indent with 2 spaces
+        # -ci: indent switch case blocks
+        # -sr: space after redirect operators
+        exclude: "^legacy/"
+
+  # Shell script linting (after formatting)
   - repo: https://github.com/shellcheck-py/shellcheck-py
     rev: v0.10.0.1
     hooks:
       - id: shellcheck
         args: [--severity=warning, -e, SC2034, -e, SC2155, -e, SC2088, -e, SC2011]
         exclude: '^\.envrc$|^\.envrc\..*|legacy/'
+
+  # YAML linting
   - repo: https://github.com/adrienverge/yamllint
     rev: v1.35.1
     hooks:
       - id: yamllint
         args: [-d, relaxed]
+
+  # Prettier for Markdown, JSON, YAML
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v3.1.0
+    hooks:
+      - id: prettier
+        types_or: [markdown, json, yaml]
+        args: ["--print-width=100", "--prose-wrap=always"]
+        exclude: '^(package-lock\.json|pnpm-lock\.yaml|yarn\.lock)$'
