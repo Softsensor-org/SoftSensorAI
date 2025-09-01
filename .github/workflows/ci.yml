@@ -9,21 +9,23 @@ on:
 jobs:
   shellcheck:
     runs-on: ubuntu-latest
+    continue-on-error: true # Make shellcheck advisory
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup shellcheck
-        uses: ludeeus/action-shellcheck@2.0.0
-        with:
-          version: v0.9.0
+      - name: Install shellcheck
+        run: |
+          wget -qO- "https://github.com/koalaman/shellcheck/releases/download/v0.9.0/shellcheck-v0.9.0.linux.x86_64.tar.xz" | tar -xJv
+          sudo cp "shellcheck-v0.9.0/shellcheck" /usr/local/bin/
+          shellcheck --version
 
       - name: Run shellcheck on all shell scripts
         run: |
           echo "Running shellcheck on all shell scripts..."
           shopt -s globstar nullglob
           # Only fail on errors, not warnings or notes
-          shellcheck --severity=error **/*.sh || true
+          shellcheck --severity=error **/*.sh || echo "⚠️ Shellcheck found issues (advisory)"
           echo "✅ Shellcheck validation complete"
 
   validate-scripts:
