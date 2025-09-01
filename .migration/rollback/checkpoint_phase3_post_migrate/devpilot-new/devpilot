@@ -1,0 +1,76 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+VERSION="1.0.0"
+DEVPILOT_HOME="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Load configuration and logging (tolerate missing during early scaffolding)
+[[ -f "$DEVPILOT_HOME/core/config.sh" ]] && source "$DEVPILOT_HOME/core/config.sh"
+[[ -f "$DEVPILOT_HOME/core/logger.sh" ]] && source "$DEVPILOT_HOME/core/logger.sh"
+
+log_info() { command -v log_info >/dev/null 2>&1 || echo "[INFO] $*"; }
+
+show_help() {
+  cat << 'HELP'
+DevPilot - AI-Augmented Development Platform
+
+USAGE:
+  devpilot [command] [options]
+
+CORE COMMANDS:
+  install       Install DevPilot system
+  create        Create new project
+  pilot         Interact with AI agents
+  profile       Manage skill profiles
+  studio        Development environment tools
+  
+ANALYSIS COMMANDS:
+  doctor        System health check
+  audit         Code quality audit
+  metrics       Development metrics
+
+LEARN MORE:
+  help          Show this help message
+  version       Show version information
+  
+Run 'devpilot [command] --help' for command-specific help
+HELP
+}
+
+route_command() {
+  local cmd="${1:-help}"
+  shift || true
+  
+  case "$cmd" in
+    install)     exec "$DEVPILOT_HOME/core/bootstrap.sh" "$@" ;;
+    upgrade)     exec "$DEVPILOT_HOME/core/upgrader.sh" "$@" ;;
+    config)      exec "$DEVPILOT_HOME/core/config.sh" "$@" ;;
+
+    welcome)     exec "$DEVPILOT_HOME/onboard/welcome.sh" "$@" ;;
+    setup)       exec "$DEVPILOT_HOME/onboard/wizard.sh" "$@" ;;
+
+    create)      exec "$DEVPILOT_HOME/projects/wizard.sh" "$@" ;;
+    scan)        exec "$DEVPILOT_HOME/projects/scanner.sh" "$@" ;;
+
+    pilot)       exec "$DEVPILOT_HOME/pilot/orchestrator.sh" "$@" ;;
+    think)       exec "$DEVPILOT_HOME/pilot/commands/think.sh" "$@" ;;
+
+    profile)     exec "$DEVPILOT_HOME/profiles/manager.sh" "$@" ;;
+    studio)      exec "$DEVPILOT_HOME/studio/manager.sh" "$@" ;;
+
+    doctor)      exec "$DEVPILOT_HOME/insights/doctor.sh" "$@" ;;
+    audit)       exec "$DEVPILOT_HOME/insights/audit.sh" "$@" ;;
+    metrics)     exec "$DEVPILOT_HOME/insights/metrics.sh" "$@" ;;
+
+    help|--help) show_help ;;
+    version|-v)  echo "DevPilot v$VERSION" ;;
+    *)
+      echo "Unknown command: $cmd"
+      echo "Run 'devpilot help' for available commands"
+      exit 1
+      ;;
+  esac
+}
+
+route_command "$@"
+

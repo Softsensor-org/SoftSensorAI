@@ -1,0 +1,74 @@
+# GitHub Release Configuration
+# https://docs.github.com/en/repositories/releasing-projects-on-github/automatically-generated-release-notes
+
+changelog:
+  exclude:
+    labels:
+      - ignore-for-release
+      - skip-changelog
+    authors:
+      - dependabot
+      - github-actions
+  
+  categories:
+    - title: '🚨 Breaking Changes'
+      labels:
+        - breaking-change
+        - breaking
+    
+    - title: '✨ New Features'
+      labels:
+        - feature
+        - enhancement
+        - feat
+    
+    - title: '🐛 Bug Fixes'
+      labels:
+        - bug
+        - bugfix
+        - fix
+    
+    - title: '📚 Documentation'
+      labels:
+        - documentation
+        - docs
+    
+    - title: '🎨 UI/UX Improvements'
+      labels:
+        - ui
+        - ux
+        - design
+    
+    - title: '⚡ Performance'
+      labels:
+        - performance
+        - optimization
+        - perf
+    
+    - title: '🔐 Security'
+      labels:
+        - security
+        - vulnerability
+    
+    - title: '🧪 Testing'
+      labels:
+        - test
+        - testing
+        - tests
+    
+    - title: '🔧 Maintenance'
+      labels:
+        - chore
+        - maintenance
+        - refactor
+        - ci
+        - build
+    
+    - title: '📦 Dependencies'
+      labels:
+        - dependencies
+        - deps
+    
+    - title: Other Changes
+      labels:
+        - '*'

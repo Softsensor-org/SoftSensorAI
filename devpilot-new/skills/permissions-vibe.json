@@ -1,0 +1,47 @@
+{
+  "permissions": {
+    "allow": [
+      "Read",
+      "Grep",
+      "Glob",
+      "LS",
+      "Bash(rg:*)",
+      "Bash(jq:*)",
+      "Bash(scripts/*:*)",
+      "Bash(echo:*)",
+      "Bash(cat:*)",
+      "Bash(ls:*)"
+    ],
+    "ask": [
+      "Edit",
+      "Write",
+      "WebFetch",
+      "Bash(pnpm:*)",
+      "Bash(npm:*)",
+      "Bash(python:*)"
+    ],
+    "deny": [
+      "Bash(docker:*)",
+      "Bash(kubectl:*)",
+      "Bash(terraform:*)",
+      "Bash(aws:*)",
+      "Bash(az:*)",
+      "Bash(git push:*)",
+      "Bash(rm -rf:*)",
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(./secrets/**)"
+    ],
+    "defaultMode": "requireApproval"
+  },
+  "env": {
+    "TEACH_MODE": "1",
+    "VERBOSITY": "high",
+    "EXPLAIN_COMMANDS": "1",
+    "MAX_DIFF_SIZE": "50",
+    "DEFAULT_COT": "cot-structured",
+    "EXTENDED_THINKING": "off",
+    "THINK_BUDGET_BULLETS": "5"
+  },
+  "description": "Vibe Coder - Product/PM/non-eng. Read-only by default, explains everything, runs only safe scripts."
+}

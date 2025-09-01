@@ -1,0 +1,116 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release (e.g., 1.3.0)'
+        required: true
+        type: string
+
+jobs:
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: Get version
+        id: version
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            VERSION="${{ github.event.inputs.version }}"
+          else
+            VERSION=${GITHUB_REF#refs/tags/v}
+          fi
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "tag=v$VERSION" >> $GITHUB_OUTPUT
+      
+      - name: Validate version
+        run: |
+          if [[ ! "${{ steps.version.outputs.version }}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Invalid version format: ${{ steps.version.outputs.version }}"
+            exit 1
+          fi
+      
+      - name: Generate changelog
+        id: changelog
+        run: |
+          # Get previous tag
+          PREV_TAG=$(git describe --tags --abbrev=0 ${{ steps.version.outputs.tag }}^ 2>/dev/null || echo "")
+          
+          # Generate changelog for this release
+          if [[ -n "$PREV_TAG" ]]; then
+            ./scripts/release/generate-changelog.sh "$PREV_TAG" "${{ steps.version.outputs.tag }}" > RELEASE_NOTES.md
+          else
+            ./scripts/release/generate-changelog.sh "" "${{ steps.version.outputs.tag }}" > RELEASE_NOTES.md
+          fi
+          
+          # Output for GitHub release
+          echo "changelog<<EOF" >> $GITHUB_OUTPUT
+          cat RELEASE_NOTES.md >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+      
+      - name: Create release artifacts
+        run: |
+          # Create release directory
+          mkdir -p releases
+          
+          # Create tarball for Linux/WSL
+          tar -czf "releases/devpilot-linux-${{ steps.version.outputs.version }}.tar.gz" \
+            --exclude='.git' \
+            --exclude='releases' \
+            --exclude='*.log' \
+            --exclude='node_modules' \
+            .
+          
+          # Create zip for scripts only
+          zip -r "releases/devpilot-scripts-${{ steps.version.outputs.version }}.zip" \
+            *.sh \
+            install/ \
+            setup/ \
+            scripts/ \
+            validation/ \
+            utils/ \
+            templates/ \
+            -x "*.git*" "*.log"
+      
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          name: DevPilot ${{ steps.version.outputs.tag }}
+          body: ${{ steps.changelog.outputs.changelog }}
+          draft: false
+          prerelease: ${{ contains(steps.version.outputs.version, '-') }}
+          files: |
+            releases/devpilot-linux-${{ steps.version.outputs.version }}.tar.gz
+            releases/devpilot-scripts-${{ steps.version.outputs.version }}.zip
+          generate_release_notes: true
+      
+      - name: Update latest tag
+        if: ${{ !contains(steps.version.outputs.version, '-') }}
+        run: |
+          git tag -fa latest -m "Latest stable release: ${{ steps.version.outputs.tag }}"
+          git push origin latest --force
+      
+      - name: Notify success
+        if: success()
+        run: |
+          echo "✅ Release ${{ steps.version.outputs.tag }} created successfully!"
+          echo "View at: https://github.com/${{ github.repository }}/releases/tag/${{ steps.version.outputs.tag }}"

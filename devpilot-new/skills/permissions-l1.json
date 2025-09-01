@@ -1,0 +1,57 @@
+{
+  "permissions": {
+    "allow": [
+      "Edit",
+      "MultiEdit",
+      "Read",
+      "Write",
+      "Grep",
+      "Glob",
+      "LS",
+      "Bash(rg:*)",
+      "Bash(fd:*)",
+      "Bash(jq:*)",
+      "Bash(yq:*)",
+      "Bash(pnpm:*)",
+      "Bash(npm:*)",
+      "Bash(npx:*)",
+      "Bash(pytest:*)",
+      "Bash(python:*)",
+      "Bash(node:*)",
+      "Bash(http:*)",
+      "Bash(git:*)",
+      "Bash(gh:*)",
+      "Bash(semgrep:*)",
+      "Bash(eslint:*)",
+      "Bash(prettier:*)",
+      "Bash(jest:*)"
+    ],
+    "ask": [
+      "WebFetch",
+      "Bash(docker:*)",
+      "Bash(kubectl:*)",
+      "Bash(terraform:*)",
+      "Bash(git push --force:*)",
+      "Bash(rm -rf /*)",
+      "Bash(aws s3 rm:*)",
+      "Bash(az group delete:*)"
+    ],
+    "deny": [
+      "Read(./secrets/**)",
+      "Bash(sudo rm -rf /*)"
+    ],
+    "defaultMode": "acceptEdits"
+  },
+  "env": {
+    "TEACH_MODE": "0",
+    "VERBOSITY": "medium",
+    "EXPLAIN_COMMANDS": "0",
+    "MAX_DIFF_SIZE": "200",
+    "PARALLEL_TOOLS": "1",
+    "DEFAULT_COT": "cot-lite",
+    "parallel_hint": true,
+    "EXTENDED_THINKING": "off",
+    "THINK_BUDGET_BULLETS": "5"
+  },
+  "description": "Level 1 - Junior dev. Can run tests, lints, basic scans. MCP-first, parallel safe ops."
+}

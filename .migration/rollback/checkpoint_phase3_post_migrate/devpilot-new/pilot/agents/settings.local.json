@@ -1,0 +1,37 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git mv:*)",
+      "Bash(bash:*)",
+      "Bash(make test:*)",
+      "Bash(tree:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(chmod:*)",
+      "Bash(scripts/repo_plan.sh:*)",
+      "Bash(./setup/repo_wizard.sh:*)",
+      "Bash(echo \"Exit code: $?\")",
+      "Bash(timeout:*)",
+      "Bash(for tool in git gh curl jq)",
+      "Bash(do echo -n \"$tool: \")",
+      "Bash(command:*)",
+      "Bash(done)",
+      "Bash(echo:*)",
+      "Bash(/tmp/minimal_test.sh:*)",
+      "Bash(/tmp/debug_repo_wizard.sh:*)",
+      "Bash(git reset:*)",
+      "Bash(find:*)",
+      "Bash(for:*)",
+      "Bash(do)",
+      "Bash(then)",
+      "Bash(/dev/null)",
+      "Bash(else)",
+      "Bash(fi)"
+    ]
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "github",
+    "atlassian"
+  ]
+}

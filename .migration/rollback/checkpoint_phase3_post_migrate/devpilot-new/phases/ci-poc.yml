@@ -1,0 +1,76 @@
+name: CI - POC Phase
+
+on:
+  push:
+    branches: [main, develop, 'feature/*', 'poc/*']
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    continue-on-error: true  # POC allows failures as warnings
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          
+      - name: Install dependencies
+        run: |
+          npm install || pnpm install || yarn install || echo "No JS deps"
+          
+      - name: Run lints (warnings only)
+        continue-on-error: true
+        run: |
+          echo "::warning::Running lints - failures are warnings in POC phase"
+          npm run lint || pnpm lint || echo "::warning::Lint issues found (non-blocking)"
+          
+      - name: Run tests (optional)
+        continue-on-error: true
+        run: |
+          echo "::warning::Running tests - failures are warnings in POC phase"
+          npm test || pnpm test || pytest || echo "::warning::Test failures (non-blocking)"
+          
+      - name: Check for secrets (advisory)
+        continue-on-error: true
+        run: |
+          if command -v gitleaks &> /dev/null; then
+            gitleaks detect --no-banner || echo "::warning::Potential secrets detected"
+          fi
+          
+  build-demo:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Build artifacts
+        run: |
+          echo "Building POC artifacts..."
+          npm run build || pnpm build || make build || echo "Build step not configured"
+          
+      - name: Generate demo
+        run: |
+          echo "POC Phase - Demo generation would go here"
+          # Could run Storybook, generate API docs, etc.
+          
+  summary:
+    runs-on: ubuntu-latest
+    needs: [lint-and-test, build-demo]
+    if: always()
+    
+    steps:
+      - name: POC Status Summary
+        run: |
+          echo "## POC Phase CI Summary"
+          echo "- Lints: Advisory only"
+          echo "- Tests: Optional"
+          echo "- Security: Advisory only"
+          echo "- Ready for: Demos, prototypes, throwaway code"
+          echo ""
+          echo "To graduate to MVP: Add core tests and fix critical lints"

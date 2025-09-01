@@ -1,501 +1,324 @@
-# DevPilot - AI Development Platform
+# DevPilot - AI-Augmented Development Platform
+
+[![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)](https://github.com/yourusername/devpilot)
 [![CI](https://github.com/VivekLmd/setup-scripts/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/VivekLmd/setup-scripts/actions/workflows/ci.yml)
-[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://pre-commit.com/)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![Platform](https://img.shields.io/badge/platform-WSL%20%7C%20Linux%20%7C%20macOS-lightgrey.svg)](docs/platforms.md)
 
-**DevPilot** is a learning-aware AI development platform that adapts to your skill level and project phase. It provides comprehensive setup and configuration for AI coding assistants (Claude, Gemini, Grok, Codex) with progressive skill-based tooling and guardrails.
+DevPilot is a modern, modular development environment orchestrator that seamlessly integrates AI coding assistants (Claude, Gemini, Grok, Codex) into your workflow. It provides automated setup, standardized project structures, and intelligent agent configurations with learning-aware profiles that adapt to your skill level.
 
-## ✨ DevPilot Features
-- **Learning-Aware Profiles**: 5 skill levels (vibe → beginner → l1 → l2 → expert) with progressive tooling
-- **Project Phase Management**: 4 phases (poc → mvp → beta → scale) with appropriate CI/CD gates
-- **Extended Thinking Controls**: Per-skill reasoning budgets and structured prompts
-- **Long-Context Management**: Map→Reduce commands for large codebase analysis
-- **Structured Output**: Prefill templates and diff-first workflows
-- **System Prompt Layering**: Composable global + repo + task prompt system
-- **Comprehensive Auditing**: Automated code analysis and ticket generation
-- **Cross-Platform Support**: WSL2, Linux, and macOS with unified tooling
+## 🎯 Key Features
 
-## 🚀 Quick Installation
-- **Linux/WSL**: `./install/key_software_linux.sh`
-- **macOS**: `./install/key_software_macos.sh`
-- **Universal**: `./setup_all.sh`
-
-## 📚 Documentation
-Complete guides for getting started with DevPilot:
-  - docs/quickstart.md
-  - docs/repo-wizard.md
-  - docs/agent-commands.md
-  - docs/profiles.md
-  - docs/devcontainer.md
-  - docs/system-prompts.md
-  - docs/ci.md
-  - docs/validation-troubleshooting.md
-  - docs/appendix.md
-
-## 📁 DevPilot Structure
-
-```
-devpilot/
-├── setup_all.sh                     # Master setup script (auto-detects fresh/upgrade)
-├── setup/
-│   ├── agents_global.sh             # One-time global agent configuration  
-│   ├── agents_repo.sh               # Per-repository agent setup
-│   ├── repo_wizard.sh               # Interactive/non-interactive repo wizard
-│   └── folders.sh                   # Create standard project directory structure
-├── install/
-│   ├── key_software_wsl.sh          # Install dev tools + agent multipliers
-│   ├── key_software_linux.sh        # Linux development tools
-│   ├── key_software_macos.sh        # macOS development tools
-│   ├── ai_clis.sh                   # Install AI CLI tools
-│   └── productivity_extras.sh       # Advanced tooling for all stacks
-├── validation/
-│   └── validate_agents.sh           # Audit script for checking agent configs
-├── utils/
-├── install_productivity_extras.sh   # Advanced tooling for all stacks
-├── install_ai_clis.sh               # Install AI CLI tools
-├── copy_windows_ssh_to_wsl.sh       # Copy SSH keys from Windows to WSL
-│   └── copy_windows_ssh_to_wsl.sh   # Copy SSH keys from Windows to WSL
-├── claude_user_defaults.sh          # Set Claude user defaults
-├── templates/
-│   └── justfile                     # Universal task runner template
-├── tools/
-│   └── audit_setup_scripts.sh      # Shellcheck and lint validator
-├── .github/
-│   └── workflows/
-│       └── ci.yml                   # GitHub Actions CI pipeline
-├── .pre-commit-config.yaml          # Pre-commit hooks configuration
-├── Makefile                         # Development automation
-└── LICENSE                          # MIT License
-```
+### Core Capabilities
+- **🤖 Multi-Agent Integration**: Unified configuration for Claude, Gemini, Grok, and Codex
+- **📈 Learning-Aware Profiles**: 5 skill levels (vibe → beginner → l1 → l2 → expert) with progressive tooling
+- **🔄 Project Phase Management**: 4 phases (poc → mvp → beta → scale) with appropriate CI/CD gates
+- **🔧 Automated Setup**: Platform-specific installation (WSL, Linux, macOS)
+- **📁 Standardized Structure**: Consistent project organization with templates
+- **🔒 Security First**: Built-in guardrails for secrets and sensitive data
+- **📊 Insights & Auditing**: Code quality checks and system health monitoring
+- **🚀 Smart Migration**: Seamless upgrade path from legacy setups
 
 ## 🚀 Quick Start
 
-### 1. One-Command Setup (WSL/Linux/macOS)
+```bash
+# Clone the repository
+git clone https://github.com/yourusername/devpilot.git
+cd devpilot
+
+# Run bootstrap (auto-detects fresh install vs upgrade)
+./devpilot-new/devpilot bootstrap
+
+# Configure AI agents globally
+./devpilot-new/devpilot pilot setup
+
+# Create project structure
+./devpilot-new/devpilot core folders
+
+# Initialize a new project with AI agents
+cd ~/projects/personal
+./devpilot-new/devpilot project wizard
+```
+
+## 🏗️ Project Structure
+
+### Current (Production) Structure
+```
+setup-scripts/
+├── setup_all.sh                # Master setup orchestrator
+├── setup/                      # Setup scripts
+│   ├── agents_global.sh        # Global agent configuration
+│   ├── agents_repo.sh          # Repository agent setup
+│   ├── repo_wizard.sh          # Project initialization wizard
+│   └── folders.sh              # Directory structure creation
+├── install/                    # Platform installers
+│   ├── key_software_wsl.sh     # WSL-specific tools
+│   ├── key_software_linux.sh   # Linux tools
+│   ├── key_software_macos.sh   # macOS tools
+│   └── ai_clis.sh              # AI CLI installations
+└── validation/                  # Testing and validation
+    └── validate_agents.sh       # Agent configuration checker
+```
+
+### New (Migrated) Structure
+```
+devpilot-new/
+├── core/                       # Core system components
+│   ├── bootstrap.sh            # Main installer/upgrader
+│   ├── config.sh               # Configuration management
+│   ├── logger.sh               # Logging utilities
+│   └── folders.sh              # Directory structure setup
+├── onboard/                    # Onboarding and setup
+│   ├── platforms/              # Platform-specific installers
+│   │   ├── wsl.sh
+│   │   ├── linux.sh
+│   │   └── macos.sh
+│   └── tools/                  # Tool installations
+│       └── ai-clis.sh
+├── pilot/                      # AI agent management
+│   └── agents/
+│       ├── setup.sh            # Global agent configuration
+│       └── repo.sh             # Repository-specific setup
+├── projects/                   # Project management
+│   └── wizard.sh               # Interactive project creator
+├── insights/                   # Analysis and monitoring
+│   ├── audit.sh                # Code quality auditor
+│   └── doctor.sh               # System health checker
+├── skills/                     # Skill-based profiles
+│   └── profiles.sh             # Learning-aware configurations
+└── devpilot                    # Main CLI router
+```
+
+### Migration Framework
+```
+.migration/
+├── scripts/                    # Migration utilities
+│   ├── migrate-files.sh        # File migration executor
+│   ├── compat-layer.sh         # Backward compatibility
+│   ├── test-migration.sh       # Migration tests
+│   └── rollback.sh             # Emergency rollback
+├── transformations/            # Code transformations
+│   ├── update_paths.sh         # Path updates
+│   ├── add_logging.sh          # Logging additions
+│   └── extract_common.sh       # Function extraction
+└── state/                      # Migration state
+    └── migration-map.json      # Source→destination mapping
+```
+
+## 📦 Installation
+
+### Prerequisites
+- **OS**: WSL 2, Ubuntu 20.04+, or macOS 11+
+- **Shell**: Bash 4.0+
+- **Tools**: Git, curl/wget
+- **Optional**: Docker, Python 3.8+, Node.js 18+
+
+### Bootstrap Installation
 
 ```bash
-# Clone this repository
-git clone https://github.com/VivekLmd/setup-scripts.git ~/repos/setup-scripts
-cd ~/repos/setup-scripts
+# Full installation with all components
+./devpilot-new/devpilot bootstrap --fresh
 
-# Run master setup (auto-detects OS + fresh vs upgrade)
+# Upgrade existing installation
+./devpilot-new/devpilot bootstrap --upgrade
+
+# Dry run to preview changes
+./devpilot-new/devpilot bootstrap --dry-run
+
+# Platform-specific options
+./devpilot-new/devpilot bootstrap --platform wsl
+./devpilot-new/devpilot bootstrap --platform linux
+./devpilot-new/devpilot bootstrap --platform macos
+```
+
+### Legacy Installation (Still Supported)
+
+```bash
+# Universal setup
 ./setup_all.sh
+
+# Platform-specific
+./install/key_software_wsl.sh    # WSL
+./install/key_software_linux.sh  # Linux
+./install/key_software_macos.sh  # macOS
 ```
 
-Or manually:
+## 🔄 Migration Guide
+
+### From Legacy to DevPilot 2.0
 
 ```bash
-# Install essential development tools + agent multipliers
-./install/key_software_wsl.sh
+# 1. Run migration executor
+.migration/scripts/migrate-files.sh
 
-# Install AI CLI tools
-./install_ai_clis.sh
+# 2. Test the migration
+.migration/scripts/test-migration.sh
 
-# Set up global agent configurations (run once)
-./setup/agents_global.sh
+# 3. Create compatibility wrappers (preview)
+.migration/scripts/compat-layer.sh
 
-# Create project directory structure
-./setup/folders.sh
+# 4. Apply wrappers in-place
+.migration/scripts/compat-layer.sh --in-place
+
+# 5. Verify with canary deployment
+.migration/scripts/canary.sh
 ```
 
-### 2. Repository Setup
-
-#### Interactive Mode
-```bash
-./setup/repo_wizard.sh
-```
-
-#### Preview/Planning Mode
-**Preview first** - see what will be created without making changes:
-```bash
-# Using the wizard with --plan-only
-./setup/repo_wizard.sh --plan-only --org myorg --category backend \
-  --url git@github.com:user/repo.git --name myapp
-
-# Or use the standalone planner
-scripts/repo_plan.sh ~/projects myorg backend myapp git@github.com:user/repo.git
-```
-
-Customize location and skip prompts:
-```bash
-# Custom base directory with auto-confirm
-./setup/repo_wizard.sh --base ~/work --org myorg --category backend \
-  --url git@github.com:user/repo.git --yes
-```
-
-#### Non-Interactive Mode
-```bash
-# Clone and set up in one command
-./setup/repo_wizard.sh --non-interactive \
-  --org myorg \
-  --category backend \
-  --url git@github.com:user/repo.git \
-  --branch main \
-  --skill beginner \
-  --phase mvp \
-  --teach-mode on
-```
-
-#### Manual Setup (existing repo)
-```bash
-cd /path/to/your/repo
-~/repos/setup-scripts/setup/agents_repo.sh [OPTIONS]
-
-# Options:
-#   --force         Overwrite existing files
-#   --no-mcp        Skip MCP configuration
-#   --no-commands   Skip Claude commands
-#   --no-direnv     Skip direnv setup
-#   --no-gitignore  Skip .gitignore updates
-```
-
-### macOS Quick Install
+### Rollback if Needed
 
 ```bash
-cd ~/repos/setup-scripts
-./install/key_software_macos.sh    # install prerequisites via Homebrew
-./setup/agents_global.sh           # seed global configs + templates
+# Rollback to latest checkpoint
+.migration/scripts/rollback.sh latest
+
+# Emergency rollback
+.migration/scripts/rollback.sh --emergency
 ```
 
-Then use the Repo Wizard as below.
+## 🎮 CLI Reference
 
-### 3. Validation
+### Core Commands
+```bash
+devpilot bootstrap      # Install/upgrade DevPilot
+devpilot pilot setup    # Configure AI agents
+devpilot project wizard # Create new project
+devpilot core folders   # Setup directory structure
+```
 
-Check all repositories for proper agent configuration:
+### Management Commands
+```bash
+devpilot insights audit    # Run code audit
+devpilot insights doctor   # System health check
+devpilot skills profile    # Manage skill profiles
+devpilot pilot repo-setup  # Setup agents in repo
+```
+
+### Advanced Options
+```bash
+# Dry run mode
+devpilot bootstrap --dry-run
+
+# Force operations
+devpilot pilot setup --force
+
+# Skip components
+devpilot bootstrap --skip-tools --skip-agents
+
+# Custom configurations
+devpilot core folders --orgs "acme corp" --personal "my-projects"
+```
+
+## 🔧 Configuration
+
+### Environment Variables
 
 ```bash
-./validation/validate_agents.sh
+# API Keys (add to ~/.bashrc or ~/.zshrc)
+export ANTHROPIC_API_KEY='your-key'
+export GEMINI_API_KEY='your-key'
+export XAI_API_KEY='your-key'
+export OPENAI_API_KEY='your-key'
 
-# Or check a specific directory tree
-./validation/validate_agents.sh ~/my-projects
+# DevPilot Settings
+export DEVPILOT_ORGS="acme corp startup"
+export DEVPILOT_PERSONAL="personal"
+export DEVPILOT_PROJECT_BASE="$HOME/projects"
+export DEVPILOT_SKILL_LEVEL="l2"  # vibe|beginner|l1|l2|expert
+export DEVPILOT_PROJECT_PHASE="mvp" # poc|mvp|beta|scale
 ```
 
-## 🧹 Repo Audit & CI
+### Configuration Files
 
-Keep scripts consistent locally and in CI:
-
-```bash
-# One-shot local audit
-make audit
-
-# Normalize CRLF in shell scripts
-make fmt
-
-# (optional) pre-commit hooks
-pipx install pre-commit || pip install pre-commit
-pre-commit install && pre-commit run --all-files
-```
-
-GitHub Actions runs the same pre-commit checks on every push/PR.
-
-## 📋 Script Descriptions
-
-### Core Agent Setup
-
-#### `setup_agents_global.sh`
-- **Purpose**: One-time global configuration for all AI agents
-- **Creates**:
-  - `~/.claude/settings.json` - Claude global permissions
-  - `~/.gemini/settings.json` - Gemini CLI settings
-  - `~/.grok/user-settings.json` - Grok CLI settings
-  - `~/.codex/config.toml` - Codex configuration
-  - `~/templates/agent-setup/` - Templates for repo setup
-
-#### `setup_agents_repo.sh`
-- **Purpose**: Configure AI agents for a specific repository
-- **Creates**:
-  - `CLAUDE.md` - Repository-specific Claude guardrails
-  - `AGENTS.md` - General agent directives
-  - `.claude/settings.json` - Claude permissions
-  - `.claude/commands/` - Custom Claude commands
-  - `.mcp.json` - MCP server configuration
-  - `.mcp.local.json.example` - Template for local MCP overrides
-  - `.envrc` - Direnv configuration for auto-loading
-  - `.envrc.local.example` - Template for API keys
-  - `.gitignore` - Updated with proper exclusions
-- **Options**:
-  - `--force` - Overwrite existing files
-  - `--template-dir DIR` - Use custom template directory
-  - `--no-mcp` - Skip MCP configuration
-  - `--no-commands` - Skip Claude commands
-  - `--no-direnv` - Skip direnv setup
-  - `--no-gitignore` - Skip .gitignore updates
-
-#### `validate_agents.sh`
-- **Purpose**: Audit all repositories for proper agent setup
-- **Checks**:
-  - Required files presence
-  - JSON file validity
-  - Tool availability
-- **Output**: Color-coded status report with fix suggestions
-
-### Development Environment
-
-#### `repo_wizard.sh`
-- **Purpose**: Interactive/non-interactive repository setup wizard with planning preview
-- **New features**: `--plan-only` for dry-run preview, `--base` for custom location, `--yes` for auto-confirm
-- **Features**:
-  - Organized directory structure (`~/projects/org/category/repo`)
-  - GitHub repository cloning (SSH/HTTPS)
-  - Automatic agent configuration
-  - Commit sanitizer hooks
-  - Dependency bootstrapping
-- **Options**:
-  - `--non-interactive` - Run without prompts
-  - `--org ORG` - Organization name
-  - `--category CAT` - Category (backend/frontend/mobile/etc)
-  - `--url URL` - GitHub repository URL
-  - `--branch BRANCH` - Branch to clone
-  - `--name NAME` - Local repository name
-  - `--lite` - Minimal setup (no hooks, scripts, bootstrap)
-  - `--no-hooks` - Skip git hooks installation
-  - `--no-scripts` - Skip helper scripts
-  - `--no-bootstrap` - Skip dependency installation
-
-#### `install_key_software_wsl.sh`
-- **Installs**: 
-  - Core tools: ripgrep, fd-find, jq, yq, direnv, GitHub CLI
-  - Agent multipliers: mise (runtime manager), just (task runner), devcontainer CLI
-  - Package managers: pnpm, uv
-  - Cloud tools: AWS CLI, Azure CLI
-- **Purpose**: Essential tools for development and agent functionality
-
-#### `install_productivity_extras.sh`
-- **Purpose**: Advanced tooling for backend, frontend, DS/ML, and deployment
-- **Categories**:
-  - **API & Contracts**: OpenAPI/GraphQL toolchain, Newman
-  - **Databases**: dbt, sqlfluff, pgcli, Prisma/Drizzle
-  - **DS/ML**: DVC, W&B, MLflow, nbstripout
-  - **Security**: trivy, semgrep, gitleaks, hadolint, ruff/black/mypy
-  - **K8s Dev**: kind, kustomize, skaffold, tilt
-  - **Release**: changesets, cloudflared
-  - **QoL**: hyperfine, entr, watchexec, cookiecutter
-- **Run after**: `install_key_software_wsl.sh`
-
-#### `install_ai_clis.sh`
-- **Installs**: Claude, Gemini, Grok, Codex CLI tools
-- **Requires**: API keys for each service
-
-### Utilities
-
-#### `copy_windows_ssh_to_wsl.sh`
-- **Purpose**: Copy SSH keys from Windows to WSL
-- **Features**: Proper permissions, known_hosts transfer
-
-#### `make_folders.sh`
-- **Creates**: Standard project directory structure under `~/projects`
-
-#### `claude_user_defaults.sh`
-- **Sets**: Default Claude user preferences
-
-## 🎯 Productivity Extras
-
-For advanced development scenarios, install the productivity extras:
-
-```bash
-./install_productivity_extras.sh
-```
-
-This adds powerful agent multipliers across all stacks:
-- **Reproducible environments**: mise + devcontainer ensure consistent toolchains
-- **Task automation**: just provides a universal command interface
-- **API development**: OpenAPI/GraphQL tools for contract-first development
-- **Data engineering**: dbt, DVC for analytics and ML pipelines
-- **Security scanning**: trivy, semgrep for shift-left security
-- **K8s development**: Local clusters and hot-reload with kind, tilt
-- **Quality tools**: Formatters, linters, type checkers for all languages
-
-### Using Justfile
-
-Copy the template justfile to your project:
-
-```bash
-cp ~/repos/setup-scripts/templates/justfile ./justfile
-
-# Common commands
-just          # Show available commands
-just install  # Install dependencies
-just test     # Run tests
-just lint     # Run linters
-just build    # Build project
-```
-
-## 🔌 MCP (Model Context Protocol) Setup
-
-### Local MCP Server Configuration
-
-To run local MCP servers (e.g., for Postman, database connections, or custom tools):
-
-1. **Create `.mcp.local.json`** in your repository:
-```json
-{
-  "mcpServers": {
-    "postman": {
-      "type": "http",
-      "url": "http://localhost:3000/mcp",
-      "headers": {
-        "Authorization": "Bearer ${POSTMAN_API_KEY}"
-      }
-    },
-    "database": {
-      "type": "stdio",
-      "command": "/usr/local/bin/mcp-postgres",
-      "args": ["--connection-string", "${DATABASE_URL}"]
-    },
-    "custom": {
-      "type": "sse",
-      "url": "http://localhost:8080/events",
-      "env": {
-        "API_KEY": "${CUSTOM_API_KEY}"
-      }
-    }
-  }
-}
-```
-
-2. **Add credentials to `.envrc.local`**:
-```bash
-export POSTMAN_API_KEY="your-postman-api-key"
-export DATABASE_URL="postgresql://user:pass@localhost/dbname"
-export CUSTOM_API_KEY="your-custom-key"
-```
-
-3. **Merge local config** (automatic if using our setup):
-   - `.mcp.local.json` is gitignored
-   - Claude will read both `.mcp.json` and `.mcp.local.json`
-   - Local settings override global ones
-
-### Available MCP Servers
-
-- **GitHub**: Built-in via `.mcp.json`
-- **Atlassian**: Built-in via `.mcp.json`
-- **Postman**: Set up local server with Postman API
-- **Database**: Use MCP database adapters for PostgreSQL/MySQL
-- **Custom**: Build your own MCP server for internal tools
-
-## 🔧 Configuration Files
-
-### Global Configuration
-After running `setup_agents_global.sh`:
-- `~/.claude/settings.json` - Claude global settings
+#### Global Agent Settings
+- `~/.claude/settings.json` - Claude global configuration
 - `~/.gemini/settings.json` - Gemini settings
-- `~/.grok/user-settings.json` - Grok settings
-- `~/.codex/config.toml` - Codex configuration
+- `~/.grok/user-settings.json` - Grok configuration
+- `~/.codex/config.yaml` - Codex settings
+- `~/.devpilot/agents/registry.json` - Agent registry
 
-### Per-Repository Files
-After running `setup_agents_repo.sh`:
-- `CLAUDE.md` - Repository-specific instructions for Claude
-- `AGENTS.md` - General agent directives
-- `.claude/settings.json` - Claude permissions for this repo
-- `.claude/commands/*.md` - Custom Claude commands
-- `.mcp.json` - MCP server configuration
-- `.mcp.local.json` - Local MCP overrides (gitignored)
-- `.envrc` - Auto-load environment variables
-- `.envrc.local` - Local environment variables (gitignored)
+#### Project-Specific
+- `.claude/settings.json` - Project Claude settings
+- `CLAUDE.md` - Repository guardrails
+- `AGENTS.md` - Agent directives
+- `.mcp.json` - MCP server configurations
 
-## 🔐 Security Best Practices
-
-1. **API Keys**: Store in `.envrc.local` (automatically gitignored)
-2. **Secrets**: Never commit `.env*` files or `secrets/` directories
-3. **Permissions**: Review `.claude/settings.json` permissions
-4. **MCP Servers**: Use `.mcp.local.json` for sensitive configurations
-
-## 📝 Workflow Example
-
-```bash
-# 1. Initial setup (once per system)
-cd ~/repos/setup-scripts
-./install/key_software_wsl.sh
-./install_ai_clis.sh
-./setup/agents_global.sh
-
-# 2. Set up a new project
-./setup/repo_wizard.sh
-# Choose organization, category, provide GitHub URL
-# Script clones repo and configures everything
-# In interactive mode, wizard can apply a profile and ask for Beginner teach mode.
-# It also prints GitHub repo secrets commands if API keys are missing.
-
-# 3. Work on the project
-cd ~/projects/myorg/backend/myrepo
-# Claude/Gemini/Grok will respect the configurations
-
-# 4. Validate setup across all projects
-~/repos/setup-scripts/validate_agents.sh
-
-# 5. Fix any misconfigured repos
-cd ~/projects/myorg/backend/broken-repo
-~/repos/setup-scripts/setup/agents_repo.sh --force
-```
-
-## 🧪 Testing
-
-Run sanity checks after setup:
-
-```bash
-# Check file presence
-ls -la CLAUDE.md AGENTS.md .mcp.json .claude/settings.json
-
-# Validate JSON files
-jq -e type .claude/settings.json && echo "✓ Valid JSON"
-jq -e type .mcp.json && echo "✓ Valid JSON"
-
-# Check tool availability
-rg --version && jq --version && pnpm -v
-
-# In Claude REPL
-/mcp           # Should show connected MCP servers
-/permissions   # Should show your allow/ask/deny rules
-```
-
-## 🤝 Contributing
-
-1. Keep scripts idempotent (safe to run multiple times)
-2. Use `set -euo pipefail` for error handling
-3. Provide `--force` flags for overwrites
-4. Maintain backwards compatibility
-5. Document new features in this README
-
-#### `setup_all.sh`
-- **Purpose**: Master setup script with mode detection
-- **Modes**:
-  - **Fresh**: Full installation for new systems
-  - **Upgrade**: Backs up and updates existing configurations
-- **Options**:
-  - `--fresh` - Force fresh installation
-  - `--upgrade` - Force upgrade mode
-  - `--os <wsl|linux|macos>` - Force platform installer (overrides auto-detect)
-  - `--yes` - Non-interactive; skip confirmation prompts
-  - `--skip-tools` - Skip tool installation
-  - `--skip-agents` - Skip agent configuration
-  - `--backup-only` - Only backup existing configs
-
-## 📄 License
-
-Proprietary License - Copyright © 2024 Softsensor.AI - See [LICENSE](LICENSE) file for details
-
-## 🆘 Troubleshooting
+## 🚨 Troubleshooting
 
 ### Common Issues
 
-**Missing tools**: Run `./install/key_software_wsl.sh`
+#### WSL PowerShell Hanging
+DevPilot 2.0 avoids PowerShell calls that can hang in WSL. If using legacy scripts:
+```bash
+# Check for stuck processes
+ps aux | grep powershell
 
-**Invalid JSON**: Check with `jq -e type <file>`
+# Kill stuck process
+kill -9 <PID>
+```
 
-**Permission denied**: Ensure scripts are executable: `chmod +x *.sh`
+#### Permission Denied
+```bash
+# Make scripts executable
+chmod +x devpilot-new/**/*.sh
+chmod +x .migration/**/*.sh
+chmod +x setup/**/*.sh
+```
 
-**API keys not loading**: Check `.envrc.local` and run `direnv allow`
+#### Missing Dependencies
+```bash
+# Run platform installer
+devpilot bootstrap --platform <wsl|linux|macos> --force
 
-**Repos not configured**: Run `./validation/validate_agents.sh` to identify and fix
+# Or use legacy installer
+./install/key_software_<platform>.sh
+```
 
-### Support
+## 📚 Documentation
 
-For issues or questions, please open an issue in this repository.
+### Core Documentation
+- [Architecture Guide](docs/architecture.md) - System design and components
+- [Migration Guide](docs/migration.md) - Upgrading from legacy setup
+- [CLI Reference](docs/cli-reference.md) - Complete command documentation
 
-## 📚 Additional Documentation
+### Feature Guides
+- [Agent Guide](docs/agents.md) - AI assistant configuration
+- [Profiles Guide](docs/profiles.md) - Skill-based profiles
+- [Platform Guide](docs/platforms.md) - OS-specific setup
+- [Project Wizard](docs/repo-wizard.md) - Project initialization
 
-- Quick Start: docs/quickstart.md
-- Repo Wizard Tutorial: docs/repo-wizard.md
-- Commands Catalog (Claude): docs/agent-commands.md
-- Profiles & Skill Levels: docs/profiles.md
-- System Prompt Layering: docs/system-prompts.md
-- CI Integrations: docs/ci.md
-- Validation & Troubleshooting: docs/validation-troubleshooting.md
+### Advanced Topics
+- [System Prompts](docs/system-prompts.md) - Prompt engineering
+- [DevContainer](docs/devcontainer.md) - Container development
+- [CI/CD Integration](docs/ci.md) - Continuous integration
+- [Validation & Troubleshooting](docs/validation-troubleshooting.md)
+
+## 🤝 Contributing
+
+We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'feat: add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📄 License
+
+This project is licensed under the MIT License - see [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- Claude (Anthropic) for AI assistance
+- The open-source community for tools and inspiration
+- All contributors and users
+
+## 📞 Support
+
+- **Issues**: [GitHub Issues](https://github.com/yourusername/devpilot/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/yourusername/devpilot/discussions)
+- **Wiki**: [Project Wiki](https://github.com/yourusername/devpilot/wiki)
+
+---
+
+**DevPilot** - Empowering developers with AI-augmented workflows 🚀
+
+*Version 2.0.0 - The Learning-Aware Update*

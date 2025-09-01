@@ -1,0 +1,14 @@
+{
+  "version": "1.0.0",
+  "status": "initialized",
+  "phase": 0,
+  "started": "",
+  "checkpoints": [],
+  "rollback_points": [],
+  "metrics": {
+    "files_migrated": 0,
+    "tests_passed": 0,
+    "compatibility_checks": 0
+  }
+}
+

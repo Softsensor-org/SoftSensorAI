@@ -1,0 +1,68 @@
+{
+  "permissions": {
+    "allow": [
+      "Edit",
+      "MultiEdit",
+      "Read",
+      "Write",
+      "NotebookEdit",
+      "Grep",
+      "Glob",
+      "LS",
+      "Bash(rg:*)",
+      "Bash(fd:*)",
+      "Bash(jq:*)",
+      "Bash(yq:*)",
+      "Bash(pnpm:*)",
+      "Bash(npm:*)",
+      "Bash(npx:*)",
+      "Bash(pytest:*)",
+      "Bash(python:*)",
+      "Bash(node:*)",
+      "Bash(http:*)",
+      "Bash(git:*)",
+      "Bash(gh:*)",
+      "Bash(docker:*)",
+      "Bash(docker-compose:*)",
+      "Bash(semgrep:*)",
+      "Bash(trivy:*)",
+      "Bash(gitleaks:*)",
+      "Bash(hadolint:*)",
+      "Bash(hyperfine:*)",
+      "Bash(k6:*)",
+      "Bash(sqlfluff:*)",
+      "Bash(prisma:*)",
+      "Bash(drizzle-kit:*)"
+    ],
+    "ask": [
+      "WebFetch",
+      "Bash(kubectl apply:*)",
+      "Bash(terraform apply:*)",
+      "Bash(terraform destroy:*)",
+      "Bash(git push --force:*)",
+      "Bash(aws s3 rm:*)",
+      "Bash(az group delete:*)",
+      "Bash(DROP DATABASE:*)",
+      "Bash(TRUNCATE:*)"
+    ],
+    "deny": [
+      "Read(./secrets/**)",
+      "Bash(sudo rm -rf /*)"
+    ],
+    "defaultMode": "acceptEditsAndCommands"
+  },
+  "env": {
+    "TEACH_MODE": "0",
+    "VERBOSITY": "low",
+    "EXPLAIN_COMMANDS": "0",
+    "MAX_DIFF_SIZE": "500",
+    "PARALLEL_TOOLS": "1",
+    "SECURITY_TOOLS": "1",
+    "PERF_TOOLS": "1",
+    "DEFAULT_COT": "cot-lite",
+    "parallel_hint": true,
+    "EXTENDED_THINKING": "on",
+    "THINK_BUDGET_BULLETS": "5"
+  },
+  "description": "Level 2 - Intermediate. Security tools, DB migrations, performance testing, light refactors."
+}

@@ -1,0 +1,27 @@
+{
+  "migrations": [
+    { "source": "setup_all.sh", "destination": "core/bootstrap.sh", "transform": ["update_paths", "add_logging", "modernize_ui"], "priority": 1 },
+    { "source": "install/key_software_wsl.sh", "destination": "onboard/platforms/wsl.sh", "transform": ["extract_common", "update_paths"], "priority": 2 },
+    { "source": "install/key_software_linux.sh", "destination": "onboard/platforms/linux.sh", "transform": ["extract_common", "update_paths"], "priority": 2 },
+    { "source": "install/key_software_macos.sh", "destination": "onboard/platforms/macos.sh", "transform": ["extract_common", "update_paths"], "priority": 2 },
+    { "source": "setup/agents_global.sh", "destination": "pilot/agents/setup.sh", "transform": ["modularize", "update_paths"], "priority": 3 },
+    { "source": "setup/repo_wizard.sh", "destination": "projects/wizard.sh", "transform": ["add_interactive_ui", "update_paths"], "priority": 3 },
+    { "source": "validation/validate_agents.sh", "destination": "insights/audit.sh", "transform": ["rename_functions", "add_reporting"], "priority": 4 },
+    { "source": "scripts/doctor.sh", "destination": "insights/doctor.sh", "transform": ["enhance_diagnostics"], "priority": 4 },
+    { "source": ".claude/", "destination": "pilot/agents/claude/", "transform": ["restructure_configs"], "priority": 5 },
+    { "source": "profiles/", "destination": "profiles/", "transform": ["reorganize_structure", "add_progression"], "priority": 5 },
+    { "source": "templates/", "destination": "projects/templates/", "transform": ["standardize_format"], "priority": 6 }
+  ],
+  "transformations": {
+    "update_paths": { "description": "Update all script paths to new structure", "script": "transformations/update_paths.sh" },
+    "extract_common": { "description": "Extract common functions to shared library", "script": "transformations/extract_common.sh" },
+    "add_logging": { "description": "Add comprehensive logging", "script": "transformations/add_logging.sh" },
+    "modernize_ui": { "description": "Add progress indicators and rich UI", "script": "transformations/modernize_ui.sh" },
+    "rename_functions": { "description": "Rename functions to new conventions", "script": "transformations/rename_functions.sh" },
+    "enhance_diagnostics": { "description": "Enhance diagnostics and checks", "script": "transformations/enhance_diagnostics.sh" },
+    "restructure_configs": { "description": "Restructure agent configs", "script": "transformations/restructure_configs.sh" },
+    "reorganize_structure": { "description": "Reorganize profiles structure", "script": "transformations/reorganize_structure.sh" },
+    "standardize_format": { "description": "Standardize template formats", "script": "transformations/standardize_format.sh" }
+  }
+}
+

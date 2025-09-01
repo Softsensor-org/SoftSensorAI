@@ -1,0 +1,118 @@
+name: CI - MVP Phase
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  quality-gates:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          
+      - name: Install dependencies
+        run: |
+          npm ci || pnpm install --frozen-lockfile || yarn install --frozen-lockfile
+          
+      - name: Lint check (required)
+        run: |
+          echo "Running lints - must pass for MVP"
+          npm run lint || pnpm lint
+          
+      - name: Type check (required)
+        run: |
+          echo "Running type checks - must pass for MVP"
+          npm run typecheck || pnpm typecheck || tsc --noEmit
+          
+      - name: Unit tests (required)
+        run: |
+          echo "Running unit tests - must pass for MVP"
+          npm test || pnpm test || pytest
+          
+      - name: Test coverage check
+        continue-on-error: true
+        run: |
+          npm run test:coverage || pnpm test:coverage || echo "::warning::Coverage not configured"
+          echo "::warning::Target coverage for Beta phase: 60%"
+          
+  security-scan:
+    runs-on: ubuntu-latest
+    continue-on-error: true  # Advisory in MVP
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Dependency audit
+        run: |
+          npm audit --audit-level=high || echo "::warning::Security issues in dependencies"
+          
+      - name: Basic security scan
+        continue-on-error: true
+        run: |
+          if command -v semgrep &> /dev/null; then
+            semgrep --config=auto || echo "::warning::Security patterns detected"
+          fi
+          
+      - name: Secret detection
+        run: |
+          if command -v gitleaks &> /dev/null; then
+            gitleaks detect --no-banner || exit 1
+          fi
+          
+  build:
+    runs-on: ubuntu-latest
+    needs: [quality-gates]
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          
+      - name: Install and build
+        run: |
+          npm ci || pnpm install --frozen-lockfile
+          npm run build || pnpm build
+          
+      - name: Verify build artifacts
+        run: |
+          test -d dist || test -d build || echo "::warning::No build artifacts found"
+          
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: mvp-build
+          path: |
+            dist/
+            build/
+            
+  mvp-summary:
+    runs-on: ubuntu-latest
+    needs: [quality-gates, security-scan, build]
+    if: always()
+    
+    steps:
+      - name: MVP Gate Summary
+        run: |
+          echo "## MVP Phase Gates"
+          echo "✅ Required:"
+          echo "  - Linting: MUST PASS"
+          echo "  - Type checking: MUST PASS"
+          echo "  - Unit tests: MUST PASS"
+          echo "  - Build: MUST SUCCEED"
+          echo ""
+          echo "⚠️ Advisory:"
+          echo "  - Security scans: Review findings"
+          echo "  - Test coverage: Track trend"
+          echo ""
+          echo "To graduate to Beta: Add integration tests, 60% coverage, fix security issues"
