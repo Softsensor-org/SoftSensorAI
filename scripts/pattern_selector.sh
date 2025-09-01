@@ -57,7 +57,7 @@ list_patterns() {
   else
     # Fallback to basic grep
     echo "Patterns:"
-    ls -1 "$PATTERNS_DIR"/*.md 2>/dev/null | xargs -n1 basename | sed 's/\.md$//' | sed 's/^/  • /'
+    find "$PATTERNS_DIR" -name "*.md" -print0 2>/dev/null | xargs -0 -n1 basename | sed 's/\.md$//' | sed 's/^/  • /'
   fi
 
   echo -e "\n${CYAN}Command Chains:${NC}"
