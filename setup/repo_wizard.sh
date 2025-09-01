@@ -120,7 +120,7 @@ require_tools(){
   for t in "${tools[@]}"; do has "$t" || m+=("$t"); done
   if ((${#m[@]})); then
     err "Missing required tools: ${m[*]}"
-    echo "Install with: ./install_key_software_wsl.sh (WSL) or ./install_key_software_linux.sh / ./install_key_software_macos.sh"
+    echo "Install with: ./install/key_software_linux.sh (Linux/WSL) or ./install/key_software_macos.sh (macOS)"
     exit 1
   fi
 }
