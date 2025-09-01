@@ -94,7 +94,7 @@ detect_environment() {
 
   # Check for cloud providers
   find . -name "*.tf" | head -1 >/dev/null && env_indicators+=("Terraform")
-  [ -f ".github/workflows/"*.yml ] && env_indicators+=("GitHub-Actions")
+  ls .github/workflows/*.yml 2>/dev/null | head -1 >/dev/null && env_indicators+=("GitHub-Actions")
   [ -f ".gitlab-ci.yml" ] && env_indicators+=("GitLab-CI")
 
   # Default
