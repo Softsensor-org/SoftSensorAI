@@ -62,28 +62,35 @@ Creates in your home directory:
 
 ## 🎯 Your First AI Project
 
-### Option 1: New Project (Clone & Setup)
-```bash
-# Interactive wizard
-~/devpilot/setup/repo_wizard.sh
-```
+### ⭐ RECOMMENDED: Existing Repository Setup
 
-You'll be asked:
-1. **Repository URL**: Your GitHub repo to clone
-2. **Organization**: work, personal, learning, or custom
-3. **Category**: backend, frontend, mobile, ml, etc.
+**Most teams should use this approach** - it works with your current directory structure:
 
-### Option 2: Existing Project (Recommended for most teams)
 ```bash
 # Navigate to your already-cloned repo
 cd /path/to/your/existing/repo
 
-# Run setup without cloning
+# Run setup without cloning (keeps your structure intact)
 ~/devpilot/setup/existing_repo_setup.sh --skill l1 --phase mvp
 
-# Add personas as needed
+# Add personas for your project type
 ~/devpilot/scripts/persona_manager.sh add backend-developer
 ~/devpilot/scripts/persona_manager.sh add devops-engineer
+```
+
+**Why this is better:**
+- ✅ Works with your existing directory structure
+- ✅ No repo cloning or moving
+- ✅ Keeps your current workflow
+- ✅ Perfect for teams with established repos
+
+### Alternative: New Project (Clone & Setup)
+
+Only use this if you need to clone a repository first:
+
+```bash
+# Interactive wizard that clones then sets up
+~/devpilot/setup/repo_wizard.sh
 ```
 
 ### One-Line Setup
@@ -113,31 +120,59 @@ Start with `beginner` if unsure - you can change anytime!
 
 **Important**: DevPilot uses the **CLI versions** of AI assistants, not raw APIs. Each assistant points to `system/active.md` for consistent behavior.
 
-### Setting Up CLIs
+### Installing AI CLIs (Required)
+
+**Important**: DevPilot requires CLI tools, not direct API access.
 
 ```bash
-# Install AI CLIs (if not already installed)
-npm install -g @anthropic-ai/claude-cli    # Claude
-npm install -g @openai/codex-cli          # Codex
-pip install gemini-cli                     # Gemini
-cargo install grok-cli                     # Grok
+# Claude CLI
+npm install -g @anthropic-ai/claude-cli
+# or
+curl -fsSL https://claude.ai/install.sh | sh
+
+# Codex CLI (with sandbox support)
+npm install -g @openai/codex-cli
+# or
+pip install openai-codex-cli
+
+# Gemini CLI
+pip install google-generativeai-cli
+# or
+npm install -g @google-ai/gemini-cli
+
+# Grok CLI
+cargo install grok-cli
+# or download from: https://grok.x.ai/cli
+
+# Verify installations
+which claude codex gemini grok
 ```
 
-### Daily Usage
+**Note**: CLI availability varies by provider. Check each provider's documentation for latest installation methods.
+
+### Daily Usage: Always Target system/active.md
+
+**Key Point**: Always point CLI tools at `system/active.md` - this contains your merged prompts (global + repo + task).
 
 ```bash
-# Claude - Best for complex coding (with system prompt)
+# Claude - Best for complex coding
 claude --system-prompt system/active.md "refactor this function for better performance"
 
-# Gemini - Great for explanations (with context)
+# Gemini - Great for explanations
 gemini --context system/active.md "explain how this authentication works"
 
-# Grok - Good for quick tasks (with prompt)
+# Grok - Good for quick tasks
 grok --prompt system/active.md "add error handling to this script"
 
 # Codex - Completions and generation (with sandboxed execution)
 codex --system system/active.md --sandbox "generate unit tests"
 ```
+
+**Why system/active.md?**
+- ✅ Contains your skill level, project phase, and personas
+- ✅ Merges global DevPilot guidance + your project specifics
+- ✅ Ensures consistent AI behavior across all assistants
+- ✅ Automatically updated when you change profiles/personas
 
 ### Using Slash Commands
 

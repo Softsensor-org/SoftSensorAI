@@ -396,7 +396,10 @@ Quick reference for what gets enforced at each project phase:
 | **License Check** | None | None | Check | **Enforce** |
 | **Dependency Audit** | None | Advisory | **Blocks HIGH+** | **Blocks all** |
 
-To change phase: `scripts/apply_profile.sh --phase beta`
+**Managing Legacy Issues:**
+- Set `SEMGREP_BASELINE_REF` repo variable to suppress pre-existing findings
+- Create `.trivyignore` file to suppress known/accepted CVEs
+- Use `scripts/apply_profile.sh --phase beta` to change enforcement level
 
 ## 🚀 AI Development Environment
 
@@ -742,8 +745,13 @@ scripts/graduate.sh advance     # Graduate to next level
 
 ### Project Planning & Analysis
 ```bash
-# Preview what would be created WITHOUT making changes
+# IMPORTANT: Preview setup without making changes (dry run)
 ~/devpilot/scripts/repo_plan.sh ~/projects work backend my-api https://github.com/you/api
+# Shows exactly what files would be created, where they'd go
+
+# Then run actual setup after reviewing the plan
+~/devpilot/setup/repo_wizard.sh --dry-run  # Preview first
+~/devpilot/setup/repo_wizard.sh            # Actual setup
 
 # Analyze codebase and generate tickets
 scripts/generate_tickets.sh --mode detailed --format markdown

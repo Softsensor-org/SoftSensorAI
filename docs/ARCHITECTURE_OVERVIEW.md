@@ -230,8 +230,13 @@ cat .github/workflows/ci.yml | grep -A5 "Security Checks"
 # Run local validation
 scripts/run_checks.sh --all
 
-# Fix issues before push
-semgrep --config=auto --autofix .
+# Manage legacy noise (for existing codebases)
+gh variable set SEMGREP_BASELINE_REF --body "main"  # Suppress pre-existing findings
+echo "CVE-2021-44228" >> .trivyignore              # Accept known CVE
+
+# Fix new issues before push
+semgrep --config=auto --baseline-ref=main --autofix .
+trivy fs . --ignorefile .trivyignore
 gitleaks detect --baseline-path .gitleaksignore
 ```
 
@@ -379,6 +384,12 @@ EOF
 chmod +x .git/hooks/pre-push
 ```
 
+**Cross-Platform Compatibility:**
+- All DevPilot scripts use BSD-safe `sed` commands
+- Works on macOS, Linux, and BSD systems
+- Use `sed -i ''` (with empty string) for macOS compatibility
+- Git hooks are portable across all platforms
+
 ## Troubleshooting
 
 ### CLI Not Finding System Prompt
@@ -423,7 +434,8 @@ cat .github/workflows/ci.yml | grep "exit-code"
    - Define organization standards in `templates/`
 
 3. **Scale Adoption**:
-   - Use `repo_plan.sh` for dry runs
+   - **Always preview first**: `~/devpilot/scripts/repo_plan.sh [base] [org] [category] [name] [url]`
+   - Use `--dry-run` flags: `~/devpilot/setup/repo_wizard.sh --dry-run`
    - Batch apply with `find` and `xargs`
    - Monitor with `validation/validate_agents.sh`
 
