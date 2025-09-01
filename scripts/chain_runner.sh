@@ -80,7 +80,7 @@ CHAIN_STEPS[ml-pipeline]="profile features model evaluate errors"
 # Validate chain type
 if [[ -z "${CHAIN_STEPS[$CHAIN_TYPE]:-}" ]]; then
   echo -e "${RED}Error: Unknown chain type '$CHAIN_TYPE'${NC}"
-  echo "Valid types: ${!CHAIN_STEPS[@]}"
+  echo "Valid types: ${!CHAIN_STEPS[*]}"
   exit 1
 fi
 

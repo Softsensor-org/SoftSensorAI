@@ -49,7 +49,7 @@ clean: ## Clean up generated files
 	rm -rf tickets/ temp/ *.log 2>/dev/null || true
 	@echo "$(GREEN)✓ Cleanup complete$(NC)"
 
-lint: ## Run shellcheck on scripts  
+lint: ## Run shellcheck on scripts
 	@echo "$(CYAN)Running ShellCheck...$(NC)"
 	find . -name "*.sh" -exec shellcheck {} \; || true
 	@echo "$(GREEN)✓ Linting complete$(NC)"
