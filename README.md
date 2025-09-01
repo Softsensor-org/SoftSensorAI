@@ -148,7 +148,7 @@ ls -la setup/ install/ validation/
 
 ## License
 
-MIT - See [LICENSE](LICENSE) file
+Proprietary - Copyright © 2024 Softsensor.AI - See [LICENSE](LICENSE) file
 
 ---
 
