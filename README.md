@@ -83,7 +83,7 @@ Pre-configured command library in `.claude/commands/`:
 Intelligent project setup with `setup/repo_wizard.sh`:
 
 ```bash
-# Interactive mode
+# Interactive mode (recommended)
 ./setup/repo_wizard.sh
 
 # One-liner with all options
@@ -96,13 +96,41 @@ Intelligent project setup with `setup/repo_wizard.sh`:
   --teach-mode on
 ```
 
+**Interactive Profile Selection:**
+When you run the wizard, it now prompts you to select:
+
+1. **Skill Level** (with descriptions):
+   - `vibe` - Vibecoding: minimal structure, maximum freedom
+   - `beginner` - Learning mode with detailed guidance
+   - `l1` - Junior developer level
+   - `l2` - Mid-level developer
+   - `expert` - Senior developer, minimal hand-holding
+
+2. **Project Phase** (with descriptions):
+   - `poc` - Proof of concept, rapid prototyping
+   - `mvp` - Minimum viable product
+   - `beta` - Beta testing, stabilization
+   - `scale` - Production, scaling focus
+
 **Features:**
 - Organized directory structure (`~/projects/org/category/repo`)
-- Automatic dependency detection and installation
+- Automatic dependency detection with detailed reporting
+- Shows what dependency files are found (package.json, requirements.txt, etc.)
+- Reports what was actually installed (Node modules, Python venv, etc.)
 - Git hooks for commit quality
-- Profile-based configuration
+- Profile-based configuration with interactive selection
 - MCP server setup
 - Environment variable management
+
+**Updating Existing Repos:**
+To change your profile on an existing repository:
+```bash
+# From within your repo
+scripts/apply_profile.sh --skill vibe --phase poc
+
+# Or use interactive mode
+scripts/apply_profile.sh
+```
 
 ### 7. **Project Organization**
 
