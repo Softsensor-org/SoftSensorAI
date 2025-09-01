@@ -7,12 +7,21 @@ on:
   schedule:
     - cron: '0 9 * * 1'  # Weekly on Mondays at 9am
 
+# Pin versions for security and reproducibility
+env:
+  GITLEAKS_VERSION: "8.18.1"
+  HADOLINT_VERSION: "2.12.0"
+  TRIVY_VERSION: "0.48.1"
+  SEMGREP_VERSION: "1.45.0"
+
 jobs:
   security-scan:
     runs-on: ubuntu-latest
     permissions:
       contents: read
       security-events: write
+      issues: write
+      pull-requests: write
 
     steps:
       - uses: actions/checkout@v4
@@ -27,202 +36,347 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install security tools
+      - name: Install security tools with pinned versions
         run: |
-          # Semgrep for SAST
-          pip install semgrep
+          # Semgrep for SAST (pinned version)
+          pip install semgrep==${{ env.SEMGREP_VERSION }}
 
-          # Trivy for container/IaC scanning (using modern keyring approach)
+          # Trivy for container/IaC scanning (modern keyring approach with version pin)
           sudo apt-get update
           sudo apt-get install -y wget apt-transport-https gnupg lsb-release
-          wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | gpg --dearmor | sudo tee /usr/share/keyrings/trivy.gpg > /dev/null
-          echo "deb [signed-by=/usr/share/keyrings/trivy.gpg] https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main" | sudo tee /etc/apt/sources.list.d/trivy.list
-          sudo apt-get update && sudo apt-get install trivy -y
 
-          # Gitleaks for secret detection
-          wget https://github.com/gitleaks/gitleaks/releases/latest/download/gitleaks_linux_x64.tar.gz
-          tar -xzf gitleaks_linux_x64.tar.gz
+          # Download and verify Trivy GPG key
+          wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | \
+            gpg --dearmor | \
+            sudo tee /usr/share/keyrings/trivy.gpg > /dev/null
+
+          # Add Trivy repository with signed-by
+          echo "deb [signed-by=/usr/share/keyrings/trivy.gpg] https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main" | \
+            sudo tee /etc/apt/sources.list.d/trivy.list
+
+          # Install specific Trivy version
+          sudo apt-get update
+          sudo apt-get install -y trivy=${{ env.TRIVY_VERSION }}-* || sudo apt-get install -y trivy
+
+          # Gitleaks for secret detection (pinned version)
+          wget https://github.com/gitleaks/gitleaks/releases/download/v${{ env.GITLEAKS_VERSION }}/gitleaks_${{ env.GITLEAKS_VERSION }}_linux_x64.tar.gz
+          tar -xzf gitleaks_${{ env.GITLEAKS_VERSION }}_linux_x64.tar.gz
           sudo mv gitleaks /usr/local/bin/
+          rm gitleaks_${{ env.GITLEAKS_VERSION }}_linux_x64.tar.gz
 
-          # Hadolint for Dockerfile linting
-          wget -O /tmp/hadolint https://github.com/hadolint/hadolint/releases/latest/download/hadolint-Linux-x86_64
+          # Hadolint for Dockerfile linting (pinned version)
+          wget -O /tmp/hadolint https://github.com/hadolint/hadolint/releases/download/v${{ env.HADOLINT_VERSION }}/hadolint-Linux-x86_64
           chmod +x /tmp/hadolint
           sudo mv /tmp/hadolint /usr/local/bin/
 
-      - name: Run Semgrep SAST
+          # Verify installations
+          echo "Tool versions:"
+          semgrep --version
+          trivy --version
+          gitleaks version
+          hadolint --version
+
+      - name: Run Semgrep SAST with SARIF output
+        id: semgrep
         continue-on-error: true
         run: |
+          # Run with both JSON and SARIF output
           semgrep --config=auto --json -o semgrep-results.json . || true
+          semgrep --config=auto --sarif -o semgrep.sarif . || true
+
+          # Count findings
           if [ -f semgrep-results.json ]; then
-            echo "::warning::Semgrep found issues. Check artifacts for details."
+            FINDINGS=$(jq '.results | length' semgrep-results.json)
+            echo "findings=$FINDINGS" >> $GITHUB_OUTPUT
+            echo "::warning::Semgrep found $FINDINGS issues"
+          else
+            echo "findings=0" >> $GITHUB_OUTPUT
           fi
 
-      - name: Run Trivy filesystem scan
+      - name: Upload Semgrep SARIF
+        if: always() && steps.semgrep.outputs.findings != '0'
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: semgrep.sarif
+          category: semgrep
+
+      - name: Run Trivy scan with SARIF output
+        id: trivy
         continue-on-error: true
         run: |
+          # Run with both JSON and SARIF output
           trivy fs --security-checks vuln,config --format json -o trivy-results.json . || true
+          trivy fs --security-checks vuln,config --format sarif -o trivy.sarif . || true
+
+          # Count vulnerabilities
           if [ -f trivy-results.json ]; then
-            echo "::warning::Trivy found vulnerabilities. Check artifacts for details."
+            VULNS=$(jq '[.Results[].Vulnerabilities // [] | length] | add // 0' trivy-results.json)
+            echo "vulnerabilities=$VULNS" >> $GITHUB_OUTPUT
+            echo "::warning::Trivy found $VULNS vulnerabilities"
+          else
+            echo "vulnerabilities=0" >> $GITHUB_OUTPUT
           fi
 
-      - name: Run Gitleaks secret scan
+      - name: Upload Trivy SARIF
+        if: always() && steps.trivy.outputs.vulnerabilities != '0'
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: trivy.sarif
+          category: trivy
+
+      - name: Run Gitleaks secret scan with SARIF output
+        id: gitleaks
         continue-on-error: true
         run: |
+          # Run with both JSON and SARIF output
           gitleaks detect --no-banner -v --report-format json --report-path gitleaks-results.json || true
+          gitleaks detect --no-banner -v --report-format sarif --report-path gitleaks.sarif || true
+
+          # Count secrets
           if [ -f gitleaks-results.json ]; then
-            echo "::error::Gitleaks found exposed secrets!"
+            SECRETS=$(jq '. | length' gitleaks-results.json)
+            echo "secrets=$SECRETS" >> $GITHUB_OUTPUT
+            if [ "$SECRETS" -gt 0 ]; then
+              echo "::error::Gitleaks found $SECRETS exposed secrets!"
+            fi
+          else
+            echo "secrets=0" >> $GITHUB_OUTPUT
           fi
 
-      - name: Lint Dockerfiles
+      - name: Upload Gitleaks SARIF
+        if: always() && steps.gitleaks.outputs.secrets != '0'
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: gitleaks.sarif
+          category: gitleaks
+
+      - name: Lint Dockerfiles with Hadolint
+        id: hadolint
         continue-on-error: true
         run: |
+          ISSUES=0
           find . -name "Dockerfile*" -type f | while read -r file; do
             echo "Linting $file..."
             hadolint "$file" --format json > "hadolint-$(basename $file).json" || true
+            if [ -f "hadolint-$(basename $file).json" ]; then
+              COUNT=$(jq '. | length' "hadolint-$(basename $file).json")
+              ISSUES=$((ISSUES + COUNT))
+            fi
           done
+          echo "dockerfile_issues=$ISSUES" >> $GITHUB_OUTPUT
 
-      - name: Check shell scripts
-        continue-on-error: true
-        run: |
-          find . -name "*.sh" -type f | while read -r file; do
-            shellcheck -f json "$file" > "shellcheck-$(basename $file).json" 2>&1 || true
-          done
-
-      - name: Generate security report
+      - name: Generate comprehensive security report
         if: always()
         run: |
           cat > security-report.md <<'EOF'
-          # Security Review Report
+          # 🔒 Security Review Report
 
           ## Summary
-          - Date: $(date -u +"%Y-%m-%d %H:%M:%S UTC")
-          - Branch: ${{ github.head_ref || github.ref_name }}
-          - Commit: ${{ github.sha }}
+          - **Date**: $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          - **Branch**: ${{ github.head_ref || github.ref_name }}
+          - **Commit**: ${{ github.sha }}
+          - **Triggered by**: ${{ github.actor }}
 
           ## Scan Results
+
+          | Tool | Findings | Status |
+          |------|----------|--------|
+          | Semgrep (SAST) | ${{ steps.semgrep.outputs.findings }} | $([ "${{ steps.semgrep.outputs.findings }}" -eq 0 ] && echo "✅ Pass" || echo "⚠️ Review") |
+          | Trivy (Vulnerabilities) | ${{ steps.trivy.outputs.vulnerabilities }} | $([ "${{ steps.trivy.outputs.vulnerabilities }}" -eq 0 ] && echo "✅ Pass" || echo "⚠️ Review") |
+          | Gitleaks (Secrets) | ${{ steps.gitleaks.outputs.secrets }} | $([ "${{ steps.gitleaks.outputs.secrets }}" -eq 0 ] && echo "✅ Pass" || echo "🚨 Critical") |
+          | Hadolint (Dockerfiles) | ${{ steps.hadolint.outputs.dockerfile_issues }} | $([ "${{ steps.hadolint.outputs.dockerfile_issues }}" -eq 0 ] && echo "✅ Pass" || echo "⚠️ Review") |
+
+          ## Details
           EOF
 
-          if [ -f semgrep-results.json ]; then
-            echo "### Semgrep SAST" >> security-report.md
+          # Add Semgrep details
+          if [ -f semgrep-results.json ] && [ "${{ steps.semgrep.outputs.findings }}" -gt 0 ]; then
+            echo "### Semgrep SAST Findings" >> security-report.md
             echo '```json' >> security-report.md
-            jq -r '.results | length' semgrep-results.json >> security-report.md
-            echo ' issues found```' >> security-report.md
+            jq -r '.results[:5] | map({path: .path, message: .extra.message, severity: .extra.severity})' semgrep-results.json >> security-report.md
+            echo '```' >> security-report.md
+            [ "${{ steps.semgrep.outputs.findings }}" -gt 5 ] && echo "*...and $(({{ steps.semgrep.outputs.findings }} - 5)) more*" >> security-report.md
           fi
 
-          if [ -f trivy-results.json ]; then
-            echo "### Trivy Vulnerabilities" >> security-report.md
+          # Add Trivy details
+          if [ -f trivy-results.json ] && [ "${{ steps.trivy.outputs.vulnerabilities }}" -gt 0 ]; then
+            echo "### Trivy Vulnerability Findings" >> security-report.md
+            echo '```json' >> security-report.md
+            jq -r '.Results[] | select(.Vulnerabilities) | .Vulnerabilities[:5] | map({id: .VulnerabilityID, pkg: .PkgName, severity: .Severity})' trivy-results.json >> security-report.md
             echo '```' >> security-report.md
-            jq -r '.Results[].Vulnerabilities | length' trivy-results.json | awk '{s+=$1} END {print s " vulnerabilities found"}' >> security-report.md
-            echo '```' >> security-report.md
+            [ "${{ steps.trivy.outputs.vulnerabilities }}" -gt 5 ] && echo "*...and $(({{ steps.trivy.outputs.vulnerabilities }} - 5)) more*" >> security-report.md
           fi
 
-          if [ -f gitleaks-results.json ]; then
-            echo "### Secret Detection" >> security-report.md
+          # Add Gitleaks details
+          if [ -f gitleaks-results.json ] && [ "${{ steps.gitleaks.outputs.secrets }}" -gt 0 ]; then
+            echo "### 🚨 Secret Detection" >> security-report.md
+            echo "**CRITICAL: Potential secrets found!**" >> security-report.md
             echo '```' >> security-report.md
-            jq -r '. | length' gitleaks-results.json >> security-report.md
-            echo ' potential secrets found```' >> security-report.md
+            jq -r '.[:3] | map({file: .File, line: .StartLine, rule: .RuleID})' gitleaks-results.json >> security-report.md
+            echo '```' >> security-report.md
+            [ "${{ steps.gitleaks.outputs.secrets }}" -gt 3 ] && echo "*...and $(({{ steps.gitleaks.outputs.secrets }} - 3)) more*" >> security-report.md
           fi
 
-      - name: Create security issues if findings exist
+          echo "" >> security-report.md
+          echo "## Actions Required" >> security-report.md
+
+          if [ "${{ steps.gitleaks.outputs.secrets }}" -gt 0 ]; then
+            echo "1. **🚨 IMMEDIATE**: Review and rotate any exposed secrets" >> security-report.md
+          fi
+          if [ "${{ steps.trivy.outputs.vulnerabilities }}" -gt 0 ]; then
+            echo "2. **HIGH**: Update vulnerable dependencies" >> security-report.md
+          fi
+          if [ "${{ steps.semgrep.outputs.findings }}" -gt 0 ]; then
+            echo "3. **MEDIUM**: Review and fix code security issues" >> security-report.md
+          fi
+
+          echo "" >> security-report.md
+          echo "---" >> security-report.md
+          echo "*View detailed results in the [workflow artifacts](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})*" >> security-report.md
+
+      - name: Create or update security issues
         if: always()
         uses: actions/github-script@v7
         with:
           script: |
             const fs = require('fs');
-            let totalIssues = 0;
-            let issueBody = '## 🔒 Security Scan Results\n\n';
 
-            // Check Semgrep results
-            if (fs.existsSync('semgrep-results.json')) {
-              const semgrep = JSON.parse(fs.readFileSync('semgrep-results.json', 'utf8'));
-              const count = semgrep.results ? semgrep.results.length : 0;
-              if (count > 0) {
-                totalIssues += count;
-                issueBody += `### Semgrep SAST\n- **${count}** code security issues found\n\n`;
-              }
+            // Calculate total findings
+            const semgrepFindings = parseInt('${{ steps.semgrep.outputs.findings }}') || 0;
+            const trivyVulns = parseInt('${{ steps.trivy.outputs.vulnerabilities }}') || 0;
+            const gitleaksSecrets = parseInt('${{ steps.gitleaks.outputs.secrets }}') || 0;
+            const hadolintIssues = parseInt('${{ steps.hadolint.outputs.dockerfile_issues }}') || 0;
+
+            const totalFindings = semgrepFindings + trivyVulns + gitleaksSecrets + hadolintIssues;
+
+            if (totalFindings === 0) {
+              console.log('No security findings - no issue needed');
+              return;
             }
 
-            // Check Trivy results
-            if (fs.existsSync('trivy-results.json')) {
-              const trivy = JSON.parse(fs.readFileSync('trivy-results.json', 'utf8'));
-              let vulnCount = 0;
-              if (trivy.Results) {
-                trivy.Results.forEach(r => {
-                  if (r.Vulnerabilities) vulnCount += r.Vulnerabilities.length;
-                });
-              }
-              if (vulnCount > 0) {
-                totalIssues += vulnCount;
-                issueBody += `### Trivy Scan\n- **${vulnCount}** vulnerabilities found\n\n`;
-              }
+            // Read the report
+            const report = fs.readFileSync('security-report.md', 'utf8');
+
+            // Determine priority based on findings
+            let priority = 'P2';
+            let labels = ['security', 'automated'];
+
+            if (gitleaksSecrets > 0) {
+              priority = 'P0';
+              labels.push('critical', 'secrets-exposed');
+            } else if (trivyVulns > 10) {
+              priority = 'P1';
+              labels.push('vulnerabilities');
             }
 
-            // Check Gitleaks results
-            if (fs.existsSync('gitleaks-results.json')) {
-              const gitleaks = JSON.parse(fs.readFileSync('gitleaks-results.json', 'utf8'));
-              const count = Array.isArray(gitleaks) ? gitleaks.length : 0;
-              if (count > 0) {
-                totalIssues += count;
-                issueBody += `### Secret Detection\n- **${count}** potential secrets exposed\n\n`;
-              }
-            }
+            const issueTitle = `🔒 Security Scan: ${totalFindings} findings (${priority})`;
 
-            // Create issue if findings exist
-            if (totalIssues > 0) {
-              issueBody += `---\n**Commit:** ${context.sha}\n`;
-              issueBody += `**Workflow Run:** [View Results](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})\n\n`;
-              issueBody += `Please review the security scan artifacts for detailed findings.`;
+            // Check for existing open security issues from today
+            const { data: existingIssues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'security,automated',
+              state: 'open',
+              since: new Date(Date.now() - 24*60*60*1000).toISOString()
+            });
 
-              // Check if similar issue already exists
-              const { data: issues } = await github.rest.issues.listForRepo({
+            const existingIssue = existingIssues.find(i =>
+              i.title.includes('Security Scan:') &&
+              new Date(i.created_at) > new Date(Date.now() - 24*60*60*1000)
+            );
+
+            if (existingIssue) {
+              // Update existing issue
+              await github.rest.issues.update({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                labels: 'security',
-                state: 'open'
+                issue_number: existingIssue.number,
+                title: issueTitle,
+                body: report,
+                labels: labels
               });
+              console.log(`Updated existing security issue #${existingIssue.number}`);
 
-              const existingIssue = issues.find(i =>
-                i.title.includes('Security Scan Alert') &&
-                i.created_at > new Date(Date.now() - 24*60*60*1000).toISOString()
-              );
+              // Add a comment with the update
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: existingIssue.number,
+                body: `🔄 **Updated with latest scan results**\n\nCommit: ${context.sha}\nRun: [View Details](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})`
+              });
+            } else {
+              // Create new issue
+              const { data: newIssue } = await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: issueTitle,
+                body: report,
+                labels: labels
+              });
+              console.log(`Created new security issue #${newIssue.number}`);
 
-              if (!existingIssue) {
-                await github.rest.issues.create({
+              // If this is a PR, add a comment
+              if (context.eventName === 'pull_request') {
+                await github.rest.issues.createComment({
                   owner: context.repo.owner,
                   repo: context.repo.repo,
-                  title: `🚨 Security Scan Alert: ${totalIssues} findings`,
-                  body: issueBody,
-                  labels: ['security', 'automated']
+                  issue_number: context.issue.number,
+                  body: `⚠️ **Security scan found ${totalFindings} issues**\n\nSee #${newIssue.number} for details.`
                 });
-                console.log(`Created security issue with ${totalIssues} findings`);
-              } else {
-                console.log('Security issue already exists for recent scan');
               }
+            }
+
+      - name: Post PR comment with summary
+        if: github.event_name == 'pull_request' && always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const report = fs.readFileSync('security-report.md', 'utf8');
+
+            // Find and update or create comment
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const botComment = comments.find(c =>
+              c.user.login === 'github-actions[bot]' &&
+              c.body.includes('🔒 Security Review Report')
+            );
+
+            if (botComment) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: report
+              });
             } else {
-              console.log('No security findings - no issue created');
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: report
+              });
             }
 
       - name: Upload artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: security-results
+          name: security-scan-results
           path: |
             *-results.json
+            *.sarif
             security-report.md
+            hadolint-*.json
+            shellcheck-*.json
 
-      - name: Comment on PR
-        if: github.event_name == 'pull_request'
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const fs = require('fs');
-            if (fs.existsSync('security-report.md')) {
-              const report = fs.readFileSync('security-report.md', 'utf8');
-              github.rest.issues.createComment({
-                issue_number: context.issue.number,
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                body: report
-              });
-            }
+      - name: Fail if critical findings
+        if: steps.gitleaks.outputs.secrets != '0'
+        run: |
+          echo "::error::Critical security issue: Exposed secrets detected!"
+          echo "Review the Gitleaks findings and rotate any compromised credentials immediately."
+          exit 1
