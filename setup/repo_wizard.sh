@@ -150,6 +150,7 @@ plan_files() {
 - scripts/repo_analysis.sh, scripts/run_checks.sh, scripts/open_pr.sh
 EOF
   [[ "$WITH_CODEX" -eq 1 ]] && echo "- Makefile (Codex targets) or scripts/codex_sandbox.sh"
+  return 0
 }
 
 plan_actions() {
@@ -166,6 +167,7 @@ EOF
   • Node: pnpm install (or npm ci)
   • Python: create .venv and install requirements/pyproject (if present)
 EOF
+  return 0
 }
 
 confirm_or_exit() {
@@ -273,7 +275,7 @@ SC
 
 bootstrap_env(){
   if [ -f package.json ]; then
-    say "Installing Node deps"
+    say "Found package.json - Installing Node dependencies..."
     if [ -f pnpm-lock.yaml ]; then
       if command -v pnpm >/dev/null 2>&1; then pnpm install; else err "pnpm required by pnpm-lock.yaml but not installed"; exit 1; fi
     else
@@ -281,7 +283,7 @@ bootstrap_env(){
     fi
   fi
   if [ -f requirements.txt ] || [ -f pyproject.toml ]; then
-    say "Setting up Python venv (.venv)"
+    say "Found Python project - Setting up virtual environment (.venv)..."
     if command -v uv >/dev/null 2>&1; then
       uv venv .venv; . .venv/bin/activate
       { [ -f requirements.txt ] && uv pip install -r requirements.txt || uv pip install -e . || true; }
@@ -310,13 +312,15 @@ RC
 
 # main
 say "Repo Setup Wizard"
+say "Checking required tools..."
 require_tools
+say "✓ All required tools found"
 
 # Ensure/ask base location if not provided
 if [[ -z "${BASE:-}" || "${BASE}" = "/" ]]; then BASE="${BASE_DEFAULT}"; fi
 if [[ "$DRY" -eq 0 ]]; then
   if [[ ! -d "$BASE" ]]; then
-    echo "Base folder does not exist: $BASE"
+    warn "Base folder does not exist: $BASE"
     if [[ "$YES" -eq 1 || "$NON_INTERACTIVE" -eq 1 ]]; then
       mkdir -p "$BASE"
     else
@@ -327,6 +331,7 @@ if [[ "$DRY" -eq 0 ]]; then
   ensure_dir "$BASE"
 fi
 if [[ -z "$ORG" && "$DRY" -eq 0 ]]; then
+  say "Scanning for existing organizations..."
   mapfile -t ORGS < <(find "$BASE" -mindepth 1 -maxdepth 1 -type d -printf "%f\n" 2>/dev/null | sort)
   if ((${#ORGS[@]}==0)); then warn "No orgs under $BASE."; read -rp "Enter new org slug (e.g., org1): " ORG
   else say "Choose an org"; ORG=$(select_menu "${ORGS[@]}" "Create new…"); [[ "$ORG" == "Create new…" ]] && read -rp "Enter new org slug: " ORG; fi
@@ -335,7 +340,9 @@ fi
 
 SUBS=(backend frontend mobile infra ml ops data docs sandbox playground)
 if [[ "$DRY" -eq 0 ]]; then
+  say "Setting up category directories..."
   for s in "${SUBS[@]}"; do ensure_dir "$BASE/$ORG/$s"; done
+  say "✓ Category directories ready"
 fi
 
 if [[ -z "$CAT" && "$DRY" -eq 0 ]]; then
@@ -379,25 +386,32 @@ fi
 # show the plan and confirm before any change
 confirm_or_exit
 
-say "Cloning → $TARGET"
-if [ -n "${BRANCH:-}" ]; then git clone --branch "$BRANCH" --single-branch "$URL" "$TARGET"; else git clone "$URL" "$TARGET"; fi
+say "Cloning repository → $TARGET"
+if [ -n "${BRANCH:-}" ]; then
+  say "  Branch: $BRANCH"
+  git clone --branch "$BRANCH" --single-branch "$URL" "$TARGET"
+else
+  git clone "$URL" "$TARGET"
+fi
+say "✓ Repository cloned successfully"
 cd "$TARGET"
 
-say "Seeding repo defaults"
+say "Seeding repo defaults (CLAUDE.md, settings, commands)..."
 seed_defaults
-[[ "$LITE" -eq 1 || "$NO_HOOKS" -eq 1 ]] || { say "Installing commit sanitizer hook"; install_commit_sanitizer; }
-[[ "$LITE" -eq 1 || "$NO_SCRIPTS" -eq 1 ]] || { say "Dropping helper scripts"; seed_helper_scripts; }
+say "✓ Agent configuration seeded"
+[[ "$LITE" -eq 1 || "$NO_HOOKS" -eq 1 ]] || { say "Installing commit sanitizer hook..."; install_commit_sanitizer; say "✓ Commit hooks installed"; }
+[[ "$LITE" -eq 1 || "$NO_SCRIPTS" -eq 1 ]] || { say "Creating helper scripts (repo_analysis, run_checks, open_pr)..."; seed_helper_scripts; say "✓ Helper scripts created"; }
 
 # Add Codex integration if requested
 if [[ "$WITH_CODEX" -eq 1 ]]; then
-  say "Adding Codex CLI integration"
+  say "Adding Codex CLI integration..."
 
   # Copy sandbox script if available
   if [ -f "$SCRIPT_DIR/../scripts/codex_sandbox.sh" ]; then
     mkdir -p scripts
     cp "$SCRIPT_DIR/../scripts/codex_sandbox.sh" scripts/
     chmod +x scripts/codex_sandbox.sh
-    echo "  ✓ Added scripts/codex_sandbox.sh"
+    say "  ✓ Added scripts/codex_sandbox.sh"
   fi
 
   # Add Codex targets to Makefile
@@ -421,7 +435,7 @@ codex-refactor:
 
 .PHONY: codex-fix codex-refactor
 MAKEFILE
-      echo "  ✓ Added Codex targets to Makefile"
+      say "  ✓ Added Codex targets to Makefile"
     fi
   else
     # Create minimal Makefile with Codex targets
@@ -441,7 +455,7 @@ codex-fix:
 codex-refactor:
 	@codex exec "refactor for readability and performance" --approval-mode suggest
 MAKEFILE
-    echo "  ✓ Created Makefile with Codex targets"
+    say "  ✓ Created Makefile with Codex targets"
   fi
 
   # Update Claude permissions to include Codex
@@ -450,12 +464,12 @@ MAKEFILE
     if ! grep -q "codex exec" .claude/settings.json; then
       jq '.permissions.allow += ["Bash(codex exec:*)", "Bash(scripts/codex_sandbox.sh:*)"]' .claude/settings.json > .claude/settings.json.tmp && \
         mv .claude/settings.json.tmp .claude/settings.json
-      echo "  ✓ Updated Claude permissions for Codex"
+      say "  ✓ Updated Claude permissions for Codex"
     fi
   fi
 fi
 
-[[ "$NO_BOOTSTRAP" -eq 1 ]] || { say "Bootstrapping deps"; bootstrap_env; }
+[[ "$NO_BOOTSTRAP" -eq 1 ]] || { say "Bootstrapping project dependencies..."; bootstrap_env; say "✓ Dependencies installed"; }
 
 # Apply profile (with Beginner teach-mode prompt in interactive mode)
 apply_profile_now="no"
@@ -484,8 +498,9 @@ if [[ "$apply_profile_now" == "yes" ]]; then
 
   cmd=(scripts/apply_profile.sh --skill "$skill" --phase "$phase")
   [[ -n "$teach" ]] && cmd+=(--teach-mode "$teach")
-  say "Applying profile: skill=$skill phase=$phase teach=${teach:-auto}"
+  say "Applying profile: skill=$skill phase=$phase teach=${teach:-auto}..."
   "${cmd[@]}"
+  say "✓ Profile applied"
 fi
 
 # Secrets guidance (print instructions and optional gh setup)
@@ -494,7 +509,9 @@ for key in ANTHROPIC_API_KEY OPENAI_API_KEY GEMINI_API_KEY XAI_API_KEY GROQ_API_
   if [[ -z "${!key:-}" ]]; then MISSING_SECRETS+=("$key"); fi
 done
 if (( ${#MISSING_SECRETS[@]} > 0 )); then
-  say "Detected missing API keys: ${MISSING_SECRETS[*]}"
+  echo ""
+  say "Checking for API keys..."
+  warn "Missing API keys: ${MISSING_SECRETS[*]}"
   echo "Add GitHub repo secrets (recommended for CI and agents):"
   echo "Repo: $(git config --get remote.origin.url | sed 's#.*/##;s/.git$//')"
   echo "Commands:"
@@ -518,10 +535,16 @@ if (( ${#MISSING_SECRETS[@]} > 0 )); then
       echo "# API keys (not committed)"
       for s in "${MISSING_SECRETS[@]}"; do echo "export $s=..."; done
     } >> .envrc.local.example
-    echo "  ✓ Added placeholders to .envrc.local.example"
+    say "  ✓ Added placeholders to .envrc.local.example"
   fi
 fi
 
-say "Done."
-echo "Open in VS Code: code \"$TARGET\""
-echo "Try: scripts/repo_analysis.sh  ·  scripts/run_checks.sh  ·  scripts/open_pr.sh"
+say "✓ Repository setup complete!"
+echo ""
+echo "📂 Repository location: $TARGET"
+echo "💻 Open in VS Code: code \"$TARGET\""
+echo ""
+echo "📝 Available helper scripts:"
+echo "  - scripts/repo_analysis.sh - Analyze repository structure"
+echo "  - scripts/run_checks.sh - Run lint/typecheck/tests"
+echo "  - scripts/open_pr.sh - Quick PR creation"
