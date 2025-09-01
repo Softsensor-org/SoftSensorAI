@@ -1,152 +1,133 @@
-# Code → Tickets (Epics, Issues, AC, Effort)
+# Command: tickets-from-code (CLI‑first)
 
-Generate HIGH-QUALITY BACKLOG from the connected repository.
+> **Save as:** `.claude/commands/tickets-from-code.md`
+> **Purpose:** Generate a *structured* engineering backlog directly from the codebase (or a supplied diff), for **Claude / Codex / Gemini / Grok** CLIs.
+> **Output:** **JSON only** (strict schema below). No markdown fences, no prose.
 
-## System Context
-You are a staff engineer + SRE + security reviewer generating a HIGH-QUALITY BACKLOG from the connected repository.
+---
 
-## Formatting Preferences
-- Follow the exact headings & tables I specify.
-- When outputting Markdown tickets, use the provided skeleton and valid Markdown.
-- When outputting CSV, return a single CSV table; first row must be headers; quote fields that contain commas/newlines.
-- Use XML-like tags (<header/>, <epics/>, <tickets/>, <csv/>, <final/>) so I can parse sections later.
+## ROLE
 
-## Tool Use & Safety
-- Assume READ-ONLY execution. If you cannot run, INFER from code/configs.
-- Prefer repo-local info (source, configs, CI, Dockerfiles, IaC, docs, tests).
-- If you call multiple independent repo-inspection tools, invoke them in parallel. Do NOT run destructive commands.
+You are a senior staff engineer, SRE, and security reviewer. Produce a *prioritized* backlog of improvements across code quality, testing, documentation, reliability, and security for the target repository.
 
-## Thinking Control
-- Do a brief structured reasoning (<thinking/>) before generating tickets; keep it concise.
-- Merge duplicates; prefer "fix then guardrail" (tests/lints/CI checks).
+## CONTEXT (filled by caller)
 
-## User Input Template
-MODE: {{MODE}}            # one of: GITHUB_MARKDOWN | JIRA_CSV | BOTH
-RUNTIMES: {{Node/Python/...}}     TARGET_ENV: {{Docker+k8s on cloud}}   KEY_CONCERNS: {{e.g., authz, data privacy, perf /api/search}}
+* **PHASE:** `<poc|mvp|beta|scale>` (affects security/test gates)
+* **SKILL\_PROFILE:** `<l1|l2|expert>` (affects tone/assumptions)
+* **TECH\_STACK:** `<short list, e.g., ts+express+postgres>`
+* **NON\_GOALS:** `<optional bullets>`
+* **DIFF:** `<optional unified diff or paths>`
+* **SCOPE\_HINTS:** `<optional: folders/files to focus on>`
+* **REPO\_MAP:** `<optional: file tree, cloc, or inventory>`
 
-## CONTEXT
-- The repository is connected here; analyze source, configs, CI, Dockerfiles, IaC, docs, tests.
-- Assume read-only execution. If you can't run commands, infer from code/configs.
+> If `DIFF` is provided, focus primarily on changed areas; otherwise, perform a repo‑wide sweep guided by `REPO_MAP`.
 
-## SCOPE
-- Create 5–7 EPICS: Security; Reliability & Ops; Performance; Code Quality; DevEx & CI/CD; Docs & Onboarding; (ML/Privacy if present).
-- Under all epics combined, produce ~25 TICKETS (20–40 acceptable) prioritized top-down. Start with P0/P1 (largest impact / lowest effort).
-- Every ticket must be CONCRETE with at least ONE file:line and a short code/config snippet (3–8 lines).
+## GOVERNANCE DIAL (interpretation)
 
-## SEVERITY & PRIORITY
-- Severity: P0 (critical/exploitable/prod risk), P1 (high), P2 (moderate), P3 (nice-to-have).
-- Priority = severity × impact × effort (1–5). Prefer low-effort, high-impact work first.
+* **POC/MVP:** security and SAST findings are **advisory**; must include essential tests and docs.
+* **BETA:** **block** HIGH/CRITICAL vulns & exposed secrets; raise coverage to ≥60%.
+* **SCALE:** **block** MEDIUM+ SAST; coverage ≥80%; IaC hardening if present.
 
-## TICKET TEMPLATE (use EXACT fields)
-- Title: Imperative, ≤ 70 chars.
-- Epic: {Security|Reliability|Performance|Code Quality|DevEx|Docs|ML/Privacy}
-- Area: path(s)/module(s) or service name(s)
-- Severity: P0|P1|P2|P3
-- Priority: High|Medium|Low (state why briefly)
-- Effort: S (≤4h) | M (≤2d) | L (>2d)  (or hours if confident)
-- Evidence: file:line with a 3–8 line snippet or config excerpt
-- Why it matters: 1–3 sentences on risk/cost/benefit
-- Suggested fix: specific steps or short patch/diff (if safe)
-- Acceptance Criteria (AC): 3–6 bullets; observable/testable; include config flags, logs/metrics, perf thresholds (e.g., p95 latency), and security gates (e.g., secret scan passes)
-- Test plan: exact commands & cases (unit/integration; include negative tests; perf/load or security scans if relevant); mention fixtures/mocks and CI invocation
-- Dependencies/Blocks: ticket IDs or files/services that must change first
-- Labels: e.g., area/security, type/refactor, good-first-issue (if S), CI/CD, docs
-- Milestone/Sprint: suggest grouping (e.g., "Hardening Sprint 1")
-- Owner hint: based on paths (e.g., backend-platform); "TBD" if unclear
-- Links: repo-relative paths to referenced spots
+## OUTPUT — STRICT JSON SCHEMA
 
-## RULES
-- Cite every finding with at least one file:line and a snippet.
-- Merge duplicates; if many similar instances, create one ticket with a checklist.
-- Prefer "fix then guardrail": after fixes, add tests/lints/CI checks to prevent regression.
-- If a risky refactor is needed, create a parent "epic ticket" + smaller step tickets (each with AC + tests).
-- If secrets/keys/unsafe crypto are found: mark P0 and include rotation steps in AC + test plan that proves the secret scanner blocks future leaks.
-- Respect async vs blocking: flag blocking I/O in async endpoints; AC must include concurrency/perf verification.
-- For ML/LLM code: require schema validation + tests proving deterministic extractors win; validate LLM outputs before use.
+Output **only** a single JSON object matching this schema:
 
-## DELIVERABLE STRUCTURE (use these sections & tags)
-<thinking>brief bullets on where you'll look first and why</thinking>
-
-<header>
-Repo: {{REPO_NAME}}  |  Default branch: {{BRANCH}}  |  Latest SHA: {{SHA?}}  |  Date: {{TODAY}}
-Summary by severity: P0=?, P1=?, P2=?, P3=?
-Summary by epic: {Security=?, Reliability=?, Performance=?, Code Quality=?, DevEx=?, Docs=?, ML/Privacy=?}
-</header>
-
-<epics>
-- Security — problem theme + expected value (1–2 lines)
-- Reliability & Ops — …
-- Performance — …
-- Code Quality — …
-- DevEx & CI/CD — …
-- Docs & Onboarding — …
-- ML/Privacy (if applicable) — …
-</epics>
-
-# Tickets (strict priority order)
-<tickets>
-IF MODE = GITHUB_MARKDOWN:
-  Emit one Markdown block per ticket using the GitHub skeleton below.
-IF MODE = JIRA_CSV:
-  Emit ONE CSV table with the header:
-  Title,Epic,Area,Severity,Priority,Effort,Evidence,Why,Suggested fix,Acceptance Criteria,Test plan,Dependencies,Labels,Milestone,Owner,Links
-IF MODE = BOTH:
-  First emit the GitHub Markdown blocks (all tickets), THEN emit the single CSV table.
-</tickets>
-
-<final>
-Quick Wins (S): 10–15 bullets.
-Top 5 PRs to open first: branch names + commit messages.
-Guardrails checklist (linters/type/CI rules to add).
-</final>
-
-Begin with <header> and <epics>, then produce ~25 tickets, then <final>.
-
-## GitHub Markdown Ticket Skeleton
-
-```md
-### {Title}
-**Epic:** {Security|Reliability|Performance|Code Quality|DevEx|Docs|ML/Privacy}
-**Area:** {paths/services}
-**Severity:** P{0|1|2|3}  ·  **Priority:** {High|Medium|Low — why}  ·  **Effort:** {S|M|L}
-
-**Evidence (file:line):** `{path}:{line}`
-```lang
-<3–8 lines of code/config excerpt>
+```json
+{
+  "repo": "<name>",
+  "phase": "poc|mvp|beta|scale",
+  "generated_at": "YYYY-MM-DD",
+  "tickets": [
+    {
+      "id": "T-001",
+      "title": "short imperative",
+      "type": "feat|fix|refactor|docs|test|security|chore",
+      "priority": "P0|P1|P2|P3",
+      "effort": "XS|S|M|L|XL",
+      "labels": ["ai","devx"],
+      "assignee": "",
+      "dependencies": ["T-00N"],
+      "notes": "concise rationale and scope",
+      "acceptance_criteria": [
+        "observable, testable outcomes",
+        "thresholds or examples"
+      ]
+    }
+  ]
+}
 ```
 
-**Why it matters**
-{1–3 sentences}
+## NORMS
 
-**Suggested fix**
-{specific steps OR short safe diff}
+* IDs increment from **T‑001** in order of **descending priority** (P0→P3).
+* **Effort scale:** XS(≤0.5d), S(≤1d), M(1–2d), L(3–5d), XL(>1wk). Use conservative estimates.
+* **Security:**
 
-**Acceptance Criteria**
-* {observable outcome with threshold/flag/log/metric}
-* {…}
-* {…}
+  * MVP: include at least one secret scan + dependency audit ticket.
+  * BETA+: include actionable fixes for HIGH/CRIT vulns and secret exposure; ensure CI gates are reflected in acceptance criteria.
+* **Testing:** include tests where coverage is likely missing (unit + smoke + e2e where relevant).
+* **Docs:** README gaps, setup scripts, runbooks, contribution guide.
+* **Reliability/Obs:** logging, metrics, tracing, alerts; add SLO‑linked tasks if applicable.
 
-**Test plan**
-* Unit: `{commands}` / files / fixtures
-* Integration/E2E: `{commands}` (include negative tests)
-* Perf/Security scans: `{commands}` with expected bounds
+## CONSTRAINTS
 
-**Dependencies/Blocks:** {IDs or files}
-**Labels:** {area/…, type/…, good-first-issue?}
-**Milestone/Sprint:** {e.g., Hardening Sprint 1}
-**Owner hint:** {team or TBD}
-**Links:** `{repo-relative paths}`
+* **DO NOT** output analysis, explanation, markdown fences, or any text outside the JSON.
+* Max **30 tickets**; prefer crisp, shippable items. Merge trivially related fixes.
+* Include at least **1** ticket per relevant domain (security, tests, docs, reliability) unless `NON_GOALS` excludes it.
+
+## VALIDATION (self‑check before emitting)
+
+1. JSON parses.
+2. `.tickets` is a non‑empty array.
+3. IDs are unique and sequential from T‑001.
+4. All tickets include **title, type, priority, effort, acceptance\_criteria**.
+5. If `phase ∈ {beta, scale}`, include tickets that *activate or tighten* CI gates accordingly.
+
+---
+
+## CALLER INSTRUCTIONS (CLI examples)
+
+> Provide `CONTEXT` and optional `DIFF/REPO_MAP` via an input file. Point the CLI's **system** to `system/active.md`.
+
+* **Claude (anthropic):**
+
+```bash
+anthropic messages create \
+  --model claude-3-7-sonnet-20250219 \
+  --system "$(cat system/active.md)" \
+  --input-file artifacts/tickets_prompt.txt \
+  --max-tokens 4000 > artifacts/tickets.json
 ```
 
-## Jira CSV Header (exact)
-```
-Title,Epic,Area,Severity,Priority,Effort,Evidence,Why,Suggested fix,Acceptance Criteria,Test plan,Dependencies,Labels,Milestone,Owner,Links
-```
-*(Ensure fields with commas/newlines are quoted.)*
+* **Codex:**
 
-## Quality Gates
-- ✅ Each ticket has **file:line** + a **3–8 line snippet**
-- ✅ **AC** includes testable outcomes (flags/logs/metrics/perf/security gates)
-- ✅ **Test plan** includes unit + integration + negative tests (+ perf/security when relevant) with **exact commands**
-- ✅ **Duplicates merged** (one ticket + checklist)
-- ✅ **P0 secrets** include rotation steps + scanner in CI
+```bash
+codex exec \
+  --model codex-latest \
+  --system-file system/active.md \
+  --input-file artifacts/tickets_prompt.txt > artifacts/tickets.json
+```
+
+* **Gemini / Vertex:**
+
+```bash
+gemini generate \
+  --model gemini-1.5-pro-latest \
+  --system-file system/active.md \
+  --prompt-file artifacts/tickets_prompt.txt > artifacts/tickets.json
+```
+
+* **Grok / OpenRouter:**
+
+```bash
+grok chat --model grok-2-latest \
+  --system "$(cat system/active.md)" \
+  --input-file artifacts/tickets_prompt.txt > artifacts/tickets.json
+```
+
+### Convert to CSV (optional)
+
+```bash
+jq -r '.tickets[] | [ .id, .title, .type, .priority, .effort, (.labels // [] | join("|")), (.assignee // ""), (.dependencies // [] | join("|")), (.notes // "" | gsub("[\r\n]+";" ")), (.acceptance_criteria // [] | join("; ")) ] | @csv' \
+  artifacts/tickets.json > artifacts/tickets.csv
+```
