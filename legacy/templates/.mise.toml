@@ -92,3 +92,4 @@ elif command -v ruff >/dev/null; then
   ruff format .
 fi
 """
+

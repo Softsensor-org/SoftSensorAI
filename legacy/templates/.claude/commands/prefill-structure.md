@@ -9,4 +9,3 @@ Assistant (prefill this, then continue):
 
 User: Continue and fill each block. Keep <thinking> ≤ 5 bullets.
 
-
