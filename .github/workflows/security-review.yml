@@ -5,7 +5,7 @@ on:
     types: [opened, synchronize]
   workflow_dispatch:
   schedule:
-    - cron: '0 9 * * 1'  # Weekly on Mondays at 9am
+    - cron: "0 9 * * 1" # Weekly on Mondays at 9am
 
 # Pin versions for security and reproducibility
 env:
@@ -29,12 +29,12 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 'lts/*'
+          node-version: "lts/*"
 
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - name: Install security tools with pinned versions
         run: |
@@ -261,12 +261,23 @@ jobs:
             let priority = 'P2';
             let labels = ['security', 'automated'];
 
+            // Add tool-specific labels for easier triage
+            if (semgrepFindings > 0) {
+              labels.push('semgrep');
+            }
+            if (trivyVulns > 0) {
+              labels.push('trivy');
+            }
             if (gitleaksSecrets > 0) {
+              labels.push('gitleaks');
               priority = 'P0';
               labels.push('critical', 'secrets-exposed');
             } else if (trivyVulns > 10) {
               priority = 'P1';
               labels.push('vulnerabilities');
+            }
+            if (hadolintIssues > 0) {
+              labels.push('hadolint', 'dockerfile');
             }
 
             const issueTitle = `🔒 Security Scan: ${totalFindings} findings (${priority})`;
