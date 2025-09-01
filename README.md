@@ -137,6 +137,9 @@ All checks passed! Ready for DevPilot installation.
 git clone https://github.com/Softsensor-org/DevPilot.git ~/devpilot
 cd ~/devpilot
 ./setup_all.sh
+
+# Optional: Only if building AI/ML applications
+# ./scripts/install_ai_frameworks.sh  # Skip for web/backend projects
 ```
 
 **What gets installed:**
@@ -161,12 +164,15 @@ AI Agent Configurations:
 - Grok settings
 - Codex integration with sandboxed execution
 
-AI Development Environment:
+AI Development Environment: **[Optional Module]**
 
 - GPU detection (NVIDIA CUDA, AMD ROCm, Apple Silicon)
 - AI frameworks (LangChain, AutoGen, CrewAI)
 - Vector databases (ChromaDB, FAISS)
 - Secure package verification
+
+> 💡 **Not building AI/ML?** Skip this module - it's completely optional. See
+> [AI Frameworks Guide](docs/AI_FRAMEWORKS.md) if you need it later.
 
 What this does:
 
@@ -501,10 +507,13 @@ Quick reference for what gets enforced at each project phase:
 - Create `.trivyignore` file to suppress known/accepted CVEs
 - Use `scripts/apply_profile.sh --phase beta` to change enforcement level
 
-## 🚀 AI Development Environment
+## 🚀 AI Development Environment **[Optional Module]**
 
-DevPilot now includes comprehensive AI/ML development support with GPU acceleration and secure
-package management.
+> **Note:** This section is for AI/ML projects only. Most web/backend projects can skip this
+> entirely. Run `~/devpilot/scripts/install_ai_frameworks.sh` only if you need ML capabilities.
+
+DevPilot includes comprehensive AI/ML development support with GPU acceleration and secure package
+management.
 
 ### GPU Detection & Optimization
 
