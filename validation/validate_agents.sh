@@ -97,7 +97,6 @@ REPOS_JSON_ENTRIES=()
 
 while IFS= read -r -d '' git_dir; do
   REPO="${git_dir%/.git}"
-  REPO_NAME=$(basename "$REPO")
   REPO_REL="${REPO#$ROOT/}"
   REPO_COUNT=$((REPO_COUNT + 1))
 
