@@ -368,6 +368,27 @@ preview-test ID="local":
 
   echo "✅ Preview tests complete"
 
+# Generate command registry
+commands:
+  @echo "📚 Generating command registry..."
+  @./scripts/generate_command_registry.sh artifacts/commands.md artifacts/commands.json
+  @echo "✅ Command registry generated:"
+  @echo "  - artifacts/commands.md (human-readable)"
+  @echo "  - artifacts/commands.json (machine-readable)"
+  @echo ""
+  @echo "View with: cat artifacts/commands.md"
+  @echo "Search with: dp palette"
+
+# Interactive command palette
+palette QUERY="":
+  #!/usr/bin/env bash
+  set -euo pipefail
+  if [ -n "{{QUERY}}" ]; then
+    ./bin/dp palette "{{QUERY}}"
+  else
+    ./bin/dp palette
+  fi
+
 # AI review with preview context
 review-preview BASE="main":
   #!/usr/bin/env bash

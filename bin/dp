@@ -245,11 +245,84 @@ EOF
   fi
 }
 
+cmd_palette() {
+  # Interactive command palette with fzf
+  local query="${1:-}"
+
+  # Check for fzf
+  if ! have fzf; then
+    say "⚠️  fzf not found. Install with:"
+    say "  brew install fzf    # macOS"
+    say "  apt install fzf     # Ubuntu/Debian"
+    say ""
+    say "Or use: just commands  # to view command list"
+    exit 1
+  fi
+
+  # Generate command registry if needed
+  local registry="$ART/commands.json"
+  if [[ ! -f "$registry" ]] || [[ "$ROOT/scripts/generate_command_registry.sh" -nt "$registry" ]]; then
+    say "▸ Generating command registry..."
+    if [[ -x "$ROOT/scripts/generate_command_registry.sh" ]]; then
+      "$ROOT/scripts/generate_command_registry.sh" "$ART/commands.md" "$registry" >/dev/null 2>&1
+    fi
+  fi
+
+  # Build command list for fzf
+  local commands_file="$ART/palette_commands.txt"
+  if [[ -f "$registry" ]]; then
+    jq -r '.commands[] | "\(.command) :: \(.description) [\(.category)]"' "$registry" > "$commands_file"
+  else
+    # Fallback to basic commands
+    cat > "$commands_file" <<'EOF'
+dp init :: Initialize project
+dp tickets :: Generate backlog
+dp review :: Review code changes
+dp palette :: Command palette
+just dev :: Start dev server
+just test :: Run tests
+just lint :: Run linters
+just fmt :: Format code
+EOF
+  fi
+
+  # Interactive selection with fzf
+  local selected
+  if [[ -n "$query" ]]; then
+    selected=$(cat "$commands_file" | fzf --query="$query" --select-1 --exit-0 \
+      --prompt="DevPilot ▸ " \
+      --header="Select command (ESC to cancel)" \
+      --preview-window=hidden \
+      --height=40% \
+      --layout=reverse \
+      --border=rounded)
+  else
+    selected=$(cat "$commands_file" | fzf \
+      --prompt="DevPilot ▸ " \
+      --header="Select command (ESC to cancel)" \
+      --preview-window=hidden \
+      --height=40% \
+      --layout=reverse \
+      --border=rounded)
+  fi
+
+  if [[ -n "$selected" ]]; then
+    # Extract command from selection
+    local cmd="${selected%% ::*}"
+    say "▸ Running: $cmd"
+    say ""
+
+    # Execute the command
+    eval "$cmd"
+  fi
+}
+
 case "${1:-}" in
   init)   shift; cmd_init "$@";;
   tickets)shift; cmd_tickets "$@";;
   review) shift; cmd_review "$@";;
   project)shift; cmd_project "$@";;
+  palette)shift; cmd_palette "$@";;
   -h|--help|"")
     cat <<'HELP'
 DevPilot meta-CLI
@@ -258,12 +331,15 @@ DevPilot meta-CLI
   dp tickets           # structured backlog (JSON → CSV), CLI-first, strict schema
   dp review            # local AI review of your diff (neutral if no CLIs)
   dp review --preview  # review with preview environment logs for context
+  dp palette [query]   # interactive command palette (requires fzf)
 
 Commands via just:
   just preview         # start preview environment (Docker Compose)
   just preview-logs    # view preview logs
   just preview-stop    # stop preview environment
   just review-preview  # AI review with full preview context
+  just palette         # interactive command palette
+  just commands        # generate command registry
 
 Env: AI_MODEL_* override model names; TIMEOUT_SECS limits long runs
 HELP

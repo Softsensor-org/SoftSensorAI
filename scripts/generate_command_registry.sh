@@ -1,213 +1,177 @@
 #!/usr/bin/env bash
+# Generate Command Registry from Justfile and scripts
+# Creates a searchable command palette for DevPilot
 set -euo pipefail
 
-# Generate command registry from .claude/commands/*.md files
-# Creates docs/agent-commands.md with categorized command reference
+OUTPUT="${1:-commands.md}"
+JSON_OUTPUT="${2:-commands.json}"
 
-COMMANDS_DIR=".claude/commands"
-OUTPUT_FILE="docs/agent-commands.md"
+# Header for markdown
+cat > "$OUTPUT" <<'EOF'
+# DevPilot Command Registry
 
-# Colors for terminal output
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-NC='\033[0m' # No Color
+Quick reference for all available commands. Use `dp palette` or `just palette` to search interactively.
 
-# Check if commands directory exists
-if [[ ! -d "$COMMANDS_DIR" ]]; then
-    echo -e "${RED}Error: Commands directory $COMMANDS_DIR not found${NC}"
-    exit 1
-fi
+## Commands
 
-# Initialize the registry document
-cat > "$OUTPUT_FILE" << 'EOF'
-# 🤖 AI Agent Commands Registry
-
-Auto-generated index of all available AI assistant commands.
-
-> **Note:** This file is auto-generated. Do not edit manually.
-> Run `scripts/generate_command_registry.sh` to update.
-
-## Command Categories
-
-- [🧠 Thinking & Analysis](#-thinking--analysis)
-- [🔒 Security](#-security)
-- [📋 Ticket Management](#-ticket-management)
-- [🔍 Code Auditing](#-code-auditing)
-- [🔄 Processing & Workflows](#-processing--workflows)
-
----
-
+| Command | Description | Category | Source |
+|---------|-------------|----------|--------|
 EOF
 
-# Function to extract command metadata from markdown file
-extract_metadata() {
-    local file="$1"
-    local command_name=$(basename "$file" .md)
+# JSON array start
+echo '{"commands": [' > "$JSON_OUTPUT"
+FIRST=true
 
-    # Extract first line as description (after removing # if present)
-    local description=$(head -n 1 "$file" | sed 's/^#\+ *//')
+# Parse Justfile targets
+if [[ -f "Justfile" ]] || [[ -f "justfile" ]]; then
+  JUSTFILE=$(ls Just* just* 2>/dev/null | head -1)
 
-    # Categorize based on command name patterns first, then content
-    local category="Other"
+  # Extract recipes with descriptions
+  awk '
+    /^[a-z][a-z0-9_-]*:/ {
+      # Found a recipe
+      recipe = $1
+      sub(/:.*/, "", recipe)
 
-    case "$command_name" in
-        think-*|cot-*)
-            category="Thinking & Analysis"
-            ;;
-        security-*|secure-*)
-            category="Security"
-            ;;
-        ticket-*|tickets-*)
-            category="Ticket Management"
-            ;;
-        audit-*)
-            category="Code Auditing"
-            ;;
-        chain-*|parallel-*)
-            category="Processing & Workflows"
-            ;;
-        *)
-            # Fallback to content-based categorization
-            if grep -qi "security\|secure\|vulnerability" "$file"; then
-                category="Security"
-            elif grep -qi "ticket\|issue\|backlog\|sprint" "$file"; then
-                category="Ticket Management"
-            elif grep -qi "audit\|review\|quality\|scan" "$file"; then
-                category="Code Auditing"
-            elif grep -qi "think\|analyze\|reasoning\|analysis" "$file"; then
-                category="Thinking & Analysis"
-            elif grep -qi "parallel\|process\|workflow\|chain\|step" "$file"; then
-                category="Processing & Workflows"
-            fi
-            ;;
-    esac
-
-    echo "$category|/$command_name|$description"
-}
-
-# Collect all commands with metadata
-declare -a commands=()
-echo -e "${YELLOW}Scanning commands in $COMMANDS_DIR...${NC}"
-
-for file in "$COMMANDS_DIR"/*.md; do
-    [[ -f "$file" ]] || continue
-    metadata=$(extract_metadata "$file")
-    commands+=("$metadata")
-    echo -e "${GREEN}✓${NC} Processed: $(basename "$file")"
-done
-
-# Sort commands by category and name
-mapfile -t sorted_commands < <(printf '%s\n' "${commands[@]}" | sort -t'|' -k1,1 -k2,2)
-
-# Group commands by category
-declare -A categories
-for cmd in "${sorted_commands[@]}"; do
-    IFS='|' read -r category name description <<< "$cmd"
-    if [[ ! -v "categories[$category]" ]]; then
-        categories[$category]=""
-    fi
-    categories[$category]+="| \`$name\` | $description |"$'\n'
-done
-
-# Write sections for each category
-write_section() {
-    local title="$1"
-    local anchor="$2"
-    local category="$3"
-
-    cat >> "$OUTPUT_FILE" << EOF
-## $title
-
-| Command | Description |
-|---------|-------------|
-EOF
-
-    if [[ -v "categories[$category]" ]] && [[ -n "${categories[$category]}" ]]; then
-        echo -n "${categories[$category]}" >> "$OUTPUT_FILE"
+      # Look for comment on previous line
+      if (prev_line ~ /^# /) {
+        desc = prev_line
+        sub(/^# /, "", desc)
+        printf "| `just %s` | %s | build | Justfile |\n", recipe, desc
+        printf "JSON:{\"command\":\"just %s\",\"description\":\"%s\",\"category\":\"build\",\"source\":\"Justfile\"}\n", recipe, desc
+      } else {
+        # No description, use recipe name
+        printf "| `just %s` | Run %s | build | Justfile |\n", recipe, recipe
+        printf "JSON:{\"command\":\"just %s\",\"description\":\"Run %s\",\"category\":\"build\",\"source\":\"Justfile\"}\n", recipe, recipe
+      }
+    }
+    { prev_line = $0 }
+  ' "$JUSTFILE" | while IFS= read -r line; do
+    if [[ "$line" =~ ^JSON: ]]; then
+      # JSON output
+      json_line="${line#JSON:}"
+      if [[ "$FIRST" == "false" ]]; then
+        echo "," >> "$JSON_OUTPUT"
+      fi
+      echo -n "  $json_line" >> "$JSON_OUTPUT"
+      FIRST=false
     else
-        echo "| *No commands in this category* | - |" >> "$OUTPUT_FILE"
+      # Markdown output
+      echo "$line" >> "$OUTPUT"
     fi
-
-    echo "" >> "$OUTPUT_FILE"
-}
-
-# Write each category section
-write_section "🧠 Thinking & Analysis" "thinking--analysis" "Thinking & Analysis"
-write_section "🔒 Security" "security" "Security"
-write_section "📋 Ticket Management" "ticket-management" "Ticket Management"
-write_section "🔍 Code Auditing" "code-auditing" "Code Auditing"
-write_section "🔄 Processing & Workflows" "processing--workflows" "Processing & Workflows"
-
-# Add other/uncategorized if exists
-if [[ -v "categories[Other]" ]] && [[ -n "${categories[Other]}" ]]; then
-    cat >> "$OUTPUT_FILE" << EOF
-## 📦 Other Commands
-
-| Command | Description |
-|---------|-------------|
-EOF
-    echo -n "${categories[Other]}" >> "$OUTPUT_FILE"
-    echo "" >> "$OUTPUT_FILE"
+  done
 fi
 
-# Add command details section
-cat >> "$OUTPUT_FILE" << 'EOF'
+# Parse dp commands
+if [[ -f "bin/dp" ]]; then
+  echo "" >> "$OUTPUT"
+  echo "| \`dp init\` | Initialize project with doctor, profile, and system build | setup | dp |" >> "$OUTPUT"
+  echo "| \`dp tickets\` | Generate structured backlog (JSON/CSV) | planning | dp |" >> "$OUTPUT"
+  echo "| \`dp review\` | AI review of local diff | review | dp |" >> "$OUTPUT"
+  echo "| \`dp review --preview\` | AI review with preview logs | review | dp |" >> "$OUTPUT"
+  echo "| \`dp project\` | Create/show project profile | config | dp |" >> "$OUTPUT"
+  echo "| \`dp palette\` | Open command palette | meta | dp |" >> "$OUTPUT"
+
+  # Add to JSON
+  for cmd in "init:Initialize project with doctor, profile, and system build:setup" \
+             "tickets:Generate structured backlog (JSON/CSV):planning" \
+             "review:AI review of local diff:review" \
+             "review --preview:AI review with preview logs:review" \
+             "project:Create/show project profile:config" \
+             "palette:Open command palette:meta"; do
+    IFS=: read -r c d cat <<< "$cmd"
+    if [[ "$FIRST" == "false" ]]; then
+      echo "," >> "$JSON_OUTPUT"
+    fi
+    echo -n "  {\"command\":\"dp $c\",\"description\":\"$d\",\"category\":\"$cat\",\"source\":\"dp\"}" >> "$JSON_OUTPUT"
+    FIRST=false
+  done
+fi
+
+# Parse scripts directory
+if [[ -d "scripts" ]]; then
+  echo "" >> "$OUTPUT"
+  echo "## Scripts" >> "$OUTPUT"
+  echo "" >> "$OUTPUT"
+
+  for script in scripts/*.sh; do
+    [[ -f "$script" ]] || continue
+    basename="${script##*/}"
+    name="${basename%.sh}"
+
+    # Extract description from script header
+    desc=$(grep -m1 "^# " "$script" 2>/dev/null | sed 's/^# //' || echo "Run $name")
+
+    echo "| \`./scripts/$basename\` | $desc | script | scripts |" >> "$OUTPUT"
+
+    # Add to JSON
+    if [[ "$FIRST" == "false" ]]; then
+      echo "," >> "$JSON_OUTPUT"
+    fi
+    echo -n "  {\"command\":\"./scripts/$basename\",\"description\":\"$desc\",\"category\":\"script\",\"source\":\"scripts\"}" >> "$JSON_OUTPUT"
+    FIRST=false
+  done
+fi
+
+# Parse tools directory
+if [[ -d "tools" ]]; then
+  echo "" >> "$OUTPUT"
+  echo "## Tools" >> "$OUTPUT"
+  echo "" >> "$OUTPUT"
+
+  for tool in tools/*.sh; do
+    [[ -f "$tool" ]] || continue
+    basename="${tool##*/}"
+    name="${basename%.sh}"
+
+    # Extract description from tool header
+    desc=$(grep -m1 "^# " "$tool" 2>/dev/null | sed 's/^# //' || echo "Run $name")
+
+    echo "| \`./tools/$basename\` | $desc | tool | tools |" >> "$OUTPUT"
+
+    # Add to JSON
+    if [[ "$FIRST" == "false" ]]; then
+      echo "," >> "$JSON_OUTPUT"
+    fi
+    echo -n "  {\"command\":\"./tools/$basename\",\"description\":\"$desc\",\"category\":\"tool\",\"source\":\"tools\"}" >> "$JSON_OUTPUT"
+    FIRST=false
+  done
+fi
+
+# Close JSON array
+echo "" >> "$JSON_OUTPUT"
+echo "]}" >> "$JSON_OUTPUT"
+
+# Add footer to markdown
+cat >> "$OUTPUT" <<'EOF'
+
+## Categories
+
+- **build**: Build, test, and development commands
+- **setup**: Project initialization and configuration
+- **planning**: Ticket generation and project planning
+- **review**: Code review and analysis
+- **config**: Configuration management
+- **script**: Utility scripts
+- **tool**: Development tools
+- **meta**: Meta commands and navigation
+
+## Quick Access
+
+```bash
+# Interactive command palette
+dp palette
+
+# Or use just
+just palette
+
+# Search for specific commands
+dp palette test
+dp palette review
+```
+
 ---
-
-## Command Details
-
-### Using Commands
-
-Commands are invoked by typing the slash command in your AI assistant:
-
-```
-/command-name
-```
-
-Some commands accept parameters or context:
-
-```
-/tickets-from-diff HEAD~3
-/security-review path/to/file.py
-```
-
-### Command Files
-
-Each command is defined in a markdown file under `.claude/commands/`. The file structure:
-
-1. **Description** - First line describes the command
-2. **Instructions** - Detailed steps for the AI to follow
-3. **Examples** - Usage examples (optional)
-4. **Parameters** - Accepted parameters (optional)
-
-### Adding New Commands
-
-1. Create a new `.md` file in `.claude/commands/`
-2. Follow the existing command structure
-3. Run `scripts/generate_command_registry.sh` to update this registry
-
-### Command Naming Convention
-
-- Use kebab-case: `think-hard`, `security-review`
-- Be descriptive but concise
-- Group related commands with common prefixes:
-  - `tickets-*` for ticket operations
-  - `audit-*` for code auditing
-  - `think-*` for analysis modes
-
----
-
-*Generated on $(date -u +"%Y-%m-%d %H:%M:%S UTC")*
+*Generated by generate_command_registry.sh*
 EOF
 
-# Summary
-total_commands=${#commands[@]}
-echo ""
-echo -e "${GREEN}✅ Registry generated successfully!${NC}"
-echo -e "   📁 Output: $OUTPUT_FILE"
-echo -e "   📊 Total commands: $total_commands"
-echo -e "   🏷️  Categories: $(echo "${!categories[@]}" | wc -w)"
-echo ""
-echo "View the registry:"
-echo "  cat $OUTPUT_FILE"
+echo "✅ Generated $OUTPUT and $JSON_OUTPUT"
