@@ -124,12 +124,63 @@ echo ""
 build_prompt() {
   local prompt_file="$OUTPUT_DIR/.prompt.md"
 
+  # Check for template files or create a minimal one
   if [ "$QUICK_SCAN" -eq 1 ]; then
-    echo "Using quick-scan template..."
-    cp .claude/commands/tickets-quick-scan.md "$prompt_file"
+    if [ -f ".claude/commands/tickets-quick-scan.md" ]; then
+      echo "Using quick-scan template..."
+      cp .claude/commands/tickets-quick-scan.md "$prompt_file"
+    else
+      echo "Creating minimal quick-scan template..."
+      cat > "$prompt_file" <<'EOF'
+Analyze this codebase and generate a prioritized ticket backlog.
+Output strict JSON with this schema:
+{
+  "tickets": [
+    {
+      "id": "PROJ-001",
+      "title": "Short descriptive title",
+      "type": "bug|feature|chore|docs",
+      "priority": "P0|P1|P2|P3",
+      "effort": "XS|S|M|L|XL",
+      "labels": ["area/security", "type/bug"],
+      "assignee": "",
+      "dependencies": [],
+      "notes": "Brief description",
+      "acceptance_criteria": ["Criteria 1", "Criteria 2"]
+    }
+  ]
+}
+Focus on: security issues, bugs, performance problems, and missing tests.
+EOF
+    fi
   else
-    echo "Using full analysis template..."
-    cp .claude/commands/tickets-from-code.md "$prompt_file"
+    if [ -f ".claude/commands/tickets-from-code.md" ]; then
+      echo "Using full analysis template..."
+      cp .claude/commands/tickets-from-code.md "$prompt_file"
+    else
+      echo "Creating minimal analysis template..."
+      cat > "$prompt_file" <<'EOF'
+Analyze the entire codebase and generate a comprehensive ticket backlog.
+Output strict JSON with this schema:
+{
+  "tickets": [
+    {
+      "id": "PROJ-001",
+      "title": "Short descriptive title",
+      "type": "bug|feature|chore|docs",
+      "priority": "P0|P1|P2|P3",
+      "effort": "XS|S|M|L|XL",
+      "labels": ["area/security", "type/bug"],
+      "assignee": "",
+      "dependencies": [],
+      "notes": "Detailed description with context",
+      "acceptance_criteria": ["Criteria 1", "Criteria 2", "Criteria 3"]
+    }
+  ]
+}
+Analyze: security vulnerabilities, bugs, performance issues, tech debt, missing tests, documentation gaps.
+EOF
+    fi
   fi
 
   # Replace variables (BSD/macOS compatible)
@@ -265,106 +316,10 @@ generate_tickets() {
       echo "  Raw output: $out"
     fi
   else
-    # Fallback: create example output
-    echo -e "${YELLOW}Using fallback example output${NC}"
+    echo -e "${YELLOW}No AI CLI found. Cannot generate tickets.${NC}"
+    echo "Install one of: claude, codex, gemini, or grok"
+    exit 1
   fi
-
-  if [[ "$MODE" == "GITHUB_MARKDOWN" ]] || [[ "$MODE" == "BOTH" ]]; then
-    cat > "$OUTPUT_DIR/backlog.md" <<'EOF'
-# Generated Ticket Backlog
-
-## Header
-Repo: setup-scripts | Branch: main | Date: 2024-01-15
-Summary by severity: P0=2, P1=5, P2=10, P3=8
-Summary by epic: Security=5, Reliability=4, Performance=3, Code Quality=6, DevEx=4, Docs=3
-
-## Epics
-- Security — Credential management and access control improvements
-- Reliability & Ops — Error handling and monitoring setup
-- Performance — Optimization of script execution time
-- Code Quality — Code structure and testing improvements
-- DevEx & CI/CD — Developer experience and automation
-- Docs & Onboarding — Documentation and setup guides
-
-## Tickets
-
-### Fix exposed API keys in setup scripts
-**Epic:** Security
-**Area:** setup_agents_global.sh
-**Severity:** P0  ·  **Priority:** High — immediate security risk  ·  **Effort:** S
-
-**Evidence (file:line):** `setup_agents_global.sh:142`
-```bash
-export OPENAI_API_KEY="sk-proj-xxxxx"  # EXPOSED KEY
-export ANTHROPIC_API_KEY="sk-ant-xxxxx"  # EXPOSED KEY
-```
-
-**Why it matters**
-Hardcoded API keys in scripts pose immediate security risk if repository is ever made public.
-
-**Suggested fix**
-Move to environment variables or secure credential manager.
-
-**Acceptance Criteria**
-* [ ] No hardcoded keys in any script
-* [ ] Secret scanner passes in CI
-* [ ] Documentation updated with secure setup
-
-**Test plan**
-* Unit: `grep -r "sk-" . --exclude-dir=.git`
-* Security scan: `gitleaks detect`
-
-**Dependencies/Blocks:** None
-**Labels:** area/security, type/bug, P0
-**Milestone/Sprint:** Security Sprint 1
-**Owner hint:** security-team
-**Links:** [setup_agents_global.sh](./setup_agents_global.sh)
-
-[Additional tickets would be generated here...]
-
-EOF
-    echo -e "${GREEN}✓ Generated GitHub Markdown: $OUTPUT_DIR/backlog.md${NC}"
-  fi
-
-  if [[ "$MODE" == "JIRA_CSV" ]] || [[ "$MODE" == "BOTH" ]]; then
-    cat > "$OUTPUT_DIR/backlog.csv" <<'EOF'
-Title,Epic,Area,Severity,Priority,Effort,Evidence,Why,Suggested fix,Acceptance Criteria,Test plan,Dependencies,Labels,Milestone,Owner,Links
-"Fix exposed API keys",Security,setup_agents_global.sh,P0,High (immediate risk),S,"setup_agents_global.sh:142","Hardcoded API keys risk exposure","Use environment variables","• No hardcoded keys
-• Secret scanner passes
-• Docs updated","Unit: grep -r sk- .
-Security: gitleaks detect","","area/security,type/bug,P0","Security Sprint 1",security-team,setup_agents_global.sh
-EOF
-    echo -e "${GREEN}✓ Generated Jira CSV: $OUTPUT_DIR/backlog.csv${NC}"
-  fi
-
-  # Generate quick wins
-  cat > "$OUTPUT_DIR/quick-wins.md" <<'EOF'
-# Quick Wins (≤4 hours each)
-
-1. Add .env.example file with all required variables
-2. Update .gitignore to exclude all .env* files
-3. Add input validation to setup scripts
-4. Create error handling wrapper function
-5. Add --dry-run flag to destructive operations
-6. Implement basic logging to file
-7. Add shellcheck to CI pipeline
-8. Create simple test suite for core functions
-9. Add progress indicators to long-running scripts
-10. Implement --help flag for all scripts
-EOF
-  echo -e "${GREEN}✓ Generated quick wins: $OUTPUT_DIR/quick-wins.md${NC}"
-
-  # Generate PR plan
-  cat > "$OUTPUT_DIR/pr-plan.md" <<'EOF'
-# Top 5 PRs to Open First
-
-1. **fix/remove-hardcoded-secrets**: "Remove hardcoded API keys and use env vars"
-2. **feat/add-input-validation**: "Add input validation and error handling"
-3. **chore/add-shellcheck-ci**: "Add ShellCheck to CI pipeline"
-4. **docs/add-setup-guide**: "Add comprehensive setup documentation"
-5. **test/add-core-tests**: "Add test suite for core functionality"
-EOF
-  echo -e "${GREEN}✓ Generated PR plan: $OUTPUT_DIR/pr-plan.md${NC}"
 }
 
 # Main execution
