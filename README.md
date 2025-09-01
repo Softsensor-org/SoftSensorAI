@@ -390,6 +390,115 @@ DevPilot organizes your projects intelligently:
 - `.mcp.json` - MCP server configuration
 </details>
 
+## 🧰 Additional Power Tools
+
+DevPilot includes many advanced tools not covered above:
+
+### Diagnostics & Health Checks
+```bash
+# Check your entire environment setup
+~/devpilot/scripts/doctor.sh
+# Output: Shows status of all tools, versions, and configurations
+
+# Show your current profile settings
+scripts/profile_show.sh
+# Output: Current skill level, phase, and active configurations
+
+# Validate all AI agent configurations across projects
+~/devpilot/validation/validate_agents.sh --fix
+# Finds and fixes missing configurations automatically
+```
+
+### Skill Progression
+```bash
+# Track your progress toward next skill level
+scripts/graduate.sh
+# Shows checklist of skills to master
+
+# Mark skills as completed
+scripts/graduate.sh complete 1  # Complete first skill
+scripts/graduate.sh ready       # Check if ready to advance
+scripts/graduate.sh advance     # Graduate to next level
+```
+
+### Project Planning & Analysis
+```bash
+# Preview what would be created WITHOUT making changes
+~/devpilot/scripts/repo_plan.sh ~/projects work backend my-api https://github.com/you/api
+
+# Analyze codebase and generate tickets
+scripts/generate_tickets.sh --mode detailed --format markdown
+# Creates prioritized backlog of improvements
+
+# Detect your project's tech stack
+scripts/detect_stack.sh
+# Identifies languages, frameworks, and tools in use
+```
+
+### Task Automation
+```bash
+# Chain multiple commands together
+scripts/chain_runner.sh "task1.yaml"
+# Runs complex multi-step workflows
+
+# Select and apply design patterns
+scripts/pattern_selector.sh
+# Interactive pattern selection for common architectures
+```
+
+### Git Worktree Management
+```bash
+# Manage multiple branches simultaneously
+~/devpilot/tools/worktree_helper.sh add feature-branch
+~/devpilot/tools/worktree_helper.sh list
+~/devpilot/tools/worktree_helper.sh remove feature-branch
+```
+
+### Templates & Scaffolding
+
+DevPilot includes templates for:
+- **Justfile**: Task runner configuration with pre-defined recipes
+- **CLAUDE.md**: AI instruction templates for different project types
+- **.devcontainer**: VS Code container configurations
+- **Tickets**: GitHub/JIRA issue templates
+- **.mise.toml**: Runtime version management
+- **CI/CD**: GitHub Actions workflows for testing and security
+
+Access templates:
+```bash
+ls ~/devpilot/templates/
+cp ~/devpilot/templates/justfile ./
+
+# Copy GitHub Actions workflows
+cp ~/devpilot/.github/workflows/ci.yml .github/workflows/
+cp ~/devpilot/.github/workflows/security-review.yml .github/workflows/
+```
+
+### AI CLI Tools
+```bash
+# Install additional AI command-line tools
+~/devpilot/install/ai_clis.sh
+# Installs: aider, sgpt, chatgpt-cli, and more
+
+# Install Codex CLI (sandboxed AI execution)
+~/devpilot/install/codex_cli.sh
+# Provides safe, isolated AI code execution
+
+# Run Codex in sandbox (requires Docker)
+scripts/codex_sandbox.sh
+# Executes AI-generated code in isolated container
+```
+
+### Language-Specific Stacks
+```bash
+# Install entire language ecosystems
+~/devpilot/install/stacks.sh --with-api   # API development stack
+~/devpilot/install/stacks.sh --with-ml    # Machine learning stack
+~/devpilot/install/stacks.sh --with-sec   # Security tools stack
+~/devpilot/install/stacks.sh --with-k8s   # Kubernetes stack
+~/devpilot/install/stacks.sh --all        # Everything
+```
+
 ## 🐳 Dev Container Support
 
 DevPilot works seamlessly in containerized environments:
