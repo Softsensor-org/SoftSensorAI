@@ -209,7 +209,8 @@ main() {
   echo ""
 
   # Detect platform
-  local platform=$(detect_platform)
+  local platform
+  platform=$(detect_platform)
   say "Detected platform: ${platform}"
 
   # Confirm with user
