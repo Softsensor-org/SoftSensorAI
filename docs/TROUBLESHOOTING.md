@@ -1,6 +1,6 @@
 # 🔧 Troubleshooting Guide
 
-Complete solutions for common issues with setup-scripts.
+Complete solutions for common issues with DevPilot.
 
 ## Table of Contents
 - [Installation Issues](#installation-issues)

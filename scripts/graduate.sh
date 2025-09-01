@@ -157,7 +157,7 @@ mark_complete() {
   while IFS= read -r line_num; do
     current_line=$((current_line + 1))
     if [ "$current_line" -eq "$item_num" ]; then
-      sed -i "${line_num}s/\[.\]/[x]/" PROFILE.md.tmp
+      sed -i'' -e "${line_num}s/\[.\]/[x]/" PROFILE.md.tmp
       found=1
       break
     fi
@@ -169,7 +169,7 @@ mark_complete() {
     while IFS= read -r line_num; do
       current_line=$((current_line + 1))
       if [ "$current_line" -eq "$item_num" ]; then
-        sed -i "${line_num}s/\[.\]/[x]/" PROFILE.md.tmp
+        sed -i'' -e "${line_num}s/\[.\]/[x]/" PROFILE.md.tmp
         found=1
         break
       fi
@@ -204,7 +204,7 @@ mark_incomplete() {
   while IFS= read -r line_num; do
     current_line=$((current_line + 1))
     if [ "$current_line" -eq "$item_num" ]; then
-      sed -i "${line_num}s/\[x\]/[ ]/" PROFILE.md.tmp
+      sed -i'' -e "${line_num}s/\[x\]/[ ]/" PROFILE.md.tmp
       found=1
       break
     fi

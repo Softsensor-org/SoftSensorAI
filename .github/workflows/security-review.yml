@@ -32,9 +32,11 @@ jobs:
           # Semgrep for SAST
           pip install semgrep
 
-          # Trivy for container/IaC scanning
-          wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
-          echo "deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main" | sudo tee -a /etc/apt/sources.list.d/trivy.list
+          # Trivy for container/IaC scanning (using modern keyring approach)
+          sudo apt-get update
+          sudo apt-get install -y wget apt-transport-https gnupg lsb-release
+          wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | gpg --dearmor | sudo tee /usr/share/keyrings/trivy.gpg > /dev/null
+          echo "deb [signed-by=/usr/share/keyrings/trivy.gpg] https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main" | sudo tee /etc/apt/sources.list.d/trivy.list
           sudo apt-get update && sudo apt-get install trivy -y
 
           # Gitleaks for secret detection
@@ -120,6 +122,85 @@ jobs:
             jq -r '. | length' gitleaks-results.json >> security-report.md
             echo ' potential secrets found```' >> security-report.md
           fi
+
+      - name: Create security issues if findings exist
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            let totalIssues = 0;
+            let issueBody = '## 🔒 Security Scan Results\n\n';
+
+            // Check Semgrep results
+            if (fs.existsSync('semgrep-results.json')) {
+              const semgrep = JSON.parse(fs.readFileSync('semgrep-results.json', 'utf8'));
+              const count = semgrep.results ? semgrep.results.length : 0;
+              if (count > 0) {
+                totalIssues += count;
+                issueBody += `### Semgrep SAST\n- **${count}** code security issues found\n\n`;
+              }
+            }
+
+            // Check Trivy results
+            if (fs.existsSync('trivy-results.json')) {
+              const trivy = JSON.parse(fs.readFileSync('trivy-results.json', 'utf8'));
+              let vulnCount = 0;
+              if (trivy.Results) {
+                trivy.Results.forEach(r => {
+                  if (r.Vulnerabilities) vulnCount += r.Vulnerabilities.length;
+                });
+              }
+              if (vulnCount > 0) {
+                totalIssues += vulnCount;
+                issueBody += `### Trivy Scan\n- **${vulnCount}** vulnerabilities found\n\n`;
+              }
+            }
+
+            // Check Gitleaks results
+            if (fs.existsSync('gitleaks-results.json')) {
+              const gitleaks = JSON.parse(fs.readFileSync('gitleaks-results.json', 'utf8'));
+              const count = Array.isArray(gitleaks) ? gitleaks.length : 0;
+              if (count > 0) {
+                totalIssues += count;
+                issueBody += `### Secret Detection\n- **${count}** potential secrets exposed\n\n`;
+              }
+            }
+
+            // Create issue if findings exist
+            if (totalIssues > 0) {
+              issueBody += `---\n**Commit:** ${context.sha}\n`;
+              issueBody += `**Workflow Run:** [View Results](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})\n\n`;
+              issueBody += `Please review the security scan artifacts for detailed findings.`;
+
+              // Check if similar issue already exists
+              const { data: issues } = await github.rest.issues.listForRepo({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                labels: 'security',
+                state: 'open'
+              });
+
+              const existingIssue = issues.find(i =>
+                i.title.includes('Security Scan Alert') &&
+                i.created_at > new Date(Date.now() - 24*60*60*1000).toISOString()
+              );
+
+              if (!existingIssue) {
+                await github.rest.issues.create({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  title: `🚨 Security Scan Alert: ${totalIssues} findings`,
+                  body: issueBody,
+                  labels: ['security', 'automated']
+                });
+                console.log(`Created security issue with ${totalIssues} findings`);
+              } else {
+                console.log('Security issue already exists for recent scan');
+              }
+            } else {
+              console.log('No security findings - no issue created');
+            }
 
       - name: Upload artifacts
         if: always()

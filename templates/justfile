@@ -10,6 +10,68 @@ export NODE_ENV := env_var_or_default("NODE_ENV", "development")
 export CI := env_var_or_default("CI", "false")
 
 # ============================================================================
+# AI Commands
+# ============================================================================
+
+# AI review of local changes (CLI-first, no secrets)
+review-local:
+  #!/usr/bin/env bash
+  set -euo pipefail
+  echo "Running AI review on local changes..."
+  diff=$(git diff --cached)
+  if [ -z "$diff" ]; then
+    echo "No staged changes. Checking working tree..."
+    diff=$(git diff)
+  fi
+  if [ -z "$diff" ]; then
+    echo "No changes to review"
+    exit 0
+  fi
+
+  # Try each CLI until one works
+  for cli in claude codex gemini grok; do
+    if command -v $cli >/dev/null 2>&1; then
+      echo "Using $cli for review..."
+      echo "$diff" | $cli --system-prompt system/active.md \
+        "Review this diff for security, performance, and bugs. Be concise."
+      exit 0
+    fi
+  done
+  echo "No AI CLI found. Install claude, codex, gemini, or grok."
+
+# Generate tickets from codebase (outputs JSON and CSV)
+tickets:
+  #!/usr/bin/env bash
+  set -euo pipefail
+  echo "Generating tickets from codebase..."
+
+  # Create output directory
+  mkdir -p artifacts
+
+  # Try each CLI until one works
+  for cli in claude codex gemini grok; do
+    if command -v $cli >/dev/null 2>&1; then
+      echo "Using $cli..."
+      $cli --system-prompt .claude/commands/tickets-from-code.md \
+        "analyze entire codebase" > artifacts/tickets_raw.txt
+
+      # Extract JSON and convert to CSV
+      awk '/^{/,0' artifacts/tickets_raw.txt > artifacts/tickets.json || true
+      if [ -s artifacts/tickets.json ] && jq -e . artifacts/tickets.json >/dev/null 2>&1; then
+        jq -r '.tickets[] | [.id, .title, .priority, .effort] | @csv' \
+          artifacts/tickets.json > artifacts/backlog.csv
+        echo "✓ Generated tickets:"
+        echo "  JSON: artifacts/tickets.json"
+        echo "  CSV: artifacts/backlog.csv"
+      else
+        echo "Generated output but not valid JSON"
+      fi
+      exit 0
+    fi
+  done
+  echo "No AI CLI found. Install claude, codex, gemini, or grok."
+
+# ============================================================================
 # Development
 # ============================================================================
 

@@ -132,23 +132,23 @@ build_prompt() {
     cp .claude/commands/tickets-from-code.md "$prompt_file"
   fi
 
-  # Replace variables
-  sed -i "s/{{MODE}}/$MODE/g" "$prompt_file"
-  sed -i "s/{{REPO_NAME}}/$REPO_NAME/g" "$prompt_file"
-  sed -i "s/{{BRANCH}}/$BRANCH/g" "$prompt_file"
-  sed -i "s/{{SHA}}/$SHA/g" "$prompt_file"
-  sed -i "s/{{TODAY}}/$TODAY/g" "$prompt_file"
+  # Replace variables (BSD/macOS compatible)
+  sed -i'' -e "s/{{MODE}}/$MODE/g" "$prompt_file"
+  sed -i'' -e "s/{{REPO_NAME}}/$REPO_NAME/g" "$prompt_file"
+  sed -i'' -e "s/{{BRANCH}}/$BRANCH/g" "$prompt_file"
+  sed -i'' -e "s/{{SHA}}/$SHA/g" "$prompt_file"
+  sed -i'' -e "s/{{TODAY}}/$TODAY/g" "$prompt_file"
 
   if [ -n "$RUNTIMES" ]; then
-    sed -i "s/{{Node\/Python\/...}}/$RUNTIMES/g" "$prompt_file"
+    sed -i'' -e "s/{{Node\/Python\/...}}/$RUNTIMES/g" "$prompt_file"
   fi
 
   if [ -n "$ENVIRONMENT" ]; then
-    sed -i "s/{{Docker+k8s on cloud}}/$ENVIRONMENT/g" "$prompt_file"
+    sed -i'' -e "s/{{Docker+k8s on cloud}}/$ENVIRONMENT/g" "$prompt_file"
   fi
 
   if [ -n "$CONCERNS" ]; then
-    sed -i "s/{{e.g., authz, data privacy, perf \/api\/search}}/$CONCERNS/g" "$prompt_file"
+    sed -i'' -e "s/{{e.g., authz, data privacy, perf \/api\/search}}/$CONCERNS/g" "$prompt_file"
   fi
 
   echo "$prompt_file"
@@ -193,10 +193,82 @@ generate_tickets() {
   local prompt_file="$1"
 
   echo -e "${BLUE}Generating tickets...${NC}"
-  echo "(This would normally call Claude API with the prompt)"
-  echo ""
 
-  # For now, create example output
+  # CLI-first ticket generation with fallback chain
+  local out="$OUTPUT_DIR/tickets_raw.txt"
+  local json="$OUTPUT_DIR/tickets.json"
+  local csv="$OUTPUT_DIR/backlog.csv"
+  : > "$out"
+
+  # Try each CLI in order until one works
+  try_cli() {
+    "$@" > "$out" 2>>"$OUTPUT_DIR/tickets.err" || return 1
+    [ -s "$out" ] || return 1
+    return 0
+  }
+
+  run_ticket_generation() {
+    local pf="$1"
+
+    # Try Claude first
+    if command -v claude >/dev/null 2>&1; then
+      echo "Using Claude CLI..."
+      try_cli claude --system-prompt system/active.md --input-file "$pf" && return 0
+    fi
+
+    # Try Codex
+    if command -v codex >/dev/null 2>&1; then
+      echo "Using Codex CLI..."
+      try_cli codex exec --system-file system/active.md --input-file "$pf" && return 0
+    fi
+
+    # Try Gemini
+    if command -v gemini >/dev/null 2>&1; then
+      echo "Using Gemini CLI..."
+      try_cli gemini generate --model gemini-1.5-pro-latest --system-file system/active.md --prompt-file "$pf" && return 0
+    fi
+
+    # Try Grok
+    if command -v grok >/dev/null 2>&1; then
+      echo "Using Grok CLI..."
+      try_cli grok chat --system "$(cat system/active.md 2>/dev/null || echo 'Generate tickets')" --input-file "$pf" && return 0
+    fi
+
+    echo -e "${YELLOW}No AI CLI found. Install claude, codex, gemini, or grok.${NC}"
+    return 1
+  }
+
+  if run_ticket_generation "$prompt_file"; then
+    # Extract JSON from output (handles various CLI response formats)
+    awk '/^{/,0' "$out" > "$json" 2>/dev/null || true
+
+    # Convert to CSV if valid JSON
+    if [ -s "$json" ] && jq -e . "$json" >/dev/null 2>&1; then
+      jq -r '.tickets[] | [
+        .id,
+        .title,
+        .type,
+        .priority,
+        .effort,
+        (.labels // [] | join("|")),
+        (.assignee // ""),
+        (.dependencies // [] | join("|")),
+        (.notes // "" | gsub("[\r\n]+"; " ")),
+        (.acceptance_criteria // [] | join("; "))
+      ] | @csv' "$json" > "$csv" 2>/dev/null || true
+
+      echo -e "${GREEN}✓ Generated $(jq '.tickets | length' "$json") tickets${NC}"
+      echo "  JSON: $json"
+      echo "  CSV: $csv"
+    else
+      echo -e "${YELLOW}Output generated but not valid JSON${NC}"
+      echo "  Raw output: $out"
+    fi
+  else
+    # Fallback: create example output
+    echo -e "${YELLOW}Using fallback example output${NC}"
+  fi
+
   if [[ "$MODE" == "GITHUB_MARKDOWN" ]] || [[ "$MODE" == "BOTH" ]]; then
     cat > "$OUTPUT_DIR/backlog.md" <<'EOF'
 # Generated Ticket Backlog
