@@ -80,7 +80,7 @@ your-project/
 ### Step 1: Install DevPilot Globally (One-time only!)
 ```bash
 # This installs tools on YOUR computer, not in any project
-git clone https://github.com/VivekLmd/setup-scripts.git ~/devpilot
+git clone https://github.com/Softsensor-org/DevPilot.git ~/devpilot
 cd ~/devpilot
 ./setup_all.sh
 ```
@@ -130,9 +130,31 @@ What this does:
 ==> Setup complete! Next: run repo_wizard.sh for your projects
 ```
 
-### Step 2: Set Up Each Project (Run for every project)
+### Step 2: Set Up Your Project
+
+#### Option A: Existing Repository (Recommended for Teams)
+
+If you already have a cloned repository, use this approach:
+
 ```bash
-# This sets up a SPECIFIC project with AI configurations
+# Navigate to your existing project
+cd /path/to/your/project
+
+# Run setup without cloning
+~/devpilot/setup/existing_repo_setup.sh --skill l1 --phase mvp
+
+# Add personas for your project type (e.g., backend API)
+for p in software-architect backend-developer devops-engineer; do
+  ~/devpilot/scripts/persona_manager.sh add $p
+done
+```
+
+#### Option B: New Repository (Clone and Setup)
+
+If you need to clone a repository first:
+
+```bash
+# Run the interactive wizard
 ~/devpilot/setup/repo_wizard.sh
 ```
 
@@ -255,15 +277,18 @@ Once set up, these commands work automatically:
 - `/security-review` - Check for vulnerabilities
 - `/refactor-complex` - Restructure messy code
 
-### Setting Up New Projects
+### Setting Up Projects
+
+**For existing repos (most teams):**
+```bash
+cd your-project
+~/devpilot/setup/existing_repo_setup.sh --skill l2 --phase beta
+```
+
+**For new repos (need to clone):**
 ```bash
 ~/devpilot/setup/repo_wizard.sh
-# You'll see these prompts:
-# > Enter GitHub URL: https://github.com/you/project
-# > Select organization (1-5): 3  [for 'work']
-# > Select category (1-6): 1      [for 'backend']
-# > Select skill level (1-5): 2   [for 'beginner']
-# > Select project phase (1-4): 2 [for 'mvp']
+# Prompts: URL, organization, category, skill, phase
 ```
 
 ### Changing Settings Later
@@ -316,17 +341,21 @@ DevPilot's **Multi-Persona System** lets you activate specialized AI personaliti
 # Add a single persona
 ./scripts/persona_manager.sh add data-scientist
 
-# Combine multiple personas
-./scripts/persona_manager.sh add backend-developer
-./scripts/persona_manager.sh add devops-engineer
-
-# Quick switch to preset combinations
-./scripts/persona_manager.sh switch
-# Options: ML Engineering Mode, Full Stack Mode, etc.
-
 # View active personas
 ./scripts/persona_manager.sh show
 ```
+
+### Persona Starter Stacks
+
+Quick setup for common project types:
+
+| Project Type | Personas to Add | One-Line Setup |
+|-------------|-----------------|----------------|
+| **Backend API** | architect, backend, devops | `for p in software-architect backend-developer devops-engineer; do ~/devpilot/scripts/persona_manager.sh add $p; done` |
+| **Microservices** | architect, backend, devops, security | `for p in software-architect backend-developer devops-engineer security-engineer; do ~/devpilot/scripts/persona_manager.sh add $p; done` |
+| **ML/Data Science** | data-scientist, backend, devops | `for p in data-scientist backend-developer devops-engineer; do ~/devpilot/scripts/persona_manager.sh add $p; done` |
+| **Full Stack App** | frontend, backend, devops | `for p in frontend-developer backend-developer devops-engineer; do ~/devpilot/scripts/persona_manager.sh add $p; done` |
+| **Infrastructure** | devops, security, architect | `for p in devops-engineer security-engineer software-architect; do ~/devpilot/scripts/persona_manager.sh add $p; done` |
 
 ### Persona-Specific Commands
 
@@ -351,6 +380,23 @@ Codex has complete parity with Claude, including:
 - Unified command structure
 
 See [Codex Integration Guide](docs/CODEX_INTEGRATION.md) and [Multi-Persona Guide](docs/MULTI_PERSONA_GUIDE.md) for details.
+
+## 🔒 CI/CD Security Gates by Phase
+
+Quick reference for what gets enforced at each project phase:
+
+| Security Tool | POC | MVP | Beta | Scale |
+|--------------|-----|-----|------|-------|
+| **Unit Tests** | Optional | Required | Required | Required |
+| **Linting** | Optional | Required | Required | Required |
+| **Coverage** | None | None | ≥ 60% | ≥ 80% |
+| **Gitleaks** (secrets) | None | Advisory | **Blocks any** | **Blocks any** |
+| **Semgrep** (SAST) | None | Advisory | **Blocks HIGH+** | **Blocks MEDIUM+** |
+| **Trivy** (containers) | None | Advisory | **Blocks CRITICAL/HIGH** | **Blocks all** |
+| **License Check** | None | None | Check | **Enforce** |
+| **Dependency Audit** | None | Advisory | **Blocks HIGH+** | **Blocks all** |
+
+To change phase: `scripts/apply_profile.sh --phase beta`
 
 ## 🚀 AI Development Environment
 

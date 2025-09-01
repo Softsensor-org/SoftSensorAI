@@ -4,28 +4,34 @@ This directory contains comprehensive guides to help you install, configure, and
 
 ## 📖 Guide Overview
 
+### Getting Started
+- **[ARCHITECTURE_OVERVIEW.md](ARCHITECTURE_OVERVIEW.md)** - **START HERE** - Complete architecture and CLI-first usage guide
+- **[quickstart.md](quickstart.md)** - One-command installation and first steps
+- **[WEEK_WITH_DEVPILOT.md](WEEK_WITH_DEVPILOT.md)** - Day-by-day runbook for your first week
+
 ### Core Setup
-- **quickstart.md** - One-command installation and first steps with DevPilot
-- **repo-wizard.md** - Repository cloning and automated configuration
-- **profiles.md** - Skill levels, project phases, and capability progression
-- **AI_FRAMEWORKS.md** - LangChain, AutoGen, CrewAI setup with GPU optimization
-- **SECURITY.md** - Security best practices and checksum verification
+- **[existing_repo_setup.md](existing_repo_setup.md)** - **RECOMMENDED** - Setup for already-cloned repositories
+- **[repo-wizard.md](repo-wizard.md)** - Repository cloning and automated configuration
+- **[profiles.md](profiles.md)** - Skill levels, project phases, and capability progression
+- **[AI_FRAMEWORKS.md](AI_FRAMEWORKS.md)** - LangChain, AutoGen, CrewAI setup with GPU optimization
+- **[SECURITY.md](SECURITY.md)** - Security best practices and checksum verification
 
 ### AI Personas & Integration
-- **PERSONAS_GUIDE.md** - Individual AI personas and their specializations
-- **MULTI_PERSONA_GUIDE.md** - Combining multiple personas for comprehensive assistance
-- **CODEX_INTEGRATION.md** - Complete OpenAI Codex integration with persona support
+- **[PERSONAS_GUIDE.md](PERSONAS_GUIDE.md)** - Individual AI personas and their specializations
+- **[PERSONA_SELECTION_TUTORIAL.md](PERSONA_SELECTION_TUTORIAL.md)** - Step-by-step persona selection guide
+- **[MULTI_PERSONA_GUIDE.md](MULTI_PERSONA_GUIDE.md)** - Combining multiple personas for comprehensive assistance
+- **[CODEX_INTEGRATION.md](CODEX_INTEGRATION.md)** - Complete OpenAI Codex integration with persona support
 
 ### Commands & Architecture
 - **agent-commands.md** - Complete catalog of available AI commands
 - **system-prompts.md** - Layered prompt system architecture
 
 ### Development & Operations
-- **ci.md** - CI/CD integration and security gates
-- **devcontainer.md** - Development container setup
-- **MIGRATION.md** - Upgrading from previous versions
-- **RELEASE_MANAGEMENT.md** - Release process and versioning
-- **GPU_OPTIMIZATION.md** - GPU detection and ML workflow optimization
+- **[ci.md](ci.md)** - CI/CD integration and security gates
+- **[devcontainer.md](devcontainer.md)** - Development container setup
+- **[GPU_OPTIMIZATION.md](GPU_OPTIMIZATION.md)** - GPU detection and ML workflow optimization
+- **[MIGRATION.md](MIGRATION.md)** - Upgrading from previous versions
+- **[RELEASE_MANAGEMENT.md](RELEASE_MANAGEMENT.md)** - Release process and versioning
 
 ### Troubleshooting
 - **validation-troubleshooting.md** - Common issues and solutions
@@ -34,7 +40,11 @@ This directory contains comprehensive guides to help you install, configure, and
 
 ## 🚀 Getting Started
 
-If you only read one page, start with **quickstart.md** for immediate setup.
+**New to DevPilot?** Start with **[ARCHITECTURE_OVERVIEW.md](ARCHITECTURE_OVERVIEW.md)** to understand the system.
+
+**Ready to install?** Jump to **[quickstart.md](quickstart.md)** for immediate setup.
+
+**Have an existing repo?** Use **[existing_repo_setup.md](existing_repo_setup.md)** to add DevPilot without cloning.
 
 For comprehensive setup, the recommended reading order is:
 1. **quickstart.md** - Basic installation

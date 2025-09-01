@@ -62,16 +62,29 @@ Creates in your home directory:
 
 ## 🎯 Your First AI Project
 
-### Interactive Setup (Recommended)
+### Option 1: New Project (Clone & Setup)
 ```bash
-cd ~/devpilot
-./setup/repo_wizard.sh
+# Interactive wizard
+~/devpilot/setup/repo_wizard.sh
 ```
 
 You'll be asked:
-1. **Organization**: work, personal, learning, or custom
-2. **Category**: backend, frontend, mobile, ml, etc.
-3. **Repository URL**: Your GitHub repo (or we'll create one)
+1. **Repository URL**: Your GitHub repo to clone
+2. **Organization**: work, personal, learning, or custom
+3. **Category**: backend, frontend, mobile, ml, etc.
+
+### Option 2: Existing Project (Recommended for most teams)
+```bash
+# Navigate to your already-cloned repo
+cd /path/to/your/existing/repo
+
+# Run setup without cloning
+~/devpilot/setup/existing_repo_setup.sh --skill l1 --phase mvp
+
+# Add personas as needed
+~/devpilot/scripts/persona_manager.sh add backend-developer
+~/devpilot/scripts/persona_manager.sh add devops-engineer
+```
 
 ### One-Line Setup
 ```bash
@@ -96,22 +109,43 @@ DevPilot adapts to your experience:
 
 Start with `beginner` if unsure - you can change anytime!
 
-## 🤖 Using AI Assistants
+## 🤖 Using AI Assistants (CLI-First)
 
-After setup, in any project:
+**Important**: DevPilot uses the **CLI versions** of AI assistants, not raw APIs. Each assistant points to `system/active.md` for consistent behavior.
+
+### Setting Up CLIs
 
 ```bash
-# Claude - Best for complex coding
-claude "refactor this function for better performance"
+# Install AI CLIs (if not already installed)
+npm install -g @anthropic-ai/claude-cli    # Claude
+npm install -g @openai/codex-cli          # Codex
+pip install gemini-cli                     # Gemini
+cargo install grok-cli                     # Grok
+```
 
-# Gemini - Great for explanations
-gemini "explain how this authentication works"
+### Daily Usage
 
-# Grok - Good for quick tasks
-grok "add error handling to this script"
+```bash
+# Claude - Best for complex coding (with system prompt)
+claude --system-prompt system/active.md "refactor this function for better performance"
+
+# Gemini - Great for explanations (with context)
+gemini --context system/active.md "explain how this authentication works"
+
+# Grok - Good for quick tasks (with prompt)
+grok --prompt system/active.md "add error handling to this script"
 
 # Codex - Completions and generation (with sandboxed execution)
-codex "generate unit tests"
+codex --system system/active.md --sandbox "generate unit tests"
+```
+
+### Using Slash Commands
+
+```bash
+# Use specific commands from the catalog
+claude --system-prompt .claude/commands/security-review.md "review auth flow"
+claude --system-prompt .claude/commands/think-hard.md "should we use microservices?"
+codex --system .claude/commands/patterns/system-design.md "design payment service"
 ```
 
 ### 🎭 Managing Personas
