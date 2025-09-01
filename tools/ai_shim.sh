@@ -45,7 +45,7 @@ case "$PROVIDER" in
     ;;
   claude)
     if have anthropic; then run anthropic messages create --model "$MODEL" --input-file "$PROMPT_FILE"; exit $?; fi
-    if have claude;    then run claude --model "$MODEL" --file "$PROMPT_FILE"; exit $?; fi
+    if have claude;    then run claude --model "$MODEL" < "$PROMPT_FILE"; exit $?; fi
     echo "Claude CLI not found (anthropic/claude)" >&2; exit 127
     ;;
   gemini)

@@ -20,8 +20,26 @@ pick_cli() {
 cmd_init() {
   say "▸ Running doctor …"
   if [[ -x "$ROOT/scripts/doctor.sh" ]]; then "$ROOT/scripts/doctor.sh" || true; fi
-  say "▸ Applying defaults (skill=l1, phase=mvp) …"
-  if [[ -x "$ROOT/scripts/apply_profile.sh" ]]; then "$ROOT/scripts/apply_profile.sh" --skill l1 --phase mvp || true; fi
+
+  # Check for project file
+  local project_file=""
+  for pf in devpilot.project.yml devpilot.project.yaml .devpilot.yml .devpilot.yaml; do
+    if [[ -f "$pf" ]]; then
+      project_file="$pf"
+      say "▸ Found project profile: $pf"
+      break
+    fi
+  done
+
+  if [[ -n "$project_file" ]]; then
+    say "▸ Applying profile from $project_file …"
+    if [[ -x "$ROOT/scripts/apply_profile.sh" ]]; then "$ROOT/scripts/apply_profile.sh" || true; fi
+  else
+    say "▸ No project file found. Using defaults (skill=l1, phase=mvp) …"
+    say "  💡 Tip: Create devpilot.project.yml for zero-friction setup"
+    if [[ -x "$ROOT/scripts/apply_profile.sh" ]]; then "$ROOT/scripts/apply_profile.sh" --skill l1 --phase mvp || true; fi
+  fi
+
   say "▸ Building system/active.md …"
   if [[ -x "$ROOT/scripts/system_build.sh" ]]; then "$ROOT/scripts/system_build.sh" || true; fi
   say "▸ Quick repo review …"
@@ -117,14 +135,67 @@ cmd_review() {
   fi
 }
 
+cmd_project() {
+  # Create or show project file
+  if [[ -f devpilot.project.yml ]]; then
+    say "✓ Project file exists: devpilot.project.yml"
+    say ""
+    say "Current settings:"
+    grep -E "^  (skill|phase|primary):" devpilot.project.yml | head -5
+  else
+    say "Creating devpilot.project.yml with sensible defaults..."
+
+    # Detect current project name
+    local project_name=$(basename "$PWD")
+
+    # Create from template
+    if [[ -f "$ROOT/templates/devpilot.project.yml" ]]; then
+      sed "s/\${PROJECT_NAME:-MyProject}/$project_name/g" \
+        "$ROOT/templates/devpilot.project.yml" > devpilot.project.yml
+      say "✅ Created devpilot.project.yml"
+      say ""
+      say "Next steps:"
+      say "  1) Edit devpilot.project.yml to customize"
+      say "  2) Run: dp init"
+      say ""
+      say "Key settings to review:"
+      grep -E "^  (skill|phase|primary):" devpilot.project.yml | head -5
+    else
+      # Minimal fallback
+      cat > devpilot.project.yml <<EOF
+# DevPilot Project Profile
+project:
+  name: $project_name
+
+profile:
+  skill: l2          # l1=beginner, l2=intermediate, l3=expert
+  phase: mvp         # poc, mvp, beta, scale
+  teach_mode: false
+
+personas:
+  primary: pragmatic-coder
+
+ci:
+  gates:
+    lint: required
+    tests: required
+    coverage: advisory
+EOF
+      say "✅ Created minimal devpilot.project.yml"
+    fi
+  fi
+}
+
 case "${1:-}" in
   init)   shift; cmd_init "$@";;
   tickets)shift; cmd_tickets "$@";;
   review) shift; cmd_review "$@";;
+  project)shift; cmd_project "$@";;
   -h|--help|"")
     cat <<'HELP'
 DevPilot meta-CLI
-  dp init      # doctor → profile(mvp/l1) → build system → quick repo review
+  dp init      # doctor → profile → build system → quick repo review
+  dp project   # create/show devpilot.project.yml (zero-friction defaults)
   dp tickets   # structured backlog (JSON → CSV), CLI-first, strict schema
   dp review    # local AI review of your diff (neutral if no CLIs)
 Env: AI_MODEL_* override model names; TIMEOUT_SECS limits long runs

@@ -13,6 +13,15 @@ NC='\033[0m' # No Color
 SKILL="beginner"
 PHASE="mvp"
 TEACH_MODE=""
+
+# Load from project file if exists and no args provided
+PROJECT_FILE=""
+for pf in devpilot.project.yml devpilot.project.yaml .devpilot.yml .devpilot.yaml; do
+  if [ -f "$pf" ]; then
+    PROJECT_FILE="$pf"
+    break
+  fi
+done
 # Portable realpath resolution (macOS often lacks realpath)
 _resolve_realpath() {
   if command -v realpath >/dev/null 2>&1; then
@@ -62,10 +71,54 @@ EOF
   exit 0
 }
 
-# Check if no arguments provided - launch interactive menu
+# Check if no arguments provided
 if [ $# -eq 0 ]; then
-  # Launch interactive menu
-  exec "$(dirname "$0")/profile_menu.sh"
+  # Try to load from project file first
+  if [ -n "$PROJECT_FILE" ]; then
+    echo -e "${BLUE}=== Loading from $PROJECT_FILE ===${NC}"
+
+    # Parse YAML using simple grep/sed (portable)
+    if command -v yq >/dev/null 2>&1; then
+      # Use yq if available
+      SKILL=$(yq -r '.profile.skill // "beginner"' "$PROJECT_FILE")
+      PHASE=$(yq -r '.profile.phase // "mvp"' "$PROJECT_FILE")
+      TEACH_MODE=$(yq -r '.profile.teach_mode // ""' "$PROJECT_FILE")
+    elif command -v python3 >/dev/null 2>&1; then
+      # Use Python as fallback
+      SKILL=$(python3 -c "
+import yaml, sys
+with open('$PROJECT_FILE') as f:
+    data = yaml.safe_load(f)
+    print(data.get('profile', {}).get('skill', 'beginner'))
+" 2>/dev/null || echo "beginner")
+      PHASE=$(python3 -c "
+import yaml, sys
+with open('$PROJECT_FILE') as f:
+    data = yaml.safe_load(f)
+    print(data.get('profile', {}).get('phase', 'mvp'))
+" 2>/dev/null || echo "mvp")
+      TEACH_MODE=$(python3 -c "
+import yaml, sys
+with open('$PROJECT_FILE') as f:
+    data = yaml.safe_load(f)
+    tm = data.get('profile', {}).get('teach_mode', None)
+    print('on' if tm else 'off' if tm is False else '')
+" 2>/dev/null || echo "")
+    else
+      # Basic grep fallback
+      SKILL=$(grep "^  skill:" "$PROJECT_FILE" | sed 's/.*skill: *//' | tr -d '"' || echo "beginner")
+      PHASE=$(grep "^  phase:" "$PROJECT_FILE" | sed 's/.*phase: *//' | tr -d '"' || echo "mvp")
+      TEACH_MODE=$(grep "^  teach_mode:" "$PROJECT_FILE" | sed 's/.*teach_mode: *//' | tr -d '"' || echo "")
+    fi
+
+    echo -e "  Skill: ${GREEN}$SKILL${NC}"
+    echo -e "  Phase: ${GREEN}$PHASE${NC}"
+    echo -e "  Teach: ${GREEN}${TEACH_MODE:-auto}${NC}"
+    echo ""
+  else
+    # Launch interactive menu if no project file
+    exec "$(dirname "$0")/profile_menu.sh"
+  fi
 fi
 
 # Parse arguments
