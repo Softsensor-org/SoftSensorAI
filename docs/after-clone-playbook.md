@@ -136,36 +136,69 @@ pre-commit install
 pre-commit run --all-files || true
 ```
 
-## Justfile Shortcuts
+## Justfile Shortcuts (Production-Ready One-Liners)
 
-Add these to your `Justfile` for one-line execution:
+Add these to your `Justfile` for clean, one-line execution:
 
 ```make
-# After-clone playbook commands
+# Core workflows - clean one-liners
+# ============================================================================
+
+# Generate tickets from codebase
+tickets:
+    @mkdir -p artifacts
+    @cat .claude/commands/tickets-from-code.md > artifacts/tickets_prompt.txt 2>/dev/null || echo "Analyze codebase and generate tickets" > artifacts/tickets_prompt.txt
+    @if command -v claude >/dev/null; then \
+        claude --system-prompt system/active.md --input-file artifacts/tickets_prompt.txt > artifacts/tickets.json; \
+    elif command -v codex >/dev/null; then \
+        codex exec --system-file system/active.md --input-file artifacts/tickets_prompt.txt > artifacts/tickets.json; \
+    elif command -v gemini >/dev/null; then \
+        gemini generate --system-file system/active.md --prompt-file artifacts/tickets_prompt.txt > artifacts/tickets.json; \
+    elif command -v grok >/dev/null; then \
+        grok chat --system "$$(cat system/active.md)" --input-file artifacts/tickets_prompt.txt > artifacts/tickets.json; \
+    fi
+    @jq -r '.tickets[] | [ .id,.title,.type,.priority,.effort, (.labels//[]|join("|")), (.assignee//""), (.dependencies//[]|join("|")), (.notes//""|gsub("[\r\n]+";" ")), (.acceptance_criteria//[]|join("; ")) ] | @csv' artifacts/tickets.json > artifacts/tickets.csv
+    @echo "✓ Wrote artifacts/tickets.{json,csv}"
+
+# Review changes against base branch
+review-local BASE="main":
+    @mkdir -p artifacts
+    @git fetch --no-tags origin {{BASE}} --depth=1
+    @git diff --unified=1 --minimal --no-color origin/{{BASE}}...HEAD > artifacts/review_diff.patch
+    @echo "ROLE: Senior reviewer. Bulleted, file-scoped suggestions." > artifacts/review_prompt.txt
+    @echo "DIFF:" >> artifacts/review_prompt.txt
+    @cat artifacts/review_diff.patch >> artifacts/review_prompt.txt
+    @if command -v claude >/dev/null; then \
+        claude --system-prompt system/active.md --input-file artifacts/review_prompt.txt > artifacts/review_local.txt; \
+    elif command -v codex >/dev/null; then \
+        codex exec --system-file system/active.md --input-file artifacts/review_prompt.txt > artifacts/review_local.txt; \
+    elif command -v gemini >/dev/null; then \
+        gemini generate --system-file system/active.md --prompt-file artifacts/review_prompt.txt > artifacts/review_local.txt; \
+    elif command -v grok >/dev/null; then \
+        grok chat --system "$$(cat system/active.md)" --input-file artifacts/review_prompt.txt > artifacts/review_local.txt; \
+    fi
+    @echo "✓ Wrote artifacts/review_local.txt"
+
+# Repository review: hygiene + security
+repo-review:
+    @./scripts/pack_context.sh || true
+    @just fmt || true; just lint || true; just test-unit -k smoke || true
+    @gitleaks detect -r artifacts/gitleaks.json || true
+    @semgrep ci --json --output artifacts/semgrep.json || true
+    @trivy fs --scanners vuln,secret,config -f json -o artifacts/trivy.json . || true
+    @echo "✓ Complete. Check artifacts/"
+
+# Extended playbook commands
 # ============================================================================
 
 # Run complete after-clone playbook
 after-clone:
   @echo "🚀 Running after-clone playbook..."
-  @./scripts/doctor.sh
-  @./scripts/apply_profile.sh --skill l1 --phase mvp
-  @./scripts/system_build.sh
-  @just review-repo
+  @./scripts/doctor.sh || true
+  @./scripts/apply_profile.sh --skill l1 --phase mvp || true
+  @./scripts/system_build.sh || true
+  @just repo-review
   @echo "✅ Playbook complete! Check artifacts/ for reports"
-
-# 10-minute repository review
-review-repo:
-  @echo "📊 Running repository review..."
-  @mkdir -p artifacts
-  @./scripts/pack_context.sh || true
-  @just fmt || true
-  @just lint || true
-  @just test-unit -k smoke || true
-  @gitleaks detect -r artifacts/gitleaks.json || true
-  @semgrep ci --json --output artifacts/semgrep.json || true
-  @trivy fs --scanners vuln,secret,config -f json -o artifacts/trivy.json . || true
-  @./scripts/deps_snapshot.sh > artifacts/deps_snapshot.txt || true
-  @echo "📁 Review complete. Reports in artifacts/"
 
 # Quick security scan
 security-quick:

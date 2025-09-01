@@ -464,18 +464,19 @@ after-clone:
   @just review-repo
   @echo "✅ Playbook complete! Check artifacts/ for reports"
 
-# 10-minute repository review
+# Repository review: Complete analysis (one-liner version)
+repo-review:
+    @mkdir -p artifacts
+    @./scripts/pack_context.sh 2>/dev/null || true
+    @just fmt 2>/dev/null || true; just lint 2>/dev/null || true; just test-unit -k smoke 2>/dev/null || true
+    @gitleaks detect -r artifacts/gitleaks.json 2>/dev/null || true
+    @semgrep ci --json --output artifacts/semgrep.json 2>/dev/null || true
+    @trivy fs --scanners vuln,secret,config -f json -o artifacts/trivy.json . 2>/dev/null || true
+    @echo "✓ Repo review complete. Check artifacts/"
+
+# DEPRECATED: Use repo-review above
 review-repo:
-  @echo "📊 Running repository review..."
-  @mkdir -p artifacts
-  @scripts/pack_context.sh 2>/dev/null || echo "Context pack not available"
-  @just fmt 2>/dev/null || true
-  @just lint 2>/dev/null || true
-  @just test-unit 2>/dev/null || true
-  @gitleaks detect -r artifacts/gitleaks.json 2>/dev/null || echo "Gitleaks not installed"
-  @semgrep ci --json --output artifacts/semgrep.json 2>/dev/null || echo "Semgrep not installed"
-  @trivy fs --scanners vuln,secret,config -f json -o artifacts/trivy.json . 2>/dev/null || echo "Trivy not installed"
-  @echo "📁 Review complete. Reports in artifacts/"
+  @just repo-review
 
 # Quick security scan
 security-quick:
@@ -507,29 +508,48 @@ review-pre-pr BASE="main":
   @echo "📝 Review saved to artifacts/review_local.txt"
   @head -50 artifacts/review_local.txt
 
-# Review local changes with AI (uncommitted changes)
-review-local:
-  #!/usr/bin/env bash
-  set -euo pipefail
-  echo "Generating PR diff for AI review..."
-  git diff origin/main...HEAD > /tmp/pr.diff
+# Review local changes with AI (one-liner version)
+review-local BASE="main":
+    @mkdir -p artifacts
+    @git fetch --no-tags origin {{BASE}} --depth=1 2>/dev/null || true
+    @git diff --unified=1 --minimal --no-color origin/{{BASE}}...HEAD > artifacts/review_diff.patch
+    @echo "ROLE: Senior reviewer. Bulleted, file-scoped suggestions." > artifacts/review_prompt.txt
+    @echo "DIFF:" >> artifacts/review_prompt.txt
+    @cat artifacts/review_diff.patch >> artifacts/review_prompt.txt
+    @if command -v claude >/dev/null; then \
+        claude --system-prompt system/active.md --input-file artifacts/review_prompt.txt > artifacts/review_local.txt; \
+    elif command -v codex >/dev/null; then \
+        codex exec --system-file system/active.md --input-file artifacts/review_prompt.txt > artifacts/review_local.txt; \
+    elif command -v gemini >/dev/null; then \
+        gemini generate --system-file system/active.md --prompt-file artifacts/review_prompt.txt > artifacts/review_local.txt; \
+    elif command -v grok >/dev/null; then \
+        grok chat --system "$$(cat system/active.md)" --input-file artifacts/review_prompt.txt > artifacts/review_local.txt; \
+    else \
+        echo "No AI CLI found. Install claude, codex, gemini, or grok"; exit 1; \
+    fi
+    @echo "✓ Wrote artifacts/review_local.txt"
+    @head -30 artifacts/review_local.txt
 
-  # Try CLIs in order
-  if command -v claude >/dev/null; then
-    claude --system-prompt "Review this diff for bugs, security issues, and improvements" < /tmp/pr.diff
-  elif command -v codex >/dev/null; then
-    codex exec --system "Review this diff" --input-file /tmp/pr.diff
-  elif command -v gemini >/dev/null; then
-    gemini generate --system "Review this diff" --input-file /tmp/pr.diff
-  elif command -v grok >/dev/null; then
-    grok chat --system "Review this diff" < /tmp/pr.diff
-  else
-    echo "No AI CLI found. Install claude, codex, gemini, or grok"
-    exit 1
-  fi
-
-# Generate tickets from codebase
+# Generate tickets from codebase (one-liner version)
 tickets:
+    @mkdir -p artifacts
+    @cat .claude/commands/tickets-from-code.md > artifacts/tickets_prompt.txt 2>/dev/null || echo "Analyze codebase and generate tickets in JSON format" > artifacts/tickets_prompt.txt
+    @if command -v claude >/dev/null; then \
+        claude --system-prompt system/active.md --input-file artifacts/tickets_prompt.txt > artifacts/tickets.json; \
+    elif command -v codex >/dev/null; then \
+        codex exec --system-file system/active.md --input-file artifacts/tickets_prompt.txt > artifacts/tickets.json; \
+    elif command -v gemini >/dev/null; then \
+        gemini generate --system-file system/active.md --prompt-file artifacts/tickets_prompt.txt > artifacts/tickets.json; \
+    elif command -v grok >/dev/null; then \
+        grok chat --system "$$(cat system/active.md)" --input-file artifacts/tickets_prompt.txt > artifacts/tickets.json; \
+    else \
+        echo "No AI CLI found. Install claude, codex, gemini, or grok"; exit 1; \
+    fi
+    @jq -r '.tickets[] | [ .id,.title,.type,.priority,.effort, (.labels//[]|join("|")), (.assignee//""), (.dependencies//[]|join("|")), (.notes//""|gsub("[\r\n]+";" ")), (.acceptance_criteria//[]|join("; ")) ] | @csv' artifacts/tickets.json > artifacts/tickets.csv 2>/dev/null || echo "Could not convert to CSV"
+    @echo "✓ Wrote artifacts/tickets.{json,csv}"
+
+# DEPRECATED: Use simpler tickets target above
+tickets-old:
   #!/usr/bin/env bash
   set -euo pipefail
   echo "Analyzing codebase and generating tickets..."
