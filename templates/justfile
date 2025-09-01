@@ -484,7 +484,30 @@ security-quick:
   @semgrep --config=auto --severity=ERROR 2>/dev/null || echo "No critical issues"
   @trivy fs . --severity=HIGH,CRITICAL --exit-code=0 2>/dev/null || echo "No high vulnerabilities"
 
-# Review local changes with AI
+# Pre-PR review: AI review of changes against base branch
+review-pre-pr BASE="main":
+  @echo "🔍 Running pre-PR review against {{BASE}}..."
+  @mkdir -p artifacts
+  @git fetch --no-tags origin {{BASE}} --depth=1
+  @git diff --unified=1 --minimal --no-color origin/{{BASE}}...HEAD > artifacts/review_diff.patch
+  @echo "ROLE: Senior reviewer. File-scoped bullets with fixes." > artifacts/review_prompt.txt
+  @echo "DIFF:" >> artifacts/review_prompt.txt
+  @cat artifacts/review_diff.patch >> artifacts/review_prompt.txt
+  @if command -v claude >/dev/null; then \
+    claude --system-prompt system/active.md --input-file artifacts/review_prompt.txt > artifacts/review_local.txt; \
+  elif command -v codex >/dev/null; then \
+    codex exec --system-file system/active.md --input-file artifacts/review_prompt.txt > artifacts/review_local.txt; \
+  elif command -v gemini >/dev/null; then \
+    gemini generate --system-file system/active.md --prompt-file artifacts/review_prompt.txt > artifacts/review_local.txt; \
+  elif command -v grok >/dev/null; then \
+    grok chat --system "$$(cat system/active.md)" --input-file artifacts/review_prompt.txt > artifacts/review_local.txt; \
+  else \
+    echo "No AI CLI found. Install claude, codex, gemini, or grok"; \
+  fi
+  @echo "📝 Review saved to artifacts/review_local.txt"
+  @head -50 artifacts/review_local.txt
+
+# Review local changes with AI (uncommitted changes)
 review-local:
   #!/usr/bin/env bash
   set -euo pipefail

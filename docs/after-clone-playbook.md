@@ -83,7 +83,43 @@ jq -r '.tickets[] | [
 git diff HEAD~3 | devpilot review --diff -             # Interactive review
 ```
 
-## 3) Quick Wins (15 Minutes)
+## 3) Pre-PR Sanity (Local AI Review of Your Diff)
+
+```bash
+# Compare to base, get concise review bullets
+BASE=${BASE_BRANCH:-main}
+git fetch --no-tags origin "$BASE" --depth=1
+git diff --unified=1 --minimal --no-color origin/$BASE...HEAD > artifacts/review_diff.patch
+{ echo "ROLE: Senior reviewer. File-scoped bullets with fixes."; echo "DIFF:"; cat artifacts/review_diff.patch; } \
+  > artifacts/review_prompt.txt
+
+# Any supported CLI works; output goes to artifacts/review_local.txt
+# Claude CLI
+claude --system-prompt system/active.md \
+  --input-file artifacts/review_prompt.txt \
+  > artifacts/review_local.txt
+
+# OR Codex CLI
+codex exec --system-file system/active.md \
+  --input-file artifacts/review_prompt.txt \
+  > artifacts/review_local.txt
+
+# OR Gemini CLI
+gemini generate --model gemini-1.5-pro-latest \
+  --system-file system/active.md \
+  --prompt-file artifacts/review_prompt.txt \
+  > artifacts/review_local.txt
+
+# OR Grok CLI
+grok chat --system "$(cat system/active.md)" \
+  --input-file artifacts/review_prompt.txt \
+  > artifacts/review_local.txt
+
+# Quick one-liner using devpilot CLI
+devpilot review --diff origin/main
+```
+
+## 4) Quick Wins (15 Minutes)
 
 ```bash
 # Auto-fix formatting issues
@@ -137,6 +173,29 @@ security-quick:
   @gitleaks detect --no-git || echo "No secrets found"
   @semgrep --config=auto --severity=ERROR || echo "No critical issues"
   @trivy fs . --severity=HIGH,CRITICAL --exit-code=0
+
+# Pre-PR review: AI review of your changes
+review-pre-pr BASE="main":
+  @echo "🔍 Running pre-PR review against {{BASE}}..."
+  @mkdir -p artifacts
+  @git fetch --no-tags origin {{BASE}} --depth=1
+  @git diff --unified=1 --minimal --no-color origin/{{BASE}}...HEAD > artifacts/review_diff.patch
+  @echo "ROLE: Senior reviewer. File-scoped bullets with fixes." > artifacts/review_prompt.txt
+  @echo "DIFF:" >> artifacts/review_prompt.txt
+  @cat artifacts/review_diff.patch >> artifacts/review_prompt.txt
+  @if command -v claude >/dev/null; then \
+    claude --system-prompt system/active.md --input-file artifacts/review_prompt.txt > artifacts/review_local.txt; \
+  elif command -v codex >/dev/null; then \
+    codex exec --system-file system/active.md --input-file artifacts/review_prompt.txt > artifacts/review_local.txt; \
+  elif command -v gemini >/dev/null; then \
+    gemini generate --system-file system/active.md --prompt-file artifacts/review_prompt.txt > artifacts/review_local.txt; \
+  elif command -v grok >/dev/null; then \
+    grok chat --system "$$(cat system/active.md)" --input-file artifacts/review_prompt.txt > artifacts/review_local.txt; \
+  else \
+    echo "No AI CLI found. Install claude, codex, gemini, or grok"; \
+  fi
+  @echo "📝 Review saved to artifacts/review_local.txt"
+  @cat artifacts/review_local.txt
 
 # Generate all artifacts
 artifacts-all:
