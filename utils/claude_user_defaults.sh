@@ -42,5 +42,5 @@ if [ ! -f ~/.claude/settings.json ]; then
 JSON
   echo "Wrote ~/.claude/settings.json"
 else
-  echo "~/.claude/settings.json already exists — leaving it as-is."
+  echo "$HOME/.claude/settings.json already exists — leaving it as-is."
 fi

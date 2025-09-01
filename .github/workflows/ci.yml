@@ -49,7 +49,7 @@ jobs:
           echo "Checking for proper shebang..."
           while IFS= read -r file; do
             first_line=$(head -n1 "$file")
-            if [[ ! "$first_line" =~ ^#!/usr/bin/env\ bash || ! "$first_line" =~ ^#!/bin/bash ]]; then
+            if [[ ! "$first_line" =~ ^#!/usr/bin/env\ bash ]] && [[ ! "$first_line" =~ ^#!/bin/bash ]]; then
               echo "⚠️ Non-standard shebang in: $file"
               echo "   Found: $first_line"
             fi
