@@ -2,94 +2,138 @@
 
 [![CI](https://github.com/VivekLmd/setup-scripts/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/VivekLmd/setup-scripts/actions/workflows/ci.yml)
 
-**DevPilot** is a comprehensive AI development platform that transforms how you work with Claude, Gemini, Grok, and Codex. It provides intelligent project setup, skill-based configurations, and powerful automation tools.
+Transform how you work with AI coding assistants. DevPilot automatically configures Claude, Gemini, Grok, and Codex for your skill level and project needs.
 
-## 🚀 Getting Started for New Users
+## 🤔 Why DevPilot?
 
-### Step 1: Install DevPilot Tools (One-time setup)
+**Without DevPilot:**
+- Manually configure each AI tool for every project
+- Copy-paste the same instructions repeatedly
+- No consistency across projects
+- Dependencies installed differently each time
+- AI doesn't understand your project structure
+
+**With DevPilot:**
+- One command sets up everything
+- AI automatically knows your skill level
+- Projects organized in `~/projects/work/backend/my-api`
+- Dependencies detected and installed automatically
+- Consistent AI behavior across all your projects
+
+## 👀 What You Get
+
+After running DevPilot on your project:
+
+```
+your-project/
+├── CLAUDE.md           # AI understands your project
+├── AGENTS.md           # Consistent AI behavior
+├── .claude/
+│   ├── settings.json   # Permissions configured
+│   └── commands/       # 30+ powerful commands like /think-hard
+├── scripts/
+│   ├── apply_profile.sh    # Change skill level anytime
+│   └── run_checks.sh        # Automated quality checks
+└── (your code, now AI-ready)
+```
+
+Your AI assistants will:
+- Know if you're a beginner (teach mode) or expert (full power)
+- Understand if you're prototyping (move fast) or in production (be careful)
+- Have access to the right tools for your skill level
+- Follow consistent patterns across all your projects
+
+## 🚀 Installation (First-Time Setup)
+
+**Step 1:** Get DevPilot (2 minutes)
 ```bash
-# Clone DevPilot and install all tools
 git clone https://github.com/VivekLmd/setup-scripts.git ~/devpilot
 cd ~/devpilot
 ./setup_all.sh
 ```
 
-This installs:
-- Core development tools (git, gh, ripgrep, jq, etc.)
-- AI configurations for Claude, Gemini, Grok, Codex
-- Global settings and templates
-
-### Step 2: Set Up Your Projects (Use for each new project)
+**Step 2:** Set up your first project
 ```bash
-# Run the repository wizard
 ~/devpilot/setup/repo_wizard.sh
 ```
 
-The wizard will:
-1. Ask for your GitHub repository URL
-2. Let you choose organization and category
-3. **Prompt for skill level** (vibe, beginner, l1, l2, expert)
-4. **Prompt for project phase** (poc, mvp, beta, scale)
-5. Clone your repo to an organized location
-6. Apply AI configurations based on your selections
-7. Install project dependencies automatically
+The wizard will ask you 5 simple questions:
+1. GitHub repo URL → `https://github.com/you/your-project`
+2. Organization → `work` (or personal/learning)
+3. Category → `backend` (or frontend/mobile/etc)
+4. Your skill level → `2` (for beginner - it will show all options)
+5. Project phase → `2` (for MVP - it will show all options)
 
-### Step 3: Update Existing Projects (Optional)
+**That's it!** Your project is cloned, organized, and AI-ready.
+
+## 📖 For Daily Use
+
+### Setting Up New Projects
 ```bash
-# From within any existing project
-scripts/apply_profile.sh --skill vibe --phase poc
+~/devpilot/setup/repo_wizard.sh
+# Answer the prompts, everything else is automatic
 ```
 
-## 🎯 What DevPilot Does
+### Changing Your Skill Level
+```bash
+cd your-project
+scripts/apply_profile.sh --skill expert --phase production
+```
 
-### 1. **AI Agent Configuration**
-- **Multi-Agent Support**: Claude, Gemini, Grok, Codex with unified setup
-- **Global + Repo Settings**: System-wide defaults with per-project customization
-- **MCP Servers**: GitHub, Atlassian, custom integrations
-- **Smart Permissions**: Granular tool access control
+### Quick Reference
+| Command | What it does |
+|---------|--------------|
+| `~/devpilot/setup/repo_wizard.sh` | Set up a new project |
+| `scripts/apply_profile.sh` | Change skill/phase settings |
+| `~/devpilot/validation/validate_agents.sh` | Check all projects are configured |
 
-### 2. **Skill-Based Development Profiles**
-Adapts to your experience level with 5 progressive skill tiers:
+## 🎯 Skill Levels Explained
 
-| Skill Level | Description | Features |
-|------------|-------------|----------|
-| **Vibe** | Exploration mode | Minimal restrictions, creative freedom |
-| **Beginner** | Learning-focused | Teaching mode, guided workflows, safety rails |
-| **L1** | Junior developer | Basic tooling, structured patterns |
-| **L2** | Mid-level | Advanced tools, CI/CD, testing focus |
-| **Expert** | Senior/architect | Full access, complex operations |
+DevPilot adapts to YOUR experience level:
 
-### 3. **Project Phase Management**
-Automatic configuration based on project maturity:
+| Level | Who it's for | What changes |
+|-------|--------------|--------------|
+| **vibe** | Exploring, experimenting | No restrictions, maximum freedom |
+| **beginner** | Learning to code | AI teaches you, explains everything |
+| **l1** | Junior developer | Structured patterns, safety rails |
+| **l2** | Mid-level developer | More tools, CI/CD access |
+| **expert** | Senior developer | Full power, all tools available |
 
-| Phase | Focus | Automated Setup |
-|-------|-------|-----------------|
-| **POC** | Rapid prototyping | Minimal CI, flexible structure |
-| **MVP** | Core features | Basic tests, simple CI |
-| **Beta** | Quality & stability | Full testing, staging deploys |
-| **Scale** | Production-ready | Complete CI/CD, monitoring |
+## 📈 Project Phases Explained
 
-### 4. **Advanced Claude Commands**
-Pre-configured command library in `.claude/commands/`:
+DevPilot adapts to your PROJECT's maturity:
+
+| Phase | When to use | What changes |
+|-------|-------------|--------------|
+| **poc** | Just started, exploring ideas | Move fast, break things OK |
+| **mvp** | Building core features | Basic testing, simple CI |
+| **beta** | Getting ready for users | Full testing, staging deploys |
+| **scale** | Production with real users | Complete CI/CD, careful changes |
+
+## 🛠️ Advanced Features
+
+<details>
+<summary><b>Pre-configured AI Commands</b> (30+ commands)</summary>
+
+Once installed, your AI assistants have access to powerful commands:
 
 **Thinking & Analysis:**
 - `/think-hard` - Deep reasoning with structured output
 - `/explore-plan-code-test` - Full development cycle
 - `/security-review` - Security vulnerability analysis
-- `/audit-full` - Comprehensive code audit
 
-**Patterns & Templates:**
+**Development:**
 - `/backend-feature` - API endpoint scaffolding
-- `/sql-migration` - Database migration patterns
-- `/api-contract` - OpenAPI/GraphQL contracts
 - `/test-driven` - TDD workflow
+- `/refactor-complex` - Intelligent refactoring
 
 **Automation:**
 - `/tickets-from-code` - Generate JIRA/GitHub issues
 - `/chain-runner` - Multi-step task automation
-- `/parallel-map` - Parallel processing patterns
+</details>
 
-### 5. **Development Tools**
+<details>
+<summary><b>Development Tools Installed</b></summary>
 
 **Core Tools:**
 - `ripgrep`, `fd` - Lightning-fast search
@@ -97,85 +141,39 @@ Pre-configured command library in `.claude/commands/`:
 - `GitHub CLI` - Repository management
 - `direnv` - Auto-loading environments
 - `mise` - Runtime version management
-- `just` - Universal task runner
 
-**Productivity Extras** (`install/productivity_extras.sh`):
-- **API Development**: OpenAPI Generator, GraphQL tools, Newman
-- **Databases**: dbt, sqlfluff, pgcli, Prisma, Drizzle
-- **ML/Data**: DVC, Weights & Biases, MLflow, nbstripout
-- **Security**: trivy, semgrep, gitleaks, hadolint
-- **Kubernetes**: kind, kustomize, skaffold, tilt
-- **Quality**: ruff, black, mypy, prettier, eslint
+**Optional Productivity Extras:**
+- API Development: OpenAPI Generator, GraphQL tools
+- Databases: dbt, sqlfluff, pgcli, Prisma
+- ML/Data: DVC, Weights & Biases, MLflow
+- Security: trivy, semgrep, gitleaks
+- Kubernetes: kind, kustomize, skaffold
+</details>
 
-### 6. **Repository Setup Wizard**
+<details>
+<summary><b>Command-Line Options</b></summary>
 
-#### For New Projects
-The `repo_wizard.sh` handles everything when setting up a new project:
-
+Skip the interactive prompts:
 ```bash
-# Interactive mode (recommended for beginners)
-~/devpilot/setup/repo_wizard.sh
-```
-
-You'll be prompted for:
-1. **Repository URL** - Your GitHub repo (will be cloned)
-2. **Organization** - work, personal, learning, etc.
-3. **Category** - backend, frontend, mobile, etc.
-4. **Skill Level** - Choose from:
-   - `1) vibe` - Minimal structure, maximum freedom
-   - `2) beginner` - Learning mode with guidance (default)
-   - `3) l1` - Junior developer level
-   - `4) l2` - Mid-level developer
-   - `5) expert` - Senior developer
-5. **Project Phase** - Choose from:
-   - `1) poc` - Proof of concept
-   - `2) mvp` - Minimum viable product (default)
-   - `3) beta` - Beta testing
-   - `4) scale` - Production
-
-#### Advanced Usage
-```bash
-# Skip all prompts with command-line options
 ~/devpilot/setup/repo_wizard.sh \
   --url git@github.com:you/repo.git \
   --org work \
   --category backend \
-  --skill vibe \
-  --phase poc
+  --skill beginner \
+  --phase mvp
 ```
 
-#### What the Wizard Does
-1. **Clones your repository** to `~/projects/org/category/repo`
-2. **Detects dependencies** (package.json, requirements.txt, etc.)
-3. **Installs everything** (npm/pnpm, Python venv, etc.)
-4. **Applies AI configurations** based on your skill/phase
-5. **Sets up git hooks** for commit quality
-6. **Configures MCP servers** if needed
-
-#### For Existing Projects
-If you already have a project and just want to update the AI profile:
+For existing projects (without cloning):
 ```bash
-cd /path/to/your/project
-scripts/apply_profile.sh --skill vibe --phase poc
+cd /your/existing/project
+~/devpilot/scripts/apply_profile.sh --skill expert --phase scale
 ```
+</details>
 
-### 7. **Understanding the Flow**
+<details>
+<summary><b>Project Organization</b></summary>
 
-```mermaid
-graph LR
-    A[Install DevPilot] --> B[Run setup_all.sh]
-    B --> C[Tools Installed]
-    C --> D[Run repo_wizard.sh]
-    D --> E[Select Skill/Phase]
-    E --> F[Project Ready]
-```
-
-1. **First Time Only**: Install DevPilot tools with `setup_all.sh`
-2. **Per Project**: Use `repo_wizard.sh` to set up each new project
-3. **Updates**: Use `apply_profile.sh` to change settings later
-
-### 8. **Project Organization**
-
+DevPilot organizes your projects intelligently:
 ```
 ~/projects/
 ├── work/              # Professional projects
@@ -186,121 +184,39 @@ graph LR
 ├── learning/          # Tutorials
 └── opensource/        # Contributions
 ```
+</details>
 
-### 8. **Validation & Auditing**
+## 📚 Configuration Files
 
-```bash
-# Validate all projects
-./validation/validate_agents.sh
+<details>
+<summary><b>What gets installed where</b></summary>
 
-# Auto-fix missing configurations
-./validation/validate_agents.sh --fix
-
-# JSON output for CI/CD
-./validation/validate_agents.sh --json
-```
-
-## 📁 Configuration Files
-
-### Global (User Home)
+**Global (Home Directory):**
 - `~/.claude/settings.json` - Claude global settings
 - `~/.gemini/settings.json` - Gemini configuration
-- `~/.grok/user-settings.json` - Grok settings
-- `~/.codex/config.toml` - Codex configuration
 - `~/templates/agent-setup/` - Reusable templates
 
-### Per Repository
+**Per Repository:**
 - `CLAUDE.md` - Project-specific AI instructions
 - `AGENTS.md` - General agent directives
 - `.claude/settings.json` - Repository permissions
 - `.claude/commands/` - Custom commands
 - `.mcp.json` - MCP server configuration
-- `.envrc` - Environment variables
-- `.gitignore` - Smart exclusions
-
-## 🔧 Installation Options
-
-### Complete Setup
-```bash
-./setup_all.sh
-```
-
-### Individual Components
-```bash
-# Development tools only
-./install/key_software_linux.sh  # or key_software_macos.sh
-
-# AI CLIs only
-./install/ai_clis.sh
-
-# Global agent config
-./setup/agents_global.sh
-
-# Repository setup
-cd /your/project
-~/devpilot/setup/agents_repo.sh
-```
-
-### Platform Support
-
-| Platform | Installer | Notes |
-|----------|-----------|-------|
-| **WSL/Ubuntu** | `install/key_software_linux.sh` | Full support |
-| **Linux** | `install/key_software_linux.sh` | Cross-distro |
-| **macOS** | `install/key_software_macos.sh` | Homebrew-based |
-
-## 🎓 Skill Progression
-
-DevPilot grows with you:
-
-1. **Start as Beginner**: Teaching mode enabled, safety rails active
-2. **Progress to L1/L2**: Unlock advanced tools and patterns
-3. **Expert Mode**: Full control, complex operations
-
-Change skill level anytime:
-```bash
-cd /your/project
-~/devpilot/scripts/apply_profile.sh --skill l2 --phase beta
-```
-
-## 🔌 MCP (Model Context Protocol)
-
-Built-in integrations:
-- **GitHub**: Issues, PRs, repos
-- **Atlassian**: Jira, Confluence
-- **Custom**: Add your own servers
-
-Configure in `.mcp.json` or `.mcp.local.json` (gitignored).
-
-## 🔐 Security Features
-
-- **Secure-by-default**: Sensitive operations require approval
-- **Commit sanitization**: Automatic secret detection
-- **Gitignore management**: Prevents accidental commits
-- **Environment isolation**: `.envrc.local` for secrets
-
-## 📚 Documentation
-
-- [Quickstart Guide](docs/quickstart.md)
-- [Repository Wizard](docs/repo-wizard.md)
-- [Command Reference](docs/agent-commands.md)
-- [Skill Profiles](docs/profiles.md)
-- [CI/CD Integration](docs/ci.md)
-- [Troubleshooting](docs/validation-troubleshooting.md)
+</details>
 
 ## 🤝 Contributing
 
-DevPilot is actively developed. Contributions welcome!
-
-1. Scripts must be idempotent
-2. Use `set -euo pipefail`
-3. Provide `--force` flags
-4. Document new features
+DevPilot is open source! Contributions welcome:
+- Report issues: [GitHub Issues](https://github.com/VivekLmd/setup-scripts/issues)
+- Submit PRs: Fork and create a pull request
+- Share feedback: Star the repo if it helps you!
 
 ## 📄 License
 
-Proprietary - Copyright © 2024 Softsensor.AI - See [LICENSE](LICENSE) file
+MIT License - See [LICENSE](LICENSE) file for details.
 
 ---
 
-**Ready to supercharge your development?** Run `./setup_all.sh` and start building with AI! 🚀
+<p align="center">
+  <i>Stop configuring. Start building.</i>
+</p>
