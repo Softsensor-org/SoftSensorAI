@@ -1,0 +1,210 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# DevPilot - Unified CLI entry point
+# Provides cohesive interface to all DevPilot commands
+
+DEVPILOT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+VERSION="2.0.0"
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+# Display help
+show_help() {
+    cat << EOF
+DevPilot v${VERSION} - AI-First Development Toolkit
+
+USAGE:
+    devpilot <command> [options]
+
+CORE COMMANDS:
+    doctor              Check system setup and dependencies
+    setup               Set up a new or existing repository
+    profile             Manage skill levels and project phases
+    tickets             Generate tickets from code or diffs
+    review              Run AI code review locally
+
+WORKFLOW COMMANDS:
+    persona             Apply AI persona configurations
+    dprs                Calculate DevPilot Readiness Score
+    audit               Run security and quality audits
+    commands            Generate AI command registry
+
+EXAMPLES:
+    devpilot doctor                         # Check system health
+    devpilot setup --existing               # Set up current repo
+    devpilot profile --skill l2 --phase beta # Change profile
+    devpilot tickets --from-code            # Generate backlog
+    devpilot review --diff HEAD~3           # Review recent changes
+
+OPTIONS:
+    -h, --help          Show this help message
+    -v, --version       Show version information
+    --debug             Enable debug output
+
+For detailed help on any command:
+    devpilot <command> --help
+
+Documentation: https://github.com/Softsensor-org/DevPilot
+EOF
+}
+
+# Route commands to appropriate scripts
+case "${1:-}" in
+    doctor)
+        shift
+        exec "$DEVPILOT_ROOT/scripts/doctor.sh" "$@"
+        ;;
+
+    setup)
+        shift
+        # Parse setup options
+        if [[ "${1:-}" == "--existing" ]] || [[ "${1:-}" == "-e" ]]; then
+            shift
+            exec "$DEVPILOT_ROOT/setup/existing_repo_setup.sh" "$@"
+        else
+            exec "$DEVPILOT_ROOT/setup/repo_wizard.sh" "$@"
+        fi
+        ;;
+
+    profile)
+        shift
+        # Route to apply_profile.sh or profile_menu.sh
+        if [[ $# -eq 0 ]]; then
+            exec "$DEVPILOT_ROOT/scripts/profile_menu.sh"
+        else
+            exec "$DEVPILOT_ROOT/scripts/apply_profile.sh" "$@"
+        fi
+        ;;
+
+    tickets)
+        shift
+        # Parse ticket generation options
+        case "${1:-}" in
+            --from-code|from-code)
+                shift
+                exec "$DEVPILOT_ROOT/scripts/generate_tickets.sh" --from-code "$@"
+                ;;
+            --from-diff|from-diff)
+                shift
+                exec "$DEVPILOT_ROOT/scripts/generate_tickets.sh" --from-diff "$@"
+                ;;
+            *)
+                exec "$DEVPILOT_ROOT/scripts/generate_tickets.sh" "$@"
+                ;;
+        esac
+        ;;
+
+    review)
+        shift
+        # Local AI review
+        if [[ "${1:-}" == "--diff" ]]; then
+            shift
+            DIFF_REF="${1:-HEAD}"
+            shift || true
+
+            echo -e "${BLUE}Generating diff for AI review...${NC}"
+            git diff "${DIFF_REF}...HEAD" > /tmp/review.diff
+
+            # Try AI CLIs in order
+            if command -v claude >/dev/null; then
+                claude --system-prompt "Review this diff for bugs, security issues, and improvements" < /tmp/review.diff
+            elif command -v codex >/dev/null; then
+                codex exec --system "Review this diff" --input-file /tmp/review.diff
+            elif command -v gemini >/dev/null; then
+                gemini generate --system "Review this diff" --input-file /tmp/review.diff
+            elif command -v grok >/dev/null; then
+                grok chat --system "Review this diff" < /tmp/review.diff
+            else
+                echo -e "${RED}No AI CLI found. Install claude, codex, gemini, or grok${NC}"
+                exit 1
+            fi
+        else
+            # Default to reviewing uncommitted changes
+            echo -e "${BLUE}Reviewing uncommitted changes...${NC}"
+            git diff > /tmp/review.diff
+
+            if [[ ! -s /tmp/review.diff ]]; then
+                echo -e "${YELLOW}No uncommitted changes to review${NC}"
+                exit 0
+            fi
+
+            # Try AI CLIs in order
+            if command -v claude >/dev/null; then
+                claude --system-prompt "Review this diff for bugs, security issues, and improvements" < /tmp/review.diff
+            elif command -v codex >/dev/null; then
+                codex exec --system "Review this diff" --input-file /tmp/review.diff
+            elif command -v gemini >/dev/null; then
+                gemini generate --system "Review this diff" --input-file /tmp/review.diff
+            elif command -v grok >/dev/null; then
+                grok chat --system "Review this diff" < /tmp/review.diff
+            else
+                echo -e "${RED}No AI CLI found. Install claude, codex, gemini, or grok${NC}"
+                exit 1
+            fi
+        fi
+        ;;
+
+    persona)
+        shift
+        exec "$DEVPILOT_ROOT/scripts/persona_manager.sh" "$@"
+        ;;
+
+    dprs)
+        shift
+        exec "$DEVPILOT_ROOT/scripts/dprs.sh" "$@"
+        ;;
+
+    audit)
+        shift
+        # Security and quality audit
+        if [[ -f "scripts/audit.sh" ]]; then
+            exec "scripts/audit.sh" "$@"
+        else
+            echo -e "${YELLOW}Running basic audit...${NC}"
+            # Basic audit fallback
+            echo "==> Checking for secrets..."
+            if command -v gitleaks >/dev/null; then
+                gitleaks detect --no-git || true
+            fi
+            echo "==> Checking security issues..."
+            if command -v semgrep >/dev/null; then
+                semgrep --config=auto --severity=ERROR || true
+            fi
+            echo "==> Checking dependencies..."
+            if command -v trivy >/dev/null; then
+                trivy fs . --severity=HIGH,CRITICAL || true
+            fi
+        fi
+        ;;
+
+    commands)
+        shift
+        exec "$DEVPILOT_ROOT/scripts/generate_command_registry.sh" "$@"
+        ;;
+
+    -h|--help|help)
+        show_help
+        ;;
+
+    -v|--version|version)
+        echo "DevPilot v${VERSION}"
+        ;;
+
+    "")
+        show_help
+        exit 0
+        ;;
+
+    *)
+        echo -e "${RED}Unknown command: $1${NC}"
+        echo ""
+        show_help
+        exit 1
+        ;;
+esac

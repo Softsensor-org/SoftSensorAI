@@ -41,7 +41,72 @@ If no CLI is found, the workflow exits neutrally (won't fail your PR).
 
 **Note:** Install at least one AI CLI on your runner or use GitHub-hosted runners with setup steps.
 
-Phase-Specific CI
+## Security Issue Tracking
+
+When security tools find vulnerabilities, the security-review workflow automatically creates GitHub
+issues with appropriate labels:
+
+### Tool-Specific Labels
+
+Issues created by the security workflow include:
+
+- **Primary labels:**
+
+  - `security` - All security-related issues
+  - `automated` - Created by CI/CD pipeline
+
+- **Tool-specific labels:**
+
+  - `semgrep` - Static analysis findings
+  - `trivy` - Dependency and container vulnerabilities
+  - `gitleaks` - Exposed secrets or credentials
+  - `hadolint` - Dockerfile security issues
+
+- **Severity labels:**
+  - `severity:critical` - Immediate action required
+  - `severity:high` - Address in current sprint
+  - `severity:medium` - Schedule for next release
+  - `severity:low` - Track for future improvement
+
+### Example Issue Creation
+
+```yaml
+# In .github/workflows/security-review.yml
+- name: Create Issue for Critical Findings
+  if: steps.semgrep.outcome == 'failure'
+  uses: actions/github-script@v7
+  with:
+    script: |
+      const issue = await github.rest.issues.create({
+        owner: context.repo.owner,
+        repo: context.repo.repo,
+        title: '🔒 Security: Semgrep found critical vulnerabilities',
+        body: `## Security Scan Results\n\n${semgrepOutput}`,
+        labels: ['security', 'automated', 'semgrep', 'severity:critical']
+      });
+```
+
+### Tracking and Remediation
+
+1. **Dashboard view:** Filter issues by labels
+
+   ```
+   is:issue is:open label:security label:automated
+   ```
+
+2. **By tool:** Track specific scanner findings
+
+   ```
+   is:issue is:open label:semgrep
+   is:issue is:open label:trivy
+   ```
+
+3. **By severity:** Prioritize critical issues
+   ```
+   is:issue is:open label:security label:severity:critical
+   ```
+
+## Phase-Specific CI
 
 - `scripts/apply_profile.sh --phase <poc|mvp|beta|scale>` installs a phase CI under
   `.github/workflows/ci.yml`

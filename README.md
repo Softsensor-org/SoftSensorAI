@@ -855,6 +855,65 @@ DevPilot organizes your projects intelligently:
 
 </details>
 
+<details>
+<summary><b>Project Profiles</b></summary>
+
+DevPilot supports per-project customization through profile YAML files:
+
+```yaml
+# .devpilot/project.yml
+project:
+  name: ocr-service
+  type: ml-pipeline
+
+profiles:
+  default_phase: beta
+  default_skill: l2
+
+  # Project-specific thresholds
+  thresholds:
+    min_coverage: 75
+    min_dprs_score: 80
+    min_schema_pass_rate: 0.95 # OCR accuracy requirement
+    max_response_time_ms: 500
+
+  # Active personas for this project
+  personas:
+    - ml-engineer
+    - backend-developer
+    - devops-engineer
+
+  # Security requirements
+  security:
+    require_secrets_scan: true
+    block_on_high_vulns: true
+    allowed_licenses:
+      - MIT
+      - Apache-2.0
+      - BSD-3-Clause
+
+  # Custom quality gates
+  quality_gates:
+    - name: "OCR Accuracy"
+      command: "python tests/accuracy_test.py"
+      threshold: 0.95
+    - name: "API Performance"
+      command: "just benchmark"
+      threshold: "p99 < 500ms"
+```
+
+Apply project-specific settings:
+
+```bash
+# Load project profile
+devpilot profile --from-file .devpilot/project.yml
+
+# Or auto-detect and apply
+devpilot setup --auto-detect
+```
+
+</details>
+
 ## 📚 Configuration Files
 
 <details>
