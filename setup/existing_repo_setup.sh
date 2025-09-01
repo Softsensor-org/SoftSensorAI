@@ -8,7 +8,6 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 CYAN='\033[0;36m'
-MAGENTA='\033[0;35m'
 BOLD='\033[1m'
 NC='\033[0m' # No Color
 
@@ -152,11 +151,9 @@ main() {
 
   # Check current directory first
   local target_dir=""
-  local current_is_repo=false
-
   if is_git_repo && has_project_structure "."; then
-    current_is_repo=true
-    local repo_name=$(basename "$(git rev-parse --show-toplevel 2>/dev/null)")
+    local repo_name
+    repo_name=$(basename "$(git rev-parse --show-toplevel 2>/dev/null)")
     echo -e "${GREEN}✓ Current directory is a repository: $repo_name${NC}"
     echo
     read -p "Setup agent configurations here? (y/n): " use_current
@@ -230,21 +227,21 @@ main() {
   # Detect project type
   echo
   say "Analyzing repository..."
-  local project_type=$(detect_project_type "$target_dir")
+  local project_type
+  project_type=$(detect_project_type "$target_dir")
   echo -e "  ${BOLD}Repository:${NC} $(basename "$target_dir")"
   echo -e "  ${BOLD}Path:${NC} $target_dir"
   echo -e "  ${BOLD}Type:${NC} $project_type"
 
   if is_git_repo; then
-    local branch=$(cd "$target_dir" && git branch --show-current 2>/dev/null || echo "unknown")
+    local branch
+    branch=$(cd "$target_dir" && git branch --show-current 2>/dev/null || echo "unknown")
     echo -e "  ${BOLD}Branch:${NC} $branch"
   fi
   echo
 
   # Check existing setup
-  local has_claude=false
   if [ -f "$target_dir/CLAUDE.md" ] || [ -d "$target_dir/.claude" ]; then
-    has_claude=true
     warn "Repository already has agent configurations"
     echo "  • CLAUDE.md: $([ -f "$target_dir/CLAUDE.md" ] && echo "✓" || echo "✗")"
     echo "  • .claude/: $([ -d "$target_dir/.claude" ] && echo "✓" || echo "✗")"
