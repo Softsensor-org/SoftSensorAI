@@ -8,6 +8,8 @@ This directory contains comprehensive guides to help you install, configure, and
 - **quickstart.md** - One-command installation and first steps with DevPilot
 - **repo-wizard.md** - Repository cloning and automated configuration
 - **profiles.md** - Skill levels, project phases, and capability progression
+- **AI_FRAMEWORKS.md** - LangChain, AutoGen, CrewAI setup with GPU optimization
+- **SECURITY.md** - Security best practices and checksum verification
 
 ### AI Personas & Integration
 - **PERSONAS_GUIDE.md** - Individual AI personas and their specializations
@@ -23,6 +25,7 @@ This directory contains comprehensive guides to help you install, configure, and
 - **devcontainer.md** - Development container setup
 - **MIGRATION.md** - Upgrading from previous versions
 - **RELEASE_MANAGEMENT.md** - Release process and versioning
+- **GPU_OPTIMIZATION.md** - GPU detection and ML workflow optimization
 
 ### Troubleshooting
 - **validation-troubleshooting.md** - Common issues and solutions
@@ -40,7 +43,11 @@ For comprehensive setup, the recommended reading order is:
 4. **PERSONAS_GUIDE.md** - Activating specialized AI personas
 5. **agent-commands.md** - Available AI commands
 6. **CODEX_INTEGRATION.md** - Using OpenAI Codex with personas
+7. **AI_FRAMEWORKS.md** - Setting up AI/ML development environment
+8. **SECURITY.md** - Implementing security best practices
 
 For advanced users:
 - **MULTI_PERSONA_GUIDE.md** - Combining multiple personas
+- **AI_FRAMEWORKS.md** - Building multi-agent systems with LangChain/AutoGen
+- **SECURITY.md** - Advanced security configurations
 - **appendix.md** - Key strengths to preserve

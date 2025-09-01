@@ -4,7 +4,13 @@
 
 Transform how you work with AI coding assistants. DevPilot automatically configures Claude, Codex, Gemini, Grok, and Copilot for your skill level and project needs - with full parity across all platforms.
 
-**🎯 NEW: Multi-Persona System** - Combine multiple AI personas (Data Scientist, Software Architect, Backend Developer, etc.) for specialized assistance tailored to your exact needs.
+## 🆕 Latest Features
+
+- **🎯 Multi-Persona System** - Combine multiple AI personas (Data Scientist, Software Architect, etc.)
+- **🎮 GPU Detection & Optimization** - Automatic NVIDIA/AMD/Apple Silicon detection with ML insights
+- **🤖 AI Frameworks** - One-command installation of LangChain, AutoGen, CrewAI
+- **🔒 Checksum Verification** - Secure downloads with SHA256/SHA1/MD5 verification
+- **🧪 Sandboxed Execution** - Safe execution environment for AI-generated code
 
 ## 📋 System Requirements
 
@@ -97,7 +103,13 @@ AI Agent Configurations:
 - Claude settings and commands
 - Gemini configurations
 - Grok settings
-- Codex integration
+- Codex integration with sandboxed execution
+
+AI Development Environment:
+- GPU detection (NVIDIA CUDA, AMD ROCm, Apple Silicon)
+- AI frameworks (LangChain, AutoGen, CrewAI)
+- Vector databases (ChromaDB, FAISS)
+- Secure package verification
 
 What this does:
 - ✅ Installs ALL the tools above globally
@@ -339,6 +351,53 @@ Codex has complete parity with Claude, including:
 - Unified command structure
 
 See [Codex Integration Guide](docs/CODEX_INTEGRATION.md) and [Multi-Persona Guide](docs/MULTI_PERSONA_GUIDE.md) for details.
+
+## 🚀 AI Development Environment
+
+DevPilot now includes comprehensive AI/ML development support with GPU acceleration and secure package management.
+
+### GPU Detection & Optimization
+
+DevPilot automatically detects your GPU hardware and optimizes installations:
+
+- **NVIDIA GPUs** - CUDA detection and PyTorch CUDA builds
+- **AMD GPUs** - ROCm support for ML workloads
+- **Apple Silicon** - Metal Performance Shaders optimization
+- **CPU Fallback** - Optimized CPU builds when no GPU detected
+
+The setup script automatically detects your hardware:
+```bash
+./setup_all.sh
+# Output: Detected GPU: NVIDIA: RTX 4090 (CUDA 12.1)
+```
+
+### AI Frameworks Installer
+
+Install a complete AI development stack with one command:
+
+```bash
+./scripts/setup_ai_frameworks.sh
+```
+
+Includes:
+- **LLM APIs**: OpenAI, Anthropic, Groq, Mistral
+- **Frameworks**: LangChain, AutoGen, CrewAI, LangGraph
+- **ML Tools**: PyTorch, Transformers, scikit-learn
+- **Vector DBs**: ChromaDB, FAISS
+- **Dev Tools**: Jupyter, Streamlit, Gradio
+
+See [AI Frameworks Guide](docs/AI_FRAMEWORKS.md) for detailed setup.
+
+### Secure Downloads
+
+All downloads now support checksum verification for security:
+
+```bash
+source utils/checksum_verify.sh
+download_and_verify "$url" "$file" "$sha256_checksum"
+```
+
+See [Security Guide](docs/SECURITY.md#checksum-verification) for details.
 
 ## 🧠 AI Command System - Your Productivity Multiplier
 

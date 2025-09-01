@@ -4,14 +4,28 @@
 
 ```bash
 # Clone DevPilot
-git clone https://github.com/VivekLmd/setup-scripts.git ~/devpilot
+git clone https://github.com/Softsensor-org/DevPilot.git ~/devpilot
 
-# Run setup
+# Run setup (now with GPU detection!)
 cd ~/devpilot && ./setup_all.sh
 
 # Create your first AI-powered project
 ./setup/repo_wizard.sh
+
+# Optional: Install AI frameworks (if GPU detected)
+./scripts/setup_ai_frameworks.sh
 ```
+
+## 🆕 New Features
+
+- **🎮 GPU Detection**: Automatically detects NVIDIA/AMD/Apple Silicon GPUs
+- **🤖 AI Frameworks**: One-command installation of LangChain, AutoGen, CrewAI
+- **🔒 Checksum Verification**: Secure downloads with hash verification
+- **🎭 Multi-Persona System**: Combine multiple AI personas for specialized help
+- **📦 Python 3.12**: Latest Python for better performance
+- **🧪 Data Science Support**: GPU optimization insights and ML workflow tools
+- **🏗️ Architecture Tools**: System design and scalability analysis
+- **🤖 Codex Integration**: Full AI assistant support with sandboxed execution
 
 ## 📋 What Gets Installed
 
@@ -96,8 +110,23 @@ gemini "explain how this authentication works"
 # Grok - Good for quick tasks
 grok "add error handling to this script"
 
-# Codex - Completions and generation
+# Codex - Completions and generation (with sandboxed execution)
 codex "generate unit tests"
+```
+
+### 🎭 Managing Personas
+
+```bash
+# Add personas to your project
+cd your-project
+~/devpilot/scripts/persona_manager.sh add data-scientist
+~/devpilot/scripts/persona_manager.sh add software-architect
+
+# View active personas
+~/devpilot/scripts/persona_manager.sh show
+
+# Remove a persona
+~/devpilot/scripts/persona_manager.sh remove data-scientist
 ```
 
 ## 🔑 API Keys (Optional but Recommended)
@@ -139,18 +168,25 @@ In Claude, type `/` to see available commands:
 
 ### Apply Profiles
 ```bash
-# Change skill level
+# Interactive profile selection
 cd your-project
-~/devpilot/scripts/apply_profile.sh --skill l2
+~/devpilot/scripts/apply_profile.sh
 
-# Change project phase
-~/devpilot/scripts/apply_profile.sh --phase beta
+# Direct profile application
+~/devpilot/scripts/apply_profile.sh --skill l2 --phase beta
+
+# Add specialized personas
+~/devpilot/scripts/persona_manager.sh add data-scientist
+~/devpilot/scripts/persona_manager.sh add software-architect
 ```
 
 ### Install Extra Tools
 ```bash
 # Database, ML, Kubernetes tools
 ~/devpilot/install/productivity_extras.sh
+
+# AI Frameworks (with GPU optimization)
+~/devpilot/scripts/setup_ai_frameworks.sh
 ```
 
 ## ✅ Verify Setup
@@ -190,8 +226,10 @@ chmod +x ~/devpilot/**/*.sh
 
 1. **Explore Commands**: Check `.claude/commands/` in any project
 2. **Read CLAUDE.md**: See project-specific AI instructions
-3. **Try Profiles**: Experiment with different skill levels
-4. **Setup MCP**: Add Jira, Confluence integrations
+3. **Try Personas**: Add data-scientist or software-architect personas
+4. **Setup AI Frameworks**: Install LangChain, AutoGen for agent development
+5. **Learn Security**: Read [Security Guide](SECURITY.md) for best practices
+6. **Build AI Apps**: Check [AI Frameworks Guide](AI_FRAMEWORKS.md) for examples
 
 ## 🎉 You're Ready!
 
