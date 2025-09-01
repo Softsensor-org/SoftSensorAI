@@ -389,6 +389,30 @@ palette QUERY="":
     ./bin/dp palette
   fi
 
+# Release readiness assessment
+release-ready PHASE="":
+  #!/usr/bin/env bash
+  set -euo pipefail
+  echo "🎯 Checking release readiness..."
+
+  # Determine phase
+  if [ -n "{{PHASE}}" ]; then
+    PROJECT_PHASE="{{PHASE}}"
+  elif [ -f "devpilot.project.yml" ]; then
+    PROJECT_PHASE=$(grep "phase:" devpilot.project.yml | head -1 | awk '{print $2}' || echo "mvp")
+  else
+    PROJECT_PHASE="mvp"
+  fi
+
+  # Generate tickets if needed
+  if [ ! -f "artifacts/tickets.csv" ]; then
+    echo "📋 Generating ticket analysis..."
+    ./bin/dp tickets >/dev/null 2>&1 || true
+  fi
+
+  # Run release readiness check
+  ./scripts/release_ready.sh "artifacts/tickets.csv" "$PROJECT_PHASE"
+
 # AI review with preview context
 review-preview BASE="main":
   #!/usr/bin/env bash
