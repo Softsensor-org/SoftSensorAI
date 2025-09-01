@@ -75,15 +75,51 @@ What this does:
 ~/devpilot/setup/repo_wizard.sh
 ```
 
-The wizard will:
-1. Ask for GitHub repo URL → Clone it for you
-2. Ask for organization → Organize it in `~/projects/work/backend/`
-3. Ask for category → Keep similar projects together
-4. Ask your skill level → Configure AI for your experience
-5. Ask project phase → Configure for POC vs production
+The wizard will ask you:
+
+1. **GitHub repo URL** → `https://github.com/you/your-project`
+   - It will clone this for you
+
+2. **Organization** → Choose or create:
+   - `1) org1` - Default organization
+   - `2) org2` - Secondary organization
+   - `3) work` - Professional projects
+   - `4) personal` - Side projects
+   - `5) learning` - Tutorials/courses
+   - Or type your own: `client-name`, `startup`, etc.
+
+3. **Category** → Choose or create:
+   - `1) backend` - API services, servers
+   - `2) frontend` - Web apps, UIs
+   - `3) mobile` - iOS/Android apps
+   - `4) infra` - DevOps, infrastructure
+   - `5) ml` - Machine learning projects
+   - `6) data` - Data pipelines, analytics
+   - Or type your own: `microservice`, `cli-tool`, etc.
+
+4. **Your skill level** → `2` for beginner (shows all options)
+
+5. **Project phase** → `2` for MVP (shows all options)
+
+**Where your project ends up:**
+```
+~/projects/
+├── work/
+│   ├── backend/
+│   │   ├── api-gateway/      # If you chose work + backend
+│   │   └── user-service/
+│   └── frontend/
+│       └── admin-dashboard/
+├── personal/
+│   └── mobile/
+│       └── fitness-app/       # If you chose personal + mobile
+└── learning/
+    └── ml/
+        └── pytorch-tutorial/  # If you chose learning + ml
+```
 
 What this does:
-- ✅ Clones YOUR project from GitHub
+- ✅ Clones YOUR project to an organized location
 - ✅ Adds AI configuration files to THAT project
 - ✅ Installs THAT project's dependencies (npm, pip, etc.)
 - ✅ Sets up git hooks for THAT project
