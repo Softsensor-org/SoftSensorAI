@@ -73,6 +73,16 @@ setup_agent_configs() {
     warn "CLAUDE.md already exists, skipping"
   fi
 
+  # Copy CODEX.md template
+  if [ ! -f "$target_dir/CODEX.md" ]; then
+    if [ -f "$SETUP_SCRIPTS_DIR/templates/CODEX.md" ]; then
+      cp "$SETUP_SCRIPTS_DIR/templates/CODEX.md" "$target_dir/CODEX.md"
+      success "Created CODEX.md"
+    fi
+  else
+    warn "CODEX.md already exists, skipping"
+  fi
+
   # Copy settings
   if [ ! -f "$target_dir/.claude/settings.json" ]; then
     if [ -f "$SETUP_SCRIPTS_DIR/templates/.claude/settings.json" ]; then
@@ -83,11 +93,24 @@ setup_agent_configs() {
     warn ".claude/settings.json already exists, skipping"
   fi
 
-  # Copy command sets
+  # Copy command sets for Claude
   if [ -d "$SETUP_SCRIPTS_DIR/.claude/commands/sets" ]; then
     mkdir -p "$target_dir/.claude/commands"
     cp -r "$SETUP_SCRIPTS_DIR/.claude/commands/sets" "$target_dir/.claude/commands/"
-    success "Copied command sets"
+    success "Copied Claude command sets"
+  fi
+
+  # Setup Codex directory and settings
+  mkdir -p "$target_dir/.codex"
+  if [ -f "$SETUP_SCRIPTS_DIR/.codex/settings.json" ]; then
+    cp "$SETUP_SCRIPTS_DIR/.codex/settings.json" "$target_dir/.codex/settings.json"
+    success "Created Codex settings"
+  fi
+
+  # Copy Codex commands if they exist
+  if [ -d "$SETUP_SCRIPTS_DIR/.codex/commands" ]; then
+    cp -r "$SETUP_SCRIPTS_DIR/.codex/commands" "$target_dir/.codex/"
+    success "Copied Codex command sets"
   fi
 
   # Create system prompts directory

@@ -29,5 +29,14 @@ docker run --rm -it \
   node:20-bookworm bash -lc '
     # Install Codex if not present
     npm -g i @openai/codex >/dev/null 2>&1 || true
+
+    # Load persona configurations if available
+    if [ -f ".codex/settings.json" ]; then
+      export CODEX_CONFIG=".codex/settings.json"
+    fi
+    if [ -f ".claude/personas/active.json" ]; then
+      export CODEX_PERSONAS=".claude/personas/active.json"
+    fi
+
     # Run with all arguments passed through
     codex "$@"' -- "$@"

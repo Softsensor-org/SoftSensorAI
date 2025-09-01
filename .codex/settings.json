@@ -1,0 +1,76 @@
+{
+  "version": "1.0.0",
+  "model": "code-davinci-002",
+  "temperature": 0.2,
+  "max_tokens": 2048,
+  "top_p": 1,
+  "frequency_penalty": 0,
+  "presence_penalty": 0,
+  "stop": ["```", "\n\n\n"],
+  "execution": {
+    "mode": "sandbox",
+    "timeout": 30000,
+    "memory_limit": "512M",
+    "cpu_limit": "1",
+    "network": "none",
+    "filesystem": "readonly"
+  },
+  "permissions": {
+    "allow": [
+      "read:*",
+      "analyze:*",
+      "suggest:*",
+      "generate:*",
+      "test:*"
+    ],
+    "require_approval": [
+      "write:*",
+      "execute:*",
+      "delete:*",
+      "modify:*"
+    ],
+    "deny": [
+      "execute:rm -rf",
+      "execute:sudo",
+      "access:secrets",
+      "access:.env"
+    ]
+  },
+  "features": {
+    "auto_complete": true,
+    "inline_suggest": true,
+    "explain_code": true,
+    "generate_tests": true,
+    "refactor": true,
+    "debug": true,
+    "optimize": true,
+    "document": true
+  },
+  "integration": {
+    "claude": {
+      "enabled": true,
+      "share_context": true,
+      "unified_commands": true
+    },
+    "copilot": {
+      "enabled": true,
+      "priority": "codex_first"
+    },
+    "cursor": {
+      "enabled": true,
+      "sync_settings": true
+    }
+  },
+  "sandbox": {
+    "provider": "docker",
+    "image": "codex-sandbox:latest",
+    "auto_cleanup": true,
+    "persist_logs": true,
+    "mount_readonly": ["/templates", "/.codex"]
+  },
+  "personas": {
+    "enabled": true,
+    "sync_with_claude": true,
+    "path": ".claude/personas"
+  }
+}

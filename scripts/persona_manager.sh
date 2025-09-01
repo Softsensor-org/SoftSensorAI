@@ -102,10 +102,16 @@ add_persona() {
     cp "$persona_config" ".claude/personas/${persona}.json"
   fi
 
-  # Copy persona-specific commands
+  # Copy persona-specific commands for Claude
   if [ -d "$SETUP_SCRIPTS_DIR/.claude/commands/sets/${persona}" ]; then
     mkdir -p ".claude/commands/personas/${persona}"
     cp -r "$SETUP_SCRIPTS_DIR/.claude/commands/sets/${persona}"/* ".claude/commands/personas/${persona}/" 2>/dev/null || true
+  fi
+
+  # Copy persona-specific commands for Codex
+  if [ -d "$SETUP_SCRIPTS_DIR/.codex/commands/${persona}" ]; then
+    mkdir -p ".codex/commands/personas/${persona}"
+    cp -r "$SETUP_SCRIPTS_DIR/.codex/commands/${persona}"/* ".codex/commands/personas/${persona}/" 2>/dev/null || true
   fi
 
   # Add to active personas
@@ -132,6 +138,7 @@ remove_persona() {
   # Remove persona files
   rm -f ".claude/personas/${persona}.json"
   rm -rf ".claude/commands/personas/${persona}"
+  rm -rf ".codex/commands/personas/${persona}"
 
   echo -e "${GREEN}✓ Removed $persona persona${NC}"
 }
