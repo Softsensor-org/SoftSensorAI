@@ -121,6 +121,7 @@ fi
 
 # 7) Optional: persist agent load via keychain on login
 if ! grep -q "keychain --quiet --agents ssh --eval" "$HOME/.bashrc"; then
+  # shellcheck disable=SC2016
   echo 'eval $(keychain --quiet --agents ssh --eval ~/.ssh/id_ed25519 ~/.ssh/id_rsa 2>/dev/null)' >> "$HOME/.bashrc"
   echo "✔ Added keychain autoload to ~/.bashrc (takes effect next shell)"
 fi
