@@ -232,8 +232,10 @@ check_ready() {
   local ready_phase=0
 
   # Check skill readiness
-  local skill_total=$(grep -c "^- \[.\]" PROFILE.md 2>/dev/null | head -1 || echo 0)
-  local skill_complete=$(awk '/To Next.*Level/,/To Next.*Phase/ {print}' PROFILE.md | grep -c "^- \[x\]" || echo 0)
+  local skill_total
+  skill_total=$(grep -c "^- \[.\]" PROFILE.md 2>/dev/null | head -1 || echo 0)
+  local skill_complete
+  skill_complete=$(awk '/To Next.*Level/,/To Next.*Phase/ {print}' PROFILE.md | grep -c "^- \[x\]" || echo 0)
 
   if [ "$skill_total" -gt 0 ]; then
     local skill_percent=$((skill_complete * 100 / skill_total))
@@ -243,8 +245,10 @@ check_ready() {
   fi
 
   # Check phase readiness
-  local phase_total=$(awk '/To Next.*Phase/,/^##[^#]|$/ {print}' PROFILE.md | grep -c "^- \[.\]" || echo 0)
-  local phase_complete=$(awk '/To Next.*Phase/,/^##[^#]|$/ {print}' PROFILE.md | grep -c "^- \[x\]" || echo 0)
+  local phase_total
+  phase_total=$(awk '/To Next.*Phase/,/^##[^#]|$/ {print}' PROFILE.md | grep -c "^- \[.\]" || echo 0)
+  local phase_complete
+  phase_complete=$(awk '/To Next.*Phase/,/^##[^#]|$/ {print}' PROFILE.md | grep -c "^- \[x\]" || echo 0)
 
   if [ "$phase_total" -gt 0 ]; then
     local phase_percent=$((phase_complete * 100 / phase_total))
