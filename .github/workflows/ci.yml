@@ -21,10 +21,18 @@ jobs:
       - name: Run shellcheck on all shell scripts
         run: |
           echo "Running shellcheck on all shell scripts..."
-          find . -type f -name "*.sh" -not -path "./legacy/*" -print0 | while IFS= read -r -d '' file; do
+          failed=0
+          while IFS= read -r -d '' file; do
             echo "Checking: $file"
-            shellcheck --severity=warning "$file" || exit 1
-          done
+            if ! shellcheck --severity=warning "$file"; then
+              failed=1
+            fi
+          done < <(find . -type f -name "*.sh" -not -path "./legacy/*" -print0)
+
+          if [ "$failed" -eq 1 ]; then
+            echo "❌ Shellcheck found issues"
+            exit 1
+          fi
           echo "✅ All shell scripts passed shellcheck"
 
   validate-scripts:
