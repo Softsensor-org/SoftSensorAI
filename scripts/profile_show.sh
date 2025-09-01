@@ -3,7 +3,6 @@
 set -euo pipefail
 
 # Colors
-RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
@@ -176,8 +175,10 @@ check_graduation() {
   }' PROFILE.md | head -10
 
   # Count completed items
-  local total=$(grep -c "^- \[.\]" PROFILE.md 2>/dev/null || echo 0)
-  local completed=$(grep -c "^- \[x\]" PROFILE.md 2>/dev/null || echo 0)
+  local total
+  total=$(grep -c "^- \[.\]" PROFILE.md 2>/dev/null || echo 0)
+  local completed
+  completed=$(grep -c "^- \[x\]" PROFILE.md 2>/dev/null || echo 0)
 
   if [ "$total" -gt 0 ]; then
     local percent=$((completed * 100 / total))
@@ -196,7 +197,8 @@ show_activity() {
 
   # Check for recent git commits
   if [ -d .git ]; then
-    local commits=$(git log --oneline -5 2>/dev/null | wc -l)
+    local commits
+    commits=$(git log --oneline -5 2>/dev/null | wc -l)
     echo "  Recent commits: $commits"
   fi
 
