@@ -1,0 +1,23 @@
+{
+  "name": "devpilot",
+  "version": "2.0.0",
+  "description": "DevPilot - AI-First Development Toolkit",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Softsensor-org/DevPilot.git"
+  },
+  "keywords": [
+    "devops",
+    "ai",
+    "automation",
+    "cli"
+  ],
+  "author": "Softsensor",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Softsensor-org/DevPilot/issues"
+  },
+  "homepage": "https://github.com/Softsensor-org/DevPilot#readme",
+  "devDependencies": {},
+  "private": true
+}
