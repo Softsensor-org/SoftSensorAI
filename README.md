@@ -4,6 +4,8 @@
 
 Transform how you work with AI coding assistants. DevPilot automatically configures Claude, Codex, Gemini, Grok, and Copilot for your skill level and project needs - with full parity across all platforms.
 
+**🎯 NEW: Multi-Persona System** - Combine multiple AI personas (Data Scientist, Software Architect, Backend Developer, etc.) for specialized assistance tailored to your exact needs.
+
 ## 📋 System Requirements
 
 **Supported Systems:**
@@ -280,6 +282,63 @@ DevPilot adapts to your PROJECT's maturity:
 | **mvp** | Building core features | Basic testing, simple CI |
 | **beta** | Getting ready for users | Full testing, staging deploys |
 | **scale** | Production with real users | Complete CI/CD, careful changes |
+
+## 🎭 AI Personas - Specialized Expertise
+
+DevPilot's **Multi-Persona System** lets you activate specialized AI personalities that understand domain-specific best practices. You can combine multiple personas for comprehensive assistance.
+
+### Available Personas
+
+| Persona | Specialization | Key Features |
+|---------|---------------|--------------|
+| **data-scientist** | ML/AI Development | GPU optimization, distributed training, process impact analysis |
+| **software-architect** | System Design | Architecture reviews, scalability patterns, performance audits |
+| **backend-developer** | API Development | CRUD operations, authentication, database optimization |
+| **frontend-developer** | UI/UX Development | Component design, state management, accessibility |
+| **devops-engineer** | Infrastructure | CI/CD, monitoring, deployment automation |
+| **security-engineer** | Security | Vulnerability scanning, authentication, encryption |
+
+### Managing Personas
+
+```bash
+# Add a single persona
+./scripts/persona_manager.sh add data-scientist
+
+# Combine multiple personas
+./scripts/persona_manager.sh add backend-developer
+./scripts/persona_manager.sh add devops-engineer
+
+# Quick switch to preset combinations
+./scripts/persona_manager.sh switch
+# Options: ML Engineering Mode, Full Stack Mode, etc.
+
+# View active personas
+./scripts/persona_manager.sh show
+```
+
+### Persona-Specific Commands
+
+Each persona adds specialized commands:
+
+**Data Scientist:**
+- `/gpu-optimize` - Optimize code for GPU execution
+- `/parallel-explain` - Explain parallelization strategies
+- `/process-impact` - Analyze process termination impact
+
+**Software Architect:**
+- `/architecture-review` - Review system design
+- `/performance-audit` - Identify bottlenecks
+- `/scalability-assessment` - Evaluate scaling strategies
+
+### Full Codex Integration
+
+Codex has complete parity with Claude, including:
+- Same persona system and configurations
+- Repository-specific settings
+- Sandboxed execution for safety
+- Unified command structure
+
+See [Codex Integration Guide](docs/CODEX_INTEGRATION.md) and [Multi-Persona Guide](docs/MULTI_PERSONA_GUIDE.md) for details.
 
 ## 🧠 AI Command System - Your Productivity Multiplier
 
