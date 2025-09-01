@@ -87,6 +87,43 @@ detect_platform() {
   echo "$platform"
 }
 
+# Detect GPU capabilities
+detect_gpu() {
+  local gpu_info="None"
+  local gpu_type=""
+
+  # Check for NVIDIA GPU
+  if command -v nvidia-smi &>/dev/null; then
+    if nvidia-smi &>/dev/null; then
+      gpu_type="NVIDIA"
+      local gpu_model
+      gpu_model=$(nvidia-smi --query-gpu=name --format=csv,noheader 2>/dev/null | head -1)
+      gpu_info="${gpu_type}: ${gpu_model}"
+
+      # Check CUDA version
+      if command -v nvcc &>/dev/null; then
+        local cuda_version
+        cuda_version=$(nvcc --version | grep "release" | sed 's/.*release //' | sed 's/,.*//')
+        gpu_info="${gpu_info} (CUDA ${cuda_version})"
+      fi
+    fi
+  fi
+
+  # Check for AMD GPU
+  if [ -z "$gpu_type" ] && command -v rocm-smi &>/dev/null; then
+    gpu_type="AMD"
+    gpu_info="${gpu_type} GPU (ROCm)"
+  fi
+
+  # Check for Apple Silicon
+  if [ -z "$gpu_type" ] && [[ "$(uname -s)" == "Darwin" ]] && [[ "$(uname -m)" == "arm64" ]]; then
+    gpu_type="Apple"
+    gpu_info="Apple Silicon GPU"
+  fi
+
+  echo "$gpu_info"
+}
+
 # Install tools for detected platform
 install_tools() {
   local platform="$1"
@@ -212,6 +249,18 @@ main() {
   local platform
   platform=$(detect_platform)
   say "Detected platform: ${platform}"
+
+  # Detect GPU
+  local gpu_info
+  gpu_info=$(detect_gpu)
+  say "Detected GPU: ${gpu_info}"
+
+  # If GPU is available, suggest AI frameworks installation
+  if [[ "$gpu_info" != "None" ]]; then
+    echo ""
+    echo -e "${GREEN}GPU detected! Consider installing AI frameworks after setup:${NC}"
+    echo "  Run: ./scripts/setup_ai_frameworks.sh"
+  fi
 
   # Confirm with user
   echo ""

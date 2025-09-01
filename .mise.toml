@@ -3,7 +3,7 @@
 
 [tools]
 node = "lts"       # Latest LTS Node.js
-python = "3.11"    # Stable Python for scripts and tests
+python = "3.12"    # Latest stable Python with performance improvements
 
 [env]
 NODE_ENV = "development"

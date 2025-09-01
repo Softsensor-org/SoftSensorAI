@@ -1,0 +1,13 @@
+# Download manifest example
+# Format: <url> <filename> <checksum> [algorithm]
+# Lines starting with # are comments
+# Algorithm defaults to sha256 if not specified
+
+# Example: Download mise (formerly rtx) installer
+https://mise.run/install.sh mise-install.sh d3b9f4f6e8a7c4d5e9f6a8b7c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3 sha256
+
+# Example: Download a specific tool with SHA1
+https://example.com/tool.tar.gz tool.tar.gz a94a8fe5ccb19ba61c4c0873d391e987982fbbd3 sha1
+
+# Example: Download with MD5 (less secure, not recommended)
+https://example.com/data.zip data.zip 098f6bcd4621d373cade4e832627b4f6 md5
