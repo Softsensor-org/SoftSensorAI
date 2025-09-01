@@ -210,7 +210,7 @@ install_commit_sanitizer(){
 #!/usr/bin/env bash
 set -euo pipefail
 MSG="$1"
-sed -i 's/\r$//' "$MSG" || true
+sed -i'' -e 's/\r$//' "$MSG" || true
 awk 'BEGIN{IGNORECASE=1}
   /Generated with \[Claude Code\]\(https?:\/\/claude\.ai\/code\)/ {next}
   /^Co-Authored-By:[[:space:]]*Claude\b/ {next}
@@ -218,7 +218,7 @@ awk 'BEGIN{IGNORECASE=1}
   /^[[:space:]]*Create frontend commit[[:space:]]*$/ {next}
   {print}
 ' "$MSG" > "$MSG.tmp" && mv "$MSG.tmp" "$MSG"
-sed -i 's/[[:space:]]\+$//' "$MSG"
+sed -i'' -e 's/[[:space:]]\+$//' "$MSG"
 awk 'NR==1{pb=0}{if($0~/^[[:space:]]*$/){if(pb)next;pb=1}else pb=0;print}' "$MSG" > "$MSG.tmp" && mv "$MSG.tmp" "$MSG"
 exit 0
 HOOK
