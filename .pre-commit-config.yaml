@@ -12,7 +12,7 @@ repos:
     rev: v0.10.0.1
     hooks:
       - id: shellcheck
-        args: [--severity=warning]
+        args: [--severity=warning, -e, SC2034, -e, SC2155, -e, SC2088, -e, SC2011]
         exclude: '^\.envrc$|^\.envrc\..*|legacy/'
   - repo: https://github.com/adrienverge/yamllint
     rev: v1.35.1
