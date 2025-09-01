@@ -498,9 +498,20 @@ tickets:
     exit 1
   fi
 
-  # Convert JSON to CSV
+  # Convert JSON to CSV (matching generate_tickets.sh format)
   if [ -s "$out" ] && jq -e . "$out" >/dev/null 2>&1; then
-    jq -r '.tickets[] | [.id, .title, .type, .priority, .effort] | @csv' "$out" > tickets/backlog.csv
+    jq -r '.tickets[] | [
+      .id,
+      .title,
+      .type,
+      .priority,
+      .effort,
+      (.labels // [] | join("|")),
+      (.assignee // ""),
+      (.dependencies // [] | join("|")),
+      (.notes // "" | gsub("[\r\n]+"; " ")),
+      (.acceptance_criteria // [] | join("; "))
+    ] | @csv' "$out" > tickets/backlog.csv
     echo "✓ Generated tickets: tickets/backlog.csv"
   else
     echo "Failed to generate valid JSON"

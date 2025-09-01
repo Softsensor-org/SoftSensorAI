@@ -46,7 +46,7 @@ else
   warn "No SSH keys in ~/.ssh (use copy_windows_ssh_to_wsl.sh or ssh-keygen)"
 fi
 
-echo "\nTips:"
+printf "\nTips:\n"
 echo " - Run './install_key_software_linux.sh' or 'install_key_software_macos.sh' to install missing tools"
 echo " - For pnpm: 'corepack enable && corepack prepare pnpm@latest --activate'"
 echo " - After setting up a repo: 'scripts/apply_profile.sh --skill beginner --phase mvp'"
