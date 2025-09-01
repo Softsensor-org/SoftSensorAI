@@ -730,16 +730,12 @@ python3 -m ensurepip  # Python
 - Review the [validation script](validation/validate_agents.sh) output
 - Run diagnostics: `~/devpilot/scripts/diagnose.sh`
 
-## 🤝 Contributing
+## 🤝 Support & Feedback
 
-DevPilot is open source! Contributions welcome:
-- Report issues: [GitHub Issues](https://github.com/VivekLmd/setup-scripts/issues)
-- Submit PRs: Fork and create a pull request
-- Share feedback: Star the repo if it helps you!
-
-## 📄 License
-
-MIT License - See [LICENSE](LICENSE) file for details.
+- **Report Issues**: [GitHub Issues](https://github.com/VivekLmd/setup-scripts/issues)
+- **Feature Requests**: Create an issue with [Feature Request] tag
+- **Questions**: Open a discussion in the Issues tab
+- **Star the repo** if it helps your productivity!
 
 ---
 
