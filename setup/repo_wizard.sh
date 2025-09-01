@@ -125,7 +125,7 @@ require_tools(){
   fi
 }
 ensure_dir(){ mkdir -p "$1"; }
-to_ssh_url(){ local u="$1"; if [[ "$u" =~ ^https?://github\.com/([^/]+)/([^/]+?)(\.git)?$ ]]; then echo "git@github.com:${BASH_REMATCH[1]}/${BASH_REMATCH[2]}.git"; else echo "$u"; fi; }
+to_ssh_url(){ local u="$1"; if [[ "$u" =~ ^https?://github\.com/([^/]+)/([^/]+?)/?$ ]]; then local repo="${BASH_REMATCH[2]}"; repo="${repo%.git}"; echo "git@github.com:${BASH_REMATCH[1]}/${repo}.git"; else echo "$u"; fi; }
 select_menu(){ local PS3="Select a number: "; select opt in "$@"; do [[ -n "$opt" ]] && { echo "$opt"; return; }; echo "Invalid. Try again."; done; }
 
 seed_defaults(){ "$SCRIPT_DIR/agents_repo.sh" --force || true; }
