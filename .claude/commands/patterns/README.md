@@ -27,7 +27,7 @@ scripts/pattern_selector.sh chain feature-full
 - **discovery-scope** - Turn vague tickets into crisp specs
 - **arch-spike** - Evaluate architecture options with trade-offs
 
-### 🔧 Backend Development  
+### 🔧 Backend Development
 - **backend-feature** - Implement feature with minimal diff
 - **bug-fix** - Test-first bug fixing
 - **safe-refactor** - Restructure without behavior change

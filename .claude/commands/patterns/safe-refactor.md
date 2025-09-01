@@ -1,6 +1,6 @@
 # Pattern: Safe Refactor
 
-**Use-when:** restructure without behavior change  
+**Use-when:** restructure without behavior change
 **Success:** no test deltas; code quality up
 
 ---

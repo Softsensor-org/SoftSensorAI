@@ -81,7 +81,7 @@ Review dimensions:
 ## Areas for Improvement
 
 ### Critical Edits (Must Change)
-1. **Line X**: 
+1. **Line X**:
    - Current: "{problematic text}"
    - Issue: {Too aggressive/unclear/unprofessional}
    - Suggested: "{improved text}"

@@ -35,10 +35,10 @@ show_skill_progress() {
   local current="$1"
   local skills=("vibe" "beginner" "l1" "l2" "expert")
   local labels=("Vibe" "Beginner" "Level 1" "Level 2" "Expert")
-  
+
   echo -e "${BLUE}Skill Level Progress:${NC}"
   echo -n "  "
-  
+
   local found=0
   for i in "${!skills[@]}"; do
     if [ "${skills[$i]}" = "$current" ]; then
@@ -58,10 +58,10 @@ show_phase_progress() {
   local current="$1"
   local phases=("poc" "mvp" "beta" "scale")
   local labels=("POC" "MVP" "Beta" "Scale")
-  
+
   echo -e "${BLUE}Project Phase Progress:${NC}"
   echo -n "  "
-  
+
   local found=0
   for i in "${!phases[@]}"; do
     if [ "${phases[$i]}" = "$current" ]; then
@@ -79,9 +79,9 @@ show_phase_progress() {
 # Check capabilities based on skill level
 show_capabilities() {
   local skill="$1"
-  
+
   echo -e "${BLUE}Current Capabilities:${NC}"
-  
+
   case "$skill" in
     vibe)
       echo "  ${CHECK} Read and explore code"
@@ -127,9 +127,9 @@ show_capabilities() {
 # Show phase requirements
 show_phase_requirements() {
   local phase="$1"
-  
+
   echo -e "${BLUE}Phase Requirements:${NC}"
-  
+
   case "$phase" in
     poc)
       echo "  ○ Tests: Optional"
@@ -167,23 +167,23 @@ check_graduation() {
   if [ ! -f "PROFILE.md" ]; then
     return
   fi
-  
+
   echo -e "${BLUE}Graduation Checklist:${NC}"
-  
+
   # Extract and display checklist items
-  awk '/^### To Next.*Level/,/^###|^##/ { 
+  awk '/^### To Next.*Level/,/^###|^##/ {
     if (/^- \[.\]/) print "  " $0
   }' PROFILE.md | head -10
-  
+
   # Count completed items
   local total=$(grep -c "^- \[.\]" PROFILE.md 2>/dev/null || echo 0)
   local completed=$(grep -c "^- \[x\]" PROFILE.md 2>/dev/null || echo 0)
-  
+
   if [ "$total" -gt 0 ]; then
     local percent=$((completed * 100 / total))
     echo ""
     echo -e "  Progress: ${GREEN}$completed/$total${NC} ($percent%)"
-    
+
     if [ "$percent" -ge 80 ]; then
       echo -e "  ${GREEN}${STAR} Ready for graduation!${NC}"
     fi
@@ -193,19 +193,19 @@ check_graduation() {
 # Show recent activity
 show_activity() {
   echo -e "${BLUE}Recent Activity:${NC}"
-  
+
   # Check for recent git commits
   if [ -d .git ]; then
     local commits=$(git log --oneline -5 2>/dev/null | wc -l)
     echo "  Recent commits: $commits"
   fi
-  
+
   # Check for test results
   if [ -f "coverage/coverage-summary.json" ]; then
     local coverage=$(grep -oP '"pct":\K[0-9.]+' coverage/coverage-summary.json | head -1)
     echo "  Test coverage: ${coverage}%"
   fi
-  
+
   # Check CI status
   if [ -f ".github/workflows/ci.yml" ]; then
     local ci_phase=$(grep "^name:" .github/workflows/ci.yml | grep -oP 'CI - \K\w+' | tr '[:upper:]' '[:lower:]')
@@ -216,7 +216,7 @@ show_activity() {
 # Main display
 clear
 echo -e "${MAGENTA}╔════════════════════════════════════════════════════════╗${NC}"
-echo -e "${MAGENTA}║             ${CYAN}Repository Profile Status${MAGENTA}                  ║${NC}"  
+echo -e "${MAGENTA}║             ${CYAN}Repository Profile Status${MAGENTA}                  ║${NC}"
 echo -e "${MAGENTA}╚════════════════════════════════════════════════════════╝${NC}"
 echo ""
 

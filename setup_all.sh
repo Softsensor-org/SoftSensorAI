@@ -72,9 +72,9 @@ done
 # Detect platform
 detect_platform() {
   local platform=""
-  
+
   # WSL if env var set or /proc/version mentions Microsoft
-  if [[ -n "${WSL_DISTRO_NAME:-}" ]] || grep -qi microsoft /proc/version 2>/dev/null; then 
+  if [[ -n "${WSL_DISTRO_NAME:-}" ]] || grep -qi microsoft /proc/version 2>/dev/null; then
     platform="wsl"
   else
     case "$(uname -s)" in
@@ -83,14 +83,14 @@ detect_platform() {
       *)      platform="unknown" ;;
     esac
   fi
-  
+
   echo "$platform"
 }
 
 # Install tools for detected platform
 install_tools() {
   local platform="$1"
-  
+
   case "$platform" in
     wsl|linux)
       say "Installing Linux development tools..."
@@ -117,9 +117,9 @@ install_tools() {
 # Main installation
 run_installation() {
   local platform="$1"
-  
+
   say "Starting DevPilot installation..."
-  
+
   # 1. Install key software
   if [[ $SKIP_TOOLS -eq 0 ]]; then
     install_tools "$platform"
@@ -207,11 +207,11 @@ main() {
   echo "║       DevPilot Setup - AI Development      ║"
   echo "╚════════════════════════════════════════════╝"
   echo ""
-  
+
   # Detect platform
   local platform=$(detect_platform)
   say "Detected platform: ${platform}"
-  
+
   # Confirm with user
   echo ""
   read -p "Continue with installation? (y/N): " -n 1 -r
@@ -220,10 +220,10 @@ main() {
     say "Installation cancelled."
     exit 0
   fi
-  
+
   # Run installation
   run_installation "$platform"
-  
+
   # Show next steps
   show_next_steps
 }

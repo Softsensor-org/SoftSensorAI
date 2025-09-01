@@ -10,7 +10,7 @@ Implement a complete backend feature from spec to PR.
 
 **Steps:**
 1. **SPEC** - Define interfaces and acceptance criteria
-2. **TESTS** - Write failing tests encoding requirements  
+2. **TESTS** - Write failing tests encoding requirements
 3. **CODE** - Minimal implementation to pass tests
 4. **VERIFY** - Run comprehensive checks
 5. **PR** - Create pull request with documentation

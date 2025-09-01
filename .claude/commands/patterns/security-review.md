@@ -1,6 +1,6 @@
 # Pattern: Security Review (Local, Tool-Assisted)
 
-**Use-when:** pre-merge or audit  
+**Use-when:** pre-merge or audit
 **Success:** minimal fixes applied + residual risk noted
 
 ---

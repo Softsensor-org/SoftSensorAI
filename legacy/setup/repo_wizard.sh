@@ -391,7 +391,7 @@ seed_defaults
 # Add Codex integration if requested
 if [[ "$WITH_CODEX" -eq 1 ]]; then
   say "Adding Codex CLI integration"
-  
+
   # Copy sandbox script if available
   if [ -f "$SCRIPT_DIR/../scripts/codex_sandbox.sh" ]; then
     mkdir -p scripts
@@ -399,7 +399,7 @@ if [[ "$WITH_CODEX" -eq 1 ]]; then
     chmod +x scripts/codex_sandbox.sh
     echo "  ✓ Added scripts/codex_sandbox.sh"
   fi
-  
+
   # Add Codex targets to Makefile
   if [ -f Makefile ]; then
     if ! grep -q "codex-fix:" Makefile; then
@@ -443,7 +443,7 @@ codex-refactor:
 MAKEFILE
     echo "  ✓ Created Makefile with Codex targets"
   fi
-  
+
   # Update Claude permissions to include Codex
   if [ -f .claude/settings.json ]; then
     # Add Codex permissions if not already present

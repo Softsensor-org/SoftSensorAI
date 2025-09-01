@@ -94,10 +94,10 @@ fi
 if [[ "$OSTYPE" == "linux-gnu"* ]] || grep -qi microsoft /proc/version 2>/dev/null; then
   echo ""
   echo "==> Setting up Linux/WSL sandbox support..."
-  
+
   if command -v docker >/dev/null 2>&1; then
     echo "✓ Docker found - sandbox available"
-    
+
     # Create sandbox wrapper if it doesn't exist
     if [ ! -f ~/bin/codex-sandbox ]; then
       mkdir -p ~/bin

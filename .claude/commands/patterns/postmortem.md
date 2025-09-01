@@ -1,6 +1,6 @@
 # Pattern: Postmortem Mini-Template (After Incidents)
 
-**Use-when:** after fix lands  
+**Use-when:** after fix lands
 **Success:** crisp learning + prevention
 
 ---

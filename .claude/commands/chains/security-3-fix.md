@@ -37,7 +37,7 @@ For each priority issue:
    ```bash
    # Run relevant tests
    pnpm test {affected_tests}
-   
+
    # Re-run specific scanner
    semgrep --config=auto {FILE}
    ```

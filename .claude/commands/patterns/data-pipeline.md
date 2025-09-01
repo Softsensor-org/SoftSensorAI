@@ -1,6 +1,6 @@
 # Pattern: Data Pipeline / EDA
 
-**Use-when:** explore dataset or build ETL  
+**Use-when:** explore dataset or build ETL
 **Success:** clear data contract + reproducible steps
 
 ---

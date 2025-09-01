@@ -44,7 +44,7 @@ For each refactoring:
      // 50 lines of transformation
      // 50 lines of saving
    }
-   
+
    // After: Composed functions
    function process(data) {
      const validated = validate(data);
@@ -60,7 +60,7 @@ For each refactoring:
      case 'A': return processA();
      case 'B': return processB();
    }
-   
+
    // After: Strategy pattern
    const strategies = { A: processA, B: processB };
    return strategies[type]();
@@ -70,7 +70,7 @@ For each refactoring:
    ```javascript
    // Before: Many parameters
    function create(name, age, email, phone, address) {}
-   
+
    // After: Object parameter
    function create(userDetails) {}
    ```
@@ -85,7 +85,7 @@ For each refactoring:
    ```bash
    git add -p  # Stage specific changes
    git commit -m "refactor: extract {method} from {function}
-   
+
    - Reduces complexity from X to Y
    - Improves testability
    - No functional changes"
@@ -125,14 +125,14 @@ For each refactoring:
 +   validateUser(data);
     // ... processing
   }
-+ 
++
 + function validateUser(data) {
 +   if (!data.email || !data.email.match(/@/)) {
 +     throw new Error('Invalid email');
 +   }
 + }
 ```
-**Impact**: 
+**Impact**:
 - Complexity: 15 → 8
 - Testability: Can now unit test validation
 
@@ -152,7 +152,7 @@ For each refactoring:
 - const formatted = '$' + amount.toFixed(2);
 + const formatted = formatCurrency(amount);
 ```
-**Impact**: 
+**Impact**:
 - Removed 30 lines of duplication
 - Centralized formatting logic
 

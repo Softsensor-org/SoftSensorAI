@@ -81,7 +81,7 @@ npm run dev
 --- a/src/api/users.js
 +++ b/src/api/users.js
 @@ -40,7 +40,8 @@
- 
+
  async function getUserById(userId) {
 -  const sql = `SELECT * FROM users WHERE id = ${userId}`;
 -  return await db.query(sql);

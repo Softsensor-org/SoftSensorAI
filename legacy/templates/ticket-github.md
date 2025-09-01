@@ -1,6 +1,6 @@
 ### {Title}
-**Epic:** {Security|Reliability|Performance|Code Quality|DevEx|Docs|ML/Privacy}  
-**Area:** {paths/services}  
+**Epic:** {Security|Reliability|Performance|Code Quality|DevEx|Docs|ML/Privacy}
+**Area:** {paths/services}
 **Severity:** P{0|1|2|3}  ·  **Priority:** {High|Medium|Low — why}  ·  **Effort:** {S|M|L}
 
 **Evidence (file:line):** `{path}:{line}`

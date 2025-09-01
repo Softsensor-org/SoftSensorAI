@@ -31,19 +31,19 @@ Create config-driven training script with fixed seeds, save artifacts under runs
    experiment:
      name: "baseline_v1"
      seed: 42
-     
+
    model:
      type: "RandomForest"  # or "XGBoost", "LinearRegression"
      params:
        n_estimators: 100
        max_depth: 10
        random_state: 42
-   
+
    training:
      epochs: 100  # for neural nets
      early_stopping_patience: 10
      batch_size: 32
-   
+
    paths:
      data: "data/processed/"
      models: "runs/{exp_name}/models/"
@@ -56,38 +56,38 @@ Create config-driven training script with fixed seeds, save artifacts under runs
    import mlflow
    import joblib
    from datetime import datetime
-   
+
    def train(config_path):
        # Load config
        with open(config_path) as f:
            config = yaml.safe_load(f)
-       
+
        # Set seeds
        set_all_seeds(config['experiment']['seed'])
-       
+
        # Setup MLflow
        mlflow.set_experiment(config['experiment']['name'])
-       
+
        with mlflow.start_run():
            # Log config
            mlflow.log_params(flatten_dict(config))
-           
+
            # Load data
            X_train, y_train = load_features(config['paths']['data'])
-           
+
            # Train model
            model = create_model(config['model'])
            model.fit(X_train, y_train)
-           
+
            # Validate
            metrics = evaluate(model, X_val, y_val)
            mlflow.log_metrics(metrics)
-           
+
            # Save artifacts
            model_path = f"{config['paths']['models']}/model.pkl"
            joblib.dump(model, model_path)
            mlflow.log_artifact(model_path)
-           
+
        return model, metrics
    ```
 

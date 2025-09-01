@@ -52,13 +52,13 @@ Examples:
 
 Current Profile:
 EOF
-  
+
   if [ -f "PROFILE.md" ]; then
     grep "^- " PROFILE.md | head -5
   else
     echo "  No profile configured yet"
   fi
-  
+
   exit 0
 }
 
@@ -126,7 +126,7 @@ merge_json() {
   local base="$1"
   local overlay="$2"
   local output="$3"
-  
+
   if command -v jq >/dev/null 2>&1; then
     if [ -f "$base" ]; then
       jq -s '.[0] * .[1]' "$base" "$overlay" > "$output"
@@ -146,7 +146,7 @@ PERM_FILE="$SETUP_SCRIPTS_DIR/profiles/skills/permissions-${SKILL}.json"
 
 if [ -f "$PERM_FILE" ]; then
   mkdir -p .claude
-  
+
   # If settings.json exists, merge; otherwise copy
   if [ -f ".claude/settings.json" ]; then
     cp .claude/settings.json .claude/settings.json.backup
@@ -157,7 +157,7 @@ if [ -f "$PERM_FILE" ]; then
     cp "$PERM_FILE" .claude/settings.json
     echo "  ✓ Created .claude/settings.json"
   fi
-  
+
   # Add teach mode to env
   if command -v jq >/dev/null 2>&1; then
     if [ "$TEACH_MODE" = "on" ]; then
@@ -177,10 +177,10 @@ COMMANDS_DIR="$SETUP_SCRIPTS_DIR/.claude/commands/sets/$SKILL"
 
 if [ -d "$COMMANDS_DIR" ]; then
   mkdir -p .claude/commands
-  
+
   # Remove old symlinks
   find .claude/commands -type l -delete 2>/dev/null || true
-  
+
   # Create new symlinks
   for cmd in "$COMMANDS_DIR"/*.md; do
     if [ -f "$cmd" ]; then
@@ -212,7 +212,7 @@ cat > PROFILE.md <<EOF
 
 ## Current Configuration
 - **Skill Level**: $SKILL
-- **Project Phase**: $PHASE  
+- **Project Phase**: $PHASE
 - **Teach Mode**: $TEACH_MODE
 - **Profile Applied**: $(date '+%Y-%m-%d %H:%M:%S')
 

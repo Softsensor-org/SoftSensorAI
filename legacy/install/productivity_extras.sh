@@ -131,7 +131,7 @@ has wandb || { pipx install wandb && success "Weights & Biases CLI installed"; }
 has mlflow || { pipx install mlflow && success "MLflow installed"; }
 
 # Notebook tools
-has nbstripout || { 
+has nbstripout || {
   pipx install nbstripout
   nbstripout --install --global
   success "nbstripout installed"

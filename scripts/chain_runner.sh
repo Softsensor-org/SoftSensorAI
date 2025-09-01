@@ -41,10 +41,10 @@ Chain Types:
   refactor    - 3-step code refactoring
   document    - 3-step document/contract analysis
   ml-pipeline - 5-step ML model development
-  
+
 Task Name:
   Optional identifier for organizing outputs (default: task-TIMESTAMP)
-  
+
 Starting Step:
   Resume from specific step (default: 1)
 
@@ -103,7 +103,7 @@ save_output() {
   local step_num=$1
   local step_name=${STEPS[$step_num-1]}
   local output_file="$TASK_DIR/step${step_num}_${step_name}.md"
-  
+
   cat > "$output_file" <<EOF
 # Chain: $CHAIN_TYPE - Step $step_num/$TOTAL_STEPS - ${step_name^^}
 **Task**: $TASK_NAME
@@ -130,7 +130,7 @@ $2
 $3
 </handoff>
 EOF
-  
+
   echo -e "${GREEN}✓ Output saved to: $output_file${NC}"
 }
 
@@ -145,7 +145,7 @@ show_command() {
   local step_num=$1
   local step_name=${STEPS[$step_num-1]}
   local cmd_file=".claude/commands/chains/${CHAIN_TYPE}-${step_num}-${step_name}.md"
-  
+
   if [[ -f "$cmd_file" ]]; then
     echo -e "${BLUE}Command template available:${NC}"
     echo "  $cmd_file"
@@ -165,14 +165,14 @@ echo ""
 
 for ((i=STEP; i<=TOTAL_STEPS; i++)); do
   log_step $i
-  
+
   # Show available command
   show_command $i
-  
+
   # Wait for user to indicate completion
   echo -e "\n${YELLOW}Complete step $i (${STEPS[$i-1]}) using the command template.${NC}"
   echo "When done, paste the output below (end with 'END' on its own line):"
-  
+
   # Collect output
   output=""
   handoff=""
@@ -180,15 +180,15 @@ for ((i=STEP; i<=TOTAL_STEPS; i++)); do
     [[ "$line" == "END" ]] && break
     output="${output}${line}"$'\n'
   done
-  
+
   # Extract handoff if present
   if echo "$output" | grep -q "<handoff>"; then
     handoff=$(echo "$output" | sed -n '/<handoff>/,/<\/handoff>/p')
   fi
-  
+
   # Save step output
   save_output $i "$output" "$handoff"
-  
+
   # Check if we should continue
   if [[ $i -lt $TOTAL_STEPS ]]; then
     check_proceed

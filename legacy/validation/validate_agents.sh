@@ -100,12 +100,12 @@ while IFS= read -r -d '' git_dir; do
   REPO_NAME=$(basename "$REPO")
   REPO_REL="${REPO#$ROOT/}"
   REPO_COUNT=$((REPO_COUNT + 1))
-  
+
   REPO_OK=1
   MISSING_FILES=()
   INVALID_JSON=()
   OPTIONAL_MISSING=()
-  
+
   # Check required files
   for file in "${REQUIRED_FILES[@]}"; do
     if [[ ! -f "$REPO/$file" ]]; then
@@ -113,14 +113,14 @@ while IFS= read -r -d '' git_dir; do
       REPO_OK=0
     fi
   done
-  
+
   # Check optional files
   for file in "${OPTIONAL_FILES[@]}"; do
     if [[ ! -f "$REPO/$file" ]]; then
       OPTIONAL_MISSING+=("$file")
     fi
   done
-  
+
   # Validate JSON files if jq is available
   if command -v jq >/dev/null 2>&1; then
     if [[ -f "$REPO/.claude/settings.json" ]]; then
@@ -129,14 +129,14 @@ while IFS= read -r -d '' git_dir; do
         REPO_OK=0
       fi
     fi
-    
+
     if [[ -f "$REPO/.mcp.json" ]]; then
       if ! jq -e type "$REPO/.mcp.json" >/dev/null 2>&1; then
         INVALID_JSON+=(".mcp.json")
         REPO_OK=0
       fi
     fi
-    
+
     # Check for .mcp.local.json if it exists
     if [[ -f "$REPO/.mcp.local.json" ]]; then
       if ! jq -e type "$REPO/.mcp.local.json" >/dev/null 2>&1; then
@@ -145,7 +145,7 @@ while IFS= read -r -d '' git_dir; do
       fi
     fi
   fi
-  
+
   # Auto-fix if requested
   if [[ $DO_FIX -eq 1 && $REPO_OK -ne 1 ]]; then
     (cd "$REPO" && "$SCRIPT_DIR/setup_agents_repo.sh") || true
@@ -197,7 +197,7 @@ while IFS= read -r -d '' git_dir; do
       '{path:$path, rel:$rel, status:$status, missing:$missing, optional_missing:$optional_missing, invalid_json:$invalid_json}')
     REPOS_JSON_ENTRIES+=("$entry")
   fi
-  
+
 done < <(find "$ROOT" -type d -name .git -print0 2>/dev/null)
 
 # Summary

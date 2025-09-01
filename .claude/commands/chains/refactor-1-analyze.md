@@ -30,7 +30,7 @@ Analyze code to identify refactoring opportunities ranked by impact.
    ```bash
    # Cyclomatic complexity
    find {TARGET} -name "*.js" -o -name "*.ts" | xargs -I {} sh -c 'echo "=== {} ==="; npx complexity-report {} 2>/dev/null | head -20'
-   
+
    # Function length
    rg "^(async\s+)?function|^(export\s+)?(const|let|var)\s+\w+\s*=\s*(async\s*)?\(" {TARGET} -A 50 | awk '/function|const.*=/{name=$0} /^}/{print name, NR-start; start=0} /function|const.*=/{start=NR}'
    ```
@@ -45,10 +45,10 @@ Analyze code to identify refactoring opportunities ranked by impact.
    ```bash
    # Long parameter lists
    rg "\([^)]{100,}\)" {TARGET}
-   
+
    # Deeply nested code
    rg "^\s{16,}" {TARGET}
-   
+
    # God objects/modules
    wc -l {TARGET}/* | sort -rn | head
    ```

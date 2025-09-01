@@ -39,7 +39,7 @@ Examples:
 
 Available Patterns:
 EOF
-  
+
   if command -v yq >/dev/null 2>&1; then
     yq eval '.patterns | keys | .[]' "$REGISTRY" 2>/dev/null | sed 's/^/  /'
   else
@@ -51,7 +51,7 @@ EOF
 # List all patterns with descriptions
 list_patterns() {
   echo -e "${BLUE}Available Design Patterns:${NC}\n"
-  
+
   if command -v yq >/dev/null 2>&1; then
     yq eval '.patterns | to_entries | .[] | "• " + .key + ": " + .value.description' "$REGISTRY"
   else
@@ -59,7 +59,7 @@ list_patterns() {
     echo "Patterns:"
     ls -1 "$PATTERNS_DIR"/*.md 2>/dev/null | xargs -n1 basename | sed 's/\.md$//' | sed 's/^/  • /'
   fi
-  
+
   echo -e "\n${CYAN}Command Chains:${NC}"
   if command -v yq >/dev/null 2>&1; then
     yq eval '.chains | to_entries | .[] | "• " + .key + ": " + .value.description' "$REGISTRY"
@@ -72,7 +72,7 @@ list_patterns() {
 search_patterns() {
   local tag="$1"
   echo -e "${BLUE}Patterns tagged with '${tag}':${NC}\n"
-  
+
   if command -v yq >/dev/null 2>&1; then
     yq eval ".patterns | to_entries | .[] | select(.value.tags[] | contains(\"$tag\")) | .key + \": \" + .value.description" "$REGISTRY"
   else
@@ -84,7 +84,7 @@ search_patterns() {
 show_pattern() {
   local pattern="$1"
   local file="$PATTERNS_DIR/${pattern}.md"
-  
+
   if [[ -f "$file" ]]; then
     echo -e "${GREEN}Pattern: ${pattern}${NC}\n"
     cat "$file"
@@ -99,12 +99,12 @@ show_pattern() {
 copy_pattern() {
   local pattern="$1"
   local file="$PATTERNS_DIR/${pattern}.md"
-  
+
   if [[ ! -f "$file" ]]; then
     echo -e "${RED}Pattern not found: ${pattern}${NC}"
     exit 1
   fi
-  
+
   # Try different clipboard commands
   if command -v pbcopy >/dev/null 2>&1; then
     cat "$file" | pbcopy
@@ -124,31 +124,31 @@ copy_pattern() {
 # Show command chain
 show_chain() {
   local chain="$1"
-  
+
   if ! command -v yq >/dev/null 2>&1; then
     echo -e "${RED}yq required for chain support${NC}"
     echo "Install with: pip install yq"
     exit 1
   fi
-  
+
   echo -e "${BLUE}Command Chain: ${chain}${NC}\n"
-  
+
   # Get chain description
   desc=$(yq eval ".chains.${chain}.description" "$REGISTRY" 2>/dev/null)
   if [[ "$desc" == "null" || -z "$desc" ]]; then
     echo -e "${RED}Chain not found: ${chain}${NC}"
     exit 1
   fi
-  
+
   echo -e "${CYAN}Description:${NC} $desc\n"
   echo -e "${CYAN}Steps:${NC}"
-  
+
   # Get and display steps
   yq eval ".chains.${chain}.steps[]" "$REGISTRY" | while read -r step; do
     step_desc=$(yq eval ".patterns.${step}.description" "$REGISTRY" 2>/dev/null)
     echo "  1. ${step}: ${step_desc}"
   done
-  
+
   echo -e "\n${YELLOW}To execute:${NC}"
   yq eval ".chains.${chain}.steps[]" "$REGISTRY" | while read -r step; do
     echo "  $0 ${step} show"
@@ -158,7 +158,7 @@ show_chain() {
 # Quick tool reference
 show_tools() {
   echo -e "${BLUE}Quick Tool Commands:${NC}\n"
-  
+
   if command -v yq >/dev/null 2>&1; then
     yq eval '.tools | to_entries | .[] | "• " + .key + ": " + .value' "$REGISTRY"
   else

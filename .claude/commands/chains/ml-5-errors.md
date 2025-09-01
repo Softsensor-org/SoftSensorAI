@@ -35,17 +35,17 @@ Analyze error patterns, create error buckets, and propose 3 concrete next experi
        errors_df['probability'] = y_proba
        errors_df['correct'] = (y_test == y_pred)
        errors_df['confidence'] = np.abs(y_proba - 0.5)
-       
+
        # Focus on errors
        errors_only = errors_df[~errors_df['correct']]
-       
+
        # Error types
        false_positives = errors_only[errors_only['actual'] == 0]
        false_negatives = errors_only[errors_only['actual'] == 1]
-       
+
        # High confidence errors (model was sure but wrong)
        high_conf_errors = errors_only[errors_only['confidence'] > 0.3]
-       
+
        return errors_only, false_positives, false_negatives, high_conf_errors
    ```
 
@@ -53,30 +53,30 @@ Analyze error patterns, create error buckets, and propose 3 concrete next experi
    ```python
    def create_error_buckets(errors_df):
        buckets = {}
-       
+
        # Bucket 1: Edge cases (extreme feature values)
        buckets['edge_cases'] = errors_df[
            (errors_df['feature_1'] > errors_df['feature_1'].quantile(0.95)) |
            (errors_df['feature_1'] < errors_df['feature_1'].quantile(0.05))
        ]
-       
+
        # Bucket 2: Missing data issues
        buckets['high_missing'] = errors_df[
            errors_df.isnull().sum(axis=1) > 3
        ]
-       
+
        # Bucket 3: Rare categories
        rare_categories = ['category_rare_1', 'category_rare_2']
        buckets['rare_categories'] = errors_df[
            errors_df['category_1'].isin(rare_categories)
        ]
-       
+
        # Bucket 4: Temporal (if applicable)
        if 'date' in errors_df.columns:
            buckets['recent_data'] = errors_df[
                errors_df['date'] > '2024-01-01'
            ]
-       
+
        return buckets
    ```
 
@@ -84,7 +84,7 @@ Analyze error patterns, create error buckets, and propose 3 concrete next experi
    ```python
    def identify_patterns(error_buckets):
        patterns = []
-       
+
        for bucket_name, bucket_df in error_buckets.items():
            if len(bucket_df) > 0:
                error_rate = len(bucket_df) / len(test_set)
@@ -94,7 +94,7 @@ Analyze error patterns, create error buckets, and propose 3 concrete next experi
                    'error_rate': error_rate,
                    'common_features': bucket_df.describe()
                })
-       
+
        return sorted(patterns, key=lambda x: x['error_rate'], reverse=True)
    ```
 </work>
@@ -153,7 +153,7 @@ Analyze error patterns, create error buckets, and propose 3 concrete next experi
 
 #### Experiment 1: Handle Class Imbalance
 **Hypothesis**: Class weights will improve rare category performance
-**Approach**: 
+**Approach**:
 - Add class_weight='balanced' to model
 - Or: SMOTE oversampling for rare classes
 **Expected impact**: -25% error rate on Bucket 2

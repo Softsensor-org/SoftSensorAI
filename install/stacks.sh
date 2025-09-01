@@ -110,12 +110,12 @@ pipx ensurepath >/dev/null 2>&1 || true
 
 if [[ $INSTALL_API -eq 1 ]]; then
   log "Installing API Development Stack"
-  
+
   # OpenAPI toolchain
   has redocly || { npm install -g @redocly/cli && success "Redocly CLI installed"; }
   has spectral || { npm install -g @stoplight/spectral-cli && success "Spectral CLI installed"; }
   has openapi-typescript || { npm install -g openapi-typescript && success "openapi-typescript installed"; }
-  
+
   # GraphQL tools
   if ! has rover; then
     log "Installing Rover (Apollo GraphQL)"
@@ -124,16 +124,16 @@ if [[ $INSTALL_API -eq 1 ]]; then
   else
     success "Rover already installed"
   fi
-  
+
   has graphql-codegen || { npm install -g @graphql-codegen/cli && success "GraphQL Codegen installed"; }
   has newman || { npm install -g newman && success "Newman installed"; }
-  
+
   # Database tools
   has pgcli || { pipx install pgcli && success "pgcli installed"; }
   has sqlite-utils || { pipx install sqlite-utils && success "sqlite-utils installed"; }
   has dbt || { pipx install dbt-core && success "dbt-core installed"; }
   has sqlfluff || { pipx install sqlfluff && success "sqlfluff installed"; }
-  
+
   success "API stack installed"
 fi
 
@@ -143,10 +143,10 @@ fi
 
 if [[ $INSTALL_ML -eq 1 ]]; then
   log "Installing ML/DS Stack"
-  
+
   # DVC - Data Version Control
   has dvc || { pipx install 'dvc[s3]' && success "DVC installed"; }
-  
+
   # Git LFS
   if ! has git-lfs; then
     sudo apt-get install -y git-lfs
@@ -155,21 +155,21 @@ if [[ $INSTALL_ML -eq 1 ]]; then
   else
     success "Git LFS already installed"
   fi
-  
+
   # ML experiment tracking
   has wandb || { pipx install wandb && success "Weights & Biases CLI installed"; }
   has mlflow || { pipx install mlflow && success "MLflow installed"; }
-  
+
   # Notebook tools
-  has nbstripout || { 
+  has nbstripout || {
     pipx install nbstripout
     nbstripout --install --global
     success "nbstripout installed"
   }
-  
+
   # Jupyter extensions
   has jupyter || { pipx install jupyter && success "Jupyter installed"; }
-  
+
   success "ML/DS stack installed"
 fi
 
@@ -179,7 +179,7 @@ fi
 
 if [[ $INSTALL_SEC -eq 1 ]]; then
   log "Installing Security Stack"
-  
+
   # Container/dependency scanning
   if ! has trivy; then
     log "Installing Trivy"
@@ -192,10 +192,10 @@ if [[ $INSTALL_SEC -eq 1 ]]; then
   else
     success "Trivy already installed"
   fi
-  
+
   # SAST tools
   has semgrep || { pipx install semgrep && success "Semgrep installed"; }
-  
+
   # Secret scanning
   if ! has gitleaks; then
     log "Installing Gitleaks"
@@ -213,7 +213,7 @@ if [[ $INSTALL_SEC -eq 1 ]]; then
   else
     success "Gitleaks already installed"
   fi
-  
+
   # Dockerfile linting
   if ! has hadolint; then
     log "Installing Hadolint"
@@ -223,11 +223,11 @@ if [[ $INSTALL_SEC -eq 1 ]]; then
   else
     success "Hadolint already installed"
   fi
-  
+
   # Python security tools
   has bandit || { pipx install bandit && success "Bandit installed"; }
   has safety || { pipx install safety && success "Safety installed"; }
-  
+
   success "Security stack installed"
 fi
 
@@ -237,7 +237,7 @@ fi
 
 if [[ $INSTALL_K8S -eq 1 ]]; then
   log "Installing Kubernetes Stack"
-  
+
   # Kustomize
   if ! has kustomize; then
     log "Installing Kustomize"
@@ -247,7 +247,7 @@ if [[ $INSTALL_K8S -eq 1 ]]; then
   else
     success "Kustomize already installed"
   fi
-  
+
   # kubectx/kubens
   if ! has kubectx; then
     log "Installing kubectx/kubens"
@@ -258,7 +258,7 @@ if [[ $INSTALL_K8S -eq 1 ]]; then
   else
     success "kubectx/kubens already installed"
   fi
-  
+
   # kind - local Kubernetes
   if ! has kind; then
     log "Installing kind (Kubernetes in Docker)"
@@ -269,7 +269,7 @@ if [[ $INSTALL_K8S -eq 1 ]]; then
   else
     success "kind already installed"
   fi
-  
+
   # Skaffold
   if ! has skaffold; then
     log "Installing Skaffold"
@@ -280,7 +280,7 @@ if [[ $INSTALL_K8S -eq 1 ]]; then
   else
     success "Skaffold already installed"
   fi
-  
+
   # Tilt
   if ! has tilt; then
     log "Installing Tilt"
@@ -289,7 +289,7 @@ if [[ $INSTALL_K8S -eq 1 ]]; then
   else
     success "Tilt already installed"
   fi
-  
+
   # k9s - Kubernetes CLI UI
   if ! has k9s; then
     log "Installing k9s"
@@ -299,7 +299,7 @@ if [[ $INSTALL_K8S -eq 1 ]]; then
   else
     success "k9s already installed"
   fi
-  
+
   success "Kubernetes stack installed"
 fi
 

@@ -213,7 +213,7 @@ backup_configs() {
 # Fresh installation
 run_fresh_install() {
   say "Starting fresh installation..."
-  
+
   # 1. Install key software
   if [[ $SKIP_TOOLS -eq 0 ]]; then
     say "Installing essential development tools..."
@@ -288,7 +288,7 @@ show_next_steps() {
   echo ""
   say "Next steps:"
   echo ""
-  
+
   if [[ "$MODE" == "fresh" ]]; then
     echo "1. Configure your API keys:"
     echo "   export ANTHROPIC_API_KEY='your-key'"
@@ -313,7 +313,7 @@ show_next_steps() {
     echo "3. Update existing repositories:"
     echo "   cd <repo> && $SCRIPT_DIR/setup/agents_repo.sh --force"
   fi
-  
+
   echo ""
   success "Setup complete! Open a new terminal for all changes to take effect."
 }
@@ -322,23 +322,23 @@ show_next_steps() {
 main() {
   say "WSL Development Environment Setup"
   echo "=================================="
-  
+
   # Detect installation mode
   detect_mode
   detect_platform
-  
+
   if [[ $BACKUP_ONLY -eq 1 ]]; then
     backup_configs
     success "Backup complete!"
     exit 0
   fi
-  
+
   # Confirm with user
   echo ""
   echo "Mode: $MODE"
   echo "Platform: ${platform:-unknown} (override with --os wsl|linux|macos)"
   echo ""
-  
+
   if [[ -z "$FORCE_OS" ]]; then
     read -p "Use detected platform '${platform}'? (Y/n): " -n 1 -r choice
     echo ""
@@ -355,7 +355,7 @@ main() {
   if [[ "$MODE" == "upgrade" ]]; then
     warn "This will backup and update your existing configuration."
   fi
-  
+
   if [[ "${AUTO_YES:-0}" -ne 1 ]]; then
     read -p "Continue? (y/N): " -n 1 -r
     echo ""
@@ -364,14 +364,14 @@ main() {
       exit 1
     fi
   fi
-  
+
   # Run appropriate installation
   if [[ "$MODE" == "fresh" ]]; then
     run_fresh_install
   else
     run_upgrade
   fi
-  
+
   # Show next steps
   show_next_steps
 }

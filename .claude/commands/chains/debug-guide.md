@@ -5,28 +5,28 @@ When a chain step underperforms, use this systematic approach to diagnose and fi
 ## Quick Debugging Checklist
 
 ### 1. Goal Clarity
-**Problem**: Step trying to do too much  
-**Symptom**: Partial completion, unfocused output  
+**Problem**: Step trying to do too much
+**Symptom**: Partial completion, unfocused output
 **Fix**: Split into multiple steps, each with ONE clear goal
 
 ### 2. Acceptance Criteria
-**Problem**: Vague success criteria  
-**Symptom**: Can't tell if step succeeded  
+**Problem**: Vague success criteria
+**Symptom**: Can't tell if step succeeded
 **Fix**: Add objective, measurable checks
 
 ### 3. Command Specification
-**Problem**: Missing or vague commands  
-**Symptom**: "I would run tests" instead of "pnpm test -i user.spec.ts"  
+**Problem**: Missing or vague commands
+**Symptom**: "I would run tests" instead of "pnpm test -i user.spec.ts"
 **Fix**: List exact commands with full arguments
 
 ### 4. Handoff Completeness
-**Problem**: Next step missing required data  
-**Symptom**: Step 2 asks for info from Step 1  
+**Problem**: Next step missing required data
+**Symptom**: Step 2 asks for info from Step 1
 **Fix**: Verify handoff tags contain all needed data
 
 ### 5. Self-Check Integration
-**Problem**: Errors propagating through chain  
-**Symptom**: Late-stage failures from early mistakes  
+**Problem**: Errors propagating through chain
+**Symptom**: Late-stage failures from early mistakes
 **Fix**: Add `<self_check>` blocks to critical steps
 
 ## Debugging Patterns
@@ -114,7 +114,7 @@ echo "CHAIN_DEBUG: Output size: $(wc -l < output.txt)" >&2
 <checkpoint>
 Before proceeding, verify:
 - [ ] File exists: test/user.spec.ts
-- [ ] Contains at least 5 test cases  
+- [ ] Contains at least 5 test cases
 - [ ] All tests currently fail
 - [ ] No syntax errors: pnpm test --listTests
 </checkpoint>
@@ -149,7 +149,7 @@ Validating...
 ## Common Failure Modes
 
 ### 1. Cascading Failures
-**Symptom**: Step 3 fails because Step 1 had wrong output format  
+**Symptom**: Step 3 fails because Step 1 had wrong output format
 **Fix**: Add validation at handoff points
 ```markdown
 <review>
@@ -160,7 +160,7 @@ Validating...
 ```
 
 ### 2. Silent Failures
-**Symptom**: Step reports success but didn't actually complete work  
+**Symptom**: Step reports success but didn't actually complete work
 **Fix**: Add explicit verification
 ```markdown
 <verify>
@@ -172,7 +172,7 @@ $ ls -la tests/*.spec.ts
 ```
 
 ### 3. Environment Assumptions
-**Symptom**: Works locally, fails in CI  
+**Symptom**: Works locally, fails in CI
 **Fix**: Explicit environment checks
 ```markdown
 <environment_check>
@@ -184,7 +184,7 @@ Required tools:
 ```
 
 ### 4. Partial Completion
-**Symptom**: Step does 80% of work then stops  
+**Symptom**: Step does 80% of work then stops
 **Fix**: Break into smaller steps or add progress tracking
 ```markdown
 <progress>

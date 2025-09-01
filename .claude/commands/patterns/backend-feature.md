@@ -1,7 +1,7 @@
 # Pattern: Implement Backend Feature
 
-**Use-when:** ticket ready; code the minimal diff  
-**Inputs:** `<JIRA_KEY>`, API/DB impacts  
+**Use-when:** ticket ready; code the minimal diff
+**Inputs:** `<JIRA_KEY>`, API/DB impacts
 **Success:** green tests, migration safety if any
 
 ---

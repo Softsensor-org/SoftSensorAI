@@ -31,15 +31,15 @@ Propose minimal viable feature set and train/val/test split strategy.
    # - <30% missing values
    # - Low correlation with each other (<0.9)
    # - Some predictive signal (>0.1 correlation with target)
-   
+
    selected_features = [
        # Numerical
        'feature_1',  # Strong correlation: 0.65
        'feature_2',  # Domain importance
-       
-       # Categorical  
+
+       # Categorical
        'category_1',  # High cardinality but important
-       
+
        # Engineered
        'ratio_1',  # feature_1 / feature_2
        'is_weekend',  # from date_column
@@ -51,12 +51,12 @@ Propose minimal viable feature set and train/val/test split strategy.
    from sklearn.pipeline import Pipeline
    from sklearn.preprocessing import StandardScaler, OneHotEncoder
    from sklearn.impute import SimpleImputer
-   
+
    numeric_pipeline = Pipeline([
        ('imputer', SimpleImputer(strategy='median')),
        ('scaler', StandardScaler())
    ])
-   
+
    categorical_pipeline = Pipeline([
        ('imputer', SimpleImputer(strategy='constant', fill_value='missing')),
        ('encoder', OneHotEncoder(handle_unknown='ignore', sparse=False))
@@ -68,12 +68,12 @@ Propose minimal viable feature set and train/val/test split strategy.
    # Time-based if temporal
    # Stratified if imbalanced
    # Random if no special constraints
-   
+
    if has_time_column:
        train_end = '2023-12-31'
        val_end = '2024-03-31'
        # Train: < train_end
-       # Val: train_end <= date < val_end  
+       # Val: train_end <= date < val_end
        # Test: >= val_end
    else:
        # 60/20/20 stratified split
@@ -120,11 +120,11 @@ Propose minimal viable feature set and train/val/test split strategy.
 numerical:
   impute: median
   scale: StandardScaler
-  
+
 categorical:
   impute: constant('missing')
   encode: OneHotEncoder(max_categories=20)
-  
+
 text:
   vectorize: TfidfVectorizer(max_features=100)
 ```

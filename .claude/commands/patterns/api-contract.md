@@ -1,6 +1,6 @@
 # Pattern: API Contract Update (OpenAPI or Typed Schema)
 
-**Use-when:** endpoint change  
+**Use-when:** endpoint change
 **Success:** spec + types + server/client updates aligned
 
 ---

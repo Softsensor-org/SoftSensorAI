@@ -33,7 +33,7 @@ Create comprehensive data profile: dictionary, missingness, distributions, and t
    import numpy as np
    import matplotlib.pyplot as plt
    import seaborn as sns
-   
+
    df = pd.read_csv("{dataset_path}")
    print(f"Shape: {df.shape}")
    print(f"Memory: {df.memory_usage(deep=True).sum() / 1024**2:.2f} MB")
@@ -62,7 +62,7 @@ Create comprehensive data profile: dictionary, missingness, distributions, and t
    ```python
    # Numerical features
    df.select_dtypes(include=[np.number]).hist(figsize=(15, 10))
-   
+
    # Categorical features
    for col in df.select_dtypes(include=['object']).columns[:10]:
        df[col].value_counts().head(10).plot(kind='bar')

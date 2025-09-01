@@ -1,6 +1,6 @@
 # Pattern: ML Experiment Loop (Reproducible)
 
-**Use-when:** try a model/feature  
+**Use-when:** try a model/feature
 **Success:** a results table + artifacts referenced
 
 ---

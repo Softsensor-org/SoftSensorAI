@@ -12,13 +12,13 @@ Rapid evaluation of technical approaches with production constraints.
 ### Option A: Monolithic Enhancement
 ```yaml
 complexity: LOW
-risk: LOW  
+risk: LOW
 time_to_market: 2 weeks
 scalability_limit: 10K RPS
 cost: $500/month
 ```
 
-### Option B: Service Extraction  
+### Option B: Service Extraction
 ```yaml
 complexity: MEDIUM
 risk: MEDIUM

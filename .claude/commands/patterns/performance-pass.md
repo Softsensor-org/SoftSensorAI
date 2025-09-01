@@ -1,6 +1,6 @@
 # Pattern: Performance Pass
 
-**Use-when:** slowness suspected  
+**Use-when:** slowness suspected
 **Success:** proof with numbers + micro-optimizations
 
 ---

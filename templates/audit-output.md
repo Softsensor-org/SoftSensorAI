@@ -13,7 +13,7 @@ This template shows the expected structure for audit outputs.
 project-root/
 ├── src/
 │   ├── api/          # REST API endpoints
-│   ├── services/     # Business logic 
+│   ├── services/     # Business logic
 │   ├── models/       # Data models
 │   └── utils/        # Helper utilities
 ├── tests/           # Test suites
@@ -24,7 +24,7 @@ project-root/
 
 **Language Breakdown:**
 - JavaScript: 60% (24 files, ~3.2k SLOC)
-- TypeScript: 25% (10 files, ~1.8k SLOC) 
+- TypeScript: 25% (10 files, ~1.8k SLOC)
 - Shell: 10% (5 files, ~500 SLOC)
 - YAML: 5% (config files)
 
@@ -42,7 +42,7 @@ Request → Express Router → Controller → Service → Model → Database
 
 **Data Flow:**
 1. Client requests hit Express middleware stack
-2. Routes dispatch to controllers  
+2. Routes dispatch to controllers
 3. Controllers call business logic services
 4. Services interact with MongoDB via Mongoose
 5. Responses formatted and returned via JSON API
@@ -70,7 +70,7 @@ Request → Express Router → Controller → Service → Model → Database
 <plan>
 ### Quick Wins (≤1 day)
 - Fix hardcoded JWT secret (P0, 1h)
-- Fix SQL injection in users endpoint (P0, 2h)  
+- Fix SQL injection in users endpoint (P0, 2h)
 - Add .env.example file (15min)
 - Enable ESLint in CI pipeline (30min)
 - Add input validation middleware (4h)
@@ -122,7 +122,7 @@ npm run test:coverage
 
 ### Top 3 PRs
 1. Branch: `fix/jwt-secret-env-var` - "Use environment variable for JWT secret"
-2. Branch: `fix/sql-injection-users` - "Fix SQL injection in users endpoint"  
+2. Branch: `fix/sql-injection-users` - "Fix SQL injection in users endpoint"
 3. Branch: `feat/async-file-operations` - "Replace sync file ops with async"
 
 ### Sample Patches
@@ -149,7 +149,7 @@ npm run test:coverage
 
 ## Quality Gates
 - All P0 issues fixed before production deployment
-- Test coverage above 80% for core business logic  
+- Test coverage above 80% for core business logic
 - Security scan passes with no HIGH/CRITICAL findings
 - Performance tests validate response times < 200ms p95
 - Code review approval from senior engineer required

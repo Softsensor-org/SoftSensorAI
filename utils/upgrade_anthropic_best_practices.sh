@@ -7,7 +7,7 @@ echo "This script adds high-leverage improvements from official guidance"
 echo ""
 
 # Helper function
-backup() { 
+backup() {
   [ -f "$1" ] && cp -a "$1" "$1.bak.$(date +%Y%m%d%H%M%S)" && echo "  Backed up: $1"
 }
 
@@ -31,21 +31,21 @@ jobs:
     permissions:
       contents: read
       security-events: write
-      
+
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup tools
         run: |
           pip install semgrep
           wget -qO- https://github.com/gitleaks/gitleaks/releases/latest/download/gitleaks_linux_x64.tar.gz | tar xz
           sudo mv gitleaks /usr/local/bin/
-          
+
       - name: Run scans
         run: |
           semgrep --config=auto --json -o semgrep.json . || true
           gitleaks detect --no-banner -v --report-format json --report-path gitleaks.json || true
-          
+
       - name: Upload results
         uses: actions/upload-artifact@v4
         with:

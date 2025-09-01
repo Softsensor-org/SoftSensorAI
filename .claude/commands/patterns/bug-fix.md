@@ -1,7 +1,7 @@
 # Pattern: Bug Fix (Repro → Test → Fix)
 
-**Use-when:** defect; ensure non-regression  
-**Inputs:** repro steps/logs  
+**Use-when:** defect; ensure non-regression
+**Inputs:** repro steps/logs
 **Success:** failing test first, then fixed
 
 ---

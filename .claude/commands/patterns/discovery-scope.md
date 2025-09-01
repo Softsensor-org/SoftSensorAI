@@ -1,7 +1,7 @@
 # Pattern: Problem Discovery / Scoping
 
-**Use-when:** ticket vague; clarify before touching code  
-**Inputs:** `<JIRA_TITLE>`, optional paths  
+**Use-when:** ticket vague; clarify before touching code
+**Inputs:** `<JIRA_TITLE>`, optional paths
 **Success:** unambiguous spec + acceptance checks
 
 ---

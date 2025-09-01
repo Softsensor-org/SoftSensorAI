@@ -1,6 +1,6 @@
 # Pattern: Frontend Feature (Component-First)
 
-**Use-when:** UI addition  
+**Use-when:** UI addition
 **Success:** component story + tests + snapshot approved
 
 ---

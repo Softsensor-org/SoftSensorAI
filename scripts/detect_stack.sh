@@ -4,7 +4,7 @@ set -euo pipefail
 
 detect_languages() {
   local languages=()
-  
+
   # Check for common language files
   [ -f "package.json" ] && languages+=("Node.js")
   [ -f "requirements.txt" ] || [ -f "pyproject.toml" ] || [ -f "setup.py" ] && languages+=("Python")
@@ -14,7 +14,7 @@ detect_languages() {
   [ -f "Gemfile" ] && languages+=("Ruby")
   [ -f "composer.json" ] && languages+=("PHP")
   [ -f "pubspec.yaml" ] && languages+=("Dart/Flutter")
-  
+
   # Check for specific file extensions if no obvious indicators
   if [ ${#languages[@]} -eq 0 ]; then
     find . -type f -name "*.js" -o -name "*.ts" | head -1 >/dev/null && languages+=("JavaScript")
@@ -26,10 +26,10 @@ detect_languages() {
     find . -type f -name "*.php" | head -1 >/dev/null && languages+=("PHP")
     find . -type f -name "*.sh" | head -1 >/dev/null && languages+=("Shell")
   fi
-  
+
   # Default if nothing found
   [ ${#languages[@]} -eq 0 ] && languages+=("Unknown")
-  
+
   # Join array elements with /
   local IFS="/"
   echo "${languages[*]}"
@@ -37,7 +37,7 @@ detect_languages() {
 
 detect_frameworks() {
   local frameworks=()
-  
+
   # Check package.json for JS frameworks
   if [ -f "package.json" ]; then
     if grep -q "\"react\"" package.json; then
@@ -56,7 +56,7 @@ detect_frameworks() {
       frameworks+=("Angular")
     fi
   fi
-  
+
   # Check for Python frameworks
   if [ -f "requirements.txt" ]; then
     if grep -q "django" requirements.txt; then
@@ -69,11 +69,11 @@ detect_frameworks() {
       frameworks+=("FastAPI")
     fi
   fi
-  
+
   # Check for specific files
   [ -f "manage.py" ] && frameworks+=("Django")
   [ -f "app.py" ] && frameworks+=("Flask")
-  
+
   if [ ${#frameworks[@]} -gt 0 ]; then
     local IFS="+"
     echo " (${frameworks[*]})"
@@ -82,24 +82,24 @@ detect_frameworks() {
 
 detect_environment() {
   local env_indicators=()
-  
+
   # Check for containerization
   [ -f "Dockerfile" ] && env_indicators+=("Docker")
   [ -f "docker-compose.yml" ] && env_indicators+=("Docker-Compose")
-  
+
   # Check for Kubernetes
   if [ -d ".k8s" ] || [ -d "k8s" ] || [ -d "kubernetes" ]; then
     env_indicators+=("Kubernetes")
   fi
-  
+
   # Check for cloud providers
   find . -name "*.tf" | head -1 >/dev/null && env_indicators+=("Terraform")
   [ -f ".github/workflows/"*.yml ] && env_indicators+=("GitHub-Actions")
   [ -f ".gitlab-ci.yml" ] && env_indicators+=("GitLab-CI")
-  
+
   # Default
   [ ${#env_indicators[@]} -eq 0 ] && env_indicators+=("Local")
-  
+
   local IFS="+"
   echo "${env_indicators[*]}"
 }

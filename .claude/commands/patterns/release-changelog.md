@@ -1,6 +1,6 @@
 # Pattern: Release / Changelog (Automated Summary)
 
-**Use-when:** prepping a release  
+**Use-when:** prepping a release
 **Success:** concise notes + version bump plan
 
 ---

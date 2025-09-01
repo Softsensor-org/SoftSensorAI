@@ -36,7 +36,7 @@ Ensure every generated ticket meets these standards before delivery.
 - [ ] **Scanner integration** - CI scanner configuration in AC
 - [ ] **Audit trail** - Logging requirements specified
 
-#### Performance Issues  
+#### Performance Issues
 - [ ] **Baseline metrics** - Current performance documented
 - [ ] **Target metrics** - Specific p50/p95/p99 targets
 - [ ] **Load profile** - Expected traffic/load specified

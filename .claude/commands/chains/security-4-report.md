@@ -53,8 +53,8 @@ Generate executive summary and detailed security report with recommendations.
 <report>
 # Security Audit Report
 
-**Date**: {DATE}  
-**Repository**: {REPO}  
+**Date**: {DATE}
+**Repository**: {REPO}
 **Auditor**: Automated + Manual Review
 
 ## Executive Summary
@@ -62,7 +62,7 @@ Generate executive summary and detailed security report with recommendations.
 **Overall Risk**: **{HIGH/MEDIUM/LOW}**
 
 - **Critical Issues**: {X} found, {Y} fixed
-- **High Issues**: {X} found, {Y} fixed  
+- **High Issues**: {X} found, {Y} fixed
 - **Medium Issues**: {X} found, {Y} deferred
 - **Estimated Risk Reduction**: {Z}%
 

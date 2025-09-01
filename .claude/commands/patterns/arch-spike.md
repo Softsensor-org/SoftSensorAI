@@ -1,7 +1,7 @@
 # Pattern: Architecture Spike
 
-**Use-when:** new feature/system boundary  
-**Inputs:** constraints (perf, latency, data)  
+**Use-when:** new feature/system boundary
+**Inputs:** constraints (perf, latency, data)
 **Success:** 2–3 options with trade-offs + chosen plan
 
 ---

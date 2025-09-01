@@ -32,7 +32,7 @@ Use multiple tool calls in a single message:
 I'll analyze these three documents in parallel for efficiency.
 
 [Calls Read tool for doc1.md]
-[Calls Read tool for doc2.md]  
+[Calls Read tool for doc2.md]
 [Calls Read tool for doc3.md]
 [All execute simultaneously]
 ```

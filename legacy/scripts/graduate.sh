@@ -32,7 +32,7 @@ Actions:
   reset NUM       Mark criteria item NUM as incomplete
   ready           Check if ready to graduate
   advance         Graduate to next level (if ready)
-  
+
 Examples:
   $0                      # Show progress
   $0 complete 1           # Mark first item complete
@@ -41,7 +41,7 @@ Examples:
 
 Current Status:
 EOF
-  
+
   if [ -f "PROFILE.md" ]; then
     echo -n "  Skill: "
     grep "^\*\*Skill Level\*\*:" PROFILE.md | cut -d: -f2 | tr -d ' '
@@ -50,7 +50,7 @@ EOF
   else
     echo "  No profile configured - run: scripts/apply_profile.sh"
   fi
-  
+
   exit 0
 }
 
@@ -72,23 +72,23 @@ get_current_levels() {
 show_progress() {
   check_profile
   get_current_levels
-  
+
   echo -e "${BLUE}=== Graduation Progress ===${NC}"
   echo ""
-  
+
   # Skill level progress
   echo -e "${CYAN}Skill Level: $CURRENT_SKILL${NC}"
   echo "To advance to next skill level:"
-  
+
   local skill_items=0
   local skill_complete=0
-  
+
   while IFS= read -r line; do
     if [[ "$line" =~ ^-\ \[(.)\]\ (.*)$ ]]; then
       skill_items=$((skill_items + 1))
       local status="${BASH_REMATCH[1]}"
       local task="${BASH_REMATCH[2]}"
-      
+
       if [ "$status" = "x" ]; then
         skill_complete=$((skill_complete + 1))
         echo -e "  ${GREEN}[$skill_items] $CHECK $task${NC}"
@@ -97,31 +97,31 @@ show_progress() {
       fi
     fi
   done < <(awk '/^### To Next.*Level/,/^### To Next.*Phase|^##[^#]/ {print}' PROFILE.md)
-  
+
   if [ "$skill_items" -gt 0 ]; then
     local skill_percent=$((skill_complete * 100 / skill_items))
     echo -e "\nSkill Progress: ${GREEN}$skill_complete/$skill_items${NC} ($skill_percent%)"
-    
+
     if [ "$skill_percent" -ge 80 ]; then
       echo -e "${GREEN}$STAR Ready to advance skill level!${NC}"
     fi
   fi
-  
+
   echo ""
-  
+
   # Project phase progress
   echo -e "${CYAN}Project Phase: $CURRENT_PHASE${NC}"
   echo "To advance to next project phase:"
-  
+
   local phase_items=0
   local phase_complete=0
-  
+
   while IFS= read -r line; do
     if [[ "$line" =~ ^-\ \[(.)\]\ (.*)$ ]]; then
       phase_items=$((phase_items + 1))
       local status="${BASH_REMATCH[1]}"
       local task="${BASH_REMATCH[2]}"
-      
+
       if [ "$status" = "x" ]; then
         phase_complete=$((phase_complete + 1))
         echo -e "  ${GREEN}[$phase_items] $CHECK $task${NC}"
@@ -130,11 +130,11 @@ show_progress() {
       fi
     fi
   done < <(awk '/^### To Next.*Phase/,/^##[^#]|$/ {print}' PROFILE.md)
-  
+
   if [ "$phase_items" -gt 0 ]; then
     local phase_percent=$((phase_complete * 100 / phase_items))
     echo -e "\nPhase Progress: ${GREEN}$phase_complete/$phase_items${NC} ($phase_percent%)"
-    
+
     if [ "$phase_percent" -ge 80 ]; then
       echo -e "${GREEN}$STAR Ready to advance project phase!${NC}"
     fi
@@ -145,14 +145,14 @@ show_progress() {
 mark_complete() {
   local item_num=$1
   check_profile
-  
+
   # Count items in both sections
   local current_line=0
   local found=0
-  
+
   # Create temp file
   cp PROFILE.md PROFILE.md.tmp
-  
+
   # Process skill level items
   while IFS= read -r line_num; do
     current_line=$((current_line + 1))
@@ -162,8 +162,8 @@ mark_complete() {
       break
     fi
   done < <(grep -n "^- \[.\]" PROFILE.md | grep -A100 "To Next.*Level" | grep -B100 "To Next.*Phase" | cut -d: -f1)
-  
-  # If not found in skill items, check phase items  
+
+  # If not found in skill items, check phase items
   if [ "$found" -eq 0 ]; then
     current_line=0
     while IFS= read -r line_num; do
@@ -175,11 +175,11 @@ mark_complete() {
       fi
     done < <(grep -n "^- \[.\]" PROFILE.md | grep -A100 "To Next.*Phase" | cut -d: -f1)
   fi
-  
+
   if [ "$found" -eq 1 ]; then
     mv PROFILE.md.tmp PROFILE.md
     echo -e "${GREEN}$CHECK Item $item_num marked complete${NC}"
-    
+
     # Show updated progress
     echo ""
     show_progress
@@ -193,13 +193,13 @@ mark_complete() {
 mark_incomplete() {
   local item_num=$1
   check_profile
-  
+
   # Similar to mark_complete but reverse
   cp PROFILE.md PROFILE.md.tmp
-  
+
   local current_line=0
   local found=0
-  
+
   # Process all checklist items
   while IFS= read -r line_num; do
     current_line=$((current_line + 1))
@@ -209,11 +209,11 @@ mark_incomplete() {
       break
     fi
   done < <(grep -n "^- \[.\]" PROFILE.md | cut -d: -f1)
-  
+
   if [ "$found" -eq 1 ]; then
     mv PROFILE.md.tmp PROFILE.md
     echo -e "${YELLOW}Item $item_num marked incomplete${NC}"
-    
+
     # Show updated progress
     echo ""
     show_progress
@@ -227,38 +227,38 @@ mark_incomplete() {
 check_ready() {
   check_profile
   get_current_levels
-  
+
   local ready_skill=0
   local ready_phase=0
-  
+
   # Check skill readiness
   local skill_total=$(grep -c "^- \[.\]" PROFILE.md 2>/dev/null | head -1 || echo 0)
   local skill_complete=$(awk '/To Next.*Level/,/To Next.*Phase/ {print}' PROFILE.md | grep -c "^- \[x\]" || echo 0)
-  
+
   if [ "$skill_total" -gt 0 ]; then
     local skill_percent=$((skill_complete * 100 / skill_total))
     if [ "$skill_percent" -ge 80 ]; then
       ready_skill=1
     fi
   fi
-  
+
   # Check phase readiness
   local phase_total=$(awk '/To Next.*Phase/,/^##[^#]|$/ {print}' PROFILE.md | grep -c "^- \[.\]" || echo 0)
   local phase_complete=$(awk '/To Next.*Phase/,/^##[^#]|$/ {print}' PROFILE.md | grep -c "^- \[x\]" || echo 0)
-  
+
   if [ "$phase_total" -gt 0 ]; then
     local phase_percent=$((phase_complete * 100 / phase_total))
     if [ "$phase_percent" -ge 80 ]; then
       ready_phase=1
     fi
   fi
-  
+
   echo -e "${BLUE}=== Graduation Readiness ===${NC}"
   echo ""
-  
+
   if [ "$ready_skill" -eq 1 ]; then
     echo -e "${GREEN}$STAR Skill Level: READY TO ADVANCE${NC}"
-    
+
     # Suggest next level
     case "$CURRENT_SKILL" in
       vibe) echo "  Next: beginner" ;;
@@ -270,10 +270,10 @@ check_ready() {
   else
     echo -e "${YELLOW}Skill Level: Not ready (need 80% completion)${NC}"
   fi
-  
+
   if [ "$ready_phase" -eq 1 ]; then
     echo -e "${GREEN}$STAR Project Phase: READY TO ADVANCE${NC}"
-    
+
     # Suggest next phase
     case "$CURRENT_PHASE" in
       poc) echo "  Next: mvp" ;;
@@ -284,14 +284,14 @@ check_ready() {
   else
     echo -e "${YELLOW}Project Phase: Not ready (need 80% completion)${NC}"
   fi
-  
+
   echo ""
   echo "To advance when ready:"
-  
+
   if [ "$ready_skill" -eq 1 ]; then
     echo "  scripts/graduate.sh advance"
   fi
-  
+
   if [ "$ready_phase" -eq 1 ]; then
     echo "  scripts/graduate.sh advance"
   fi
@@ -302,10 +302,10 @@ advance() {
   check_profile
   get_current_levels
   check_ready
-  
+
   local next_skill=""
   local next_phase=""
-  
+
   # Determine next levels
   case "$CURRENT_SKILL" in
     vibe) next_skill="beginner" ;;
@@ -313,13 +313,13 @@ advance() {
     l1) next_skill="l2" ;;
     l2) next_skill="expert" ;;
   esac
-  
+
   case "$CURRENT_PHASE" in
     poc) next_phase="mvp" ;;
     mvp) next_phase="beta" ;;
     beta) next_phase="scale" ;;
   esac
-  
+
   echo ""
   echo -e "${BLUE}Select advancement:${NC}"
   echo "  1) Advance skill to: $next_skill"
@@ -327,7 +327,7 @@ advance() {
   echo "  3) Cancel"
   echo ""
   read -p "Choice [1-3]: " choice
-  
+
   case "$choice" in
     1)
       if [ -n "$next_skill" ]; then

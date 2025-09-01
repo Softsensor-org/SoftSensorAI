@@ -47,7 +47,7 @@ function processData(input) {
   return input;
 }
 
-// After  
+// After
 function processData(input) {
   // Validate input first
   if (!input) {

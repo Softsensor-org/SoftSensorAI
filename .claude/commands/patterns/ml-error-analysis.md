@@ -1,6 +1,6 @@
 # Pattern: Error Analysis (ML)
 
-**Use-when:** metric stalls; inspect failures  
+**Use-when:** metric stalls; inspect failures
 **Success:** actionable error buckets + next actions
 
 ---

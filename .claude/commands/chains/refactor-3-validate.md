@@ -29,10 +29,10 @@ Validate that refactoring improved code quality without breaking functionality.
    ```bash
    # Full test suite
    pnpm test
-   
+
    # Integration tests
    pnpm test:e2e
-   
+
    # Regression check
    git diff HEAD~3 | grep -E "^\+" | wc -l  # Lines added
    git diff HEAD~3 | grep -E "^-" | wc -l   # Lines removed
@@ -44,7 +44,7 @@ Validate that refactoring improved code quality without breaking functionality.
    hyperfine --warmup 3 \
      'git checkout HEAD~3 && pnpm build' \
      'git checkout HEAD && pnpm build'
-   
+
    # Memory usage
    /usr/bin/time -v pnpm test 2>&1 | grep "Maximum resident"
    ```
@@ -53,10 +53,10 @@ Validate that refactoring improved code quality without breaking functionality.
    ```bash
    # Complexity re-check
    npx complexity-report {REFACTORED_FILES}
-   
+
    # Type coverage
    pnpm typecheck
-   
+
    # Lint check
    pnpm lint
    ```
@@ -83,7 +83,7 @@ Validate that refactoring improved code quality without breaking functionality.
 
 ### ✅ Functional Testing
 - **Unit Tests**: 145/145 passing
-- **Integration Tests**: 23/23 passing  
+- **Integration Tests**: 23/23 passing
 - **E2E Tests**: 12/12 passing
 - **Regression**: None detected
 

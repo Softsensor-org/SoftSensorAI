@@ -5,7 +5,7 @@ This directory contains comprehensive guides to help you install, configure, and
 ## 📖 Guide Overview
 
 - **quickstart.md** - One-command installation and first steps with DevPilot
-- **repo-wizard.md** - Repository cloning and automated configuration  
+- **repo-wizard.md** - Repository cloning and automated configuration
 - **agent-commands.md** - Complete catalog of available AI commands
 - **profiles.md** - Skill levels, project phases, and capability progression
 - **system-prompts.md** - Layered prompt system architecture

@@ -42,7 +42,7 @@ Brief 1-line description per epic (5-7 total)
 
 <top-prs>
 1. branch-name: "commit message"
-2. branch-name: "commit message"  
+2. branch-name: "commit message"
 3. branch-name: "commit message"
 </top-prs>
 

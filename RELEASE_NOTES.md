@@ -1,7 +1,7 @@
 # DevPilot v2.0.0 Release Notes
 
-**Release Date:** August 31, 2024  
-**Type:** Major Release  
+**Release Date:** August 31, 2024
+**Type:** Major Release
 **Breaking Changes:** Yes (see Migration section)
 
 ## 🚀 Highlights

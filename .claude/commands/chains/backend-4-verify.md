@@ -30,16 +30,16 @@ Run comprehensive verification checks and document all results.
    ```bash
    # Full test suite
    pnpm test
-   
+
    # Type checking
    pnpm typecheck
-   
+
    # Linting
    pnpm lint
-   
+
    # Security audit
    pnpm audit || npm audit
-   
+
    # If available
    make audit
    make security-json

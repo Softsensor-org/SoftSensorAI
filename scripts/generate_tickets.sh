@@ -123,7 +123,7 @@ echo ""
 # Build the prompt
 build_prompt() {
   local prompt_file="$OUTPUT_DIR/.prompt.md"
-  
+
   if [ "$QUICK_SCAN" -eq 1 ]; then
     echo "Using quick-scan template..."
     cp .claude/commands/tickets-quick-scan.md "$prompt_file"
@@ -131,71 +131,71 @@ build_prompt() {
     echo "Using full analysis template..."
     cp .claude/commands/tickets-from-code.md "$prompt_file"
   fi
-  
+
   # Replace variables
   sed -i "s/{{MODE}}/$MODE/g" "$prompt_file"
   sed -i "s/{{REPO_NAME}}/$REPO_NAME/g" "$prompt_file"
   sed -i "s/{{BRANCH}}/$BRANCH/g" "$prompt_file"
   sed -i "s/{{SHA}}/$SHA/g" "$prompt_file"
   sed -i "s/{{TODAY}}/$TODAY/g" "$prompt_file"
-  
+
   if [ -n "$RUNTIMES" ]; then
     sed -i "s/{{Node\/Python\/...}}/$RUNTIMES/g" "$prompt_file"
   fi
-  
+
   if [ -n "$ENVIRONMENT" ]; then
     sed -i "s/{{Docker+k8s on cloud}}/$ENVIRONMENT/g" "$prompt_file"
   fi
-  
+
   if [ -n "$CONCERNS" ]; then
     sed -i "s/{{e.g., authz, data privacy, perf \/api\/search}}/$CONCERNS/g" "$prompt_file"
   fi
-  
+
   echo "$prompt_file"
 }
 
 # Analyze repository
 analyze_repo() {
   echo -e "${BLUE}Analyzing repository structure...${NC}"
-  
+
   local analysis="$OUTPUT_DIR/.analysis.txt"
-  
+
   {
     echo "=== Repository Structure ==="
     find . -type f -name "*.json" -o -name "*.yml" -o -name "*.yaml" | head -20
-    
+
     echo -e "\n=== Languages Detected ==="
     find . -type f \( -name "*.js" -o -name "*.ts" -o -name "*.py" -o -name "*.go" \) | \
       sed 's/.*\.//' | sort | uniq -c | sort -rn
-    
+
     echo -e "\n=== CI/CD Configuration ==="
     ls -la .github/workflows/ 2>/dev/null || echo "No GitHub Actions found"
     ls -la .gitlab-ci.yml 2>/dev/null || echo "No GitLab CI found"
-    
+
     echo -e "\n=== Security Files ==="
     ls -la .env* 2>/dev/null || echo "No .env files"
     find . -name "*secret*" -o -name "*credential*" | head -10
-    
+
     echo -e "\n=== Test Coverage ==="
     find . -type f -name "*.test.*" -o -name "*.spec.*" | wc -l
-    
+
     echo -e "\n=== Dependencies ==="
     [ -f package.json ] && jq '.dependencies | keys | length' package.json
     [ -f requirements.txt ] && wc -l < requirements.txt
     [ -f go.mod ] && grep -c "require" go.mod
   } > "$analysis"
-  
+
   echo "Analysis saved to: $analysis"
 }
 
 # Generate tickets
 generate_tickets() {
   local prompt_file="$1"
-  
+
   echo -e "${BLUE}Generating tickets...${NC}"
   echo "(This would normally call Claude API with the prompt)"
   echo ""
-  
+
   # For now, create example output
   if [[ "$MODE" == "GITHUB_MARKDOWN" ]] || [[ "$MODE" == "BOTH" ]]; then
     cat > "$OUTPUT_DIR/backlog.md" <<'EOF'
@@ -217,8 +217,8 @@ Summary by epic: Security=5, Reliability=4, Performance=3, Code Quality=6, DevEx
 ## Tickets
 
 ### Fix exposed API keys in setup scripts
-**Epic:** Security  
-**Area:** setup_agents_global.sh  
+**Epic:** Security
+**Area:** setup_agents_global.sh
 **Severity:** P0  ·  **Priority:** High — immediate security risk  ·  **Effort:** S
 
 **Evidence (file:line):** `setup_agents_global.sh:142`
@@ -253,7 +253,7 @@ Move to environment variables or secure credential manager.
 EOF
     echo -e "${GREEN}✓ Generated GitHub Markdown: $OUTPUT_DIR/backlog.md${NC}"
   fi
-  
+
   if [[ "$MODE" == "JIRA_CSV" ]] || [[ "$MODE" == "BOTH" ]]; then
     cat > "$OUTPUT_DIR/backlog.csv" <<'EOF'
 Title,Epic,Area,Severity,Priority,Effort,Evidence,Why,Suggested fix,Acceptance Criteria,Test plan,Dependencies,Labels,Milestone,Owner,Links
@@ -264,7 +264,7 @@ Security: gitleaks detect","","area/security,type/bug,P0","Security Sprint 1",se
 EOF
     echo -e "${GREEN}✓ Generated Jira CSV: $OUTPUT_DIR/backlog.csv${NC}"
   fi
-  
+
   # Generate quick wins
   cat > "$OUTPUT_DIR/quick-wins.md" <<'EOF'
 # Quick Wins (≤4 hours each)
@@ -281,13 +281,13 @@ EOF
 10. Implement --help flag for all scripts
 EOF
   echo -e "${GREEN}✓ Generated quick wins: $OUTPUT_DIR/quick-wins.md${NC}"
-  
+
   # Generate PR plan
   cat > "$OUTPUT_DIR/pr-plan.md" <<'EOF'
 # Top 5 PRs to Open First
 
 1. **fix/remove-hardcoded-secrets**: "Remove hardcoded API keys and use env vars"
-2. **feat/add-input-validation**: "Add input validation and error handling"  
+2. **feat/add-input-validation**: "Add input validation and error handling"
 3. **chore/add-shellcheck-ci**: "Add ShellCheck to CI pipeline"
 4. **docs/add-setup-guide**: "Add comprehensive setup documentation"
 5. **test/add-core-tests**: "Add test suite for core functionality"

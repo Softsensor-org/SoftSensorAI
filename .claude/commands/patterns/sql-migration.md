@@ -1,6 +1,6 @@
 # Pattern: SQL & Migrations
 
-**Use-when:** schema change or query work  
+**Use-when:** schema change or query work
 **Success:** safe migration, audited SQL
 
 ---

@@ -1,6 +1,6 @@
 # Pattern: Test-First for New Unit/API
 
-**Use-when:** adding new behavior  
+**Use-when:** adding new behavior
 **Success:** new failing test → pass → green suite
 
 ---

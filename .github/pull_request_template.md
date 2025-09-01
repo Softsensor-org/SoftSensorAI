@@ -4,7 +4,7 @@ Describe the change and why it’s needed.
 
 ## Changes
 
-- 
+-
 
 ## Screenshots / Logs (if relevant)
 

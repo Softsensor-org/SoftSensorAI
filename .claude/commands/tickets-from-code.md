@@ -106,8 +106,8 @@ Begin with <header> and <epics>, then produce ~25 tickets, then <final>.
 
 ```md
 ### {Title}
-**Epic:** {Security|Reliability|Performance|Code Quality|DevEx|Docs|ML/Privacy}  
-**Area:** {paths/services}  
+**Epic:** {Security|Reliability|Performance|Code Quality|DevEx|Docs|ML/Privacy}
+**Area:** {paths/services}
 **Severity:** P{0|1|2|3}  ·  **Priority:** {High|Medium|Low — why}  ·  **Effort:** {S|M|L}
 
 **Evidence (file:line):** `{path}:{line}`
@@ -145,8 +145,8 @@ Title,Epic,Area,Severity,Priority,Effort,Evidence,Why,Suggested fix,Acceptance C
 *(Ensure fields with commas/newlines are quoted.)*
 
 ## Quality Gates
-- ✅ Each ticket has **file:line** + a **3–8 line snippet**  
-- ✅ **AC** includes testable outcomes (flags/logs/metrics/perf/security gates)  
-- ✅ **Test plan** includes unit + integration + negative tests (+ perf/security when relevant) with **exact commands**  
-- ✅ **Duplicates merged** (one ticket + checklist)  
+- ✅ Each ticket has **file:line** + a **3–8 line snippet**
+- ✅ **AC** includes testable outcomes (flags/logs/metrics/perf/security gates)
+- ✅ **Test plan** includes unit + integration + negative tests (+ perf/security when relevant) with **exact commands**
+- ✅ **Duplicates merged** (one ticket + checklist)
 - ✅ **P0 secrets** include rotation steps + scanner in CI

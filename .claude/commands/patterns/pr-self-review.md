@@ -1,6 +1,6 @@
 # Pattern: PR Review (Self-Critique)
 
-**Use-when:** pre-PR polish  
+**Use-when:** pre-PR polish
 **Success:** tighten diff + rationale note
 
 ---
