@@ -29,7 +29,7 @@ sudo apt-get update -qq
 
 log "Installing Core Agent Multipliers"
 
-# mise - unified runtime manager (already in install_key_software_wsl.sh but ensuring)
+# mise - unified runtime manager
 if ! has mise; then
   log "Installing mise (runtime version manager)"
   curl https://mise.run | sh
@@ -40,7 +40,7 @@ else
   success "mise already installed"
 fi
 
-# just - task runner (already in install_key_software_wsl.sh but ensuring)
+# just - task runner
 if ! has just; then
   log "Installing just (command runner)"
   sudo apt-get install -y just 2>/dev/null || {
@@ -57,7 +57,7 @@ else
   success "just already installed"
 fi
 
-# devcontainer CLI (already in install_key_software_wsl.sh but ensuring)
+# devcontainer CLI
 if ! npm list -g @devcontainers/cli >/dev/null 2>&1; then
   log "Installing devcontainer CLI"
   npm install -g @devcontainers/cli
