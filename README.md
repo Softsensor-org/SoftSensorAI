@@ -1,6 +1,6 @@
 # DevPilot - AI-Powered Development Platform
 
-[![CI](https://github.com/VivekLmd/setup-scripts/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/VivekLmd/setup-scripts/actions/workflows/ci.yml)
+[![CI](https://github.com/Softsensor-org/DevPilot/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Softsensor-org/DevPilot/actions/workflows/ci.yml)
 
 Transform how you work with AI coding assistants. DevPilot automatically configures Claude, Codex, Gemini, Grok, and Copilot for your skill level and project needs - with full parity across all platforms.
 
@@ -395,6 +395,11 @@ Quick reference for what gets enforced at each project phase:
 | **Trivy** (containers) | None | Advisory | **Blocks CRITICAL/HIGH** | **Blocks all** |
 | **License Check** | None | None | Check | **Enforce** |
 | **Dependency Audit** | None | Advisory | **Blocks HIGH+** | **Blocks all** |
+
+**CI Pipeline Behavior:**
+- **Default CI** (this repo): Light validation - shellcheck, basic tests
+- **Phase CI** (your projects): Full security gates activated by `apply_profile.sh`
+- Run `scripts/apply_profile.sh --phase beta` to install strict CI with blocking gates
 
 **Managing Legacy Issues:**
 - Set `SEMGREP_BASELINE_REF` repo variable to suppress pre-existing findings
