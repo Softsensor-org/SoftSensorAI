@@ -1,62 +1,65 @@
 # DevPilot Quickstart
 
-**Goal**: Install DevPilot, configure AI agents, and bootstrap your first project with skill-aware settings.
+**Time to setup**: 2 minutes  
+**Result**: AI-powered development environment ready to use
 
-## Prerequisites
-- WSL (Ubuntu), Linux, or macOS shell
-- Sudo access for package installs
-- API keys (optional now, recommended): `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `GEMINI_API_KEY`, `XAI_API_KEY`
+## Step 1: Install DevPilot
 
-## One-Command Setup
 ```bash
-# Clone DevPilot
-git clone https://github.com/VivekLmd/setup-scripts.git ~/repos/devpilot
-cd ~/repos/devpilot
-
-# Install everything
+git clone https://github.com/VivekLmd/setup-scripts.git ~/devpilot
+cd ~/devpilot
 ./setup_all.sh
 ```
 
-Manual Steps
+## Step 2: Add Your First Project
+
 ```bash
-# Install core tooling
-./install_key_software_wsl.sh
-
-# Install AI CLIs (Gemini, Grok, Codex)
-./install_ai_clis.sh
-
-# Global agent configuration (Claude/Gemini/Grok/Codex + templates)
-./setup_agents_global.sh
-
-# Create standard folders under ~/projects
-./make_folders.sh
+./setup/repo_wizard.sh
 ```
 
-Set API Keys (optional but recommended)
+Answer 3 simple questions:
+1. Organization name (e.g., "work", "personal")
+2. Project type (e.g., "backend", "frontend")
+3. GitHub repo URL
+
+## Step 3: Start Coding with AI
+
 ```bash
-# Example — add to ~/.bashrc to persist
-export OPENAI_API_KEY=...
-export ANTHROPIC_API_KEY=...
-export GEMINI_API_KEY=...
-export XAI_API_KEY=...
+cd ~/projects/[your-project]
+
+# Claude is ready
+claude "explain this codebase"
+
+# Gemini is ready
+gemini "add error handling to main.py"
+
+# Grok is ready
+grok "write tests for the API"
 ```
 
-Create Your First Project
-```bash
-./repo_setup_wizard.sh
-# choose org/category and paste the GitHub URL
+## What Just Happened?
 
-# in the cloned repo
-# the wizard can apply a profile and ask for Beginner teach mode; if skipped:
-scripts/apply_profile.sh --skill beginner --phase mvp --teach-mode on
+DevPilot configured:
+- ✅ AI assistants with your project context
+- ✅ Development tools (ripgrep, jq, GitHub CLI)
+- ✅ Project structure and commands
+- ✅ Environment auto-loading
+
+## Optional: Add API Keys
+
+For enhanced AI features, add to `~/.bashrc`:
+
+```bash
+export ANTHROPIC_API_KEY="your-key"
+export OPENAI_API_KEY="your-key"
+export GEMINI_API_KEY="your-key"
+export XAI_API_KEY="your-key"
 ```
 
-Validate
-```bash
-./validate_agents.sh ~/projects
-```
+## Next Steps
 
-Next Steps
-- Read repo’s `CLAUDE.md` for guardrails
-- Explore commands in `.claude/commands/`
-- Use `system/active.md` as the layered system prompt if your CLI supports it
+- Run `just` in any project to see available commands
+- Check `CLAUDE.md` in your project for AI guidelines
+- Explore `docs/` for advanced features
+
+**Questions?** Run `./validation/validate_agents.sh` to check your setup.
