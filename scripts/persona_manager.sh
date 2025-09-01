@@ -8,7 +8,6 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 CYAN='\033[0;36m'
-MAGENTA='\033[0;35m'
 BOLD='\033[1m'
 NC='\033[0m'
 
@@ -231,13 +230,15 @@ combine_personas() {
     while IFS= read -r persona; do
       if [ -f ".claude/personas/${persona}.json" ]; then
         # Merge permissions
-        local perms=$(jq -r '.permissions.allow[]?' ".claude/personas/${persona}.json" 2>/dev/null)
+        local perms
+        perms=$(jq -r '.permissions.allow[]?' ".claude/personas/${persona}.json" 2>/dev/null)
         if [ -n "$perms" ]; then
           combined_perms=$(echo "$combined_perms" | jq --arg p "$perms" '.allow += [$p]')
         fi
 
         # Collect commands
-        local cmds=$(jq -r '.commands[]?' ".claude/personas/${persona}.json" 2>/dev/null)
+        local cmds
+        cmds=$(jq -r '.commands[]?' ".claude/personas/${persona}.json" 2>/dev/null)
         if [ -n "$cmds" ]; then
           while IFS= read -r cmd; do
             combined_commands+=("$cmd")
@@ -245,7 +246,8 @@ combine_personas() {
         fi
 
         # Collect focus areas
-        local focus=$(jq -r '.focus[]?' ".claude/personas/${persona}.json" 2>/dev/null)
+        local focus
+        focus=$(jq -r '.focus[]?' ".claude/personas/${persona}.json" 2>/dev/null)
         if [ -n "$focus" ]; then
           while IFS= read -r f; do
             combined_focus+=("$f")
@@ -275,8 +277,8 @@ EOF
   # Update main settings
   if [ -f ".claude/settings.json" ]; then
     # Merge permissions into main settings
-    local main_perms=$(jq '.permissions' .claude/settings.json)
-    local new_perms=$(jq '.permissions.allow' "$combined_file")
+    local new_perms
+    new_perms=$(jq '.permissions.allow' "$combined_file")
 
     jq --argjson np "$new_perms" '.permissions.allow += $np | .permissions.allow |= unique' .claude/settings.json > .claude/settings.tmp
     mv .claude/settings.tmp .claude/settings.json
