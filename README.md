@@ -105,6 +105,31 @@ your-project/
 
 ## 🚀 Getting Started
 
+### Step 0: Check Your System (Optional but Recommended)
+
+Before installing, run our diagnostic tool to ensure your system is ready:
+
+```bash
+# Quick download and run (no installation needed)
+curl -sL https://raw.githubusercontent.com/Softsensor-org/DevPilot/main/scripts/doctor.sh | bash
+```
+
+**All green? You're ready!** 🟢
+
+```
+✓ OS: Linux (supported)
+✓ Shell: bash 5.1.16
+✓ Git: 2.34.1
+✓ Package manager: apt (available)
+✓ Python: 3.10.12
+✓ Node.js: 18.17.0
+✓ Docker: 24.0.5 (running)
+✓ GPU: NVIDIA RTX 4090 (CUDA 12.2)
+✓ Disk space: 42G available
+
+All checks passed! Ready for DevPilot installation.
+```
+
 ### Step 1: Install DevPilot Globally (One-time only!)
 
 ```bash
@@ -848,7 +873,7 @@ DevPilot includes many advanced tools not covered above:
 ### Diagnostics & Health Checks
 
 ```bash
-# Check your entire environment setup
+# Check your entire environment setup (already covered in Step 0)
 ~/devpilot/scripts/doctor.sh
 # Output: Shows status of all tools, versions, and configurations
 
