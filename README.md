@@ -4,6 +4,21 @@
 
 Transform how you work with AI coding assistants. DevPilot automatically configures Claude, Gemini, Grok, and Codex for your skill level and project needs.
 
+## 📋 System Requirements
+
+**Supported Systems:**
+- ✅ **Linux** (Ubuntu 20.04+, Debian, Fedora, Arch)
+- ✅ **macOS** (Intel & Apple Silicon)
+- ✅ **Windows** (via WSL2)
+- ✅ **Dev Containers** (GitHub Codespaces, VS Code Remote)
+- ✅ **Cloud IDEs** (Gitpod, Cloud9, Coder)
+
+**Prerequisites:**
+- `bash` 4.0+ (check with `bash --version`)
+- `git` 2.0+ (check with `git --version`)
+- Internet connection for tool downloads
+- 2GB free disk space
+
 ## 🤔 Why DevPilot?
 
 **Without DevPilot:**
@@ -191,8 +206,15 @@ Enter choice (1-4) [2]: 2
 What this does:
 - ✅ Clones YOUR project to an organized location
 - ✅ Adds AI configuration files to THAT project
-- ✅ Installs THAT project's dependencies (npm, pip, etc.)
+- ✅ Auto-detects and installs dependencies:
+  - **Node.js**: npm, pnpm, yarn, bun
+  - **Python**: pip, poetry, uv (creates .venv)
+  - **Ruby**: bundler
+  - **Rust**: cargo
+  - **Go**: go mod
+  - **Java**: maven, gradle
 - ✅ Sets up git hooks for THAT project
+- ✅ Configures direnv for auto-environment loading
 - ❌ Does NOT affect other projects
 - ❌ Does NOT change global settings
 
@@ -292,11 +314,26 @@ Once installed, your AI assistants have access to powerful commands:
 - `mise` - Runtime version management
 
 **Optional Productivity Extras:**
-- API Development: OpenAPI Generator, GraphQL tools
-- Databases: dbt, sqlfluff, pgcli, Prisma
-- ML/Data: DVC, Weights & Biases, MLflow
-- Security: trivy, semgrep, gitleaks
-- Kubernetes: kind, kustomize, skaffold
+
+Install additional tools based on your needs:
+```bash
+# Install ALL productivity extras (takes ~10 minutes)
+~/devpilot/install/productivity_extras.sh
+
+# Or install specific categories:
+~/devpilot/install/productivity_extras.sh --api      # API tools
+~/devpilot/install/productivity_extras.sh --data     # Data/ML tools
+~/devpilot/install/productivity_extras.sh --security # Security scanners
+~/devpilot/install/productivity_extras.sh --k8s      # Kubernetes tools
+```
+
+What each category includes:
+- **API**: OpenAPI Generator, GraphQL CLI, Postman CLI, Newman
+- **Data**: dbt, sqlfluff, pgcli, DVC, MLflow, Weights & Biases
+- **Security**: trivy, semgrep, gitleaks, hadolint
+- **K8s**: kind, kustomize, skaffold, helm, k9s
+- **Databases**: Prisma, Drizzle, migration tools
+- **Quality**: prettier, eslint, black, ruff, mypy
 </details>
 
 <details>
@@ -352,6 +389,82 @@ DevPilot organizes your projects intelligently:
 - `.claude/commands/` - Custom commands
 - `.mcp.json` - MCP server configuration
 </details>
+
+## 🐳 Dev Container Support
+
+DevPilot works seamlessly in containerized environments:
+
+### GitHub Codespaces
+```bash
+# In your Codespace terminal
+git clone https://github.com/VivekLmd/setup-scripts.git ~/devpilot
+cd ~/devpilot
+./setup_all.sh
+```
+
+### VS Code Dev Containers
+Add to `.devcontainer/devcontainer.json`:
+```json
+{
+  "postCreateCommand": "git clone https://github.com/VivekLmd/setup-scripts.git ~/devpilot && ~/devpilot/setup_all.sh",
+  "features": {
+    "ghcr.io/devcontainers/features/github-cli:1": {},
+    "ghcr.io/devcontainers/features/common-utils:2": {}
+  }
+}
+```
+
+### Docker
+```dockerfile
+FROM ubuntu:22.04
+RUN apt-get update && apt-get install -y git curl
+RUN git clone https://github.com/VivekLmd/setup-scripts.git /devpilot
+RUN cd /devpilot && ./setup_all.sh
+```
+
+## 🔧 Troubleshooting
+
+### Common Issues
+
+**"Command not found" after installation**
+```bash
+# Reload your shell configuration
+source ~/.bashrc  # or ~/.zshrc for Zsh
+```
+
+**"Permission denied" errors**
+```bash
+# Some tools need sudo for global installation
+sudo ~/devpilot/install/key_software_$(uname -s | tr '[:upper:]' '[:lower:]').sh
+```
+
+**Wizard can't find apply_profile.sh**
+```bash
+# Pull latest fixes
+cd ~/devpilot
+git pull origin main
+```
+
+**Dependencies not installing**
+```bash
+# Check your package manager is working
+which npm   # For Node projects
+which pip   # For Python projects
+
+# Install missing package managers
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash  # Node
+python3 -m ensurepip  # Python
+```
+
+**AI commands not working in Claude/Cursor**
+- Ensure `.claude/commands/` exists in your project
+- Check `.claude/settings.json` has proper permissions
+- Run `scripts/apply_profile.sh` to reapply configuration
+
+### Getting Help
+- Check existing issues: [GitHub Issues](https://github.com/VivekLmd/setup-scripts/issues)
+- Review the [validation script](validation/validate_agents.sh) output
+- Run diagnostics: `~/devpilot/scripts/diagnose.sh`
 
 ## 🤝 Contributing
 
