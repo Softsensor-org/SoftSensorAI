@@ -45,6 +45,7 @@ platforms.
 | Long PRs stall reviews              | AI PR reviewer (CLI-first, neutral if absent) | First pass in **~1-2 min**, humans focus on hard bits |
 | Security posture unclear            | Phase gates (gitleaks/semgrep/trivy)          | **Faster triage**, **fewer regressions** at Beta+     |
 | Knowledge is tribal                 | SOP commands with acceptance criteria         | **Better handoffs**, faster onboarding                |
+| Compliance needs evidence           | All outputs in `artifacts/`, prompt history   | **Full audit trail** for SOC2/ISO (see BENEFITS.md)   |
 
 ### What You Can Do Now (That You Couldn't Before)
 
