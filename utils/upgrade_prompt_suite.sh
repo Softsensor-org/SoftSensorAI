@@ -2,7 +2,6 @@
 # Upgrade: prompt scaffold + linter + /secure-fix + Makefile hooks + repo seeder refresh
 set -euo pipefail
 
-root="$(pwd)"
 [ -d .git ] || { echo "[err] Run from the repo root (must contain .git)"; exit 1; }
 
 backup() { [ -f "$1" ] && cp -a "$1" "$1.bak.$(date +%Y%m%d%H%M%S)"; }
