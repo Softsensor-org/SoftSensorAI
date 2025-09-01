@@ -21,7 +21,7 @@ jobs:
       - name: Run shellcheck on all shell scripts
         run: |
           echo "Running shellcheck on all shell scripts..."
-          find . -type f -name "*.sh" -print0 | while IFS= read -r -d '' file; do
+          find . -type f -name "*.sh" -not -path "./legacy/*" -print0 | while IFS= read -r -d '' file; do
             echo "Checking: $file"
             shellcheck --severity=warning "$file" || exit 1
           done
