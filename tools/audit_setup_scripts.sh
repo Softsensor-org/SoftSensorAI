@@ -59,13 +59,13 @@ else
 fi
 
 echo "== check required files exist =="
-req=( "setup_agents_global.sh" "setup_agents_repo.sh" "repo_setup_wizard.sh" )
+req=( "setup/agents_global.sh" "setup/agents_repo.sh" "setup/repo_wizard.sh" )
 missing=0; for f in "${req[@]}"; do [ -f "$f" ] || { echo "[missing] $f"; missing=1; }; done
 
 echo "== quick grep for strict mode and idempotency =="
 grep -RIn --color=never -E 'set -euo pipefail' "${SH[@]}" || echo "add 'set -euo pipefail' to all scripts"
 
-echo "== executable bits for top-level scripts =="
+echo "== executable bits for required scripts =="
 for f in "${req[@]}"; do
   [ -x "$f" ] || echo "[chmod] make executable: $f"
 done
