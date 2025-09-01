@@ -19,4 +19,3 @@ Long-Context Hygiene (also in CLAUDE.md)
 - Summarize before quoting; cite `file:line`
 - Cap quotes to what’s necessary
 - Refer to chunk IDs (like [A], [B]) and cite them in summaries
-

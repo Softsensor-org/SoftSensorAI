@@ -5,4 +5,3 @@ Describe task-specific context (ticket/spec/audit), constraints, and acceptance 
 - Ticket/context identifiers
 - Constraints and goals
 - Deliverables/acceptance checks
-

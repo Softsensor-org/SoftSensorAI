@@ -14,4 +14,3 @@ Now execute the Plan→Code→Test loop with minimal diffs. Show the unified dif
 Rules:
 - If EXTENDED_THINKING=off, skip <thinking> and proceed.
 - Never include secrets; remove any temp files you create.
-

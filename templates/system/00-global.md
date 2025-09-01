@@ -15,4 +15,3 @@
 
 ## Thinking
 - Use extended thinking only when needed; keep it concise and separable.
-

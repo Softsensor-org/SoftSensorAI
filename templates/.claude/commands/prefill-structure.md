@@ -8,4 +8,3 @@ Assistant (prefill this, then continue):
 <next></next>
 
 User: Continue and fill each block. Keep <thinking> ≤ 5 bullets.
-

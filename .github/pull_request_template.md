@@ -19,4 +19,3 @@ Describe the change and why it’s needed.
 ## Breaking Changes
 
 Any breaking behavior or required follow-ups.
-

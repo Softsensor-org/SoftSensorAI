@@ -17,4 +17,3 @@ Emit:
 - NAME: default + notes
 </variables>
 <why>1–3 bullets: what changed and why</why>
-

@@ -47,4 +47,3 @@ if [ -x "$BREW_BASH" ]; then
 fi
 
 echo "==> Done. Open a new terminal to reload PATH."
-

@@ -6,4 +6,3 @@ Include repo-specific rules (stack, scripts, conventions). Align with CLAUDE.md 
 - Lint/type/test commands
 - Commit/PR conventions and ticket linking
 - Any repo-specific safety constraints
-

@@ -15,4 +15,3 @@ Plan
 Output order
 <notes> ...multiple <note id="X">…</note> … </notes>
 <summary> …merged view… </summary>
-

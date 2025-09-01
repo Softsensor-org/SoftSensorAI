@@ -105,8 +105,8 @@ detect_environment() {
 }
 
 # Main detection
-languages=$(detect_languages)
-frameworks=$(detect_frameworks)
-environment=$(detect_environment)
+languages_str=$(detect_languages)
+frameworks_str=$(detect_frameworks)
+# environment=$(detect_environment)  # Not used currently
 
-echo "${languages}${frameworks}"
+echo "${languages_str}${frameworks_str}"

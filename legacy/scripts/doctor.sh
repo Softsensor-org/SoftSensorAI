@@ -52,4 +52,3 @@ echo " - For pnpm: 'corepack enable && corepack prepare pnpm@latest --activate'"
 echo " - After setting up a repo: 'scripts/apply_profile.sh --skill beginner --phase mvp'"
 
 exit 0
-
