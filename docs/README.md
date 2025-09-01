@@ -4,6 +4,9 @@ This directory contains comprehensive guides to help you install, configure, and
 
 ## 📖 Guide Overview
 
+### Platform Documentation
+- **[DevPilot.pdf](DevPilot.pdf)** - **COMPREHENSIVE OVERVIEW** - Complete platform strategy, architecture, and implementation guide
+
 ### Getting Started
 - **[ARCHITECTURE_OVERVIEW.md](ARCHITECTURE_OVERVIEW.md)** - **START HERE** - Complete architecture and CLI-first usage guide
 - **[quickstart.md](quickstart.md)** - One-command installation and first steps

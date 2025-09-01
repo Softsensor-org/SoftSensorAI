@@ -926,6 +926,7 @@ python3 -m ensurepip  # Python
 ## 📚 Essential Reading
 
 ### Getting Started
+- **[DevPilot Overview (PDF)](docs/DevPilot.pdf)** - Comprehensive platform overview and strategy
 - **[Day in the Life Guide](tutorials/day-in-the-life.md)** - See real before/after scenarios
 - **[Quick Start This Week](tutorials/quick-start-this-week.md)** - Start seeing value in 5 days
 - **[Benefits & ROI](docs/BENEFITS.md)** - Detailed metrics and cost savings
