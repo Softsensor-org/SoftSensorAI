@@ -647,6 +647,21 @@ You: /tickets-from-code
 Claude: [Analyzes code, generates prioritized tickets with estimates]
 ```
 
+**CLI Integration:**
+
+```bash
+# Use AI command files with CLI-first approach
+just tickets                          # Uses .claude/commands/tickets-from-code.md
+scripts/generate_tickets.sh --quick   # Direct CLI execution
+
+# Outputs (integration-ready):
+# tickets/tickets.json      - Raw AI output
+# tickets/backlog.csv       - Import to Jira/GitHub
+# tickets/backlog.md        - Human-readable
+# tickets/quick-wins.md     - Low effort, high impact
+# tickets/pr-plan.md        - Implementation roadmap
+```
+
 </details>
 
 <details>
@@ -855,9 +870,13 @@ scripts/graduate.sh advance     # Graduate to next level
 ~/devpilot/setup/repo_wizard.sh --dry-run  # Preview first
 ~/devpilot/setup/repo_wizard.sh            # Actual setup
 
-# Analyze codebase and generate tickets
-scripts/generate_tickets.sh --mode detailed --format markdown
-# Creates prioritized backlog of improvements
+# Generate tickets from codebase (CLI-first, JSON→CSV)
+scripts/generate_tickets.sh --quick
+# Output: tickets/tickets.json, tickets/backlog.csv, tickets/backlog.md
+
+# Or use justfile shortcut
+just tickets
+# Same output, uses system/active.md + command files
 
 # Detect your project's tech stack
 scripts/detect_stack.sh
