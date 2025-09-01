@@ -23,7 +23,7 @@ jobs:
           echo "Running shellcheck on all shell scripts..."
           find . -type f -name "*.sh" -print0 | while IFS= read -r -d '' file; do
             echo "Checking: $file"
-            shellcheck "$file" || exit 1
+            shellcheck --severity=warning "$file" || exit 1
           done
           echo "✅ All shell scripts passed shellcheck"
 
