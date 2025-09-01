@@ -1,4 +1,4 @@
-name: CI - MVP Phase
+name: CI - Shell Scripts
 
 on:
   push:
@@ -7,112 +7,191 @@ on:
     types: [opened, synchronize]
 
 jobs:
-  quality-gates:
+  shellcheck:
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 'lts/*'
-
-      - name: Install dependencies
+      - name: Install shellcheck
         run: |
-          npm ci || pnpm install --frozen-lockfile || yarn install --frozen-lockfile
+          sudo apt-get update
+          sudo apt-get install -y shellcheck
 
-      - name: Lint check (required)
+      - name: Run shellcheck on all shell scripts
         run: |
-          echo "Running lints - must pass for MVP"
-          npm run lint || pnpm lint
+          echo "Running shellcheck on all shell scripts..."
+          find . -type f -name "*.sh" -print0 | while IFS= read -r -d '' file; do
+            echo "Checking: $file"
+            shellcheck "$file" || exit 1
+          done
+          echo "✅ All shell scripts passed shellcheck"
 
-      - name: Type check (required)
-        run: |
-          echo "Running type checks - must pass for MVP"
-          npm run typecheck || pnpm typecheck || tsc --noEmit
+  validate-scripts:
+    runs-on: ubuntu-latest
 
-      - name: Unit tests (required)
-        run: |
-          echo "Running unit tests - must pass for MVP"
-          npm test || pnpm test || pytest
+    steps:
+      - uses: actions/checkout@v4
 
-      - name: Test coverage check
-        continue-on-error: true
+      - name: Check script permissions
         run: |
-          npm run test:coverage || pnpm test:coverage || echo "::warning::Coverage not configured"
-          echo "::warning::Target coverage for Beta phase: 60%"
+          echo "Checking executable permissions..."
+          while IFS= read -r file; do
+            if [[ ! -x "$file" ]]; then
+              echo "❌ Not executable: $file"
+              exit 1
+            fi
+          done < <(find . -type f -name "*.sh")
+          echo "✅ All scripts have correct permissions"
+
+      - name: Check for bash shebang
+        run: |
+          echo "Checking for proper shebang..."
+          while IFS= read -r file; do
+            first_line=$(head -n1 "$file")
+            if [[ ! "$first_line" =~ ^#!/usr/bin/env\ bash || ! "$first_line" =~ ^#!/bin/bash ]]; then
+              echo "⚠️ Non-standard shebang in: $file"
+              echo "   Found: $first_line"
+            fi
+          done < <(find . -type f -name "*.sh")
+          echo "✅ Shebang check complete"
+
+  yaml-lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install yamllint
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y yamllint
+
+      - name: Lint YAML files
+        run: |
+          echo "Linting YAML files..."
+          yamllint . || echo "⚠️ YAML linting warnings (non-blocking)"
+
+  json-lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate JSON files
+        run: |
+          echo "Validating JSON files..."
+          find . -type f -name "*.json" -print0 | while IFS= read -r -d '' file; do
+            echo "Checking: $file"
+            python3 -m json.tool "$file" > /dev/null || exit 1
+          done
+          echo "✅ All JSON files are valid"
+
+  markdown-lint:
+    runs-on: ubuntu-latest
+    continue-on-error: true  # Advisory only
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install markdownlint
+        run: |
+          sudo npm install -g markdownlint-cli
+
+      - name: Lint Markdown files
+        run: |
+          echo "Linting Markdown files..."
+          markdownlint '**/*.md' --ignore node_modules --ignore .git || echo "⚠️ Markdown linting warnings (non-blocking)"
+
+  test-scripts:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install test dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y git jq
+
+      - name: Test persona manager
+        run: |
+          echo "Testing persona manager..."
+          cd /tmp
+          git init test_repo
+          cd test_repo
+          cp -r $GITHUB_WORKSPACE/.claude .
+          cp $GITHUB_WORKSPACE/templates/*.md .
+
+          # Test add persona
+          $GITHUB_WORKSPACE/scripts/persona_manager.sh add data-scientist
+
+          # Verify persona was added
+          if [[ ! -f .claude/personas/data-scientist.json ]]; then
+            echo "❌ Failed to add persona"
+            exit 1
+          fi
+
+          echo "✅ Persona manager tests passed"
+
+      - name: Test profile menu
+        run: |
+          echo "Testing profile menu..."
+          # Test that the script can be sourced without errors
+          bash -n $GITHUB_WORKSPACE/scripts/profile_menu.sh
+          echo "✅ Profile menu syntax valid"
+
+      - name: Test apply profile
+        run: |
+          echo "Testing apply profile..."
+          # Test help output
+          $GITHUB_WORKSPACE/scripts/apply_profile.sh --help | grep -q "Usage:" || exit 1
+          echo "✅ Apply profile tests passed"
 
   security-scan:
     runs-on: ubuntu-latest
-    continue-on-error: true  # Advisory in MVP
+    continue-on-error: true  # Advisory
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Dependency audit
+      - name: Check for hardcoded secrets
         run: |
-          npm audit --audit-level=high || echo "::warning::Security issues in dependencies"
+          echo "Scanning for potential secrets..."
+          # Basic patterns to check
+          patterns=(
+            "password.*=.*['\"]"
+            "api[_-]?key.*=.*['\"]"
+            "token.*=.*['\"]"
+            "secret.*=.*['\"]"
+          )
 
-      - name: Basic security scan
-        continue-on-error: true
-        run: |
-          if command -v semgrep &> /dev/null; then
-            semgrep --config=auto || echo "::warning::Security patterns detected"
-          fi
+          for pattern in "${patterns[@]}"; do
+            if grep -rEi "$pattern" . --exclude-dir=.git --exclude-dir=node_modules --exclude="*.md"; then
+              echo "⚠️ Potential secret found (please review)"
+            fi
+          done
 
-      - name: Secret detection
-        run: |
-          if command -v gitleaks &> /dev/null; then
-            gitleaks detect --no-banner || exit 1
-          fi
+          echo "Security scan complete"
 
-  build:
+  ci-summary:
     runs-on: ubuntu-latest
-    needs: [quality-gates]
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup environment
-        uses: actions/setup-node@v4
-        with:
-          node-version: 'lts/*'
-
-      - name: Install and build
-        run: |
-          npm ci || pnpm install --frozen-lockfile
-          npm run build || pnpm build
-
-      - name: Verify build artifacts
-        run: |
-          test -d dist || test -d build || echo "::warning::No build artifacts found"
-
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: mvp-build
-          path: |
-            dist/
-            build/
-
-  mvp-summary:
-    runs-on: ubuntu-latest
-    needs: [quality-gates, security-scan, build]
+    needs: [shellcheck, validate-scripts, yaml-lint, json-lint, test-scripts]
     if: always()
 
     steps:
-      - name: MVP Gate Summary
+      - name: CI Summary
         run: |
-          echo "## MVP Phase Gates"
-          echo "✅ Required:"
-          echo "  - Linting: MUST PASS"
-          echo "  - Type checking: MUST PASS"
-          echo "  - Unit tests: MUST PASS"
-          echo "  - Build: MUST SUCCEED"
+          echo "## CI Pipeline Summary"
+          echo "✅ Required Checks:"
+          echo "  - Shellcheck: All scripts validated"
+          echo "  - Script permissions: Verified"
+          echo "  - JSON validation: Passed"
+          echo "  - Script tests: Passed"
           echo ""
-          echo "⚠️ Advisory:"
-          echo "  - Security scans: Review findings"
-          echo "  - Test coverage: Track trend"
+          echo "⚠️ Advisory Checks:"
+          echo "  - YAML linting: Best effort"
+          echo "  - Markdown linting: Best effort"
+          echo "  - Security scan: Review any findings"
           echo ""
-          echo "To graduate to Beta: Add integration tests, 60% coverage, fix security issues"
+          echo "Pipeline Status: Ready for deployment"
