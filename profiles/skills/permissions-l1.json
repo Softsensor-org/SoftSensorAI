@@ -36,10 +36,7 @@
       "Bash(aws s3 rm:*)",
       "Bash(az group delete:*)"
     ],
-    "deny": [
-      "Read(./secrets/**)",
-      "Bash(sudo rm -rf /*)"
-    ],
+    "deny": ["Read(./secrets/**)", "Bash(sudo rm -rf /*)"],
     "defaultMode": "acceptEdits"
   },
   "env": {
@@ -53,5 +50,6 @@
     "EXTENDED_THINKING": "off",
     "THINK_BUDGET_BULLETS": "5"
   },
-  "description": "Level 1 - Junior dev. Can run tests, lints, basic scans. MCP-first, parallel safe ops."
+  "description": "Level 1 - Junior dev. Can run tests, lints, basic scans. MCP-first, parallel safe ops.",
+  "teach_mode": true
 }

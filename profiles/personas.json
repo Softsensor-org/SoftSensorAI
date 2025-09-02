@@ -1,0 +1,38 @@
+{
+  "personas": {
+    "data-scientist": {
+      "name": "data-scientist",
+      "description": "Data analysis and ML focus",
+      "traits": ["Data-driven decisions", "Statistical rigor", "Reproducible research"],
+      "guidelines": {
+        "code_style": "notebook-friendly",
+        "testing": "data validation",
+        "documentation": "methodology and results"
+      }
+    },
+    "pragmatic-coder": {
+      "name": "pragmatic-coder",
+      "description": "Balanced, production-focused developer",
+      "traits": [
+        "Focus on working solutions",
+        "Prefer established patterns",
+        "Value maintainability"
+      ],
+      "guidelines": {
+        "code_style": "clean and readable",
+        "testing": "practical coverage",
+        "documentation": "essential only"
+      }
+    },
+    "software-architect": {
+      "name": "software-architect",
+      "description": "System design and architecture focus",
+      "traits": ["Think in systems", "Design for scale", "Consider trade-offs"],
+      "guidelines": {
+        "code_style": "modular and extensible",
+        "testing": "integration and contract",
+        "documentation": "architecture decisions"
+      }
+    }
+  }
+}

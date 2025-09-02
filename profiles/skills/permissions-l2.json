@@ -45,10 +45,7 @@
       "Bash(DROP DATABASE:*)",
       "Bash(TRUNCATE:*)"
     ],
-    "deny": [
-      "Read(./secrets/**)",
-      "Bash(sudo rm -rf /*)"
-    ],
+    "deny": ["Read(./secrets/**)", "Bash(sudo rm -rf /*)"],
     "defaultMode": "acceptEditsAndCommands"
   },
   "env": {
@@ -64,5 +61,6 @@
     "EXTENDED_THINKING": "on",
     "THINK_BUDGET_BULLETS": "5"
   },
-  "description": "Level 2 - Intermediate. Security tools, DB migrations, performance testing, light refactors."
+  "description": "Level 2 - Intermediate. Security tools, DB migrations, performance testing, light refactors.",
+  "teach_mode": false
 }

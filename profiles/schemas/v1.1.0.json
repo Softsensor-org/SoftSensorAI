@@ -1,0 +1,25 @@
+{
+  "version": "1.1.0",
+  "description": "Added teach_mode configuration",
+  "profile": {
+    "type": "object",
+    "properties": {
+      "skill": {
+        "type": "string",
+        "enum": ["l1", "l2", "l3"]
+      },
+      "phase": {
+        "type": "string",
+        "enum": ["poc", "mvp", "beta", "scale"]
+      },
+      "teach_mode": {
+        "type": "boolean",
+        "description": "Enable teaching explanations for learning"
+      },
+      "permissions": {
+        "type": "object"
+      }
+    },
+    "required": ["skill", "phase"]
+  }
+}

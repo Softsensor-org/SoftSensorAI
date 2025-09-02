@@ -389,6 +389,21 @@ palette QUERY="":
     ./bin/dp palette
   fi
 
+# Profile migration management
+migrate-status:
+  @echo "📊 Checking profile migration status..."
+  @./scripts/profile_migrate.sh status
+
+# Migrate profiles to latest version
+migrate-up VERSION="latest":
+  @echo "⬆️  Migrating profiles to {{VERSION}}..."
+  @./scripts/profile_migrate.sh up {{VERSION}}
+
+# Rollback profile migration
+migrate-down VERSION="previous":
+  @echo "⬇️  Rolling back profiles to {{VERSION}}..."
+  @./scripts/profile_migrate.sh down {{VERSION}}
+
 # Release readiness assessment
 release-ready PHASE="":
   #!/usr/bin/env bash

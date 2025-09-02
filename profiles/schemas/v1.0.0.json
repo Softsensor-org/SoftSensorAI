@@ -1,0 +1,21 @@
+{
+  "version": "1.0.0",
+  "description": "Initial DevPilot profile schema",
+  "profile": {
+    "type": "object",
+    "properties": {
+      "skill": {
+        "type": "string",
+        "enum": ["l1", "l2", "l3"]
+      },
+      "phase": {
+        "type": "string",
+        "enum": ["poc", "mvp", "beta", "scale"]
+      },
+      "permissions": {
+        "type": "object"
+      }
+    },
+    "required": ["skill", "phase"]
+  }
+}

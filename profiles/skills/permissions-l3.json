@@ -1,0 +1,9 @@
+{
+  "level": "l3",
+  "teach_mode": false,
+  "permissions": {
+    "file_write": true,
+    "shell_execute": true,
+    "system_modify": false
+  }
+}
