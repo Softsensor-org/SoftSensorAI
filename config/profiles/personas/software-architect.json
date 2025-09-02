@@ -16,10 +16,7 @@
       "Task",
       "TodoWrite"
     ],
-    "block": [
-      "Bash(rm -rf /)",
-      "Bash(:(){ :|:& };:)"
-    ]
+    "block": ["Bash(rm -rf /)", "Bash(:(){ :|:& };:)"]
   },
   "environment": {
     "EXPLAIN_ARCHITECTURE": "true",

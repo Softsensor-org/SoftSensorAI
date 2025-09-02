@@ -35,11 +35,7 @@
       "WebSearch",
       "WebFetch"
     ],
-    "block": [
-      "Bash(rm -rf /)",
-      "Bash(dd if=/dev/zero)",
-      "Bash(:(){ :|:& };:)"
-    ]
+    "block": ["Bash(rm -rf /)", "Bash(dd if=/dev/zero)", "Bash(:(){ :|:& };:)"]
   },
   "environment": {
     "EXPLAIN_GPU_OPS": "true",

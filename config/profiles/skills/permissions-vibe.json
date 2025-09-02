@@ -12,14 +12,7 @@
       "Bash(cat:*)",
       "Bash(ls:*)"
     ],
-    "ask": [
-      "Edit",
-      "Write",
-      "WebFetch",
-      "Bash(pnpm:*)",
-      "Bash(npm:*)",
-      "Bash(python:*)"
-    ],
+    "ask": ["Edit", "Write", "WebFetch", "Bash(pnpm:*)", "Bash(npm:*)", "Bash(python:*)"],
     "deny": [
       "Bash(docker:*)",
       "Bash(kubectl:*)",

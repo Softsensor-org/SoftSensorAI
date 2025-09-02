@@ -13,12 +13,14 @@ Before contributing, please review our comprehensive documentation:
 ## 🚀 Quick Start for Contributors
 
 1. **Fork and clone the repository**
+
    ```bash
    git clone https://github.com/your-username/DevPilot.git
    cd DevPilot
    ```
 
 2. **Set up DevPilot on itself** (dogfooding!)
+
    ```bash
    # Install DevPilot globally
    ./setup_all.sh
@@ -42,11 +44,13 @@ Before contributing, please review our comprehensive documentation:
 ### High-Impact Areas
 
 1. **New AI Assistant Integrations**
+
    - Add support for new CLI tools
    - Extend persona system
    - Improve command catalog
 
 2. **Platform Support**
+
    - Windows native support
    - Additional Linux distributions
    - Cloud IDE integrations
@@ -59,6 +63,7 @@ Before contributing, please review our comprehensive documentation:
 ### Current Priorities
 
 Check our [GitHub Issues](https://github.com/Softsensor-org/DevPilot/issues) for:
+
 - Issues labeled `good first issue` for newcomers
 - Issues labeled `help wanted` for experienced contributors
 - Issues labeled `enhancement` for new features
@@ -66,17 +71,20 @@ Check our [GitHub Issues](https://github.com/Softsensor-org/DevPilot/issues) for
 ## 📝 Development Workflow
 
 ### 1. Create a Feature Branch
+
 ```bash
 git checkout -b feature/your-feature-name
 ```
 
 ### 2. Make Your Changes
+
 - **Follow existing patterns**: Study similar files before making changes
 - **Maintain compatibility**: Ensure changes work across Linux/macOS/WSL
 - **Update documentation**: Add/update docs for user-facing changes
 - **Add tests**: Include validation for new functionality
 
 ### 3. Test Your Changes
+
 ```bash
 # Run validation suite
 ./validation/validate_agents.sh
@@ -89,6 +97,7 @@ shellcheck setup/*.sh scripts/*.sh
 ```
 
 ### 4. Use DevPilot for Development
+
 ```bash
 # Generate implementation plan
 claude --system-prompt system/active.md "/explore-plan-code-test implement [your feature]"
@@ -101,6 +110,7 @@ claude --system-prompt .claude/commands/patterns/test-comprehensive.md "create t
 ```
 
 ### 5. Submit Pull Request
+
 - Write clear commit messages following [Conventional Commits](https://www.conventionalcommits.org/)
 - Reference relevant issues
 - Include testing instructions
@@ -109,18 +119,21 @@ claude --system-prompt .claude/commands/patterns/test-comprehensive.md "create t
 ## 🔧 Code Standards
 
 ### Shell Scripts
+
 - Use `#!/usr/bin/env bash` shebang
 - Enable strict mode: `set -euo pipefail`
 - Use BSD-compatible commands (e.g., `sed -i''` not `sed -i`)
 - Follow existing error handling patterns
 
 ### Documentation
+
 - Use clear, actionable headings
 - Include working code examples
 - Provide both interactive and command-line usage
 - Link between related documentation
 
 ### Python Scripts
+
 - Follow PEP 8 style guidelines
 - Include type hints where helpful
 - Write docstrings for functions
@@ -129,6 +142,7 @@ claude --system-prompt .claude/commands/patterns/test-comprehensive.md "create t
 ## 🧪 Testing Guidelines
 
 ### Manual Testing Checklist
+
 - [ ] Works on Linux (Ubuntu/Debian)
 - [ ] Works on macOS (Intel and Apple Silicon)
 - [ ] Works in WSL2
@@ -137,6 +151,7 @@ claude --system-prompt .claude/commands/patterns/test-comprehensive.md "create t
 - [ ] Follows existing UX patterns
 
 ### Automated Testing
+
 - Add validation scripts to `validation/`
 - Include example usage in documentation
 - Test error conditions and edge cases
@@ -155,6 +170,7 @@ test: add validation for GPU detection
 ```
 
 ### Types
+
 - `feat`: New features
 - `fix`: Bug fixes
 - `docs`: Documentation changes
@@ -166,6 +182,7 @@ test: add validation for GPU detection
 ## 🏷️ Pull Request Labels
 
 We use these labels to categorize PRs:
+
 - `enhancement`: New features
 - `bug`: Bug fixes
 - `documentation`: Documentation improvements
@@ -198,11 +215,13 @@ We use these labels to categorize PRs:
 
 ## 📜 License
 
-By contributing to DevPilot, you agree that your contributions will be licensed under the same license as the project.
+By contributing to DevPilot, you agree that your contributions will be licensed under the same
+license as the project.
 
 ## 🙏 Recognition
 
-Contributors are recognized in our README and release notes. Thank you for helping make DevPilot better for everyone!
+Contributors are recognized in our README and release notes. Thank you for helping make DevPilot
+better for everyone!
 
 ---
 

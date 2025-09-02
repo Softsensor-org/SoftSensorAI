@@ -26,9 +26,7 @@
       "Bash(DROP DATABASE:*)",
       "Bash(rm -rf /:*)"
     ],
-    "deny": [
-      "Read(./secrets/**)"
-    ],
+    "deny": ["Read(./secrets/**)"],
     "defaultMode": "fullAuto"
   },
   "env": {

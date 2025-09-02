@@ -2,14 +2,14 @@ name: CI - POC Phase
 
 on:
   push:
-    branches: [main, develop, 'feature/*', 'poc/*']
+    branches: [main, develop, "feature/*", "poc/*"]
   pull_request:
     types: [opened, synchronize]
 
 jobs:
   lint-and-test:
     runs-on: ubuntu-latest
-    continue-on-error: true  # POC allows failures as warnings
+    continue-on-error: true # POC allows failures as warnings
 
     steps:
       - uses: actions/checkout@v4
@@ -17,7 +17,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 'lts/*'
+          node-version: "lts/*"
 
       - name: Install dependencies
         run: |

@@ -30,12 +30,7 @@
       "Bash(aws:*)",
       "Bash(az:*)"
     ],
-    "deny": [
-      "Read(./.env)",
-      "Read(./.env.*)",
-      "Read(./secrets/**)",
-      "Bash(sudo:*)"
-    ],
+    "deny": ["Read(./.env)", "Read(./.env.*)", "Read(./secrets/**)", "Bash(sudo:*)"],
     "defaultMode": "acceptEdits"
   },
   "env": {

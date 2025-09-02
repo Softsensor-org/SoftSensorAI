@@ -37,3 +37,24 @@ build/
 *.baksetup_agents_repo.sh.bak.*
 PROFILE.md
 .claude/settings.json.backup
+
+# Reorganized structure
+/var/tmp/*
+/var/cache/*
+/var/logs/*
+!/var/tmp/.gitkeep
+!/var/cache/.gitkeep
+!/var/logs/.gitkeep
+
+# Workspace
+/workspace/devpilot/*
+/workspace/examples/output/*
+
+# Old compatibility symlinks
+/CHANGELOG.md
+/CONTRIBUTING.md
+/CODE_OF_CONDUCT.md
+/SECURITY.md
+/package.json
+/package-lock.json
+/requirements.txt

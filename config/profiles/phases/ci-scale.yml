@@ -6,7 +6,7 @@ on:
   pull_request:
     types: [opened, synchronize]
   schedule:
-    - cron: '0 0 * * 0'  # Weekly deep scan
+    - cron: "0 0 * * 0" # Weekly deep scan
 
 jobs:
   quality-gates:
@@ -18,7 +18,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 'lts/*'
+          node-version: "lts/*"
 
       - name: Dependency cache
         uses: actions/cache@v3
