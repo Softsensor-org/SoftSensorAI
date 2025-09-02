@@ -25,24 +25,35 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Setup repository structure
+        run: |
+          # Ensure symlinks exist for moved config files
+          [ ! -f package.json ] && [ -f config/package.json ] && ln -sf config/package.json package.json
+          [ ! -f package-lock.json ] && [ -f config/package-lock.json ] && ln -sf config/package-lock.json package-lock.json
+          [ ! -f requirements.txt ] && [ -f config/requirements.txt ] && ln -sf config/requirements.txt requirements.txt
+
       - name: Detect package manager
         id: detect-pm
         run: |
-          if [ -f pnpm-lock.yaml ]; then
+          # Check for package files in both root and config directory
+          if [ -f pnpm-lock.yaml ] || [ -f config/pnpm-lock.yaml ]; then
             echo "manager=pnpm" >> $GITHUB_OUTPUT
             echo "command=pnpm" >> $GITHUB_OUTPUT
             echo "lockfile=pnpm-lock.yaml" >> $GITHUB_OUTPUT
             echo "cache-path=~/.pnpm-store" >> $GITHUB_OUTPUT
-          elif [ -f yarn.lock ]; then
+          elif [ -f yarn.lock ] || [ -f config/yarn.lock ]; then
             echo "manager=yarn" >> $GITHUB_OUTPUT
             echo "command=yarn" >> $GITHUB_OUTPUT
             echo "lockfile=yarn.lock" >> $GITHUB_OUTPUT
             echo "cache-path=.yarn/cache" >> $GITHUB_OUTPUT
-          elif [ -f package-lock.json ]; then
+          elif [ -f package-lock.json ] || [ -f config/package-lock.json ]; then
             echo "manager=npm" >> $GITHUB_OUTPUT
             echo "command=npm" >> $GITHUB_OUTPUT
-            echo "lockfile=package-lock.json" >> $GITHUB_OUTPUT
+            echo "lockfile=config/package-lock.json" >> $GITHUB_OUTPUT
             echo "cache-path=~/.npm" >> $GITHUB_OUTPUT
+            # Create symlink if needed
+            [ ! -f package-lock.json ] && [ -f config/package-lock.json ] && ln -sf config/package-lock.json package-lock.json
+            [ ! -f package.json ] && [ -f config/package.json ] && ln -sf config/package.json package.json
           else
             echo "manager=npm" >> $GITHUB_OUTPUT
             echo "command=npm" >> $GITHUB_OUTPUT
@@ -141,6 +152,12 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Setup repository structure
+        run: |
+          # Ensure symlinks exist for moved config files
+          [ ! -f package.json ] && [ -f config/package.json ] && ln -sf config/package.json package.json
+          [ ! -f package-lock.json ] && [ -f config/package-lock.json ] && ln -sf config/package-lock.json package-lock.json
 
       - name: Setup environment
         uses: actions/setup-node@v4
