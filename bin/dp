@@ -434,6 +434,116 @@ cmd_doctor() {
   fi
 }
 
+cmd_profile() {
+  # Change skill level and project phase
+  if [[ -x "$ROOT/scripts/apply_profile.sh" ]]; then
+    "$ROOT/scripts/apply_profile.sh" "$@"
+  else
+    say "Error: apply_profile.sh not found"
+    exit 1
+  fi
+}
+
+cmd_persona() {
+  # Manage AI personas
+  if [[ -x "$ROOT/scripts/persona_manager.sh" ]]; then
+    "$ROOT/scripts/persona_manager.sh" "$@"
+  else
+    say "Error: persona_manager.sh not found"
+    exit 1
+  fi
+}
+
+cmd_score() {
+  # DevPilot Readiness Score (DPRS)
+  if [[ -x "$ROOT/scripts/dprs.sh" ]]; then
+    "$ROOT/scripts/dprs.sh" "$@"
+  else
+    say "Error: dprs.sh not found"
+    exit 1
+  fi
+}
+
+cmd_detect() {
+  # Detect technology stack
+  if [[ -x "$ROOT/scripts/detect_stack.sh" ]]; then
+    "$ROOT/scripts/detect_stack.sh" "$@"
+  else
+    say "Error: detect_stack.sh not found"
+    exit 1
+  fi
+}
+
+cmd_plan() {
+  # Preview setup changes (dry run)
+  if [[ -x "$ROOT/scripts/repo_plan.sh" ]]; then
+    "$ROOT/scripts/repo_plan.sh" "$@"
+  else
+    say "Error: repo_plan.sh not found"
+    exit 1
+  fi
+}
+
+cmd_ai() {
+  # Unified AI CLI interface
+  if [[ -x "$ROOT/tools/ai_shim.sh" ]]; then
+    "$ROOT/tools/ai_shim.sh" "$@"
+  else
+    say "Error: ai_shim.sh not found"
+    exit 1
+  fi
+}
+
+cmd_sandbox() {
+  # Sandboxed code execution
+  if [[ -x "$ROOT/scripts/codex_sandbox.sh" ]]; then
+    "$ROOT/scripts/codex_sandbox.sh" "$@"
+  else
+    say "Error: codex_sandbox.sh not found"
+    exit 1
+  fi
+}
+
+cmd_chain() {
+  # Execute multi-step command chains
+  if [[ -x "$ROOT/scripts/chain_runner.sh" ]]; then
+    "$ROOT/scripts/chain_runner.sh" "$@"
+  else
+    say "Error: chain_runner.sh not found"
+    exit 1
+  fi
+}
+
+cmd_patterns() {
+  # Browse and apply design patterns
+  if [[ -x "$ROOT/scripts/pattern_selector.sh" ]]; then
+    "$ROOT/scripts/pattern_selector.sh" "$@"
+  else
+    say "Error: pattern_selector.sh not found"
+    exit 1
+  fi
+}
+
+cmd_worktree() {
+  # Git worktree management
+  if [[ -x "$ROOT/tools/worktree_helper.sh" ]]; then
+    "$ROOT/tools/worktree_helper.sh" "$@"
+  else
+    say "Error: worktree_helper.sh not found"
+    exit 1
+  fi
+}
+
+cmd_release_check() {
+  # Release readiness assessment
+  if [[ -x "$ROOT/scripts/release_ready.sh" ]]; then
+    "$ROOT/scripts/release_ready.sh" "$@"
+  else
+    say "Error: release_ready.sh not found"
+    exit 1
+  fi
+}
+
 case "${1:-}" in
   setup)  shift; cmd_setup "$@";;
   doctor) shift; cmd_doctor "$@";;
@@ -442,6 +552,17 @@ case "${1:-}" in
   review) shift; cmd_review "$@";;
   project)shift; cmd_project "$@";;
   palette)shift; cmd_palette "$@";;
+  profile)shift; cmd_profile "$@";;
+  persona)shift; cmd_persona "$@";;
+  score)  shift; cmd_score "$@";;
+  detect) shift; cmd_detect "$@";;
+  plan)   shift; cmd_plan "$@";;
+  ai)     shift; cmd_ai "$@";;
+  sandbox)shift; cmd_sandbox "$@";;
+  chain)  shift; cmd_chain "$@";;
+  patterns)shift; cmd_patterns "$@";;
+  worktree)shift; cmd_worktree "$@";;
+  release-check)shift; cmd_release_check "$@";;
   -h|--help|"")
     cat <<'HELP'
 DevPilot - Unified AI Development Interface
@@ -451,12 +572,27 @@ Setup & Configuration:
   dp doctor            # System health check and diagnostics
   dp init              # Initialize project after setup
   dp project           # Create/show devpilot.project.yml
+  dp profile           # Change skill level and project phase
+  dp persona           # Manage AI personas (add/remove/show)
+
+Analysis & Planning:
+  dp score             # DevPilot Readiness Score (DPRS)
+  dp detect            # Detect technology stack
+  dp plan              # Preview setup changes (dry run)
+  dp tickets           # Generate structured backlog from code
 
 Development Workflow:
-  dp palette [query]   # Interactive command browser (requires fzf)
-  dp tickets           # Generate structured backlog from code
   dp review            # AI review of your changes
   dp review --preview  # Review with preview environment context
+  dp ai                # Unified AI CLI interface
+  dp sandbox           # Sandboxed code execution
+  dp chain             # Execute multi-step command chains
+  dp patterns          # Browse and apply design patterns
+
+Utilities:
+  dp palette [query]   # Interactive command browser (requires fzf)
+  dp worktree          # Git worktree management
+  dp release-check     # Release readiness assessment
 
 Examples:
   dp setup                                    # Setup current directory

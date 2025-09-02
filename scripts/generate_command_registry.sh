@@ -29,8 +29,27 @@ add_command() {
   local category="$3"
   local source="$4"
 
-  # Markdown output
-  echo "| \`$command\` | $description | $category | $source |" >> "$OUTPUT"
+  # Generate documentation link
+  local doc_link=""
+  if [[ "$command" =~ ^dp[[:space:]] ]]; then
+    # dp commands
+    local cmd_name="${command#dp }"
+    cmd_name="${cmd_name%% *}"  # Remove options
+    doc_link="[📖](docs/commands/dp/${cmd_name}.md)"
+  elif [[ "$command" =~ ^./scripts/ ]]; then
+    # Script commands
+    local script_name="${command#./scripts/}"
+    script_name="${script_name%.sh}"
+    doc_link="[📖](docs/commands/scripts/${script_name}.md)"
+  elif [[ "$command" =~ ^./tools/ ]]; then
+    # Tool commands
+    local tool_name="${command#./tools/}"
+    tool_name="${tool_name%.sh}"
+    doc_link="[📖](docs/commands/tools/${tool_name}.md)"
+  fi
+
+  # Markdown output with link
+  echo "| \`$command\` | $description | $category | $source | $doc_link |" >> "$OUTPUT"
 
   # JSON output
   add_json_separator
@@ -38,27 +57,27 @@ add_command() {
     "$command" "$description" "$category" "$source" >> "$JSON_OUTPUT"
 }
 
-# Process shell scripts in a directory
+# Process shell scripts in a directory (commented out - internal use only)
+# Scripts are now internal implementation details
+# Users should use dp commands instead
 process_directory() {
-  local dir="$1"
-  local category="$2"
-  local header="$3"
+  # Skip processing - scripts are internal
+  return 0
 
-  if [[ ! -d "$dir" ]]; then
-    return 0
-  fi
-
-  echo "" >> "$OUTPUT"
-  echo "## $header" >> "$OUTPUT"
-  echo "" >> "$OUTPUT"
-
-  for script in "$dir"/*.sh; do
-    [[ -f "$script" ]] || continue
-    local basename="${script##*/}"
-    local name="${basename%.sh}"
-    local desc=$(extract_description "$script" "$name")
-    add_command "./$dir/$basename" "$desc" "$category" "$dir"
-  done
+  # Original code kept for reference:
+  # local dir="$1"
+  # local category="$2"
+  # local header="$3"
+  # if [[ ! -d "$dir" ]]; then
+  #   return 0
+  # fi
+  # for script in "$dir"/*.sh; do
+  #   [[ -f "$script" ]] || continue
+  #   local basename="${script##*/}"
+  #   local name="${basename%.sh}"
+  #   local desc=$(extract_description "$script" "$name")
+  #   add_command "./$dir/$basename" "$desc" "$category" "$dir"
+  # done
 }
 
 # Parse Justfile targets
@@ -99,12 +118,26 @@ parse_dp_commands() {
   echo "" >> "$OUTPUT"
 
   local -a dp_commands=(
-    "init:Initialize project with doctor, profile, and system build:setup"
-    "tickets:Generate structured backlog (JSON/CSV):planning"
-    "review:AI review of local diff:review"
+    "setup:Add DevPilot to any project (smart detection):setup"
+    "init:Initialize project (doctor + profile + build):setup"
+    "doctor:Comprehensive system health check:diagnostics"
+    "project:View/modify project configuration:config"
+    "profile:Change skill level and project phase:config"
+    "persona:Manage AI personas for specialized help:config"
+    "review:AI review of local changes before commit:review"
     "review --preview:AI review with preview logs:review"
-    "project:Create/show project profile:config"
-    "palette:Open command palette:meta"
+    "tickets:Generate backlog from codebase (JSON/CSV):planning"
+    "score:DevPilot Readiness Score (DPRS):diagnostics"
+    "detect:Detect technology stack in repository:analysis"
+    "plan:Preview what setup would create (dry run):planning"
+    "palette:Interactive command browser (fzf):meta"
+    "ai:Unified AI CLI interface:ai"
+    "sandbox:Sandboxed code execution environment:ai"
+    "chain:Execute multi-step command chains:automation"
+    "patterns:Browse and apply design patterns:development"
+    "worktree:Manage git worktrees for parallel work:git"
+    "release-check:Assess release readiness:deployment"
+    "help:Show help and documentation:meta"
   )
 
   for cmd_spec in "${dp_commands[@]}"; do
@@ -119,10 +152,12 @@ cat > "$OUTPUT" <<'EOF'
 
 Quick reference for all available commands. Use `dp palette` or `just palette` to search interactively.
 
+📚 **[Full Command Documentation](docs/commands/README.md)** - Detailed guides with examples for every command
+
 ## Commands
 
-| Command | Description | Category | Source |
-|---------|-------------|----------|--------|
+| Command | Description | Category | Source | Doc |
+|---------|-------------|----------|--------|-----|
 EOF
 
 echo '{"commands": [' > "$JSON_OUTPUT"
@@ -142,14 +177,18 @@ cat >> "$OUTPUT" <<'EOF'
 
 ## Categories
 
-- **build**: Build, test, and development commands
 - **setup**: Project initialization and configuration
-- **planning**: Ticket generation and project planning
+- **config**: Profile, persona, and project settings
+- **diagnostics**: Health checks and scoring
 - **review**: Code review and analysis
-- **config**: Configuration management
-- **script**: Utility scripts
-- **tool**: Development tools
-- **meta**: Meta commands and navigation
+- **planning**: Tickets, backlogs, and planning
+- **analysis**: Stack detection and code analysis
+- **ai**: AI assistants and sandboxing
+- **automation**: Chains and workflow automation
+- **development**: Patterns and development tools
+- **git**: Version control utilities
+- **deployment**: Release and production readiness
+- **meta**: Help and command discovery
 
 ## Quick Access
 

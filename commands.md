@@ -3,68 +3,51 @@
 Quick reference for all available commands. Use `dp palette` or `just palette` to search
 interactively.
 
+📚 **[Full Command Documentation](docs/commands/README.md)** - Detailed guides with examples for
+every command
+
 ## Commands
 
-| Command | Description | Category | Source |
-| ------- | ----------- | -------- | ------ |
+| Command | Description | Category | Source | Doc |
+| ------- | ----------- | -------- | ------ | --- |
 
-| `dp init` | Initialize project with doctor, profile, and system build | setup | dp | |
-`dp tickets` | Generate structured backlog (JSON/CSV) | planning | dp | | `dp review` | AI review of
-local diff | review | dp | | `dp review --preview` | AI review with preview logs | review | dp | |
-`dp project` | Create/show project profile | config | dp | | `dp palette` | Open command palette |
-meta | dp |
-
-## Scripts
-
-| `./scripts/apply_persona.sh` | Apply persona-specific configurations | script | scripts | |
-`./scripts/apply_profile.sh` | Apply skill level and project phase profiles to configure the
-repository | script | scripts | | `./scripts/chain_runner.sh` | Chain Runner - Execute multi-step
-chains with proper handoffs | script | scripts | | `./scripts/check_documentation.sh` |
-Documentation Requirements Checker | script | scripts | | `./scripts/codex_sandbox.sh` | Sandboxed
-Codex execution for Linux/WSL - keeps runs contained to repo | script | scripts | |
-`./scripts/detect_stack.sh` | Detect technology stack from repository files | script | scripts | |
-`./scripts/doctor.sh` | Track missing tools for actionable output | script | scripts | |
-`./scripts/dprs.sh` | DevPilot Readiness Score (DPRS) - Measure repository maturity | script |
-scripts | | `./scripts/generate_command_registry.sh` | Generate Command Registry from Justfile and
-scripts | script | scripts | | `./scripts/generate_tickets.sh` | Generate tickets from codebase
-analysis | script | scripts | | `./scripts/graduate.sh` | Track and manage graduation criteria for
-skill levels and project phases | script | scripts | | `./scripts/manage_repo_access.sh` | Manage
-repository access for Softsensor org members | script | scripts | | `./scripts/pattern_selector.sh`
-| Pattern Selector - Quick access to design patterns | script | scripts | |
-`./scripts/persona_manager.sh` | Multi-persona manager - allows combining multiple personas per
-repository | script | scripts | | `./scripts/profile_menu.sh` | Interactive profile configuration
-menu | script | scripts | | `./scripts/profile_migrate.sh` | Profile migration system - handles
-versioning and migrations for profiles | script | scripts | | `./scripts/profile_show.sh` | Display
-current profile status and progress toward graduation | script | scripts | |
-`./scripts/release_ready.sh` | Release readiness assessment - aggregates critical metrics for
-go/no-go decision | script | scripts | | `./scripts/reorganize_repo.sh` | Repository Reorganization
-Script | script | scripts | | `./scripts/repo_plan.sh` | Standalone repository setup planner - shows
-what would be created without making changes | script | scripts | |
-`./scripts/setup_ai_frameworks.sh` | Install AI development frameworks and libraries | script |
-scripts | | `./scripts/toggle_doc_check.sh` | Toggle documentation check pre-commit hook | script |
-scripts |
-
-## Tools
-
-| `./tools/ai_shim.sh` | Portable AI CLI shim: runs Claude/Codex/Gemini/Grok via installed CLIs. |
-tool | tools | | `./tools/audit_setup_scripts.sh` | Lints shell scripts, validates JSON/YAML, checks
-shebangs/CRLF/exec bits, and basic idempotency hints. | tool | tools | |
-`./tools/config_validate.sh` | Repo-root relative checks | tool | tools | | `./tools/diff_risk.sh` |
-Risk-aware diff analyzer - tags PRs with risk categories for smarter AI review | tool | tools | |
-`./tools/preview_logs.sh` | Extract and format preview logs for AI review context | tool | tools | |
-`./tools/prompt_lint.sh` | Lint a prompt file for required sections | tool | tools | |
-`./tools/worktree_helper.sh` | Git worktree helper for parallel Claude sessions | tool | tools |
+| `dp setup` | Add DevPilot to any project (smart detection) | setup | dp |
+[📖](docs/commands/dp/setup.md) | | `dp init` | Initialize project (doctor + profile + build) |
+setup | dp | [📖](docs/commands/dp/init.md) | | `dp doctor` | Comprehensive system health check |
+diagnostics | dp | [📖](docs/commands/dp/doctor.md) | | `dp project` | View/modify project
+configuration | config | dp | [📖](docs/commands/dp/project.md) | | `dp profile` | Change skill
+level and project phase | config | dp | [📖](docs/commands/dp/profile.md) | | `dp persona` | Manage
+AI personas for specialized help | config | dp | [📖](docs/commands/dp/persona.md) | | `dp review` |
+AI review of local changes before commit | review | dp | [📖](docs/commands/dp/review.md) | |
+`dp review --preview` | AI review with preview logs | review | dp | [📖](docs/commands/dp/review.md)
+| | `dp tickets` | Generate backlog from codebase (JSON/CSV) | planning | dp |
+[📖](docs/commands/dp/tickets.md) | | `dp score` | DevPilot Readiness Score (DPRS) | diagnostics |
+dp | [📖](docs/commands/dp/score.md) | | `dp detect` | Detect technology stack in repository |
+analysis | dp | [📖](docs/commands/dp/detect.md) | | `dp plan` | Preview what setup would create
+(dry run) | planning | dp | [📖](docs/commands/dp/plan.md) | | `dp palette` | Interactive command
+browser (fzf) | meta | dp | [📖](docs/commands/dp/palette.md) | | `dp ai` | Unified AI CLI interface
+| ai | dp | [📖](docs/commands/dp/ai.md) | | `dp sandbox` | Sandboxed code execution environment |
+ai | dp | [📖](docs/commands/dp/sandbox.md) | | `dp chain` | Execute multi-step command chains |
+automation | dp | [📖](docs/commands/dp/chain.md) | | `dp patterns` | Browse and apply design
+patterns | development | dp | [📖](docs/commands/dp/patterns.md) | | `dp worktree` | Manage git
+worktrees for parallel work | git | dp | [📖](docs/commands/dp/worktree.md) | | `dp release-check` |
+Assess release readiness | deployment | dp | [📖](docs/commands/dp/release-check.md) | | `dp help` |
+Show help and documentation | meta | dp | [📖](docs/commands/dp/help.md) |
 
 ## Categories
 
-- **build**: Build, test, and development commands
 - **setup**: Project initialization and configuration
-- **planning**: Ticket generation and project planning
+- **config**: Profile, persona, and project settings
+- **diagnostics**: Health checks and scoring
 - **review**: Code review and analysis
-- **config**: Configuration management
-- **script**: Utility scripts
-- **tool**: Development tools
-- **meta**: Meta commands and navigation
+- **planning**: Tickets, backlogs, and planning
+- **analysis**: Stack detection and code analysis
+- **ai**: AI assistants and sandboxing
+- **automation**: Chains and workflow automation
+- **development**: Patterns and development tools
+- **git**: Version control utilities
+- **deployment**: Release and production readiness
+- **meta**: Help and command discovery
 
 ## Quick Access
 

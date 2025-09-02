@@ -11,42 +11,46 @@ DevPilot provides two main paths for setting up AI-assisted development in your 
 
 ```mermaid
 graph TD
-    Start([Start DevPilot Setup]) --> Choice{New or Existing Repo?}
+    Start([Start DevPilot Setup]) --> DpSetup[dp setup]
 
-    %% New Repository Path
-    Choice -->|New Repository| NewRepo[Run repo_wizard.sh]
-    NewRepo --> Input[Gather User Input]
-    Input --> Plan[Show Setup Plan]
-    Plan --> Confirm{User Confirms?}
-    Confirm -->|No| End([Cancel Setup])
-    Confirm -->|Yes| Clone[1. Clone Repository]
-    Clone --> Enter[2. Enter Repository]
-    Enter --> Create[3. Create DevPilot Files]
+    %% Smart Detection
+    DpSetup --> Detect{Smart Detection}
 
-    %% Existing Repository Path
-    Choice -->|Existing Repository| ExistingRepo[Run existing_repo_setup.sh]
-    ExistingRepo --> Check[Check Current Directory]
-    Check --> IsGit{Is Git Repo?}
-    IsGit -->|No| Error([Error: Not a Git Repo])
-    IsGit -->|Yes| Detect[Detect Project Type]
-    Detect --> Merge[Check for Conflicts]
+    %% Three Paths
+    Detect -->|URL Provided| Clone[Clone Repository]
+    Detect -->|In Git Repo| CheckFiles[Check Existing Files]
+    Detect -->|Empty Directory| Interactive[Interactive Mode]
 
-    %% File Creation Process
-    Create --> Files[Create Files:<br/>• CLAUDE.md<br/>• .claude/settings.json<br/>• .mcp.json<br/>• .claude/commands/*<br/>• AGENTS.md]
+    %% Clone Path
+    Clone --> Enter[Enter Repository]
+    Enter --> CreateFiles
 
-    %% Merge Strategy
-    Merge --> Conflict{File Exists?}
-    Conflict -->|No| Files
+    %% Existing Repo Path
+    CheckFiles --> Conflict{Files Exist?}
+    Conflict -->|No| CreateFiles
     Conflict -->|Yes| Strategy[Apply Merge Strategy:<br/>• Skip<br/>• Overwrite<br/>• Backup<br/>• Merge<br/>• Diff]
-    Strategy --> Files
+    Strategy --> CreateFiles
 
-    %% Final Steps
-    Files --> Optional[4. Optional Setup:<br/>• Commit hooks<br/>• Helper scripts<br/>• Codex integration]
-    Optional --> Success([✅ Setup Complete])
+    %% Interactive Path
+    Interactive --> Choice{User Choice}
+    Choice -->|Initialize Here| InitGit[git init]
+    Choice -->|Clone URL| InputURL[Enter URL]
+    Choice -->|Cancel| End([Cancel Setup])
+    InitGit --> CreateFiles
+    InputURL --> Clone
+
+    %% File Creation
+    CreateFiles[Create Files:<br/>• CLAUDE.md<br/>• .claude/settings.json<br/>• .mcp.json<br/>• .claude/commands/*<br/>• AGENTS.md]
+
+    %% Initialize
+    CreateFiles --> DpInit[dp init]
+    DpInit --> Steps[Run 3 Steps:<br/>1. dp doctor<br/>2. Apply profile<br/>3. Build project]
+    Steps --> Success([✅ Setup Complete])
 
     style Start fill:#e1f5e1
+    style DpSetup fill:#d4edda
+    style DpInit fill:#d4edda
     style Success fill:#c8e6c9
-    style Error fill:#ffcdd2
     style End fill:#ffe0b2
 ```
 
@@ -55,8 +59,8 @@ graph TD
 ### Path 1: New Repository Setup
 
 ```bash
-# Run the setup wizard
-./setup/repo_wizard.sh
+# Setup with URL
+dp setup https://github.com/user/repo
 ```
 
 #### Step-by-Step Process:
@@ -102,8 +106,8 @@ graph TD
 # Navigate to your repo first
 cd /path/to/your/repo
 
-# Run the existing repo setup
-./path/to/setup-scripts/setup/existing_repo_setup.sh
+# Run setup - automatically detects existing repo
+dp setup
 ```
 
 #### Step-by-Step Process:

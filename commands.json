@@ -1,20 +1,44 @@
 {
   "commands": [
     {
-      "command": "dp init",
-      "description": "Initialize project with doctor, profile, and system build",
+      "command": "dp setup",
+      "description": "Add DevPilot to any project (smart detection)",
       "category": "setup",
       "source": "dp"
     },
     {
-      "command": "dp tickets",
-      "description": "Generate structured backlog (JSON/CSV)",
-      "category": "planning",
+      "command": "dp init",
+      "description": "Initialize project (doctor + profile + build)",
+      "category": "setup",
+      "source": "dp"
+    },
+    {
+      "command": "dp doctor",
+      "description": "Comprehensive system health check",
+      "category": "diagnostics",
+      "source": "dp"
+    },
+    {
+      "command": "dp project",
+      "description": "View/modify project configuration",
+      "category": "config",
+      "source": "dp"
+    },
+    {
+      "command": "dp profile",
+      "description": "Change skill level and project phase",
+      "category": "config",
+      "source": "dp"
+    },
+    {
+      "command": "dp persona",
+      "description": "Manage AI personas for specialized help",
+      "category": "config",
       "source": "dp"
     },
     {
       "command": "dp review",
-      "description": "AI review of local diff",
+      "description": "AI review of local changes before commit",
       "category": "review",
       "source": "dp"
     },
@@ -25,190 +49,76 @@
       "source": "dp"
     },
     {
-      "command": "dp project",
-      "description": "Create/show project profile",
-      "category": "config",
+      "command": "dp tickets",
+      "description": "Generate backlog from codebase (JSON/CSV)",
+      "category": "planning",
+      "source": "dp"
+    },
+    {
+      "command": "dp score",
+      "description": "DevPilot Readiness Score (DPRS)",
+      "category": "diagnostics",
+      "source": "dp"
+    },
+    {
+      "command": "dp detect",
+      "description": "Detect technology stack in repository",
+      "category": "analysis",
+      "source": "dp"
+    },
+    {
+      "command": "dp plan",
+      "description": "Preview what setup would create (dry run)",
+      "category": "planning",
       "source": "dp"
     },
     {
       "command": "dp palette",
-      "description": "Open command palette",
+      "description": "Interactive command browser (fzf)",
       "category": "meta",
       "source": "dp"
     },
     {
-      "command": "./scripts/apply_persona.sh",
-      "description": "Apply persona-specific configurations",
-      "category": "script",
-      "source": "scripts"
+      "command": "dp ai",
+      "description": "Unified AI CLI interface",
+      "category": "ai",
+      "source": "dp"
     },
     {
-      "command": "./scripts/apply_profile.sh",
-      "description": "Apply skill level and project phase profiles to configure the repository",
-      "category": "script",
-      "source": "scripts"
+      "command": "dp sandbox",
+      "description": "Sandboxed code execution environment",
+      "category": "ai",
+      "source": "dp"
     },
     {
-      "command": "./scripts/chain_runner.sh",
-      "description": "Chain Runner - Execute multi-step chains with proper handoffs",
-      "category": "script",
-      "source": "scripts"
+      "command": "dp chain",
+      "description": "Execute multi-step command chains",
+      "category": "automation",
+      "source": "dp"
     },
     {
-      "command": "./scripts/check_documentation.sh",
-      "description": "Documentation Requirements Checker",
-      "category": "script",
-      "source": "scripts"
+      "command": "dp patterns",
+      "description": "Browse and apply design patterns",
+      "category": "development",
+      "source": "dp"
     },
     {
-      "command": "./scripts/codex_sandbox.sh",
-      "description": "Sandboxed Codex execution for Linux/WSL - keeps runs contained to repo",
-      "category": "script",
-      "source": "scripts"
+      "command": "dp worktree",
+      "description": "Manage git worktrees for parallel work",
+      "category": "git",
+      "source": "dp"
     },
     {
-      "command": "./scripts/detect_stack.sh",
-      "description": "Detect technology stack from repository files",
-      "category": "script",
-      "source": "scripts"
+      "command": "dp release-check",
+      "description": "Assess release readiness",
+      "category": "deployment",
+      "source": "dp"
     },
     {
-      "command": "./scripts/doctor.sh",
-      "description": "Track missing tools for actionable output",
-      "category": "script",
-      "source": "scripts"
-    },
-    {
-      "command": "./scripts/dprs.sh",
-      "description": "DevPilot Readiness Score (DPRS) - Measure repository maturity",
-      "category": "script",
-      "source": "scripts"
-    },
-    {
-      "command": "./scripts/generate_command_registry.sh",
-      "description": "Generate Command Registry from Justfile and scripts",
-      "category": "script",
-      "source": "scripts"
-    },
-    {
-      "command": "./scripts/generate_tickets.sh",
-      "description": "Generate tickets from codebase analysis",
-      "category": "script",
-      "source": "scripts"
-    },
-    {
-      "command": "./scripts/graduate.sh",
-      "description": "Track and manage graduation criteria for skill levels and project phases",
-      "category": "script",
-      "source": "scripts"
-    },
-    {
-      "command": "./scripts/manage_repo_access.sh",
-      "description": "Manage repository access for Softsensor org members",
-      "category": "script",
-      "source": "scripts"
-    },
-    {
-      "command": "./scripts/pattern_selector.sh",
-      "description": "Pattern Selector - Quick access to design patterns",
-      "category": "script",
-      "source": "scripts"
-    },
-    {
-      "command": "./scripts/persona_manager.sh",
-      "description": "Multi-persona manager - allows combining multiple personas per repository",
-      "category": "script",
-      "source": "scripts"
-    },
-    {
-      "command": "./scripts/profile_menu.sh",
-      "description": "Interactive profile configuration menu",
-      "category": "script",
-      "source": "scripts"
-    },
-    {
-      "command": "./scripts/profile_migrate.sh",
-      "description": "Profile migration system - handles versioning and migrations for profiles",
-      "category": "script",
-      "source": "scripts"
-    },
-    {
-      "command": "./scripts/profile_show.sh",
-      "description": "Display current profile status and progress toward graduation",
-      "category": "script",
-      "source": "scripts"
-    },
-    {
-      "command": "./scripts/release_ready.sh",
-      "description": "Release readiness assessment - aggregates critical metrics for go/no-go decision",
-      "category": "script",
-      "source": "scripts"
-    },
-    {
-      "command": "./scripts/reorganize_repo.sh",
-      "description": "Repository Reorganization Script",
-      "category": "script",
-      "source": "scripts"
-    },
-    {
-      "command": "./scripts/repo_plan.sh",
-      "description": "Standalone repository setup planner - shows what would be created without making changes",
-      "category": "script",
-      "source": "scripts"
-    },
-    {
-      "command": "./scripts/setup_ai_frameworks.sh",
-      "description": "Install AI development frameworks and libraries",
-      "category": "script",
-      "source": "scripts"
-    },
-    {
-      "command": "./scripts/toggle_doc_check.sh",
-      "description": "Toggle documentation check pre-commit hook",
-      "category": "script",
-      "source": "scripts"
-    },
-    {
-      "command": "./tools/ai_shim.sh",
-      "description": "Portable AI CLI shim: runs Claude/Codex/Gemini/Grok via installed CLIs.",
-      "category": "tool",
-      "source": "tools"
-    },
-    {
-      "command": "./tools/audit_setup_scripts.sh",
-      "description": "Lints shell scripts, validates JSON/YAML, checks shebangs/CRLF/exec bits, and basic idempotency hints.",
-      "category": "tool",
-      "source": "tools"
-    },
-    {
-      "command": "./tools/config_validate.sh",
-      "description": "Repo-root relative checks",
-      "category": "tool",
-      "source": "tools"
-    },
-    {
-      "command": "./tools/diff_risk.sh",
-      "description": "Risk-aware diff analyzer - tags PRs with risk categories for smarter AI review",
-      "category": "tool",
-      "source": "tools"
-    },
-    {
-      "command": "./tools/preview_logs.sh",
-      "description": "Extract and format preview logs for AI review context",
-      "category": "tool",
-      "source": "tools"
-    },
-    {
-      "command": "./tools/prompt_lint.sh",
-      "description": "Lint a prompt file for required sections",
-      "category": "tool",
-      "source": "tools"
-    },
-    {
-      "command": "./tools/worktree_helper.sh",
-      "description": "Git worktree helper for parallel Claude sessions",
-      "category": "tool",
-      "source": "tools"
+      "command": "dp help",
+      "description": "Show help and documentation",
+      "category": "meta",
+      "source": "dp"
     }
   ]
 }

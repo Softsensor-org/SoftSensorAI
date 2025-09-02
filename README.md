@@ -112,7 +112,7 @@ Your Home Directory:
 
 ### 2️⃣ Per-Project Setup (For EACH project)
 
-After running `repo_wizard.sh` on a project:
+After running `dp setup` on a project:
 
 ```
 your-project/
@@ -122,7 +122,7 @@ your-project/
 │   ├── settings.json   # Project-specific permissions
 │   └── commands/       # 30+ powerful commands like /think-hard
 ├── scripts/
-│   ├── apply_profile.sh    # Change skill level anytime
+│   ├── profile utilities    # Change skill level anytime
 │   └── run_checks.sh        # Automated quality checks
 └── (your existing code, now AI-ready)
 ```
@@ -136,7 +136,7 @@ Before installing, run our diagnostic tool to ensure your system is ready:
 ```bash
 # Option 1: If you have access to the repository, clone and run locally
 git clone https://github.com/Softsensor-org/DevPilot.git ~/devpilot
-bash ~/devpilot/scripts/doctor.sh
+cd ~/devpilot && ./bin/dp doctor
 
 # Option 2: Quick download and run (when repository is public)
 # curl -sL https://raw.githubusercontent.com/Softsensor-org/DevPilot/main/scripts/doctor.sh | bash
@@ -220,7 +220,7 @@ What this does:
 ==> Setting up AI agents...
   ✓ Claude configuration
   ✓ Gemini configuration
-==> Setup complete! Next: run repo_wizard.sh for your projects
+==> Setup complete! Next: run 'dp setup' for your projects
 ```
 
 ### Step 2: Set Up Your Project
@@ -229,24 +229,31 @@ What this does:
 
 ```mermaid
 graph LR
-    A[Start] --> B{New or<br/>Existing?}
-    B -->|New| C[repo_wizard.sh]
-    B -->|Existing| D[existing_repo_setup.sh]
+    A[Start] --> B[dp setup]
+    B --> C{Smart<br/>Detection}
 
-    C --> E[1. Clone Repo]
-    E --> F[2. Enter Repo]
-    F --> G[3. Create Files]
+    C -->|URL Given| D[Clone Repo]
+    C -->|In Repo| E[Check Files]
+    C -->|Empty Dir| F[Interactive]
 
-    D --> H[1. Check Repo]
-    H --> I{Files<br/>Exist?}
-    I -->|No| G
-    I -->|Yes| J[Merge/Skip/<br/>Backup]
+    D --> G[Create Files]
+    E --> H{Files<br/>Exist?}
+    F --> I[Choose Path]
+
+    H -->|No| G
+    H -->|Yes| J[Merge/Skip/<br/>Backup]
+
+    I -->|Init Here| G
+    I -->|Clone URL| D
+
     J --> G
-
-    G --> K[✅ AI-Ready<br/>Repository]
+    G --> K[dp init]
+    K --> L[✅ AI-Ready<br/>Repository]
 
     style A fill:#e1f5e1
-    style K fill:#c8e6c9
+    style B fill:#d4edda
+    style K fill:#d4edda
+    style L fill:#c8e6c9
 ```
 
 **The Process:**
@@ -273,12 +280,12 @@ dp setup
 dp setup https://github.com/user/repo
 
 # Add personas for your project type (e.g., backend API)
-for p in software-architect backend-developer devops-engineer; do
-  ~/devpilot/scripts/persona_manager.sh add $p
-done
+dp persona add software-architect
+dp persona add backend-developer
+dp persona add devops-engineer
 
 # Check what got configured
-scripts/profile_show.sh
+dp project
 ```
 
 #### Option B: New Repository (Clone and Setup)
@@ -286,12 +293,12 @@ scripts/profile_show.sh
 If you need to clone a repository first:
 
 ```bash
-# Run the interactive wizard
-~/devpilot/setup/repo_wizard.sh
+# Run setup with URL
+dp setup https://github.com/you/your-project
 
 # After setup completes, verify your configuration
 cd /path/to/cloned/project
-scripts/profile_show.sh
+dp project
 ```
 
 > **Note**: AI review features require a CLI to be installed (claude, codex, gemini, or grok). If no
@@ -441,21 +448,23 @@ system/active.md    → Sets baseline behavior (skill level, phase)
 
 ```bash
 cd your-project
-~/devpilot/setup/existing_repo_setup.sh --skill l2 --phase beta
+dp setup
+dp init --skill l2 --phase beta
 ```
 
 **For new repos (need to clone):**
 
 ```bash
-~/devpilot/setup/repo_wizard.sh
-# Prompts: URL, organization, category, skill, phase
+dp setup https://github.com/user/repo
+# Then initialize with your preferences
+dp init
 ```
 
 ### Changing Settings Later
 
 ```bash
 cd your-project
-scripts/apply_profile.sh --skill expert --phase scale
+dp profile --skill expert --phase scale
 ```
 
 ### AI PR Review (Optional)
@@ -515,23 +524,23 @@ domain-specific best practices. You can combine multiple personas for comprehens
 
 ```bash
 # Add a single persona
-./scripts/persona_manager.sh add data-scientist
+dp persona add data-scientist
 
 # View active personas
-./scripts/persona_manager.sh show
+dp persona show
 ```
 
 ### Persona Starter Stacks
 
 Quick setup for common project types:
 
-| Project Type        | Personas to Add                      | One-Line Setup                                                                                                                           |
-| ------------------- | ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| **Backend API**     | architect, backend, devops           | `for p in software-architect backend-developer devops-engineer; do ~/devpilot/scripts/persona_manager.sh add $p; done`                   |
-| **Microservices**   | architect, backend, devops, security | `for p in software-architect backend-developer devops-engineer security-engineer; do ~/devpilot/scripts/persona_manager.sh add $p; done` |
-| **ML/Data Science** | data-scientist, backend, devops      | `for p in data-scientist backend-developer devops-engineer; do ~/devpilot/scripts/persona_manager.sh add $p; done`                       |
-| **Full Stack App**  | frontend, backend, devops            | `for p in frontend-developer backend-developer devops-engineer; do ~/devpilot/scripts/persona_manager.sh add $p; done`                   |
-| **Infrastructure**  | devops, security, architect          | `for p in devops-engineer security-engineer software-architect; do ~/devpilot/scripts/persona_manager.sh add $p; done`                   |
+| Project Type        | Personas to Add                      | Setup Commands                                                                          |
+| ------------------- | ------------------------------------ | --------------------------------------------------------------------------------------- |
+| **Backend API**     | architect, backend, devops           | `dp persona add software-architect backend-developer devops-engineer`                   |
+| **Microservices**   | architect, backend, devops, security | `dp persona add software-architect backend-developer devops-engineer security-engineer` |
+| **ML/Data Science** | data-scientist, backend, devops      | `dp persona add data-scientist backend-developer devops-engineer`                       |
+| **Full Stack App**  | frontend, backend, devops            | `dp persona add frontend-developer backend-developer devops-engineer`                   |
+| **Infrastructure**  | devops, security, architect          | `dp persona add devops-engineer security-engineer software-architect`                   |
 
 ### Persona-Specific Commands
 
@@ -579,14 +588,14 @@ Quick reference for what gets enforced at each project phase:
 **CI Pipeline Behavior:**
 
 - **Default CI** (this repo): Light validation - shellcheck, basic tests
-- **Phase CI** (your projects): Full security gates activated by `apply_profile.sh`
-- Run `scripts/apply_profile.sh --phase beta` to install strict CI with blocking gates
+- **Phase CI** (your projects): Full security gates activated by profile settings
+- Run `dp init --phase beta` to install strict CI with blocking gates
 
 **Managing Legacy Issues:**
 
 - Set `SEMGREP_BASELINE_REF` repo variable to suppress pre-existing findings
 - Create `.trivyignore` file to suppress known/accepted CVEs
-- Use `scripts/apply_profile.sh --phase beta` to change enforcement level
+- Use `dp init --phase beta` to change enforcement level
 
 ## 🚀 AI Development Environment **[Optional Module]**
 
@@ -1022,16 +1031,16 @@ DevPilot includes many advanced tools not covered above:
 
 ```bash
 # Check your entire environment setup (already covered in Step 0)
-~/devpilot/scripts/doctor.sh
+dp doctor
 # Output: Shows status of all tools, versions, and configurations
 
 # Show your current profile settings
-scripts/profile_show.sh
+dp project
 # Output: Current skill level, phase, and active configurations
 
-# Validate all AI agent configurations across projects
-~/devpilot/validation/validate_agents.sh --fix
-# Finds and fixes missing configurations automatically
+# Validate all AI agent configurations across projects (if needed)
+# Note: This is an internal validation tool
+# ~/devpilot/validation/validate_agents.sh --fix
 ```
 
 ### Skill Progression
@@ -1195,7 +1204,7 @@ source ~/.bashrc  # or ~/.zshrc for Zsh
 sudo ~/devpilot/install/key_software_$(uname -s | tr '[:upper:]' '[:lower:]').sh
 ```
 
-**Wizard can't find apply_profile.sh**
+**'dp init' fails to configure profile**
 
 ```bash
 # Pull latest fixes
@@ -1219,7 +1228,7 @@ python3 -m ensurepip  # Python
 
 - Ensure `.claude/commands/` exists in your project
 - Check `.claude/settings.json` has proper permissions
-- Run `scripts/apply_profile.sh` to reapply configuration
+- Run `dp init` to reapply configuration
 
 ### Getting Help
 
