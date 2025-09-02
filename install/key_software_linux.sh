@@ -2,11 +2,30 @@
 # Cross-distro installer for key developer and agent tools (Linux)
 set -euo pipefail
 
-echo "==> Detecting Linux distribution"
-if [ ! -r /etc/os-release ]; then
-  echo "Unsupported system: /etc/os-release not found" >&2; exit 1
+echo "==> Detecting system type"
+
+# Initialize variables
+ID=""
+ID_LIKE=""
+
+# Detect OS type
+if [ -r /etc/os-release ]; then
+  . /etc/os-release
+elif [ "$(uname -s)" = "FreeBSD" ]; then
+  ID="freebsd"
+elif [ "$(uname -s)" = "OpenBSD" ]; then
+  ID="openbsd"
+elif [ "$(uname -s)" = "NetBSD" ]; then
+  ID="netbsd"
+elif [ "$(uname -s)" = "SunOS" ]; then
+  ID="solaris"
+elif [[ "$(uname -s)" == CYGWIN* ]] || [[ "$(uname -s)" == MINGW* ]] || [[ "$(uname -s)" == MSYS* ]]; then
+  ID="windows"
+else
+  echo "Warning: Could not detect OS type, attempting generic Unix installation" >&2
+  ID="unknown"
 fi
-. /etc/os-release
+
 ID_LIKE_LOWER=$(echo "${ID_LIKE:-$ID}" | tr '[:upper:]' '[:lower:]')
 ID_LOWER=$(echo "${ID}" | tr '[:upper:]' '[:lower:]')
 
@@ -16,13 +35,25 @@ pkg_install() {
   if echo "$ID_LIKE_LOWER $ID_LOWER" | grep -Eq 'debian|ubuntu'; then
     sudo apt update
     sudo apt install -y "$@"
-  elif echo "$ID_LIKE_LOWER $ID_LOWER" | grep -Eq 'fedora|rhel|centos'; then
+  elif echo "$ID_LIKE_LOWER $ID_LOWER" | grep -Eq 'fedora|rhel|centos|rocky|alma'; then
     sudo dnf install -y "$@" || sudo yum install -y "$@"
   elif echo "$ID_LIKE_LOWER $ID_LOWER" | grep -Eq 'arch|manjaro'; then
     sudo pacman -Syu --noconfirm "$@"
+  elif echo "$ID_LIKE_LOWER $ID_LOWER" | grep -Eq 'alpine'; then
+    sudo apk add "$@"
+  elif echo "$ID_LIKE_LOWER $ID_LOWER" | grep -Eq 'freebsd'; then
+    sudo pkg install -y "$@"
+  elif echo "$ID_LIKE_LOWER $ID_LOWER" | grep -Eq 'openbsd|netbsd'; then
+    sudo pkg_add "$@"
+  elif echo "$ID_LIKE_LOWER $ID_LOWER" | grep -Eq 'solaris'; then
+    sudo pkg install "$@"
+  elif echo "$ID_LIKE_LOWER $ID_LOWER" | grep -Eq 'windows'; then
+    echo "Native Windows detected. Please use WSL2 or install tools via scoop/chocolatey." >&2
+    return 1
   else
-    echo "Unsupported distro: $ID_LOWER ($ID_LIKE_LOWER). Please install dependencies manually." >&2
-    exit 2
+    echo "Unsupported system: $ID_LOWER ($ID_LIKE_LOWER). Please install dependencies manually." >&2
+    echo "Attempting to continue with available tools..." >&2
+    return 1
   fi
 }
 

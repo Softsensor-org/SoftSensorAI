@@ -91,7 +91,7 @@ if [ $api_configured -eq 0 ]; then
 fi
 
 # Install Docker sandbox dependencies (Linux/WSL only)
-if [[ "$OSTYPE" == "linux-gnu"* ]] || grep -qi microsoft /proc/version 2>/dev/null; then
+if [[ "$OSTYPE" == "linux-gnu"* ]] || ([ -f /proc/version ] && grep -qi microsoft /proc/version 2>/dev/null); then
   echo ""
   echo "==> Setting up Linux/WSL sandbox support..."
 
@@ -168,7 +168,7 @@ echo "  codex --help             # Show all options"
 echo "  codex exec \"fix tests\"   # One-shot command"
 echo ""
 
-if [[ "$OSTYPE" == "linux-gnu"* ]] || grep -qi microsoft /proc/version 2>/dev/null; then
+if [[ "$OSTYPE" == "linux-gnu"* ]] || ([ -f /proc/version ] && grep -qi microsoft /proc/version 2>/dev/null); then
   echo "For sandboxed execution (Linux/WSL):"
   echo "  ~/bin/codex-sandbox exec \"fix tests\""
   echo ""

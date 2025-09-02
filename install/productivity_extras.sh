@@ -146,11 +146,20 @@ log "Installing Security & Quality Tools"
 # Container/dependency scanning
 if ! has trivy; then
   log "Installing Trivy"
-  sudo apt-get install -y wget apt-transport-https gnupg lsb-release
-  wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
-  echo "deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main" | sudo tee /etc/apt/sources.list.d/trivy.list
-  sudo apt-get update -qq
-  sudo apt-get install -y trivy
+  # Source compatibility functions
+  source "$(dirname "${BASH_SOURCE[0]}")/../utils/os_compat.sh" 2>/dev/null || true
+
+  if command -v apt-get >/dev/null 2>&1; then
+    sudo apt-get install -y wget apt-transport-https gnupg
+    wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
+    echo "deb https://aquasecurity.github.io/trivy-repo/deb $(get_os_codename 2>/dev/null || echo "stable") main" | sudo tee /etc/apt/sources.list.d/trivy.list
+    sudo apt-get update -qq
+    sudo apt-get install -y trivy
+  else
+    log "Installing Trivy via binary (apt not available)"
+    TRIVY_VERSION=$(curl -s "https://api.github.com/repos/aquasecurity/trivy/releases/latest" | grep '"tag_name":' | sed -E 's/.*"v([^"]+)".*/\1/')
+    curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v${TRIVY_VERSION}
+  fi
   success "Trivy installed"
 else
   success "Trivy already installed"

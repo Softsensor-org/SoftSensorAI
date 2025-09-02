@@ -16,9 +16,14 @@ echo "==> Doctor: environment checks"
 case "$(uname -s)" in
   Linux) ok "OS: Linux" ;;
   Darwin) ok "OS: macOS" ;;
+  FreeBSD) ok "OS: FreeBSD" ;;
+  OpenBSD) ok "OS: OpenBSD" ;;
+  NetBSD) ok "OS: NetBSD" ;;
+  SunOS) ok "OS: Solaris/illumos" ;;
+  CYGWIN*|MINGW*|MSYS*) warn "OS: Windows (via $(uname -s)) - Limited support" ;;
   *) warn "OS: $(uname -s) (untested)" ;;
 esac
-if [ -n "${WSL_DISTRO_NAME:-}" ] || grep -qi microsoft /proc/version 2>/dev/null; then
+if [ -n "${WSL_DISTRO_NAME:-}" ] || ([ -f /proc/version ] && grep -qi microsoft /proc/version 2>/dev/null); then
   ok "WSL detected"
 fi
 
@@ -86,7 +91,7 @@ else
 fi
 
 # SSH
-if [ -d "$HOME/.ssh" ] && ls "$HOME/.ssh"/id_* >/dev/null 2>&1; then
+if [ -d "$HOME/.ssh" ] && find "$HOME/.ssh" -name 'id_*' -type f 2>/dev/null | grep -q .; then
   ok "SSH keys present"
 else
   warn "No SSH keys in ~/.ssh (use copy_windows_ssh_to_wsl.sh or ssh-keygen)"
@@ -113,19 +118,67 @@ if [ ${#MISSING_TOOLS[@]} -gt 0 ]; then
         python3) echo "brew install python@3" ;;
       esac
     done
+  elif [[ "$(uname -s)" == "Linux" ]] || [[ "$(uname -s)" == *"BSD"* ]]; then
+    # Linux/BSD/WSL
+    # Detect package manager
+    if has apt-get; then
+      # Debian/Ubuntu
+      for tool in "${MISSING_TOOLS[@]}"; do
+        case "$tool" in
+          git) echo "sudo apt-get install -y git" ;;
+          jq) echo "sudo apt-get install -y jq" ;;
+          rg) echo "curl -LO https://github.com/BurntSushi/ripgrep/releases/download/14.1.0/ripgrep_14.1.0-1_amd64.deb && sudo dpkg -i ripgrep_14.1.0-1_amd64.deb" ;;
+          fd) echo "sudo apt-get install -y fd-find && sudo ln -s \$(which fdfind) /usr/local/bin/fd" ;;
+          direnv) echo "sudo apt-get install -y direnv" ;;
+          node) echo "curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash - && sudo apt-get install -y nodejs" ;;
+          python3) echo "sudo apt-get install -y python3 python3-pip python3-venv" ;;
+        esac
+      done
+    elif has dnf; then
+      # Fedora/RHEL
+      for tool in "${MISSING_TOOLS[@]}"; do
+        case "$tool" in
+          git) echo "sudo dnf install -y git" ;;
+          jq) echo "sudo dnf install -y jq" ;;
+          rg) echo "sudo dnf install -y ripgrep" ;;
+          fd) echo "sudo dnf install -y fd-find" ;;
+          direnv) echo "sudo dnf install -y direnv" ;;
+          node) echo "sudo dnf install -y nodejs" ;;
+          python3) echo "sudo dnf install -y python3 python3-pip" ;;
+        esac
+      done
+    elif has pacman; then
+      # Arch Linux
+      for tool in "${MISSING_TOOLS[@]}"; do
+        case "$tool" in
+          git) echo "sudo pacman -S --noconfirm git" ;;
+          jq) echo "sudo pacman -S --noconfirm jq" ;;
+          rg) echo "sudo pacman -S --noconfirm ripgrep" ;;
+          fd) echo "sudo pacman -S --noconfirm fd" ;;
+          direnv) echo "sudo pacman -S --noconfirm direnv" ;;
+          node) echo "sudo pacman -S --noconfirm nodejs npm" ;;
+          python3) echo "sudo pacman -S --noconfirm python python-pip" ;;
+        esac
+      done
+    elif has pkg; then
+      # FreeBSD/pkg
+      for tool in "${MISSING_TOOLS[@]}"; do
+        case "$tool" in
+          git) echo "sudo pkg install -y git" ;;
+          jq) echo "sudo pkg install -y jq" ;;
+          rg) echo "sudo pkg install -y ripgrep" ;;
+          fd) echo "sudo pkg install -y fd-find" ;;
+          direnv) echo "sudo pkg install -y direnv" ;;
+          node) echo "sudo pkg install -y node" ;;
+          python3) echo "sudo pkg install -y python3" ;;
+        esac
+      done
+    else
+      echo "Package manager not detected. Please install tools manually."
+    fi
   else
-    # Linux/WSL
-    for tool in "${MISSING_TOOLS[@]}"; do
-      case "$tool" in
-        git) echo "sudo apt-get install -y git" ;;
-        jq) echo "sudo apt-get install -y jq" ;;
-        rg) echo "curl -LO https://github.com/BurntSushi/ripgrep/releases/download/14.1.0/ripgrep_14.1.0-1_amd64.deb && sudo dpkg -i ripgrep_14.1.0-1_amd64.deb" ;;
-        fd) echo "sudo apt-get install -y fd-find && sudo ln -s \$(which fdfind) /usr/local/bin/fd" ;;
-        direnv) echo "sudo apt-get install -y direnv" ;;
-        node) echo "curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash - && sudo apt-get install -y nodejs" ;;
-        python3) echo "sudo apt-get install -y python3 python3-pip python3-venv" ;;
-      esac
-    done
+    # Unknown OS
+    echo "Unknown OS: $(uname -s). Please install tools manually."
   fi
 
   echo ""

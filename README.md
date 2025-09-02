@@ -20,11 +20,13 @@ platforms.
 
 **Supported Systems:**
 
-- ✅ **Linux** (Ubuntu 20.04+, Debian, Fedora, Arch)
+- ✅ **Linux** (Ubuntu 20.04+, Debian, Fedora, RHEL/CentOS/Rocky, Arch, Alpine)
 - ✅ **macOS** (Intel & Apple Silicon)
-- ✅ **Windows** (via WSL2)
+- ✅ **Windows** (via WSL2, limited support for Cygwin/MinGW/MSYS)
+- ✅ **BSD** (FreeBSD, OpenBSD, NetBSD)
 - ✅ **Dev Containers** (GitHub Codespaces, VS Code Remote)
 - ✅ **Cloud IDEs** (Gitpod, Cloud9, Coder)
+- ✅ **Unix** (Solaris/illumos - experimental)
 
 **Prerequisites:**
 

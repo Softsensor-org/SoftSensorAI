@@ -74,12 +74,15 @@ detect_platform() {
   local platform=""
 
   # WSL if env var set or /proc/version mentions Microsoft
-  if [[ -n "${WSL_DISTRO_NAME:-}" ]] || grep -qi microsoft /proc/version 2>/dev/null; then
+  if [[ -n "${WSL_DISTRO_NAME:-}" ]] || ([ -f /proc/version ] && grep -qi microsoft /proc/version 2>/dev/null); then
     platform="wsl"
   else
     case "$(uname -s)" in
       Darwin) platform="macos" ;;
       Linux)  platform="linux" ;;
+      FreeBSD|OpenBSD|NetBSD) platform="bsd" ;;
+      CYGWIN*|MINGW*|MSYS*) platform="windows" ;;
+      SunOS) platform="solaris" ;;
       *)      platform="unknown" ;;
     esac
   fi
@@ -129,8 +132,8 @@ install_tools() {
   local platform="$1"
 
   case "$platform" in
-    wsl|linux)
-      say "Installing Linux development tools..."
+    wsl|linux|bsd|solaris)
+      say "Installing Unix/Linux development tools..."
       if [[ -f "$SCRIPT_DIR/install/key_software_linux.sh" ]]; then
         bash "$SCRIPT_DIR/install/key_software_linux.sh"
       else
@@ -145,8 +148,23 @@ install_tools() {
         warn "install/key_software_macos.sh not found"
       fi
       ;;
+    windows)
+      warn "Native Windows detected (Cygwin/MinGW/MSYS). Limited support available."
+      warn "Consider using WSL2 for full functionality."
+      say "Attempting basic tool installation..."
+      if [[ -f "$SCRIPT_DIR/install/key_software_linux.sh" ]]; then
+        bash "$SCRIPT_DIR/install/key_software_linux.sh"
+      else
+        warn "install/key_software_linux.sh not found"
+      fi
+      ;;
     *)
-      warn "Unknown platform. Skipping tool installation."
+      warn "Unknown platform: $platform. Attempting generic Unix installation."
+      if [[ -f "$SCRIPT_DIR/install/key_software_linux.sh" ]]; then
+        bash "$SCRIPT_DIR/install/key_software_linux.sh"
+      else
+        warn "install/key_software_linux.sh not found"
+      fi
       ;;
   esac
 }
