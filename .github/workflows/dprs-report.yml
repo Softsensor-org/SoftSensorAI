@@ -33,6 +33,11 @@ jobs:
           if [ ! -f package-lock.json ] && [ -f config/package-lock.json ]; then
             ln -sf config/package-lock.json package-lock.json
           fi
+          # Create artifacts directory (moved to var/tmp/artifacts)
+          mkdir -p var/tmp/artifacts
+          if [ ! -e artifacts ]; then
+            ln -sf var/tmp/artifacts artifacts
+          fi
 
       - name: Setup Node.js (for package analysis)
         uses: actions/setup-node@v4
