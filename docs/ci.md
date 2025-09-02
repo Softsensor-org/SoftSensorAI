@@ -3,10 +3,32 @@
 ## Included Workflows
 
 - `.github/workflows/ci.yml` — pre-commit checks, shell linting, audit script
+- `.github/workflows/os-compatibility.yml` — Cross-platform testing matrix (Ubuntu, macOS, Windows,
+  containers)
 - `.github/workflows/security-review.yml` — SAST, secrets, Dockerfile linting with tool-specific
   labels
 - `.github/workflows/ai-review.yml` — CLI-first AI PR reviews (no API keys required)
 - `.github/workflows/dprs-report.yml` — DevPilot Readiness Score tracking
+
+## OS Compatibility Testing
+
+The `os-compatibility.yml` workflow ensures DevPilot works across all supported platforms:
+
+### Test Matrix
+
+- **Native OS**: Ubuntu (20.04, 22.04, latest), macOS (Intel & ARM), Windows (WSL)
+- **Containers**: Debian, Ubuntu, Fedora, Alpine, Arch Linux, Rocky Linux
+- **Simulated**: FreeBSD, OpenBSD, NetBSD
+
+### Local Testing
+
+Run compatibility tests locally:
+
+```bash
+./tests/test_os_compatibility.sh
+```
+
+For detailed platform support, see the [OS Compatibility Guide](OS_COMPATIBILITY.md).
 
 ## AI PR Review Setup
 

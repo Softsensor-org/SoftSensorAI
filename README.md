@@ -18,7 +18,7 @@ platforms.
 
 ## 📋 System Requirements
 
-**Supported Systems:**
+**Supported Systems:** ([Full compatibility guide](docs/OS_COMPATIBILITY.md))
 
 - ✅ **Linux** (Ubuntu 20.04+, Debian, Fedora, RHEL/CentOS/Rocky, Arch, Alpine)
 - ✅ **macOS** (Intel & Apple Silicon)
@@ -1170,6 +1170,27 @@ python3 -m ensurepip  # Python
 - Review the [validation script](validation/validate_agents.sh) output
 - Run diagnostics: `~/devpilot/scripts/diagnose.sh`
 
+## 🧪 Testing & CI
+
+DevPilot includes comprehensive testing across all supported platforms:
+
+### OS Compatibility Testing
+
+- **Automated CI Tests**: Runs on every push and PR
+- **Test Matrix**: Ubuntu, macOS, Windows (WSL), and 6+ container environments
+- **Local Testing**: Run `./tests/test_os_compatibility.sh` to validate your system
+- **Full Guide**: See [OS Compatibility Guide](docs/OS_COMPATIBILITY.md)
+
+### CI Workflows
+
+- **Quality Gates**: Linting, type checking, unit tests
+- **Security Scanning**: Dependency audits, secret detection
+- **OS Compatibility**: Cross-platform validation
+- **AI PR Review**: Automated code review (when AI CLI available)
+
+View test results:
+[![CI](https://github.com/Softsensor-org/DevPilot/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Softsensor-org/DevPilot/actions/workflows/ci.yml)
+
 ## 📚 Essential Reading
 
 ### Getting Started
@@ -1181,6 +1202,7 @@ python3 -m ensurepip  # Python
 
 ### Deep Dives
 
+- **[OS Compatibility](docs/OS_COMPATIBILITY.md)** - Platform support and testing
 - **[Security Guide](docs/SECURITY.md)** - Comprehensive security practices
 - **[Architecture](docs/ARCHITECTURE.md)** - System design and decisions
 - **[AI Command System](docs/AI_COMMAND_SYSTEM.md)** - How commands work

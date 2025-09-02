@@ -3,6 +3,7 @@
 Complete solutions for common issues with DevPilot.
 
 ## Table of Contents
+
 - [Installation Issues](#installation-issues)
 - [Profile & Persona Problems](#profile--persona-problems)
 - [Data Science Specific](#data-science-specific)
@@ -17,6 +18,7 @@ Complete solutions for common issues with DevPilot.
 ### Issue: "bash: ./setup.sh: Permission denied"
 
 **Solution**:
+
 ```bash
 # Make all scripts executable
 chmod +x setup.sh
@@ -32,6 +34,7 @@ bash setup.sh
 **Cause**: Wrong shell or old bash version
 
 **Solution**:
+
 ```bash
 # Check bash version (need 4.0+)
 bash --version
@@ -50,6 +53,7 @@ brew install bash
 ### Issue: Scripts not found after installation
 
 **Solution**:
+
 ```bash
 # Check installation location
 ls -la ~/setup-scripts/
@@ -69,6 +73,7 @@ source ~/.bashrc
 ### Issue: "Profile not applying" or "Permissions not working"
 
 **Diagnosis**:
+
 ```bash
 # Check current directory
 pwd  # Must be in project root
@@ -85,12 +90,14 @@ cat .claude/persona.json | grep persona
 **Solutions**:
 
 1. **Reapply profile**:
+
 ```bash
 cd /your/project
 ~/setup-scripts/scripts/apply_profile.sh --skill beginner --phase mvp
 ```
 
 2. **Reset and reapply**:
+
 ```bash
 # Remove existing configs
 rm -rf .claude/ CLAUDE.md PROFILE.md
@@ -100,6 +107,7 @@ rm -rf .claude/ CLAUDE.md PROFILE.md
 ```
 
 3. **Manual fix**:
+
 ```bash
 # Copy templates manually
 cp -r ~/setup-scripts/templates/.claude .
@@ -109,6 +117,7 @@ cp ~/setup-scripts/templates/CLAUDE.md .
 ### Issue: "Persona commands not available"
 
 **Solution**:
+
 ```bash
 # Check persona installation
 ls .claude/commands/sets/
@@ -126,6 +135,7 @@ ls .claude/commands/sets/data-science/  # Should see gpu-optimize.md etc
 ### Issue: "Wrong skill level applied"
 
 **Solution**:
+
 ```bash
 # View current level
 grep "Skill Level" PROFILE.md
@@ -143,6 +153,7 @@ grep "Skill Level" PROFILE.md
 ### Issue: "GPU monitoring not working"
 
 **Diagnosis**:
+
 ```bash
 # Check NVIDIA drivers
 nvidia-smi
@@ -154,6 +165,7 @@ nvidia-smi
 **Solutions**:
 
 1. **Install NVIDIA drivers** (Ubuntu):
+
 ```bash
 # Check for GPU
 lspci | grep -i nvidia
@@ -167,6 +179,7 @@ sudo reboot
 ```
 
 2. **For WSL2**:
+
 ```bash
 # Ensure WSL2 has GPU support
 wsl --version  # Need WSL 2
@@ -176,6 +189,7 @@ wsl --version  # Need WSL 2
 ```
 
 3. **For cloud instances**:
+
 ```bash
 # AWS/GCP/Azure typically pre-install drivers
 # Just verify:
@@ -185,6 +199,7 @@ nvidia-smi
 ### Issue: "Process impact analyzer shows wrong information"
 
 **Solution**:
+
 ```bash
 # Update process analyzer
 cd ~/setup-scripts
@@ -204,6 +219,7 @@ kill $PID
 ### Issue: "Mixed precision training not working"
 
 **Diagnosis**:
+
 ```bash
 # Check PyTorch CUDA support
 python -c "import torch; print(torch.cuda.is_available())"
@@ -211,6 +227,7 @@ python -c "import torch; print(torch.cuda.get_device_capability())"
 ```
 
 **Solution**:
+
 ```python
 # Ensure compatible GPU (compute capability >= 7.0 for automatic mixed precision)
 # For older GPUs, use manual mixed precision:
@@ -230,6 +247,7 @@ model = model.half()  # Convert to FP16
 ### Issue: "Setup detects wrong project type"
 
 **Solution**:
+
 ```bash
 # Manually specify during setup
 ~/setup-scripts/setup/existing_repo_setup.sh
@@ -241,6 +259,7 @@ model = model.half()  # Convert to FP16
 ### Issue: "Setup overwrites my existing files"
 
 **Prevention**:
+
 ```bash
 # Backup first
 cp CLAUDE.md CLAUDE.md.backup
@@ -253,6 +272,7 @@ cp -r .claude .claude.backup
 ```
 
 **Recovery**:
+
 ```bash
 # Restore from backup
 mv CLAUDE.md.backup CLAUDE.md
@@ -262,6 +282,7 @@ mv .claude.backup .claude
 ### Issue: "Can't find my repository in browser"
 
 **Solution**:
+
 ```bash
 # Directly specify path
 ~/setup-scripts/setup/existing_repo_setup.sh
@@ -282,6 +303,7 @@ cd /your/repo
 ### Issue: "Commands not working in Claude/Cursor"
 
 **Diagnosis**:
+
 ```bash
 # Check command files exist
 ls .claude/commands/
@@ -294,12 +316,14 @@ cat .claude/settings.json
 **Solutions**:
 
 1. **For Claude Desktop**:
+
 ```bash
 # Ensure project is open in Claude
 # Commands only work in project context
 ```
 
 2. **For Cursor**:
+
 ```bash
 # Install Cursor AI extension
 # Open command palette (Cmd/Ctrl + Shift + P)
@@ -307,6 +331,7 @@ cat .claude/settings.json
 ```
 
 3. **Manual command usage**:
+
 ```bash
 # Read command content
 cat .claude/commands/gpu-optimize.md
@@ -317,6 +342,7 @@ cat .claude/commands/gpu-optimize.md
 ### Issue: "Permission denied when AI tries to run commands"
 
 **Solution**:
+
 ```bash
 # Check allowed commands
 cat .claude/settings.json | grep -A 20 '"allow"'
@@ -334,11 +360,14 @@ cat .claude/settings.json | grep -A 20 '"allow"'
 
 ## Platform-Specific Issues
 
+> **📚 For comprehensive platform support, see the [OS Compatibility Guide](OS_COMPATIBILITY.md)**
+
 ### macOS Issues
 
 #### Issue: "realpath: command not found"
 
 **Solution**:
+
 ```bash
 # Install coreutils
 brew install coreutils
@@ -352,6 +381,7 @@ realpath() {
 #### Issue: "sed: illegal option"
 
 **Solution**:
+
 ```bash
 # macOS uses BSD sed, not GNU sed
 # Install GNU sed
@@ -366,6 +396,7 @@ alias sed=gsed
 #### Issue: "Line ending problems"
 
 **Solution**:
+
 ```bash
 # Configure git for Unix line endings
 git config --global core.autocrlf false
@@ -379,6 +410,7 @@ sed -i 's/\r$//' scripts/*.sh
 #### Issue: "Cannot execute binary file"
 
 **Solution**:
+
 ```bash
 # Ensure running in WSL2, not PowerShell
 wsl
@@ -391,6 +423,7 @@ wsl
 #### Issue: "sudo: command not found" (in containers)
 
 **Solution**:
+
 ```bash
 # In Docker/containers, run as root
 docker exec -it --user root container_name bash
@@ -507,14 +540,14 @@ bash -x problematic_script.sh 2>&1 | tee error.log
 
 ## FAQ
 
-**Q: Can I use this without git?**
-A: Yes, but you'll miss git hooks and some features. The core AI configurations still work.
+**Q: Can I use this without git?** A: Yes, but you'll miss git hooks and some features. The core AI
+configurations still work.
 
-**Q: Can I share configs between projects?**
-A: Yes, copy `.claude/` directory and `CLAUDE.md` between projects.
+**Q: Can I share configs between projects?** A: Yes, copy `.claude/` directory and `CLAUDE.md`
+between projects.
 
-**Q: How do I completely uninstall?**
-A:
+**Q: How do I completely uninstall?** A:
+
 ```bash
 rm -rf ~/setup-scripts
 rm -rf ~/.claude ~/.gemini
@@ -522,11 +555,11 @@ rm -rf ~/.claude ~/.gemini
 rm -rf .claude/ CLAUDE.md PROFILE.md
 ```
 
-**Q: Can I customize personas?**
-A: Yes! See [PERSONAS_GUIDE.md](PERSONAS_GUIDE.md#customizing-personas)
+**Q: Can I customize personas?** A: Yes! See
+[PERSONAS_GUIDE.md](PERSONAS_GUIDE.md#customizing-personas)
 
-**Q: Will this work with other AI assistants?**
-A: Yes, the configurations work with Claude, Cursor, Copilot, and similar AI coding assistants.
+**Q: Will this work with other AI assistants?** A: Yes, the configurations work with Claude, Cursor,
+Copilot, and similar AI coding assistants.
 
 ---
 

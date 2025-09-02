@@ -1,35 +1,49 @@
 # DevPilot Documentation
 
-This directory contains comprehensive guides to help you install, configure, and use the DevPilot AI development platform.
+This directory contains comprehensive guides to help you install, configure, and use the DevPilot AI
+development platform.
 
 ## 📖 Guide Overview
 
 ### Platform Documentation
-- **[DevPilot.pdf](DevPilot.pdf)** - **COMPREHENSIVE OVERVIEW** - Complete platform strategy, architecture, and implementation guide
+
+- **[DevPilot.pdf](DevPilot.pdf)** - **COMPREHENSIVE OVERVIEW** - Complete platform strategy,
+  architecture, and implementation guide
 
 ### Getting Started
-- **[ARCHITECTURE_OVERVIEW.md](ARCHITECTURE_OVERVIEW.md)** - **START HERE** - Complete architecture and CLI-first usage guide
+
+- **[ARCHITECTURE_OVERVIEW.md](ARCHITECTURE_OVERVIEW.md)** - **START HERE** - Complete architecture
+  and CLI-first usage guide
 - **[quickstart.md](quickstart.md)** - One-command installation and first steps
 - **[WEEK_WITH_DEVPILOT.md](WEEK_WITH_DEVPILOT.md)** - Day-by-day runbook for your first week
 
 ### Core Setup
-- **[existing_repo_setup.md](existing_repo_setup.md)** - **RECOMMENDED** - Setup for already-cloned repositories
+
+- **[existing_repo_setup.md](existing_repo_setup.md)** - **RECOMMENDED** - Setup for already-cloned
+  repositories
 - **[repo-wizard.md](repo-wizard.md)** - Repository cloning and automated configuration
 - **[profiles.md](profiles.md)** - Skill levels, project phases, and capability progression
+- **[OS_COMPATIBILITY.md](OS_COMPATIBILITY.md)** - Platform support, testing, and troubleshooting
 - **[AI_FRAMEWORKS.md](AI_FRAMEWORKS.md)** - LangChain, AutoGen, CrewAI setup with GPU optimization
 - **[SECURITY.md](SECURITY.md)** - Security best practices and checksum verification
 
 ### AI Personas & Integration
+
 - **[PERSONAS_GUIDE.md](PERSONAS_GUIDE.md)** - Individual AI personas and their specializations
-- **[PERSONA_SELECTION_TUTORIAL.md](PERSONA_SELECTION_TUTORIAL.md)** - Step-by-step persona selection guide
-- **[MULTI_PERSONA_GUIDE.md](MULTI_PERSONA_GUIDE.md)** - Combining multiple personas for comprehensive assistance
-- **[CODEX_INTEGRATION.md](CODEX_INTEGRATION.md)** - Complete OpenAI Codex integration with persona support
+- **[PERSONA_SELECTION_TUTORIAL.md](PERSONA_SELECTION_TUTORIAL.md)** - Step-by-step persona
+  selection guide
+- **[MULTI_PERSONA_GUIDE.md](MULTI_PERSONA_GUIDE.md)** - Combining multiple personas for
+  comprehensive assistance
+- **[CODEX_INTEGRATION.md](CODEX_INTEGRATION.md)** - Complete OpenAI Codex integration with persona
+  support
 
 ### Commands & Architecture
+
 - **agent-commands.md** - Complete catalog of available AI commands
 - **system-prompts.md** - Layered prompt system architecture
 
 ### Development & Operations
+
 - **[ci.md](ci.md)** - CI/CD integration and security gates
 - **[devcontainer.md](devcontainer.md)** - Development container setup
 - **[GPU_OPTIMIZATION.md](GPU_OPTIMIZATION.md)** - GPU detection and ML workflow optimization
@@ -37,19 +51,23 @@ This directory contains comprehensive guides to help you install, configure, and
 - **[RELEASE_MANAGEMENT.md](RELEASE_MANAGEMENT.md)** - Release process and versioning
 
 ### Troubleshooting
+
 - **validation-troubleshooting.md** - Common issues and solutions
 - **TROUBLESHOOTING.md** - Advanced troubleshooting guide
 - **appendix.md** - Strengths worth keeping and why
 
 ## 🚀 Getting Started
 
-**New to DevPilot?** Start with **[ARCHITECTURE_OVERVIEW.md](ARCHITECTURE_OVERVIEW.md)** to understand the system.
+**New to DevPilot?** Start with **[ARCHITECTURE_OVERVIEW.md](ARCHITECTURE_OVERVIEW.md)** to
+understand the system.
 
 **Ready to install?** Jump to **[quickstart.md](quickstart.md)** for immediate setup.
 
-**Have an existing repo?** Use **[existing_repo_setup.md](existing_repo_setup.md)** to add DevPilot without cloning.
+**Have an existing repo?** Use **[existing_repo_setup.md](existing_repo_setup.md)** to add DevPilot
+without cloning.
 
 For comprehensive setup, the recommended reading order is:
+
 1. **quickstart.md** - Basic installation
 2. **profiles.md** - Understanding skill levels
 3. **repo-wizard.md** - Setting up your first project
@@ -60,6 +78,7 @@ For comprehensive setup, the recommended reading order is:
 8. **SECURITY.md** - Implementing security best practices
 
 For advanced users:
+
 - **MULTI_PERSONA_GUIDE.md** - Combining multiple personas
 - **AI_FRAMEWORKS.md** - Building multi-agent systems with LangChain/AutoGen
 - **SECURITY.md** - Advanced security configurations
