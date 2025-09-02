@@ -203,6 +203,44 @@ What this does:
 
 ### Step 2: Set Up Your Project
 
+#### 📋 How DevPilot Setup Works
+
+```mermaid
+graph LR
+    A[Start] --> B{New or<br/>Existing?}
+    B -->|New| C[repo_wizard.sh]
+    B -->|Existing| D[existing_repo_setup.sh]
+
+    C --> E[1. Clone Repo]
+    E --> F[2. Enter Repo]
+    F --> G[3. Create Files]
+
+    D --> H[1. Check Repo]
+    H --> I{Files<br/>Exist?}
+    I -->|No| G
+    I -->|Yes| J[Merge/Skip/<br/>Backup]
+    J --> G
+
+    G --> K[✅ AI-Ready<br/>Repository]
+
+    style A fill:#e1f5e1
+    style K fill:#c8e6c9
+```
+
+**The Process:**
+
+1. **Repository First** - Either clone a new repo OR navigate to existing one
+2. **Add DevPilot Files** - Creates CLAUDE.md, settings, commands inside the repo
+3. **Handle Conflicts** - For existing files, you choose: merge, skip, or backup
+4. **Ready to Code** - Your repo now works seamlessly with AI assistants
+
+| Scenario                  | Use This Script          | What Happens                       |
+| ------------------------- | ------------------------ | ---------------------------------- |
+| Need to clone a new repo  | `repo_wizard.sh`         | Clones → Creates files             |
+| Already have a local repo | `existing_repo_setup.sh` | Checks → Merges/Creates files      |
+| Starting from template    | `repo_wizard.sh`         | Clones template → Customizes       |
+| Adding to team project    | `existing_repo_setup.sh` | Preserves existing → Adds DevPilot |
+
 #### Option A: Existing Repository (Recommended for Teams)
 
 If you already have a cloned repository, use this approach:
