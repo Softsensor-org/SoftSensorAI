@@ -1,6 +1,7 @@
 # A Week with DevPilot: Daily Runbook
 
-Your first week using DevPilot for real development work. Follow this day-by-day guide to master the essential workflows.
+Your first week using DevPilot for real development work. Follow this day-by-day guide to master the
+essential workflows.
 
 ## Prerequisites
 
@@ -11,23 +12,20 @@ Your first week using DevPilot for real development work. Follow this day-by-day
 ## Day 1 (Monday): Setup & First Feature
 
 ### Morning: Project Setup
+
 ```bash
 # For existing repo (most common)
 cd /path/to/your/project
-~/devpilot/setup/existing_repo_setup.sh --skill l1 --phase mvp
+dp setup
+dp init --skill l1 --phase mvp
 
-# Add appropriate personas for your project type
-# Backend API example:
-for p in software-architect backend-developer devops-engineer; do
-  ~/devpilot/scripts/persona_manager.sh add $p
-done
-
-# Verify setup
-scripts/profile_show.sh
-ls -la .claude/commands/ | head -20
+# Verify setup and explore commands
+dp project  # Shows current configuration
+dp palette  # Browse all available commands
 ```
 
 ### Afternoon: First Feature with AI
+
 ```bash
 # Use the exploration workflow for a complete feature
 claude --system-prompt system/active.md \
@@ -43,12 +41,14 @@ claude --system-prompt system/active.md \
 **Before/After Example:**
 
 Before DevPilot:
+
 ```
 You: "Add a user preferences endpoint"
 AI: "Here's some code..." [No structure, no tests, no consistency]
 ```
 
 After DevPilot:
+
 ```
 You: /explore-plan-code-test implement user preferences endpoint
 AI:
@@ -62,6 +62,7 @@ AI:
 ## Day 2 (Tuesday): Security & Quality
 
 ### Morning: Security Review
+
 ```bash
 # Before committing yesterday's work
 claude --system-prompt .claude/commands/security-review.md \
@@ -77,6 +78,7 @@ claude --system-prompt .claude/commands/patterns/secure-fix.md \
 ```
 
 ### Afternoon: Code Quality Audit
+
 ```bash
 # Comprehensive quality check
 claude --system-prompt .claude/commands/audit-quick.md \
@@ -90,12 +92,14 @@ claude --system-prompt .claude/commands/patterns/document-code.md \
 **Before/After Example:**
 
 Before:
+
 ```sql
 -- Vulnerable query
 query = f"SELECT * FROM preferences WHERE user_id = {user_id}"
 ```
 
 After security review:
+
 ```sql
 -- Parameterized query
 query = "SELECT * FROM preferences WHERE user_id = ?"
@@ -105,6 +109,7 @@ cursor.execute(query, (user_id,))
 ## Day 3 (Wednesday): API Contracts & Testing
 
 ### Morning: API Documentation
+
 ```bash
 # Update OpenAPI specification
 claude --system-prompt .claude/commands/patterns/api-contract.md \
@@ -115,6 +120,7 @@ npx @apidevtools/swagger-cli validate openapi.yaml
 ```
 
 ### Afternoon: Comprehensive Testing
+
 ```bash
 # Generate edge case tests
 claude --system-prompt .claude/commands/patterns/test-comprehensive.md \
@@ -131,14 +137,16 @@ claude --system-prompt .claude/commands/patterns/test-driven.md \
 **Before/After Example:**
 
 Before (60% coverage):
+
 ```javascript
-test('should get preferences', async () => {
-  const res = await api.get('/preferences');
+test("should get preferences", async () => {
+  const res = await api.get("/preferences");
   expect(res.status).toBe(200);
 });
 ```
 
 After comprehensive testing (95% coverage):
+
 ```javascript
 describe('Preferences API', () => {
   test('should get preferences for authenticated user', ...);
@@ -153,6 +161,7 @@ describe('Preferences API', () => {
 ## Day 4 (Thursday): Architecture & Scale
 
 ### Morning: Architecture Review
+
 ```bash
 # Analyze current architecture
 claude --system-prompt .claude/commands/patterns/architecture-review.md \
@@ -164,6 +173,7 @@ claude --system-prompt .claude/commands/patterns/performance-pass.md \
 ```
 
 ### Afternoon: Scalability Planning
+
 ```bash
 # Design improvements
 codex --system .claude/commands/patterns/architect-spike.md \
@@ -177,12 +187,14 @@ claude --system-prompt .claude/commands/patterns/scale-analysis.md \
 **Before/After Example:**
 
 Before (no caching):
+
 ```
 Request → Database query (100ms) → Response
 1000 req/s = 100% CPU on database
 ```
 
 After architecture review:
+
 ```
 Request → Redis cache (1ms) → Response (cache hit)
          ↘ Database (100ms) → Redis → Response (cache miss)
@@ -192,6 +204,7 @@ Request → Redis cache (1ms) → Response (cache hit)
 ## Day 5 (Friday): Documentation & Planning
 
 ### Morning: Generate Tickets
+
 ```bash
 # Scan codebase for TODOs and technical debt
 claude --system-prompt .claude/commands/tickets-from-code.md \
@@ -205,6 +218,7 @@ claude --system-prompt .claude/commands/tickets-from-code.md \
 ```
 
 ### Afternoon: Observability & Monitoring
+
 ```bash
 # Add comprehensive logging
 claude --system-prompt .claude/commands/patterns/observability-pass.md \
@@ -218,13 +232,15 @@ claude --system-prompt .claude/commands/patterns/metrics-instrumentation.md \
 **Before/After Example:**
 
 Before (no observability):
+
 ```javascript
 function updatePreferences(userId, prefs) {
-  return db.update('preferences', prefs, { userId });
+  return db.update("preferences", prefs, { userId });
 }
 ```
 
 After observability pass:
+
 ```javascript
 function updatePreferences(userId, prefs) {
   const timer = metrics.startTimer('preferences_update_duration');
@@ -250,18 +266,22 @@ function updatePreferences(userId, prefs) {
 ### Top 5 Most Valuable Commands
 
 1. **`/explore-plan-code-test`** (Monday)
+
    - Used 10+ times for feature development
    - Saves 2-3 hours per feature by automating the full cycle
 
 2. **`/security-review`** (Tuesday)
+
    - Used before every commit
    - Caught 3 security issues before they reached code review
 
 3. **`/tickets-from-code`** (Friday)
+
    - Generated 15 properly formatted tickets
    - Saved 2 hours of manual ticket writing
 
 4. **`/api-contract`** (Wednesday)
+
    - Kept OpenAPI spec in sync
    - Prevented API drift and documentation lag
 
@@ -272,6 +292,7 @@ function updatePreferences(userId, prefs) {
 ## Week 2 Preview: Advanced Workflows
 
 ### Monday: Long Context Handling
+
 ```bash
 # Analyze large log files
 claude --system-prompt .claude/commands/automation/long-context-map-reduce.md \
@@ -279,6 +300,7 @@ claude --system-prompt .claude/commands/automation/long-context-map-reduce.md \
 ```
 
 ### Tuesday: Multi-Service Refactoring
+
 ```bash
 # Coordinate changes across services
 claude --system-prompt .claude/commands/patterns/multi-service-refactor.md \
@@ -286,6 +308,7 @@ claude --system-prompt .claude/commands/patterns/multi-service-refactor.md \
 ```
 
 ### Wednesday: Database Migrations
+
 ```bash
 # Safe database changes
 claude --system-prompt .claude/commands/patterns/sql-migration.md \
@@ -293,6 +316,7 @@ claude --system-prompt .claude/commands/patterns/sql-migration.md \
 ```
 
 ### Thursday: CI/CD Pipeline
+
 ```bash
 # Upgrade to production phase
 scripts/apply_profile.sh --phase scale
@@ -302,6 +326,7 @@ cat .github/workflows/ci.yml | grep -E "(gitleaks|semgrep|trivy)"
 ```
 
 ### Friday: Performance Optimization
+
 ```bash
 # Profile and optimize
 claude --system-prompt .claude/commands/patterns/performance-pass.md \
@@ -313,16 +338,19 @@ claude --system-prompt .claude/commands/patterns/performance-pass.md \
 ### Daily Habits
 
 1. **Start each day** by checking your profile and personas:
+
    ```bash
    scripts/profile_show.sh && ~/devpilot/scripts/persona_manager.sh show
    ```
 
 2. **Before coding**, always use explore-plan pattern:
+
    ```bash
    claude --system-prompt system/active.md "/explore-plan-code-test [feature]"
    ```
 
 3. **Before committing**, always security review:
+
    ```bash
    claude --system-prompt .claude/commands/security-review.md "review changes"
    ```
@@ -334,20 +362,18 @@ claude --system-prompt .claude/commands/patterns/performance-pass.md \
 
 ### Common Pitfalls to Avoid
 
-❌ **Don't**: Use AI without system prompts
-✅ **Do**: Always include `--system-prompt system/active.md`
+❌ **Don't**: Use AI without system prompts ✅ **Do**: Always include
+`--system-prompt system/active.md`
 
-❌ **Don't**: Write ad-hoc prompts for common tasks
-✅ **Do**: Use the command catalog (`/security-review`, `/test-driven`, etc.)
+❌ **Don't**: Write ad-hoc prompts for common tasks ✅ **Do**: Use the command catalog
+(`/security-review`, `/test-driven`, etc.)
 
-❌ **Don't**: Skip the exploration phase
-✅ **Do**: Let AI understand your codebase patterns first
+❌ **Don't**: Skip the exploration phase ✅ **Do**: Let AI understand your codebase patterns first
 
-❌ **Don't**: Commit without security review
-✅ **Do**: Run `/security-review` on every change
+❌ **Don't**: Commit without security review ✅ **Do**: Run `/security-review` on every change
 
-❌ **Don't**: Stay on POC phase in production
-✅ **Do**: Graduate to beta/scale phases for proper CI gates
+❌ **Don't**: Stay on POC phase in production ✅ **Do**: Graduate to beta/scale phases for proper CI
+gates
 
 ## Measuring Success
 
@@ -368,4 +394,4 @@ After one week with DevPilot, you should see:
 
 ---
 
-*By the end of Week 1, DevPilot will feel like a senior developer pair programming with you.*
+_By the end of Week 1, DevPilot will feel like a senior developer pair programming with you._

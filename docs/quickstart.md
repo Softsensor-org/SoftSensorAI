@@ -3,17 +3,20 @@
 ## 🚀 2-Minute Setup
 
 ```bash
-# Clone DevPilot
+# 1. Clone and install DevPilot
 git clone https://github.com/Softsensor-org/DevPilot.git ~/devpilot
-
-# Run setup (now with GPU detection!)
 cd ~/devpilot && ./setup_all.sh
 
-# Create your first AI-powered project
-./setup/repo_wizard.sh
+# 2. Add dp command to PATH
+export PATH="$HOME/devpilot/bin:$PATH"  # Add to ~/.bashrc
 
-# Optional: Install AI frameworks (if GPU detected)
-./scripts/setup_ai_frameworks.sh
+# 3. Setup your project
+cd your-project
+dp setup   # Smart detection for any project
+dp init    # Initialize with full configuration
+
+# 4. Start using DevPilot
+dp palette  # Discover all available commands
 ```
 
 ## 🆕 New Features
@@ -30,6 +33,7 @@ cd ~/devpilot && ./setup_all.sh
 ## 📋 What Gets Installed
 
 ### Step 1: Core Tools
+
 - **Search**: ripgrep, fd-find for lightning-fast code search
 - **Processing**: jq, yq for JSON/YAML manipulation
 - **Environment**: direnv for auto-loading project settings
@@ -38,13 +42,16 @@ cd ~/devpilot && ./setup_all.sh
 - **Task Runner**: just for unified commands
 
 ### Step 2: AI Assistants
+
 - **Claude**: Anthropic's coding assistant with MCP support
 - **Gemini**: Google's AI with advanced reasoning
 - **Grok**: X.AI's assistant with custom commands
 - **Codex**: OpenAI-powered completions
 
 ### Step 3: Global Configuration
+
 Creates in your home directory:
+
 - `~/.claude/settings.json` - Claude permissions
 - `~/.gemini/settings.json` - Gemini settings
 - `~/.grok/user-settings.json` - Grok config
@@ -52,6 +59,7 @@ Creates in your home directory:
 - `~/templates/` - Reusable project templates
 
 ### Step 4: Project Structure
+
 ```
 ~/projects/
 ├── work/          # Professional projects
@@ -79,6 +87,7 @@ cd /path/to/your/existing/repo
 ```
 
 **Why this is better:**
+
 - ✅ Works with your existing directory structure
 - ✅ No repo cloning or moving
 - ✅ Keeps your current workflow
@@ -94,6 +103,7 @@ Only use this if you need to clone a repository first:
 ```
 
 ### One-Line Setup
+
 ```bash
 ./setup/repo_wizard.sh \
   --url git@github.com:you/awesome-project.git \
@@ -107,18 +117,19 @@ Only use this if you need to clone a repository first:
 
 DevPilot adapts to your experience:
 
-| Level | Who It's For | What You Get |
-|-------|-------------|--------------|
-| **beginner** | New to coding | Teaching mode, guided help, safety rails |
-| **l1** | Junior dev | Basic tools, structured patterns |
-| **l2** | Mid-level | Advanced tools, CI/CD, testing |
-| **expert** | Senior/architect | Full access, complex operations |
+| Level        | Who It's For     | What You Get                             |
+| ------------ | ---------------- | ---------------------------------------- |
+| **beginner** | New to coding    | Teaching mode, guided help, safety rails |
+| **l1**       | Junior dev       | Basic tools, structured patterns         |
+| **l2**       | Mid-level        | Advanced tools, CI/CD, testing           |
+| **expert**   | Senior/architect | Full access, complex operations          |
 
 Start with `beginner` if unsure - you can change anytime!
 
 ## 🤖 Using AI Assistants (CLI-First)
 
-**Important**: DevPilot uses the **CLI versions** of AI assistants, not raw APIs. Each assistant points to `system/active.md` for consistent behavior.
+**Important**: DevPilot uses the **CLI versions** of AI assistants, not raw APIs. Each assistant
+points to `system/active.md` for consistent behavior.
 
 ### Installing AI CLIs (Required)
 
@@ -148,11 +159,13 @@ cargo install grok-cli
 which claude codex gemini grok
 ```
 
-**Note**: CLI availability varies by provider. Check each provider's documentation for latest installation methods.
+**Note**: CLI availability varies by provider. Check each provider's documentation for latest
+installation methods.
 
 ### Daily Usage: Always Target system/active.md
 
-**Key Point**: Always point CLI tools at `system/active.md` - this contains your merged prompts (global + repo + task).
+**Key Point**: Always point CLI tools at `system/active.md` - this contains your merged prompts
+(global + repo + task).
 
 ```bash
 # Claude - Best for complex coding
@@ -169,6 +182,7 @@ codex --system system/active.md --sandbox "generate unit tests"
 ```
 
 **Why system/active.md?**
+
 - ✅ Contains your skill level, project phase, and personas
 - ✅ Merges global DevPilot guidance + your project specifics
 - ✅ Ensures consistent AI behavior across all assistants
@@ -229,13 +243,16 @@ just dev      # Start development server
 ## 🛠️ Advanced Features
 
 ### Use Claude Commands
+
 In Claude, type `/` to see available commands:
+
 - `/think-hard` - Deep problem solving
 - `/security-review` - Find vulnerabilities
 - `/audit-full` - Complete code review
 - `/tickets-from-code` - Generate JIRA tickets
 
 ### Apply Profiles
+
 ```bash
 # Interactive profile selection
 cd your-project
@@ -250,6 +267,7 @@ cd your-project
 ```
 
 ### Install Extra Tools
+
 ```bash
 # Database, ML, Kubernetes tools
 ~/devpilot/install/productivity_extras.sh
@@ -271,6 +289,7 @@ ls ~/projects/
 ## 🆘 Troubleshooting
 
 ### Command not found
+
 ```bash
 # Reload your shell
 exec bash
@@ -279,12 +298,14 @@ source ~/.bashrc
 ```
 
 ### Permission denied
+
 ```bash
 # Make scripts executable
 chmod +x ~/devpilot/**/*.sh
 ```
 
 ### Missing tools
+
 ```bash
 # Re-run setup for your platform
 ~/devpilot/install/key_software_linux.sh  # Linux/WSL
@@ -303,6 +324,7 @@ chmod +x ~/devpilot/**/*.sh
 ## 🎉 You're Ready!
 
 Start coding with AI assistance:
+
 ```bash
 cd ~/projects/[your-project]
 claude "let's build something amazing"

@@ -1,10 +1,12 @@
 # Existing Repository Setup Guide
 
-The fastest way to add DevPilot to your already-cloned repositories without reorganizing your directory structure.
+The fastest way to add DevPilot to your already-cloned repositories without reorganizing your
+directory structure.
 
 ## When to Use This
 
-Use `existing_repo_setup.sh` when you:
+DevPilot automatically detects if you're in an existing repository:
+
 - ✅ Already have a repository cloned locally
 - ✅ Want to keep your current directory structure
 - ✅ Don't want the wizard to clone/move your code
@@ -16,12 +18,14 @@ Use `existing_repo_setup.sh` when you:
 # Navigate to your existing project
 cd /path/to/your/project
 
-# Run setup with your preferences
-~/devpilot/setup/existing_repo_setup.sh --skill l1 --phase mvp
+# Run setup - automatically detects existing repo
+dp setup
 
-# Add appropriate personas
-~/devpilot/scripts/persona_manager.sh add backend-developer
-~/devpilot/scripts/persona_manager.sh add devops-engineer
+# Initialize with your preferences
+dp init --skill l1 --phase mvp
+
+# That's it! DevPilot is configured for your project
+dp palette  # Browse available commands
 ```
 
 ## What Gets Added
@@ -54,6 +58,7 @@ cd your-project
 ```
 
 You'll be prompted for:
+
 1. Skill level (beginner, l1, l2, expert)
 2. Project phase (poc, mvp, beta, scale)
 3. Whether to install git hooks
@@ -70,13 +75,13 @@ cd your-project
 
 ### Parameters
 
-| Parameter | Options | Default | Description |
-|-----------|---------|---------|-------------|
-| `--skill` | vibe, beginner, l1, l2, expert | beginner | Your experience level |
-| `--phase` | poc, mvp, beta, scale | mvp | Project maturity |
-| `--hooks` | (flag) | false | Install git hooks |
-| `--no-hooks` | (flag) | true | Skip git hooks |
-| `--force` | (flag) | false | Overwrite existing configs |
+| Parameter    | Options                        | Default  | Description                |
+| ------------ | ------------------------------ | -------- | -------------------------- |
+| `--skill`    | vibe, beginner, l1, l2, expert | beginner | Your experience level      |
+| `--phase`    | poc, mvp, beta, scale          | mvp      | Project maturity           |
+| `--hooks`    | (flag)                         | false    | Install git hooks          |
+| `--no-hooks` | (flag)                         | true     | Skip git hooks             |
+| `--force`    | (flag)                         | false    | Overwrite existing configs |
 
 ## Common Scenarios
 
@@ -140,6 +145,7 @@ claude --system-prompt system/active.md "/explore-codebase explain the architect
 ## What Happens During Setup
 
 1. **Detection Phase**
+
    ```
    ✓ Detects: Node.js, Python, Go, Rust, Ruby, Java, PHP
    ✓ Finds: package.json, requirements.txt, go.mod, etc.
@@ -147,6 +153,7 @@ claude --system-prompt system/active.md "/explore-codebase explain the architect
    ```
 
 2. **Configuration Phase**
+
    ```
    ✓ Creates CLAUDE.md with project-specific instructions
    ✓ Adds AGENTS.md with general directives
@@ -154,6 +161,7 @@ claude --system-prompt system/active.md "/explore-codebase explain the architect
    ```
 
 3. **Profile Application**
+
    ```
    ✓ Applies skill level (controls available commands)
    ✓ Sets project phase (determines CI strictness)
@@ -169,14 +177,14 @@ claude --system-prompt system/active.md "/explore-codebase explain the architect
 
 ## Comparison with repo_wizard.sh
 
-| Feature | existing_repo_setup.sh | repo_wizard.sh |
-|---------|------------------------|----------------|
-| **Clones repository** | ❌ No | ✅ Yes |
-| **Organizes into ~/projects** | ❌ No | ✅ Yes |
-| **Works with current directory** | ✅ Yes | ❌ No |
-| **Interactive prompts** | ✅ Optional | ✅ Always |
-| **Command-line args** | ✅ Yes | ✅ Yes |
-| **Best for** | Existing repos | New projects |
+| Feature                          | existing_repo_setup.sh | repo_wizard.sh |
+| -------------------------------- | ---------------------- | -------------- |
+| **Clones repository**            | ❌ No                  | ✅ Yes         |
+| **Organizes into ~/projects**    | ❌ No                  | ✅ Yes         |
+| **Works with current directory** | ✅ Yes                 | ❌ No          |
+| **Interactive prompts**          | ✅ Optional            | ✅ Always      |
+| **Command-line args**            | ✅ Yes                 | ✅ Yes         |
+| **Best for**                     | Existing repos         | New projects   |
 
 ## Post-Setup Steps
 
@@ -221,6 +229,7 @@ scripts/apply_profile.sh --skill l2 --phase beta
 ### "Not a git repository"
 
 The script works with non-git directories but shows a warning:
+
 ```bash
 # Initialize git if needed
 git init
@@ -231,6 +240,7 @@ git commit -m "Initial commit with DevPilot"
 ### "Configuration already exists"
 
 If DevPilot was previously configured:
+
 ```bash
 # Force overwrite (careful!)
 ~/devpilot/setup/existing_repo_setup.sh --force
@@ -243,6 +253,7 @@ rm -rf .claude/ CLAUDE.md AGENTS.md scripts/apply_profile.sh
 ### "Dependencies not installing"
 
 The script attempts to install dependencies but won't fail if they don't install:
+
 ```bash
 # Install manually if needed
 npm install          # Node.js
@@ -314,6 +325,7 @@ setup_my_project ~/projects/new-service
 ## Next Steps
 
 After setup, explore:
+
 - [ARCHITECTURE_OVERVIEW.md](ARCHITECTURE_OVERVIEW.md) - Understand the full system
 - [WEEK_WITH_DEVPILOT.md](WEEK_WITH_DEVPILOT.md) - Daily workflow examples
 - [agent-commands.md](agent-commands.md) - Browse all available commands
@@ -321,4 +333,4 @@ After setup, explore:
 
 ---
 
-*existing_repo_setup.sh: The fastest path to AI-assisted development for your existing projects.*
+_existing_repo_setup.sh: The fastest path to AI-assisted development for your existing projects._

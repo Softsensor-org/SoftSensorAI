@@ -6,6 +6,28 @@ Transform how you work with AI coding assistants. DevPilot automatically configu
 Gemini, Grok, and Copilot for your skill level and project needs - with full parity across all
 platforms.
 
+## 🚀 Quick Start (3 Steps)
+
+```bash
+# 1. Install DevPilot (one-time)
+git clone https://github.com/Softsensor-org/DevPilot.git ~/devpilot
+cd ~/devpilot && ./setup_all.sh
+export PATH="$HOME/devpilot/bin:$PATH"  # Add to ~/.bashrc
+
+# 2. Setup your project (any repo)
+cd your-project
+dp setup        # Works for new or existing repos
+dp init         # Configure and initialize
+
+# 3. Start using AI features
+dp palette      # Browse all commands
+dp review       # AI code review
+dp tickets      # Generate backlog
+```
+
+That's it! DevPilot is now configured for your project. See [Full Guide](#getting-started) for
+details.
+
 ## 🆕 Latest Features
 
 - **🎯 Multi-Persona System** - Combine multiple AI personas (Data Scientist, Software Architect,
@@ -384,16 +406,16 @@ What this does:
 
 ### Commands You'll Use Most Often
 
-| Command                           | What it does               | When to use               |
-| --------------------------------- | -------------------------- | ------------------------- |
-| `~/devpilot/setup/repo_wizard.sh` | Set up a new project       | Starting work on any repo |
-| `scripts/apply_profile.sh`        | Change skill/phase         | Your experience changes   |
-| `just review-local`               | AI review of your changes  | Before opening PR         |
-| `just tickets`                    | Generate tickets from code | Planning sprint work      |
-| `rg "search term"`                | Lightning-fast code search | Finding code patterns     |
-| `fd filename`                     | Fast file search           | Locating files            |
-| `gh pr create`                    | Create pull request        | Ready to merge            |
-| `gh issue create`                 | Create GitHub issue        | Tracking bugs/features    |
+| Command            | What it does               | When to use               |
+| ------------------ | -------------------------- | ------------------------- |
+| `dp setup`         | Set up any project         | Starting work on any repo |
+| `dp init`          | Initialize & configure     | After setup               |
+| `dp doctor`        | Check system health        | Troubleshooting           |
+| `dp review`        | AI review of your changes  | Before opening PR         |
+| `dp tickets`       | Generate tickets from code | Planning sprint work      |
+| `dp palette`       | Browse all commands        | Discovering features      |
+| `rg "search term"` | Lightning-fast code search | Finding code patterns     |
+| `gh pr create`     | Create pull request        | Ready to merge            |
 
 ### In Your AI Assistant (Claude/Cursor)
 
@@ -759,8 +781,8 @@ Claude: [Analyzes code, generates prioritized tickets with estimates]
 
 ```bash
 # Use AI command files with CLI-first approach
-just tickets                          # Uses .claude/commands/tickets-from-code.md
-scripts/generate_tickets.sh --quick   # Direct CLI execution
+dp tickets                           # Uses AI to analyze codebase
+dp tickets --quick                   # Quick analysis mode
 
 # Outputs (integration-ready):
 # tickets/tickets.json      - Raw AI output
@@ -879,8 +901,7 @@ What each category includes:
 Skip the interactive prompts:
 
 ```bash
-~/devpilot/setup/repo_wizard.sh \
-  --url git@github.com:you/repo.git \
+dp setup git@github.com:you/repo.git \
   --org work \
   --category backend \
   --skill beginner \
@@ -891,7 +912,7 @@ For existing projects (without cloning):
 
 ```bash
 cd /your/existing/project
-~/devpilot/scripts/apply_profile.sh --skill expert --phase scale
+dp init --skill expert --phase scale
 ```
 
 </details>
@@ -1030,15 +1051,15 @@ scripts/graduate.sh advance     # Graduate to next level
 
 ```bash
 # IMPORTANT: Preview setup without making changes (dry run)
-~/devpilot/scripts/repo_plan.sh ~/projects work backend my-api https://github.com/you/api
+dp setup --dry-run https://github.com/you/api
 # Shows exactly what files would be created, where they'd go
 
 # Then run actual setup after reviewing the plan
-~/devpilot/setup/repo_wizard.sh --dry-run  # Preview first
-~/devpilot/setup/repo_wizard.sh            # Actual setup
+dp setup --dry-run https://github.com/you/repo  # Preview first
+dp setup https://github.com/you/repo            # Actual setup
 
 # Generate tickets from codebase (CLI-first, JSON→CSV)
-scripts/generate_tickets.sh --quick
+dp tickets --quick
 # Output: tickets/tickets.json, tickets/backlog.csv, tickets/backlog.md
 
 # Or use justfile shortcut

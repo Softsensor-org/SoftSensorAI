@@ -5,8 +5,115 @@ set -euo pipefail
 
 OUTPUT="${1:-commands.md}"
 JSON_OUTPUT="${2:-commands.json}"
+FIRST_JSON=true
 
-# Header for markdown
+# Extract description from file header comment
+extract_description() {
+  local file="$1"
+  local name="$2"
+  grep -m1 "^# " "$file" 2>/dev/null | sed 's/^# //' || echo "Run $name"
+}
+
+# Add JSON separator if needed
+add_json_separator() {
+  if [[ "$FIRST_JSON" == "false" ]]; then
+    echo "," >> "$JSON_OUTPUT"
+  fi
+  FIRST_JSON=false
+}
+
+# Add command to both outputs
+add_command() {
+  local command="$1"
+  local description="$2"
+  local category="$3"
+  local source="$4"
+
+  # Markdown output
+  echo "| \`$command\` | $description | $category | $source |" >> "$OUTPUT"
+
+  # JSON output
+  add_json_separator
+  printf '  {"command":"%s","description":"%s","category":"%s","source":"%s"}' \
+    "$command" "$description" "$category" "$source" >> "$JSON_OUTPUT"
+}
+
+# Process shell scripts in a directory
+process_directory() {
+  local dir="$1"
+  local category="$2"
+  local header="$3"
+
+  if [[ ! -d "$dir" ]]; then
+    return 0
+  fi
+
+  echo "" >> "$OUTPUT"
+  echo "## $header" >> "$OUTPUT"
+  echo "" >> "$OUTPUT"
+
+  for script in "$dir"/*.sh; do
+    [[ -f "$script" ]] || continue
+    local basename="${script##*/}"
+    local name="${basename%.sh}"
+    local desc=$(extract_description "$script" "$name")
+    add_command "./$dir/$basename" "$desc" "$category" "$dir"
+  done
+}
+
+# Parse Justfile targets
+parse_justfile() {
+  local justfile
+  if [[ -f "Justfile" ]] || [[ -f "justfile" ]]; then
+    justfile=$(ls Just* just* 2>/dev/null | head -1 || true)
+  else
+    return 0
+  fi
+
+  # Extract recipes with descriptions
+  awk '
+    /^[a-z][a-z0-9_-]*:/ {
+      recipe = $1
+      sub(/:.*/, "", recipe)
+
+      if (prev_line ~ /^# /) {
+        desc = prev_line
+        sub(/^# /, "", desc)
+        printf "%s|%s\n", recipe, desc
+      } else {
+        printf "%s|Run %s\n", recipe, recipe
+      }
+    }
+    { prev_line = $0 }
+  ' "$justfile" | while IFS='|' read -r recipe desc; do
+    add_command "just $recipe" "$desc" "build" "Justfile"
+  done
+}
+
+# Parse dp commands
+parse_dp_commands() {
+  if [[ ! -f "bin/dp" ]]; then
+    return 0
+  fi
+
+  echo "" >> "$OUTPUT"
+
+  local -a dp_commands=(
+    "init:Initialize project with doctor, profile, and system build:setup"
+    "tickets:Generate structured backlog (JSON/CSV):planning"
+    "review:AI review of local diff:review"
+    "review --preview:AI review with preview logs:review"
+    "project:Create/show project profile:config"
+    "palette:Open command palette:meta"
+  )
+
+  for cmd_spec in "${dp_commands[@]}"; do
+    IFS=: read -r cmd desc cat <<< "$cmd_spec"
+    add_command "dp $cmd" "$desc" "$cat" "dp"
+  done
+}
+
+# Initialize output files
 cat > "$OUTPUT" <<'EOF'
 # DevPilot Command Registry
 
@@ -18,127 +125,15 @@ Quick reference for all available commands. Use `dp palette` or `just palette` t
 |---------|-------------|----------|--------|
 EOF
 
-# JSON array start
 echo '{"commands": [' > "$JSON_OUTPUT"
-FIRST=true
 
-# Parse Justfile targets
-if [[ -f "Justfile" ]] || [[ -f "justfile" ]]; then
-  JUSTFILE=$(ls Just* just* 2>/dev/null | head -1)
+# Generate registry
+parse_justfile
+parse_dp_commands
+process_directory "scripts" "script" "Scripts"
+process_directory "tools" "tool" "Tools"
 
-  # Extract recipes with descriptions
-  awk '
-    /^[a-z][a-z0-9_-]*:/ {
-      # Found a recipe
-      recipe = $1
-      sub(/:.*/, "", recipe)
-
-      # Look for comment on previous line
-      if (prev_line ~ /^# /) {
-        desc = prev_line
-        sub(/^# /, "", desc)
-        printf "| `just %s` | %s | build | Justfile |\n", recipe, desc
-        printf "JSON:{\"command\":\"just %s\",\"description\":\"%s\",\"category\":\"build\",\"source\":\"Justfile\"}\n", recipe, desc
-      } else {
-        # No description, use recipe name
-        printf "| `just %s` | Run %s | build | Justfile |\n", recipe, recipe
-        printf "JSON:{\"command\":\"just %s\",\"description\":\"Run %s\",\"category\":\"build\",\"source\":\"Justfile\"}\n", recipe, recipe
-      }
-    }
-    { prev_line = $0 }
-  ' "$JUSTFILE" | while IFS= read -r line; do
-    if [[ "$line" =~ ^JSON: ]]; then
-      # JSON output
-      json_line="${line#JSON:}"
-      if [[ "$FIRST" == "false" ]]; then
-        echo "," >> "$JSON_OUTPUT"
-      fi
-      echo -n "  $json_line" >> "$JSON_OUTPUT"
-      FIRST=false
-    else
-      # Markdown output
-      echo "$line" >> "$OUTPUT"
-    fi
-  done
-fi
-
-# Parse dp commands
-if [[ -f "bin/dp" ]]; then
-  echo "" >> "$OUTPUT"
-  echo "| \`dp init\` | Initialize project with doctor, profile, and system build | setup | dp |" >> "$OUTPUT"
-  echo "| \`dp tickets\` | Generate structured backlog (JSON/CSV) | planning | dp |" >> "$OUTPUT"
-  echo "| \`dp review\` | AI review of local diff | review | dp |" >> "$OUTPUT"
-  echo "| \`dp review --preview\` | AI review with preview logs | review | dp |" >> "$OUTPUT"
-  echo "| \`dp project\` | Create/show project profile | config | dp |" >> "$OUTPUT"
-  echo "| \`dp palette\` | Open command palette | meta | dp |" >> "$OUTPUT"
-
-  # Add to JSON
-  for cmd in "init:Initialize project with doctor, profile, and system build:setup" \
-             "tickets:Generate structured backlog (JSON/CSV):planning" \
-             "review:AI review of local diff:review" \
-             "review --preview:AI review with preview logs:review" \
-             "project:Create/show project profile:config" \
-             "palette:Open command palette:meta"; do
-    IFS=: read -r c d cat <<< "$cmd"
-    if [[ "$FIRST" == "false" ]]; then
-      echo "," >> "$JSON_OUTPUT"
-    fi
-    echo -n "  {\"command\":\"dp $c\",\"description\":\"$d\",\"category\":\"$cat\",\"source\":\"dp\"}" >> "$JSON_OUTPUT"
-    FIRST=false
-  done
-fi
-
-# Parse scripts directory
-if [[ -d "scripts" ]]; then
-  echo "" >> "$OUTPUT"
-  echo "## Scripts" >> "$OUTPUT"
-  echo "" >> "$OUTPUT"
-
-  for script in scripts/*.sh; do
-    [[ -f "$script" ]] || continue
-    basename="${script##*/}"
-    name="${basename%.sh}"
-
-    # Extract description from script header
-    desc=$(grep -m1 "^# " "$script" 2>/dev/null | sed 's/^# //' || echo "Run $name")
-
-    echo "| \`./scripts/$basename\` | $desc | script | scripts |" >> "$OUTPUT"
-
-    # Add to JSON
-    if [[ "$FIRST" == "false" ]]; then
-      echo "," >> "$JSON_OUTPUT"
-    fi
-    echo -n "  {\"command\":\"./scripts/$basename\",\"description\":\"$desc\",\"category\":\"script\",\"source\":\"scripts\"}" >> "$JSON_OUTPUT"
-    FIRST=false
-  done
-fi
-
-# Parse tools directory
-if [[ -d "tools" ]]; then
-  echo "" >> "$OUTPUT"
-  echo "## Tools" >> "$OUTPUT"
-  echo "" >> "$OUTPUT"
-
-  for tool in tools/*.sh; do
-    [[ -f "$tool" ]] || continue
-    basename="${tool##*/}"
-    name="${basename%.sh}"
-
-    # Extract description from tool header
-    desc=$(grep -m1 "^# " "$tool" 2>/dev/null | sed 's/^# //' || echo "Run $name")
-
-    echo "| \`./tools/$basename\` | $desc | tool | tools |" >> "$OUTPUT"
-
-    # Add to JSON
-    if [[ "$FIRST" == "false" ]]; then
-      echo "," >> "$JSON_OUTPUT"
-    fi
-    echo -n "  {\"command\":\"./tools/$basename\",\"description\":\"$desc\",\"category\":\"tool\",\"source\":\"tools\"}" >> "$JSON_OUTPUT"
-    FIRST=false
-  done
-fi
-
-# Close JSON array
+# Finalize outputs
 echo "" >> "$JSON_OUTPUT"
 echo "]}" >> "$JSON_OUTPUT"
 
