@@ -1,0 +1,104 @@
+{
+  "patterns": {
+    "^scripts/.*\\.sh$": {
+      "description": "Script changes require documentation",
+      "required_docs": ["README.md", "docs/"],
+      "suggestions": [
+        "Update README.md if functionality changes",
+        "Update relevant guides in /docs",
+        "Add usage examples if new features"
+      ]
+    },
+    "^\\.github/workflows/.*\\.yml$": {
+      "description": "CI/CD workflow changes",
+      "required_docs": ["docs/ci.md"],
+      "suggestions": [
+        "Update CI documentation",
+        "Document any new workflow inputs",
+        "Update testing requirements"
+      ]
+    },
+    "^install/.*": {
+      "description": "Installation script changes",
+      "required_docs": ["README.md", "docs/quickstart.md"],
+      "suggestions": [
+        "Update installation instructions",
+        "Document new dependencies",
+        "Update OS compatibility notes"
+      ]
+    },
+    "^setup/.*": {
+      "description": "Setup script changes",
+      "required_docs": ["docs/existing_repo_setup.md", "docs/repo-wizard.md"],
+      "suggestions": [
+        "Update setup guides",
+        "Document new configuration options",
+        "Update profile documentation"
+      ]
+    },
+    "^templates/.*": {
+      "description": "Template changes",
+      "required_docs": ["docs/"],
+      "suggestions": [
+        "Update template documentation",
+        "Document placeholder variables",
+        "Add usage examples"
+      ]
+    },
+    "^tools/.*": {
+      "description": "Tool changes",
+      "required_docs": ["docs/"],
+      "suggestions": [
+        "Document tool usage",
+        "Update dependencies list",
+        "Add troubleshooting notes"
+      ]
+    },
+    "^validation/.*": {
+      "description": "Validation script changes",
+      "required_docs": ["docs/"],
+      "suggestions": [
+        "Document validation requirements",
+        "Update test documentation",
+        "Add validation criteria"
+      ]
+    },
+    "^utils/.*": {
+      "description": "Utility changes",
+      "required_docs": ["docs/"],
+      "suggestions": [
+        "Document utility functions",
+        "Update API documentation",
+        "Add usage examples"
+      ]
+    },
+    "^personas/.*": {
+      "description": "Persona configuration changes",
+      "required_docs": ["docs/PERSONAS_GUIDE.md", "docs/MULTI_PERSONA_GUIDE.md"],
+      "suggestions": [
+        "Update persona documentation",
+        "Document persona capabilities",
+        "Add usage examples"
+      ]
+    },
+    ".*\\.(py|js|ts)$": {
+      "description": "Code file changes",
+      "required_docs": ["CHANGELOG.md"],
+      "suggestions": [
+        "Update CHANGELOG for releases",
+        "Document API changes",
+        "Update relevant guides"
+      ]
+    }
+  },
+  "exceptions": {
+    "files": ["tests/*", "*.test.*", "*.spec.*", ".github/documentation-requirements.json"],
+    "commit_patterns": ["^chore:", "^test:", "^ci:", "^style:", "^refactor:"]
+  },
+  "severity": {
+    "missing_critical_docs": "error",
+    "missing_suggested_docs": "warning",
+    "outdated_docs": "info"
+  },
+  "critical_files": ["README.md", "CHANGELOG.md", "docs/quickstart.md", "docs/ci.md"]
+}

@@ -1186,10 +1186,37 @@ DevPilot includes comprehensive testing across all supported platforms:
 - **Quality Gates**: Linting, type checking, unit tests
 - **Security Scanning**: Dependency audits, secret detection
 - **OS Compatibility**: Cross-platform validation
+- **Documentation Checks**: Optional validation of documentation requirements
 - **AI PR Review**: Automated code review (when AI CLI available)
 
 View test results:
 [![CI](https://github.com/Softsensor-org/DevPilot/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Softsensor-org/DevPilot/actions/workflows/ci.yml)
+
+### Documentation Requirements
+
+DevPilot includes an optional documentation check system:
+
+**Features:**
+
+- Automated checks in CI/CD (non-blocking by default)
+- Local pre-commit hook (optional)
+- Configurable requirements per file type
+- Smart suggestions based on changes
+
+**Usage:**
+
+```bash
+# Check documentation for changed files
+./scripts/check_documentation.sh
+
+# Enable/disable pre-commit hook
+./scripts/toggle_doc_check.sh enable   # Turn on
+./scripts/toggle_doc_check.sh disable  # Turn off
+./scripts/toggle_doc_check.sh status   # Check status
+
+# Make checks required in PR
+# Add the 'require-docs' label to your pull request
+```
 
 ## 📚 Essential Reading
 
