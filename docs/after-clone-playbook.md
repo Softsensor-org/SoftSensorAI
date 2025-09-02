@@ -302,7 +302,9 @@ jobs:
 
       - name: Setup DevPilot
         run: |
-          curl -sL https://raw.githubusercontent.com/Softsensor-org/DevPilot/main/scripts/doctor.sh | bash
+          # Note: For private repo, clone first:
+          # git clone git@github.com:Softsensor-org/DevPilot.git ~/devpilot
+          ~/devpilot/scripts/doctor.sh
           ./scripts/apply_profile.sh --skill l2 --phase beta
 
       - name: Run Repository Review

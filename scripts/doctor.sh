@@ -183,10 +183,12 @@ if [ ${#MISSING_TOOLS[@]} -gt 0 ]; then
 
   echo ""
   echo "Or run the automated installer:"
+  SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+  PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
   if [[ "$(uname -s)" == "Darwin" ]]; then
-    echo "  ./install_key_software_macos.sh"
+    echo "  $PROJECT_ROOT/install/key_software_macos.sh"
   else
-    echo "  ./install_key_software_linux.sh"
+    echo "  $PROJECT_ROOT/install/key_software_linux.sh"
   fi
 fi
 
