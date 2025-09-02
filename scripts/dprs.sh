@@ -2,6 +2,17 @@
 # DevPilot Readiness Score (DPRS) - Measure repository maturity
 set -euo pipefail
 
+# Debug mode if DPRS_DEBUG is set
+[ "${DPRS_DEBUG:-}" = "1" ] && set -x
+
+# Ensure compatibility symlinks exist for reorganized structure
+if [ ! -f package-lock.json ] && [ -f config/package-lock.json ]; then
+  ln -sf config/package-lock.json package-lock.json 2>/dev/null || true
+fi
+if [ ! -f package.json ] && [ -f config/package.json ]; then
+  ln -sf config/package.json package.json 2>/dev/null || true
+fi
+
 # Colors
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -139,7 +150,11 @@ calculate_tests_score() {
 
   # Package manager lockfiles (15 points)
   local lock_points=0
-  if [ -f "package-lock.json" ] || [ -f "yarn.lock" ] || [ -f "pnpm-lock.yaml" ] || [ -f "requirements.txt" ] || [ -f "Pipfile.lock" ] || [ -f "Cargo.lock" ]; then
+  # Check for lock files in both root and config/
+  if [ -f "package-lock.json" ] || [ -f "config/package-lock.json" ] || \
+     [ -f "yarn.lock" ] || [ -f "pnpm-lock.yaml" ] || \
+     [ -f "requirements.txt" ] || [ -f "config/requirements.txt" ] || \
+     [ -f "Pipfile.lock" ] || [ -f "Cargo.lock" ]; then
     lock_points=15
   fi
   score=$((score + lock_points))
@@ -147,6 +162,7 @@ calculate_tests_score() {
 
   TESTS_SCORE=$score
   [ "$VERBOSE" -eq 1 ] && echo -e "${YELLOW}Tests Score Details:${NC}$details"
+  return 0
 }
 
 # Security Score (0-100)
@@ -197,6 +213,7 @@ calculate_security_score() {
 
   SECURITY_SCORE=$score
   [ "$VERBOSE" -eq 1 ] && echo -e "${YELLOW}Security Score Details:${NC}$details"
+  return 0
 }
 
 # Documentation Score (0-100)
@@ -220,12 +237,14 @@ calculate_docs_score() {
   details="$details\n  README.md: $readme_points/25 points"
 
   local contributing_points=0
-  [ -f "CONTRIBUTING.md" ] && contributing_points=15
+  # Check for CONTRIBUTING.md in both root and docs/
+  { [ -f "CONTRIBUTING.md" ] || [ -f "docs/CONTRIBUTING.md" ]; } && contributing_points=15
   score=$((score + contributing_points))
   details="$details\n  CONTRIBUTING.md: $contributing_points/15 points"
 
   local security_doc_points=0
-  [ -f "SECURITY.md" ] && security_doc_points=10
+  # Check for SECURITY.md in both root and docs/
+  { [ -f "SECURITY.md" ] || [ -f "docs/SECURITY.md" ]; } && security_doc_points=10
   score=$((score + security_doc_points))
   details="$details\n  SECURITY.md: $security_doc_points/10 points"
 
@@ -245,12 +264,14 @@ calculate_docs_score() {
 
   # Changelog/Releases (15 points)
   local changelog_points=0
-  [ -f "CHANGELOG.md" ] || [ -f "HISTORY.md" ] && changelog_points=15
+  # Check for CHANGELOG in both root and docs/
+  { [ -f "CHANGELOG.md" ] || [ -f "docs/CHANGELOG.md" ] || [ -f "HISTORY.md" ]; } && changelog_points=15
   score=$((score + changelog_points))
   details="$details\n  CHANGELOG: $changelog_points/15 points"
 
   DOCS_SCORE=$score
   [ "$VERBOSE" -eq 1 ] && echo -e "${YELLOW}Documentation Score Details:${NC}$details"
+  return 0
 }
 
 # Developer Experience Score (0-100)
@@ -271,7 +292,8 @@ calculate_dx_score() {
     fi
   elif [ -f "Makefile" ]; then
     task_points=15
-  elif [ -f "package.json" ] && grep -q '"scripts"' package.json; then
+  elif { [ -f "package.json" ] && grep -q '"scripts"' package.json; } || \
+       { [ -f "config/package.json" ] && grep -q '"scripts"' config/package.json; }; then
     task_points=10
   fi
   score=$((score + task_points))
@@ -303,14 +325,15 @@ calculate_dx_score() {
 
   # Package manager health (15 points)
   local pkg_points=0
-  if [ -f "package.json" ]; then
+  # Check for package files in both root and config/
+  if [ -f "package.json" ] || [ -f "config/package.json" ]; then
     # Check for security audit
     if command -v npm >/dev/null 2>&1; then
       npm audit --audit-level=high >/dev/null 2>&1 && pkg_points=$((pkg_points + 10))
     fi
     # Check for up-to-date dependencies would require network calls, skip
     pkg_points=$((pkg_points + 5))  # Basic package.json presence
-  elif [ -f "requirements.txt" ]; then
+  elif [ -f "requirements.txt" ] || [ -f "config/requirements.txt" ]; then
     pkg_points=10
   elif [ -f "Cargo.toml" ]; then
     pkg_points=10
@@ -320,6 +343,7 @@ calculate_dx_score() {
 
   DX_SCORE=$score
   [ "$VERBOSE" -eq 1 ] && echo -e "${YELLOW}Developer Experience Score Details:${NC}$details"
+  return 0
 }
 
 # Calculate phase readiness

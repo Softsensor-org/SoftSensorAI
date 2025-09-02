@@ -1,15 +1,15 @@
 {
   "repository": "setup-scripts",
   "branch": "main",
-  "commit": "85e7333",
-  "date": "2025-09-01",
-  "total_score": 71,
-  "phase_readiness": "MVP",
+  "commit": "39474da",
+  "date": "2025-09-02",
+  "total_score": 78,
+  "phase_readiness": "BETA",
   "categories": {
     "tests": {
-      "score": 35,
+      "score": 50,
       "weight": 25,
-      "weighted_score": 8
+      "weighted_score": 12
     },
     "security": {
       "score": 100,
@@ -22,9 +22,9 @@
       "weighted_score": 21
     },
     "developer_experience": {
-      "score": 65,
+      "score": 80,
       "weight": 25,
-      "weighted_score": 16
+      "weighted_score": 20
     }
   },
   "thresholds": {
