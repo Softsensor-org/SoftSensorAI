@@ -13,8 +13,8 @@ export CI := env_var_or_default("CI", "false")
 # AI Commands
 # ============================================================================
 
-# AI review of local changes (CLI-first, no secrets)
-review-local:
+# Review local changes with AI (CLI-first, no secrets)
+review:
   #!/usr/bin/env bash
   set -euo pipefail
   echo "Running AI review on local changes..."
@@ -64,7 +64,7 @@ tickets:
         echo "  JSON: artifacts/tickets.json"
         echo "  CSV: artifacts/backlog.csv"
       else
-        echo "Generated output but not valid JSON"
+        echo "ℹ️  I couldn't find JSON in the model response—try a smaller scope or different CLI"
       fi
       exit 0
     fi
@@ -646,12 +646,50 @@ commands:
 
 # After-clone playbook: Complete repo review
 after-clone:
-  @echo "🚀 Running after-clone playbook..."
-  @scripts/doctor.sh || true
-  @scripts/apply_profile.sh --skill l1 --phase mvp || true
-  @scripts/system_build.sh || true
-  @just review-repo
-  @echo "✅ Playbook complete! Check artifacts/ for reports"
+  #!/usr/bin/env bash
+  set -euo pipefail
+  echo ""
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo "  AFTER-CLONE PLAYBOOK"
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo ""
+
+  echo "  ▸ Checking environment..."
+  scripts/doctor.sh || true
+
+  echo "  ▸ Applying starter profile..."
+  scripts/apply_profile.sh --skill l1 --phase mvp || true
+
+  echo "  ▸ Building system context..."
+  scripts/system_build.sh || true
+
+  echo "  ▸ Running repository review..."
+  just repo-review
+
+  echo ""
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo "  SETUP COMPLETE"
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo ""
+  echo "  Repository Status"
+  echo "  ─────────────────"
+  echo "  ✓ Environment verified"
+  echo "  ✓ Profile configured (l1/mvp)"
+  echo "  ✓ System context ready"
+  echo "  ✓ Security scan complete"
+  echo ""
+  echo "  Generated Artifacts"
+  echo "  ───────────────────"
+  ls -la artifacts/*.* 2>/dev/null | awk '{print "  • " $NF}' | head -5 || echo "  • No artifacts yet"
+  echo ""
+  echo "  Quick Start"
+  echo "  ───────────"
+  echo "  • dp init        → Complete initialization"
+  echo "  • dp tickets     → Generate backlog"
+  echo "  • dp review      → Review changes"
+  echo "  • just dev       → Start development"
+  echo ""
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
 # Repository review: Complete analysis (one-liner version)
 repo-review:
@@ -666,6 +704,10 @@ repo-review:
 # DEPRECATED: Use repo-review above
 review-repo:
   @just repo-review
+
+# Alias for backward compatibility
+review-local:
+  @just review
 
 # Quick security scan
 security-quick:

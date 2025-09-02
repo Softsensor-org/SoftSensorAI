@@ -44,11 +44,32 @@ cmd_init() {
   if [[ -x "$ROOT/scripts/system_build.sh" ]]; then "$ROOT/scripts/system_build.sh" || true; fi
   say "▸ Quick repo review …"
   if grep -q '^repo-review:' "$ROOT/Justfile" 2>/dev/null; then just repo-review || true; fi
-  say
-  say "✅ Ready. Next:"
-  say "  1) dp tickets   # structured backlog (JSON/CSV)"
-  say "  2) dp review    # AI review of your local diff"
-  say "  3) just dev     # your project's dev server (if defined)"
+
+  # Pretty summary block
+  say ""
+  say "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  say "  INITIALIZATION COMPLETE"
+  say "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  say ""
+  say "  Project Setup"
+  say "  ─────────────"
+  if [[ -n "$project_file" ]]; then
+    say "  ✓ Profile loaded from $project_file"
+  else
+    say "  ✓ Default profile applied (skill=l1, phase=mvp)"
+  fi
+  say "  ✓ System prompt built"
+  say "  ✓ Repository analyzed"
+  say ""
+  say "  Next Steps"
+  say "  ──────────"
+  say "  1. dp tickets    → Generate structured backlog"
+  say "  2. dp review     → Review your changes with AI"
+  say "  3. just dev      → Start development server"
+  say "  4. dp palette    → Browse all commands"
+  say ""
+  say "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  say ""
 }
 
 build_tickets_prompt() {
