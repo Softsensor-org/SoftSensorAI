@@ -21,9 +21,15 @@
   "scripts": {
     "lint": "shellcheck scripts/*.sh tools/*.sh bin/* 2>/dev/null || true",
     "test": "bash tools/audit_setup_scripts.sh",
+    "test:coverage": "pytest --cov",
+    "test:python": "pytest",
+    "test:integration": "pytest -m integration",
+    "test:all": "npm run test && npm run test:python",
     "typecheck": "echo 'No TypeScript files to check (shell script project)'",
     "build": "echo 'No build step required (shell script project)'",
-    "format": "shfmt -w scripts/*.sh tools/*.sh bin/* 2>/dev/null || true"
+    "format": "shfmt -w scripts/*.sh tools/*.sh bin/* 2>/dev/null || true",
+    "precommit": "npm run lint && npm run format",
+    "audit": "echo 'Running security audit...' && bash scripts/dprs.sh --output artifacts"
   },
   "devDependencies": {},
   "private": true

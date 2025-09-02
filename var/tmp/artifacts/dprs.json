@@ -1,9 +1,9 @@
 {
   "repository": "setup-scripts",
   "branch": "main",
-  "commit": "39474da",
+  "commit": "8de7100",
   "date": "2025-09-02",
-  "total_score": 78,
+  "total_score": 80,
   "phase_readiness": "BETA",
   "categories": {
     "tests": {
@@ -22,9 +22,9 @@
       "weighted_score": 21
     },
     "developer_experience": {
-      "score": 80,
+      "score": 85,
       "weight": 25,
-      "weighted_score": 20
+      "weighted_score": 21
     }
   },
   "thresholds": {
