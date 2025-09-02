@@ -7,8 +7,20 @@ on:
     types: [opened, synchronize]
 
 jobs:
+  os-compatibility:
+    name: OS Compatibility Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run OS compatibility tests
+        run: |
+          chmod +x tests/test_os_compatibility.sh
+          ./tests/test_os_compatibility.sh
+
   quality-gates:
     runs-on: ubuntu-latest
+    needs: [os-compatibility]
 
     steps:
       - uses: actions/checkout@v4

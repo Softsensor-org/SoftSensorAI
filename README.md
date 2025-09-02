@@ -112,8 +112,12 @@ your-project/
 Before installing, run our diagnostic tool to ensure your system is ready:
 
 ```bash
-# Quick download and run (no installation needed)
-curl -sL https://raw.githubusercontent.com/Softsensor-org/DevPilot/main/scripts/doctor.sh | bash
+# Option 1: If you have access to the repository, clone and run locally
+git clone https://github.com/Softsensor-org/DevPilot.git ~/devpilot
+bash ~/devpilot/scripts/doctor.sh
+
+# Option 2: Quick download and run (when repository is public)
+# curl -sL https://raw.githubusercontent.com/Softsensor-org/DevPilot/main/scripts/doctor.sh | bash
 ```
 
 **All green? You're ready!** 🟢

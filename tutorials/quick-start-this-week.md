@@ -3,9 +3,12 @@
 ## Minimum Setup for Immediate Impact
 
 ### Day 1: Monday (30 minutes)
+
 ```bash
 # 1. Install DevPilot
-curl -fsSL https://raw.githubusercontent.com/Softsensor-org/DevPilot/main/setup_all.sh | bash
+# Clone the repository first
+git clone https://github.com/Softsensor-org/DevPilot.git ~/devpilot
+cd ~/devpilot && ./setup_all.sh
 
 # 2. Set up your main project
 cd ~/your-main-project
@@ -19,6 +22,7 @@ claude --system-prompt .claude/commands/tickets-from-code.md \
 **Immediate Win**: You now have a prioritized backlog in 10 minutes vs 3 hours
 
 ### Day 2: Tuesday (15 minutes)
+
 ```bash
 # Enable AI PR reviewer
 cd ~/your-main-project
@@ -48,6 +52,7 @@ EOF
 **Immediate Win**: Every PR now gets a first-pass review in 1-2 minutes
 
 ### Day 3: Wednesday (20 minutes)
+
 ```bash
 # Create your first custom command
 cat > .claude/commands/daily-standup.md <<'EOF'
@@ -72,6 +77,7 @@ claude --system-prompt .claude/commands/daily-standup.md \
 **Immediate Win**: Standup prep in 30 seconds vs 5 minutes
 
 ### Day 4: Thursday (15 minutes)
+
 ```bash
 # Add pre-push validation
 cat > .git/hooks/pre-push <<'EOF'
@@ -97,6 +103,7 @@ chmod +x .git/hooks/pre-push
 **Immediate Win**: Catch issues before they hit CI
 
 ### Day 5: Friday (30 minutes)
+
 ```bash
 # Generate week's accomplishments
 claude --system-prompt .claude/commands/tickets-from-diff.md \
@@ -118,6 +125,7 @@ echo "- Backlog creation: 3 hours → 15 min" >> DEVPILOT_RESULTS.md
 ## The Four Commands That Pay for Themselves
 
 ### 1. `/tickets-from-code` - Instant Backlog
+
 ```bash
 # Instead of 3-hour planning meetings:
 claude --system-prompt .claude/commands/tickets-from-code.md \
@@ -126,31 +134,38 @@ claude --system-prompt .claude/commands/tickets-from-code.md \
 # Convert to CSV for Jira import
 jq -r '.tickets[] | [.id, .title, .priority, .effort] | @csv' backlog.json > backlog.csv
 ```
+
 **Time Saved**: 2.5 hours per planning session
 
 ### 2. `/secure-fix` - Proactive Security
+
 ```bash
 # Instead of waiting for security team:
 claude --system-prompt .claude/commands/secure-fix.md \
   "scan for OWASP Top 10 in src/"
 ```
+
 **Risk Avoided**: Finding issues in dev vs production
 
 ### 3. `/long-context-map-reduce` - Digest Large Changes
+
 ```bash
 # Instead of reading 1000-line PRs:
 git diff main...feature-branch | \
   claude --system-prompt .claude/commands/long-context-map-reduce.md \
   "summarize changes and identify risks"
 ```
+
 **Time Saved**: 45 min per large PR
 
 ### 4. `/architect-spike` - Design Decisions
+
 ```bash
 # Instead of endless architecture meetings:
 claude --system-prompt .claude/commands/architect-spike.md \
   "evaluate options for migrating to microservices"
 ```
+
 **Time Saved**: 2 hours of debate → 15 min structured analysis
 
 ## Tracking Your Wins
@@ -177,9 +192,11 @@ chmod +x track_results.sh
 ## Common Gotchas & Solutions
 
 ### "AI CLI not found"
+
 ```bash
 # DevPilot is CLI-first - install any supported CLI:
-curl -fsSL https://raw.githubusercontent.com/Softsensor-org/DevPilot/main/install/ai_clis.sh | bash
+# From the cloned repository
+bash ~/devpilot/install/ai_clis.sh
 
 # Or just one:
 pip install --user anthropic-cli  # for Claude
@@ -187,6 +204,7 @@ npm install -g @google/generative-ai-cli  # for Gemini
 ```
 
 ### "Commands not working"
+
 ```bash
 # Check system prompt exists:
 ls system/active.md
@@ -196,6 +214,7 @@ cat system/00-global.md system/10-repo.md system/20-task.md > system/active.md
 ```
 
 ### "CI failing after setup"
+
 ```bash
 # Start with lightest phase:
 ~/devpilot/scripts/apply_profile.sh --phase poc
@@ -213,16 +232,19 @@ After one week, you'll have concrete metrics. Share them:
 ## DevPilot Week 1 Results
 
 **Time Saved:**
+
 - Repo setup: 90 min → 15 min (6x faster)
 - PR reviews: 48 hrs → 2 hrs (24x faster)
 - Backlog grooming: 3 hrs → 15 min (12x faster)
 
 **Quality Improved:**
+
 - Security issues caught pre-commit: 5
 - PRs with AI review: 100%
 - Onboarding time for new dev: 2 weeks → 3 days
 
 **Next Steps:**
+
 - Roll out to 2 more repos
 - Create team-specific commands
 - Track velocity improvement

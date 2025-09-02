@@ -176,11 +176,15 @@ check_graduation() {
 
   # Count completed items
   local total
-  total=$(grep -c "^- \[.\]" PROFILE.md 2>/dev/null || echo 0)
+  total=$(grep -c "^- \[.\]" PROFILE.md 2>/dev/null || echo "0")
+  # Remove any whitespace/newlines from the count
+  total=$(echo "$total" | tr -d '[:space:]')
   local completed
-  completed=$(grep -c "^- \[x\]" PROFILE.md 2>/dev/null || echo 0)
+  completed=$(grep -c "^- \[x\]" PROFILE.md 2>/dev/null || echo "0")
+  # Remove any whitespace/newlines from the count
+  completed=$(echo "$completed" | tr -d '[:space:]')
 
-  if [ "$total" -gt 0 ]; then
+  if [ "${total:-0}" -gt 0 ]; then
     local percent=$((completed * 100 / total))
     echo ""
     echo -e "  Progress: ${GREEN}$completed/$total${NC} ($percent%)"

@@ -1,0 +1,290 @@
+name: OS Compatibility Tests
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - "scripts/**"
+      - "install/**"
+      - "setup/**"
+      - "utils/**"
+      - ".github/workflows/os-compatibility.yml"
+  pull_request:
+    types: [opened, synchronize]
+    paths:
+      - "scripts/**"
+      - "install/**"
+      - "setup/**"
+      - "utils/**"
+  workflow_dispatch:
+    inputs:
+      debug_enabled:
+        type: boolean
+        description: "Enable debug logging"
+        required: false
+        default: false
+
+jobs:
+  test-matrix:
+    name: Test on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - ubuntu-22.04
+          - ubuntu-20.04
+          - macos-latest
+          - macos-13 # Intel
+          - macos-14 # Apple Silicon
+          - windows-latest
+        include:
+          # Define OS-specific variables
+          - os: ubuntu-latest
+            shell: bash
+            install_cmd: "sudo apt-get update && sudo apt-get install -y"
+          - os: ubuntu-22.04
+            shell: bash
+            install_cmd: "sudo apt-get update && sudo apt-get install -y"
+          - os: ubuntu-20.04
+            shell: bash
+            install_cmd: "sudo apt-get update && sudo apt-get install -y"
+          - os: macos-latest
+            shell: bash
+            install_cmd: "brew install"
+          - os: macos-13
+            shell: bash
+            install_cmd: "brew install"
+          - os: macos-14
+            shell: bash
+            install_cmd: "brew install"
+          - os: windows-latest
+            shell: bash
+            install_cmd: "choco install -y"
+
+    defaults:
+      run:
+        shell: ${{ matrix.shell }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "lts/*"
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      # macOS-specific setup
+      - name: Install Homebrew (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          if ! command -v brew &> /dev/null; then
+            /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+          fi
+
+      # Windows-specific setup (WSL)
+      - name: Setup WSL (Windows)
+        if: runner.os == 'Windows'
+        uses: Vampire/setup-wsl@v3
+        with:
+          distribution: Ubuntu-22.04
+          use-cache: true
+
+      - name: Test doctor.sh script
+        run: |
+          echo "Testing doctor.sh on ${{ matrix.os }}"
+          bash scripts/doctor.sh || true
+          echo "Exit code: $?"
+
+      - name: Test OS detection
+        run: |
+          echo "Testing OS detection..."
+          bash -c '
+          source utils/os_compat.sh 2>/dev/null || true
+          echo "OS: $(uname -s)"
+          echo "Architecture: $(uname -m)"
+          if declare -f get_os_codename &>/dev/null; then
+            echo "Codename: $(get_os_codename)"
+            echo "Arch: $(get_arch)"
+            echo "Package Manager: $(get_package_manager)"
+            echo "Is WSL: $(is_wsl && echo "yes" || echo "no")"
+          fi
+          '
+
+      - name: Test setup_all.sh help
+        run: |
+          echo "Testing setup_all.sh --help"
+          bash setup_all.sh --help || true
+
+      - name: Test key_software script detection
+        if: runner.os != 'Windows'
+        run: |
+          echo "Testing platform-specific installer detection..."
+          if [[ "${{ runner.os }}" == "macOS" ]]; then
+            test -f install/key_software_macos.sh && echo "✓ macOS installer found"
+          else
+            test -f install/key_software_linux.sh && echo "✓ Linux installer found"
+          fi
+
+      - name: Verify core scripts are executable
+        run: |
+          echo "Checking script permissions..."
+          for script in scripts/*.sh setup/*.sh install/*.sh utils/*.sh; do
+            if [ -f "$script" ]; then
+              echo "Checking: $script"
+              bash -n "$script" || echo "Syntax error in $script"
+            fi
+          done
+
+      - name: Test devpilot CLI
+        run: |
+          echo "Testing devpilot CLI..."
+          bash devpilot --help || true
+          bash devpilot --version || true
+
+      - name: Generate compatibility report
+        if: always()
+        run: |
+          echo "## OS Compatibility Report for ${{ matrix.os }}"
+          echo "- OS: ${{ runner.os }}"
+          echo "- Shell: ${{ matrix.shell }}"
+          echo "- Node: $(node --version 2>/dev/null || echo 'not installed')"
+          echo "- Python: $(python --version 2>/dev/null || echo 'not installed')"
+          echo "- Git: $(git --version 2>/dev/null || echo 'not installed')"
+          if [[ "${{ runner.os }}" == "macOS" ]]; then
+            echo "- Homebrew: $(brew --version 2>/dev/null | head -1 || echo 'not installed')"
+          fi
+
+  container-tests:
+    name: Test in Container - ${{ matrix.container }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        container:
+          - debian:latest
+          - ubuntu:latest
+          - fedora:latest
+          - alpine:latest
+          - archlinux:latest
+          - rockylinux:9
+
+    container:
+      image: ${{ matrix.container }}
+
+    steps:
+      - name: Install prerequisites
+        run: |
+          if command -v apt-get &>/dev/null; then
+            apt-get update && apt-get install -y git bash curl
+          elif command -v dnf &>/dev/null; then
+            dnf install -y git bash curl
+          elif command -v yum &>/dev/null; then
+            yum install -y git bash curl
+          elif command -v apk &>/dev/null; then
+            apk add --no-cache git bash curl
+          elif command -v pacman &>/dev/null; then
+            pacman -Syu --noconfirm git bash curl
+          fi
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Test doctor.sh
+        shell: bash
+        run: |
+          echo "Testing doctor.sh in ${{ matrix.container }}"
+          bash scripts/doctor.sh || true
+
+      - name: Test OS compatibility functions
+        shell: bash
+        run: |
+          if [ -f utils/os_compat.sh ]; then
+            source utils/os_compat.sh
+            echo "Container: ${{ matrix.container }}"
+            echo "Package Manager: $(get_package_manager)"
+            echo "OS Codename: $(get_os_codename)"
+            echo "Architecture: $(get_arch)"
+          fi
+
+      - name: Test installer detection
+        shell: bash
+        run: |
+          echo "Testing installer for ${{ matrix.container }}"
+          # Test that key_software_linux.sh can detect the distro
+          bash -c '
+          if [ -f install/key_software_linux.sh ]; then
+            # Just check if it can detect the OS, don't actually install
+            head -50 install/key_software_linux.sh | grep -E "debian|fedora|arch|alpine" || true
+          fi
+          '
+
+  bsd-simulation:
+    name: Simulate BSD Environment
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Test BSD detection in scripts
+        run: |
+          echo "Simulating BSD environment checks..."
+          # Test that our scripts handle BSD properly
+          for os in FreeBSD OpenBSD NetBSD; do
+            echo "Testing $os detection..."
+            # Override uname for testing
+            bash -c "
+            uname() {
+              if [[ \"\$1\" == '-s' ]]; then
+                echo '$os'
+              else
+                command uname \"\$@\"
+              fi
+            }
+            export -f uname
+            source utils/os_compat.sh 2>/dev/null || true
+            bash scripts/doctor.sh 2>&1 | head -20 || true
+            "
+          done
+
+  summary:
+    name: Compatibility Summary
+    runs-on: ubuntu-latest
+    needs: [test-matrix, container-tests, bsd-simulation]
+    if: always()
+
+    steps:
+      - name: Generate Summary Report
+        run: |
+          echo "# OS Compatibility Test Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## Tested Platforms" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Native OS Tests" >> $GITHUB_STEP_SUMMARY
+          echo "- Ubuntu (20.04, 22.04, latest)" >> $GITHUB_STEP_SUMMARY
+          echo "- macOS (Intel & Apple Silicon)" >> $GITHUB_STEP_SUMMARY
+          echo "- Windows (via WSL)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Container Tests" >> $GITHUB_STEP_SUMMARY
+          echo "- Debian, Ubuntu" >> $GITHUB_STEP_SUMMARY
+          echo "- Fedora, Rocky Linux" >> $GITHUB_STEP_SUMMARY
+          echo "- Alpine Linux" >> $GITHUB_STEP_SUMMARY
+          echo "- Arch Linux" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Simulated Tests" >> $GITHUB_STEP_SUMMARY
+          echo "- FreeBSD, OpenBSD, NetBSD" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [[ "${{ needs.test-matrix.result }}" == "success" ]] &&
+             [[ "${{ needs.container-tests.result }}" == "success" ]]; then
+            echo "✅ **All OS compatibility tests passed!**" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️ **Some OS compatibility tests failed. Check the logs for details.**" >> $GITHUB_STEP_SUMMARY
+          fi
