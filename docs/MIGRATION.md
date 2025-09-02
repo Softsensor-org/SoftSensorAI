@@ -2,7 +2,8 @@
 
 ## Migrating from DevPilot v1.x to v2.0
 
-DevPilot 2.0 is a major release with significant improvements. While we've maintained backward compatibility where possible, some changes require migration steps.
+DevPilot 2.0 is a major release with significant improvements. While we've maintained backward
+compatibility where possible, some changes require migration steps.
 
 ## Quick Migration (5 minutes)
 
@@ -34,6 +35,7 @@ done
 ### Directory Structure
 
 **Before (v1.x):**
+
 ```
 setup-scripts/
 ├── install_key_software_wsl.sh
@@ -45,6 +47,7 @@ setup-scripts/
 ```
 
 **After (v2.0):**
+
 ```
 devpilot/
 ├── setup_all.sh              # Single entry point
@@ -62,21 +65,23 @@ devpilot/
 
 ### Script Changes
 
-| Old Command | New Command |
-|-------------|-------------|
-| `./install_key_software_wsl.sh` | `./install/key_software_linux.sh` |
-| `./setup_agents_global.sh` | `./setup/agents_global.sh` (auto-run by setup_all.sh) |
-| `./repo_setup_wizard.sh` | `./setup/repo_wizard.sh` |
-| `./validate_agents.sh` | `./validation/validate_agents.sh` |
+| Old Command                     | New Command                                           |
+| ------------------------------- | ----------------------------------------------------- |
+| `./install_key_software_wsl.sh` | `./install/key_software_linux.sh`                     |
+| `./setup_agents_global.sh`      | `./setup/agents_global.sh` (auto-run by setup_all.sh) |
+| `./repo_setup_wizard.sh`        | `./setup/repo_wizard.sh`                              |
+| `./validate_agents.sh`          | `./validation/validate_agents.sh`                     |
 
 ### Configuration Updates
 
 #### Global Settings
+
 - Location unchanged: `~/.claude/`, `~/.gemini/`, etc.
 - New features added (MCP servers, advanced permissions)
 - Existing settings preserved
 
 #### Repository Settings
+
 - `.claude/commands/` now includes 15+ new commands
 - `.mcp.json` added for MCP server configuration
 - `CLAUDE.md` enhanced with skill-based instructions
@@ -120,6 +125,7 @@ Add to `.mcp.local.json` in your project:
 ### 4. New Commands
 
 Try these in Claude:
+
 - `/think-hard` - Deep problem solving
 - `/security-review` - Find vulnerabilities
 - `/audit-full` - Complete code review
@@ -128,14 +134,17 @@ Try these in Claude:
 ## Breaking Changes
 
 ### 1. WSL Installer Removed
+
 - **Impact**: Scripts calling `install_key_software_wsl.sh`
 - **Fix**: Use `install/key_software_linux.sh` instead
 
 ### 2. Root Directory Scripts
+
 - **Impact**: Direct paths to root scripts
 - **Fix**: Update paths to use subdirectories
 
 ### 3. Upgrade Mode Removed
+
 - **Impact**: `setup_all.sh --upgrade` no longer works
 - **Fix**: Just run `setup_all.sh` (auto-detects)
 
@@ -194,18 +203,23 @@ git checkout v1.5.0
 ## FAQ
 
 ### Q: Do I need to reinstall everything?
+
 **A:** No, running `setup_all.sh` will detect existing installations and update configurations.
 
 ### Q: Will my API keys be preserved?
+
 **A:** Yes, API keys in `.envrc.local` or environment variables are unchanged.
 
 ### Q: Can I keep using old scripts?
+
 **A:** Legacy wrapper scripts are provided, but we recommend updating to new paths.
 
 ### Q: What about my existing projects?
+
 **A:** Run `~/devpilot/setup/agents_repo.sh --force` in each project to update.
 
 ### Q: Is the migration reversible?
+
 **A:** Yes, with backups you can rollback. However, you'll lose v2.0 features.
 
 ## Benefits After Migration
@@ -221,8 +235,9 @@ git checkout v1.5.0
 
 1. Check validation: `~/devpilot/validation/validate_agents.sh`
 2. Review docs: `~/devpilot/docs/`
-3. Open issue: https://github.com/VivekLmd/setup-scripts/issues
+3. Open issue: https://github.com/Softsensor-org/DevPilot/issues
 
 ---
 
-**Welcome to DevPilot 2.0!** The migration is worth it for the enhanced features and better development experience.
+**Welcome to DevPilot 2.0!** The migration is worth it for the enhanced features and better
+development experience.

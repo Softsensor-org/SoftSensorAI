@@ -11,10 +11,10 @@ DevPilot follows [Semantic Versioning](https://semver.org/):
 
 ## Release Schedule
 
-| Type | Frequency | Description |
-|------|-----------|-------------|
-| **Patch** | As needed | Bug fixes, urgent updates |
-| **Minor** | Monthly | New features, improvements |
+| Type      | Frequency | Description                 |
+| --------- | --------- | --------------------------- |
+| **Patch** | As needed | Bug fixes, urgent updates   |
+| **Minor** | Monthly   | New features, improvements  |
 | **Major** | Quarterly | Breaking changes, redesigns |
 
 ## Release Process
@@ -57,7 +57,7 @@ git push origin v2.0.0
 
 ### 3. GitHub Release
 
-1. Go to https://github.com/VivekLmd/setup-scripts/releases
+1. Go to https://github.com/Softsensor-org/DevPilot/releases
 2. Click "Draft a new release"
 3. Choose tag: `v2.0.0`
 4. Title: `DevPilot v2.0.0 - Platform Redesign`
@@ -84,16 +84,19 @@ git branch -d release/v2.0.0
 ## Version Files
 
 ### VERSION
+
 - Single line with version number
 - Used by scripts for version checks
 - Example: `2.0.0`
 
 ### CHANGELOG.md
+
 - Complete history of all changes
 - Follows [Keep a Changelog](https://keepachangelog.com/) format
 - Sections: Added, Changed, Removed, Fixed, Security
 
 ### RELEASE_NOTES.md
+
 - User-friendly release announcement
 - Highlights and key features
 - Migration instructions
@@ -102,6 +105,7 @@ git branch -d release/v2.0.0
 ## Release Types
 
 ### Major Release (X.0.0)
+
 - Breaking changes
 - Architecture updates
 - Migration required
@@ -109,12 +113,14 @@ git branch -d release/v2.0.0
 - Announcement to all users
 
 ### Minor Release (x.Y.0)
+
 - New features
 - Backward compatible
 - Documentation for new features
 - Optional migration
 
 ### Patch Release (x.y.Z)
+
 - Bug fixes only
 - No documentation changes needed
 - Silent update
@@ -122,6 +128,7 @@ git branch -d release/v2.0.0
 ## Testing Requirements
 
 ### Before Any Release
+
 - [ ] All scripts pass shellcheck
 - [ ] Validation runs clean
 - [ ] Fresh install tested on WSL
@@ -131,6 +138,7 @@ git branch -d release/v2.0.0
 - [ ] Documentation reviewed
 
 ### Major Release Additional
+
 - [ ] Migration guide written
 - [ ] Breaking changes documented
 - [ ] Compatibility matrix updated
@@ -140,26 +148,31 @@ git branch -d release/v2.0.0
 
 ### Release Announcement Template
 
-```markdown
+````markdown
 # DevPilot vX.Y.Z Released!
 
 We're excited to announce DevPilot vX.Y.Z with [key feature].
 
 ## What's New
+
 - Feature 1
 - Feature 2
 - Bug fixes
 
 ## Upgrade
+
 ```bash
 cd ~/devpilot
 git pull origin main
 ./setup_all.sh
 ```
+````
 
 ## Full Details
+
 See [RELEASE_NOTES.md](RELEASE_NOTES.md)
-```
+
+````
 
 ### Channels
 1. GitHub Release page
@@ -179,15 +192,15 @@ git checkout abc123def
 
 # Reinstall
 ./setup_all.sh --fresh
-```
+````
 
 ## Version Compatibility
 
-| DevPilot | Claude CLI | Gemini | Grok | Minimum OS |
-|----------|------------|--------|------|------------|
-| 2.0.x | 0.5+ | 2.0+ | 1.0+ | Ubuntu 20.04 |
-| 1.5.x | 0.4+ | 1.5+ | 0.9+ | Ubuntu 18.04 |
-| 1.0.x | 0.3+ | 1.0+ | 0.5+ | Ubuntu 18.04 |
+| DevPilot | Claude CLI | Gemini | Grok | Minimum OS   |
+| -------- | ---------- | ------ | ---- | ------------ |
+| 2.0.x    | 0.5+       | 2.0+   | 1.0+ | Ubuntu 20.04 |
+| 1.5.x    | 0.4+       | 1.5+   | 0.9+ | Ubuntu 18.04 |
+| 1.0.x    | 0.3+       | 1.0+   | 0.5+ | Ubuntu 18.04 |
 
 ## Deprecation Policy
 
@@ -220,6 +233,7 @@ git checkout develop && git merge hotfix/v2.0.1
 ## Release Artifacts
 
 Each release should include:
+
 - Source code (automatic via Git)
 - VERSION file updated
 - CHANGELOG.md entry

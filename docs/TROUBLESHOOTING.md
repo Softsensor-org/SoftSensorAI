@@ -59,7 +59,7 @@ brew install bash
 ls -la ~/setup-scripts/
 
 # If missing, clone again
-git clone https://github.com/yourusername/setup-scripts.git ~/setup-scripts
+git clone https://github.com/Softsensor-org/DevPilot.git ~/devpilot
 
 # Add to PATH (optional)
 echo 'export PATH="$HOME/setup-scripts/scripts:$PATH"' >> ~/.bashrc
@@ -522,7 +522,7 @@ bash -x problematic_script.sh 2>&1 | tee error.log
 
 ### Report Issues
 
-1. Check existing issues: [GitHub Issues](https://github.com/yourusername/setup-scripts/issues)
+1. Check existing issues: [GitHub Issues](https://github.com/Softsensor-org/DevPilot/issues)
 2. Include debug information
 3. Describe what you expected vs what happened
 4. Include steps to reproduce
@@ -549,7 +549,7 @@ between projects.
 **Q: How do I completely uninstall?** A:
 
 ```bash
-rm -rf ~/setup-scripts
+rm -rf ~/devpilot
 rm -rf ~/.claude ~/.gemini
 # Remove from projects:
 rm -rf .claude/ CLAUDE.md PROFILE.md

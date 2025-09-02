@@ -1,17 +1,20 @@
 # DevPilot v2.0.0 Release Notes
 
-**Release Date:** August 31, 2024
-**Type:** Major Release
-**Breaking Changes:** Yes (see Migration section)
+**Release Date:** August 31, 2024 **Type:** Major Release **Breaking Changes:** Yes (see Migration
+section)
 
 ## 🚀 Highlights
 
-DevPilot 2.0 is a complete reimagining of the platform, transforming it from a collection of setup scripts into a comprehensive AI development environment that adapts to your skill level and project needs.
+DevPilot 2.0 is a complete reimagining of the platform, transforming it from a collection of setup
+scripts into a comprehensive AI development environment that adapts to your skill level and project
+needs.
 
 ### Key Features
 
-- **🎓 Skill-Based Progression**: Start as a beginner with teaching mode, progress through L1/L2, unlock expert features
-- **📈 Project Phase Management**: Automatic CI/CD and tooling based on POC → MVP → Beta → Scale lifecycle
+- **🎓 Skill-Based Progression**: Start as a beginner with teaching mode, progress through L1/L2,
+  unlock expert features
+- **📈 Project Phase Management**: Automatic CI/CD and tooling based on POC → MVP → Beta → Scale
+  lifecycle
 - **🤖 Multi-Agent Platform**: Unified configuration for Claude, Gemini, Grok, and Codex
 - **🔌 MCP Integrations**: Native GitHub and Atlassian connections
 - **📦 Smart Project Setup**: Interactive wizard with dependency detection and profile application
@@ -27,18 +30,21 @@ DevPilot 2.0 is a complete reimagining of the platform, transforming it from a c
 ## 🎯 Major Improvements
 
 ### For Beginners
+
 - Teaching mode with guided workflows
 - Safety rails to prevent mistakes
 - Progressive skill unlocking
 - Comprehensive documentation
 
 ### For Teams
+
 - Standardized project structure
 - Consistent tooling across projects
 - Validation and audit capabilities
 - Ticket generation from code
 
 ### For Experts
+
 - Advanced Claude commands
 - Custom MCP server support
 - Full productivity extras suite
@@ -48,7 +54,7 @@ DevPilot 2.0 is a complete reimagining of the platform, transforming it from a c
 
 ```bash
 # Install DevPilot
-git clone https://github.com/VivekLmd/setup-scripts.git ~/devpilot
+git clone https://github.com/Softsensor-org/DevPilot.git ~/devpilot
 cd ~/devpilot
 ./setup_all.sh
 
@@ -59,11 +65,13 @@ cd ~/devpilot
 ## 🔄 Migration from v1.x
 
 ### Breaking Changes
+
 1. **Directory Structure**: Scripts reorganized into subdirectories
 2. **Removed Scripts**: `key_software_wsl.sh` consolidated into `key_software_linux.sh`
 3. **Configuration**: New two-tier global + repo system
 
 ### Migration Steps
+
 ```bash
 # 1. Backup existing setup
 cp -r ~/.claude ~/.claude.backup
@@ -82,6 +90,7 @@ cd your-project
 ## 📋 Complete Feature List
 
 ### Core Platform
+
 - ✅ 5 skill levels with progressive features
 - ✅ 4 project phases with automatic configuration
 - ✅ Teaching mode for beginners
@@ -90,6 +99,7 @@ cd your-project
 - ✅ Global + per-repository configuration
 
 ### Developer Tools
+
 - ✅ Interactive repository wizard
 - ✅ Planning/preview mode
 - ✅ Automatic dependency installation
@@ -99,6 +109,7 @@ cd your-project
 - ✅ Runtime version management (mise)
 
 ### Claude Commands
+
 - ✅ `/think-hard` - Deep reasoning
 - ✅ `/security-review` - Vulnerability scanning
 - ✅ `/audit-full` - Comprehensive review
@@ -107,6 +118,7 @@ cd your-project
 - ✅ 10+ additional specialized commands
 
 ### Productivity Extras
+
 - ✅ API development tools
 - ✅ Database utilities
 - ✅ ML/Data science tools
@@ -115,6 +127,7 @@ cd your-project
 - ✅ Code quality tools
 
 ### Project Organization
+
 - ✅ Structured directory layout
 - ✅ Category-based organization
 - ✅ Workspace management
@@ -168,10 +181,11 @@ Thanks to all contributors and users who provided feedback for this major releas
 
 ## 📞 Support
 
-- **Issues**: https://github.com/VivekLmd/setup-scripts/issues
+- **Issues**: https://github.com/Softsensor-org/DevPilot/issues
 - **Documentation**: See `/docs` directory
 - **Validation**: Run `./validation/validate_agents.sh`
 
 ---
 
-**Upgrade Today!** DevPilot 2.0 is the most significant update yet, designed to grow with you from your first line of code to architecting complex systems.
+**Upgrade Today!** DevPilot 2.0 is the most significant update yet, designed to grow with you from
+your first line of code to architecting complex systems.

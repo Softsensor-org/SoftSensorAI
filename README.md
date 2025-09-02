@@ -1092,7 +1092,7 @@ DevPilot works seamlessly in containerized environments:
 
 ```bash
 # In your Codespace terminal
-git clone https://github.com/VivekLmd/setup-scripts.git ~/devpilot
+git clone https://github.com/Softsensor-org/DevPilot.git ~/devpilot
 cd ~/devpilot
 ./setup_all.sh
 ```
@@ -1103,7 +1103,7 @@ Add to `.devcontainer/devcontainer.json`:
 
 ```json
 {
-  "postCreateCommand": "git clone https://github.com/VivekLmd/setup-scripts.git ~/devpilot && ~/devpilot/setup_all.sh",
+  "postCreateCommand": "git clone https://github.com/Softsensor-org/DevPilot.git ~/devpilot && ~/devpilot/setup_all.sh",
   "features": {
     "ghcr.io/devcontainers/features/github-cli:1": {},
     "ghcr.io/devcontainers/features/common-utils:2": {}
@@ -1116,7 +1116,7 @@ Add to `.devcontainer/devcontainer.json`:
 ```dockerfile
 FROM ubuntu:22.04
 RUN apt-get update && apt-get install -y git curl
-RUN git clone https://github.com/VivekLmd/setup-scripts.git /devpilot
+RUN git clone https://github.com/Softsensor-org/DevPilot.git /devpilot
 RUN cd /devpilot && ./setup_all.sh
 ```
 
