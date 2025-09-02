@@ -62,14 +62,13 @@ setup_agent_configs() {
   # Create .claude directory
   mkdir -p "$target_dir/.claude"
 
-  # Copy CLAUDE.md template
-  if [ ! -f "$target_dir/CLAUDE.md" ]; then
-    if [ -f "$SETUP_SCRIPTS_DIR/templates/CLAUDE.md" ]; then
-      cp "$SETUP_SCRIPTS_DIR/templates/CLAUDE.md" "$target_dir/CLAUDE.md"
-      success "Created CLAUDE.md"
-    fi
-  else
-    warn "CLAUDE.md already exists, skipping"
+  # Handle CLAUDE.md with merge support
+  if [ -f "$SETUP_SCRIPTS_DIR/templates/CLAUDE.md" ]; then
+    # Source the merge utility
+    source "$SETUP_SCRIPTS_DIR/utils/file_merge.sh"
+
+    # Use merge function with auto strategy
+    merge_file "$SETUP_SCRIPTS_DIR/templates/CLAUDE.md" "$target_dir/CLAUDE.md" "auto"
   fi
 
   # Copy CODEX.md template

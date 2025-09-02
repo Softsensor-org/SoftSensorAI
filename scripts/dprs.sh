@@ -458,35 +458,104 @@ cat > "$OUTPUT_DIR/dprs.md" <<EOF
 
 ## Recommendations
 
+## 🎯 Improvement Opportunities
+
 EOF
 
-# Add phase-specific recommendations
-case "$PHASE_READINESS" in
-  "SCALE")
-    echo "✅ **Excellent!** Your repository meets production standards." >> "$OUTPUT_DIR/dprs.md"
-    ;;
-  "BETA")
-    echo "🎯 **Almost there!** Focus on:" >> "$OUTPUT_DIR/dprs.md"
-    [ "$TESTS_SCORE" -lt 85 ] && echo "- Increase test coverage and add integration tests" >> "$OUTPUT_DIR/dprs.md"
-    [ "$SECURITY_SCORE" -lt 85 ] && echo "- Address remaining security vulnerabilities" >> "$OUTPUT_DIR/dprs.md"
-    [ "$DOCS_SCORE" -lt 85 ] && echo "- Complete documentation (API docs, runbooks)" >> "$OUTPUT_DIR/dprs.md"
-    [ "$DX_SCORE" -lt 85 ] && echo "- Enhance developer tooling and automation" >> "$OUTPUT_DIR/dprs.md"
-    ;;
-  "MVP")
-    echo "🚧 **Getting there!** Key improvements needed:" >> "$OUTPUT_DIR/dprs.md"
-    [ "$TESTS_SCORE" -lt 70 ] && echo "- Add comprehensive test suite and CI/CD" >> "$OUTPUT_DIR/dprs.md"
-    [ "$SECURITY_SCORE" -lt 70 ] && echo "- Implement security scanning and fix vulnerabilities" >> "$OUTPUT_DIR/dprs.md"
-    [ "$DOCS_SCORE" -lt 70 ] && echo "- Write essential documentation (README, CONTRIBUTING)" >> "$OUTPUT_DIR/dprs.md"
-    [ "$DX_SCORE" -lt 70 ] && echo "- Set up development environment and tooling" >> "$OUTPUT_DIR/dprs.md"
-    ;;
-  *)
-    echo "🔧 **Foundational work needed:**" >> "$OUTPUT_DIR/dprs.md"
-    echo "- Establish basic testing and CI/CD pipeline" >> "$OUTPUT_DIR/dprs.md"
-    echo "- Add security scanning and vulnerability management" >> "$OUTPUT_DIR/dprs.md"
-    echo "- Create comprehensive documentation" >> "$OUTPUT_DIR/dprs.md"
-    echo "- Set up development environment and tooling" >> "$OUTPUT_DIR/dprs.md"
-    ;;
-esac
+# Generate detailed, actionable improvements
+if [ "$PHASE_READINESS" = "SCALE" ]; then
+  echo "✅ **Excellent!** Your repository meets production standards." >> "$OUTPUT_DIR/dprs.md"
+  echo "" >> "$OUTPUT_DIR/dprs.md"
+  echo "### Maintain Excellence:" >> "$OUTPUT_DIR/dprs.md"
+  echo "- Keep test coverage above 80%" >> "$OUTPUT_DIR/dprs.md"
+  echo "- Monitor security vulnerabilities continuously" >> "$OUTPUT_DIR/dprs.md"
+  echo "- Update dependencies regularly" >> "$OUTPUT_DIR/dprs.md"
+else
+  # Calculate points needed for next phase
+  next_phase_score=60
+  next_phase_name="MVP"
+  if [ "$TOTAL_SCORE" -ge 60 ]; then
+    next_phase_score=75
+    next_phase_name="BETA"
+  fi
+  if [ "$TOTAL_SCORE" -ge 75 ]; then
+    next_phase_score=90
+    next_phase_name="SCALE"
+  fi
+
+  points_needed=$((next_phase_score - TOTAL_SCORE))
+  echo "**Current Phase:** $PHASE_READINESS ($TOTAL_SCORE/100)" >> "$OUTPUT_DIR/dprs.md"
+  echo "**Target Phase:** $next_phase_name ($next_phase_score/100)" >> "$OUTPUT_DIR/dprs.md"
+  echo "**Points Needed:** $points_needed" >> "$OUTPUT_DIR/dprs.md"
+  echo "" >> "$OUTPUT_DIR/dprs.md"
+
+  # Testing improvements (highest impact)
+  if [ "$TESTS_SCORE" -lt 90 ]; then
+    echo "### 🧪 Testing Improvements (Current: $TESTS_SCORE/100)" >> "$OUTPUT_DIR/dprs.md"
+    echo "" >> "$OUTPUT_DIR/dprs.md"
+
+    # Coverage check
+    if [ ! -f "coverage.xml" ] && [ ! -f ".coverage" ] && [ ! -f "coverage/lcov-report/index.html" ]; then
+      echo "**🔴 Critical: No test coverage found (+40 points potential)**" >> "$OUTPUT_DIR/dprs.md"
+      echo '```bash' >> "$OUTPUT_DIR/dprs.md"
+      echo '# Python:' >> "$OUTPUT_DIR/dprs.md"
+      echo 'pip install pytest-cov && pytest --cov --cov-report=xml' >> "$OUTPUT_DIR/dprs.md"
+      echo '# JavaScript:' >> "$OUTPUT_DIR/dprs.md"
+      echo 'npm test -- --coverage' >> "$OUTPUT_DIR/dprs.md"
+      echo '# Go:' >> "$OUTPUT_DIR/dprs.md"
+      echo 'go test -coverprofile=coverage.out ./...' >> "$OUTPUT_DIR/dprs.md"
+      echo '```' >> "$OUTPUT_DIR/dprs.md"
+      echo "" >> "$OUTPUT_DIR/dprs.md"
+    fi
+
+    # Test file count
+    test_count=$(find . -type f \( -name "*.test.*" -o -name "*.spec.*" -o -path "*/tests/*" \) 2>/dev/null | wc -l)
+    if [ "$test_count" -lt 20 ]; then
+      echo "**⚠️ Add more tests (Current: $test_count files, +5-10 points)**" >> "$OUTPUT_DIR/dprs.md"
+      echo "- Target: 20+ test files for +15 points, 50+ for +20 points" >> "$OUTPUT_DIR/dprs.md"
+      echo "- Create unit tests for each module" >> "$OUTPUT_DIR/dprs.md"
+      echo "- Add integration tests for workflows" >> "$OUTPUT_DIR/dprs.md"
+      echo "" >> "$OUTPUT_DIR/dprs.md"
+    fi
+  fi
+
+  # Documentation improvements
+  if [ "$DOCS_SCORE" -lt 90 ]; then
+    echo "### 📚 Documentation Improvements (Current: $DOCS_SCORE/100)" >> "$OUTPUT_DIR/dprs.md"
+    echo "" >> "$OUTPUT_DIR/dprs.md"
+
+    [ ! -f "README.md" ] && echo "- **Create README.md** (+25 points)" >> "$OUTPUT_DIR/dprs.md"
+    [ ! -f "CONTRIBUTING.md" ] && [ ! -f "docs/CONTRIBUTING.md" ] && echo "- **Add CONTRIBUTING.md** (+15 points)" >> "$OUTPUT_DIR/dprs.md"
+    [ ! -f "CHANGELOG.md" ] && [ ! -f "docs/CHANGELOG.md" ] && echo "- **Maintain CHANGELOG.md** (+15 points)" >> "$OUTPUT_DIR/dprs.md"
+    [ ! -d "docs" ] && echo "- **Create docs/ with API documentation** (+10 points)" >> "$OUTPUT_DIR/dprs.md"
+    echo "" >> "$OUTPUT_DIR/dprs.md"
+  fi
+
+  # Developer Experience improvements
+  if [ "$DX_SCORE" -lt 90 ]; then
+    echo "### 🛠️ Developer Experience Improvements (Current: $DX_SCORE/100)" >> "$OUTPUT_DIR/dprs.md"
+    echo "" >> "$OUTPUT_DIR/dprs.md"
+
+    if [ ! -f "justfile" ] && [ ! -f "Makefile" ]; then
+      echo "- **Add task runner** (justfile/Makefile) (+20 points)" >> "$OUTPUT_DIR/dprs.md"
+      echo '  ```bash' >> "$OUTPUT_DIR/dprs.md"
+      echo '  curl -sL https://just.systems/install.sh | bash' >> "$OUTPUT_DIR/dprs.md"
+      echo '  ```' >> "$OUTPUT_DIR/dprs.md"
+    fi
+    [ ! -f ".env.example" ] && echo "- **Create .env.example** (+5 points)" >> "$OUTPUT_DIR/dprs.md"
+    [ ! -f ".pre-commit-config.yaml" ] && echo "- **Configure pre-commit hooks** (+5 points)" >> "$OUTPUT_DIR/dprs.md"
+    [ ! -f "CLAUDE.md" ] && echo "- **Add CLAUDE.md for AI assistance** (+10 points)" >> "$OUTPUT_DIR/dprs.md"
+    echo "" >> "$OUTPUT_DIR/dprs.md"
+  fi
+
+  # Quick wins summary
+  echo "### ⚡ Quick Wins (Can implement today)" >> "$OUTPUT_DIR/dprs.md"
+  echo "" >> "$OUTPUT_DIR/dprs.md"
+  echo "1. **Set up test coverage** (if missing): +40 points" >> "$OUTPUT_DIR/dprs.md"
+  echo "2. **Add missing documentation files**: +5-15 points each" >> "$OUTPUT_DIR/dprs.md"
+  echo "3. **Create .env.example**: +5 points" >> "$OUTPUT_DIR/dprs.md"
+  echo "4. **Add pre-commit hooks**: +5 points" >> "$OUTPUT_DIR/dprs.md"
+fi
 
 echo "" >> "$OUTPUT_DIR/dprs.md"
 echo "---" >> "$OUTPUT_DIR/dprs.md"
