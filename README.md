@@ -234,23 +234,21 @@ graph LR
 3. **Handle Conflicts** - For existing files, you choose: merge, skip, or backup
 4. **Ready to Code** - Your repo now works seamlessly with AI assistants
 
-| Scenario                  | Use This Script          | What Happens                       |
-| ------------------------- | ------------------------ | ---------------------------------- |
-| Need to clone a new repo  | `repo_wizard.sh`         | Clones → Creates files             |
-| Already have a local repo | `existing_repo_setup.sh` | Checks → Merges/Creates files      |
-| Starting from template    | `repo_wizard.sh`         | Clones template → Customizes       |
-| Adding to team project    | `existing_repo_setup.sh` | Preserves existing → Adds DevPilot |
+| Scenario          | Command                | What Happens                    |
+| ----------------- | ---------------------- | ------------------------------- |
+| In existing repo  | `dp setup`             | Analyzes → Merges/Creates files |
+| Have repo URL     | `dp setup https://...` | Clones → Creates files          |
+| Empty directory   | `dp setup`             | Interactive wizard              |
+| Need system check | `dp doctor`            | Validates environment           |
 
-#### Option A: Existing Repository (Recommended for Teams)
-
-If you already have a cloned repository, use this approach:
+#### Quick Start: One Command Setup
 
 ```bash
-# Navigate to your existing project
-cd /path/to/your/project
+# DevPilot handles everything with smart detection:
+dp setup
 
-# Run setup without cloning
-~/devpilot/setup/existing_repo_setup.sh --skill l1 --phase mvp
+# Or with a URL:
+dp setup https://github.com/user/repo
 
 # Add personas for your project type (e.g., backend API)
 for p in software-architect backend-developer devops-engineer; do
