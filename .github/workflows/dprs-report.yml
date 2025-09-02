@@ -27,8 +27,12 @@ jobs:
       - name: Setup repository structure
         run: |
           # Ensure symlinks exist for moved config files
-          [ ! -f package.json ] && [ -f config/package.json ] && ln -sf config/package.json package.json
-          [ ! -f package-lock.json ] && [ -f config/package-lock.json ] && ln -sf config/package-lock.json package-lock.json
+          if [ ! -f package.json ] && [ -f config/package.json ]; then
+            ln -sf config/package.json package.json
+          fi
+          if [ ! -f package-lock.json ] && [ -f config/package-lock.json ]; then
+            ln -sf config/package-lock.json package-lock.json
+          fi
 
       - name: Setup Node.js (for package analysis)
         uses: actions/setup-node@v4

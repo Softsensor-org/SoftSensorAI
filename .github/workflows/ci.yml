@@ -28,9 +28,15 @@ jobs:
       - name: Setup repository structure
         run: |
           # Ensure symlinks exist for moved config files
-          [ ! -f package.json ] && [ -f config/package.json ] && ln -sf config/package.json package.json
-          [ ! -f package-lock.json ] && [ -f config/package-lock.json ] && ln -sf config/package-lock.json package-lock.json
-          [ ! -f requirements.txt ] && [ -f config/requirements.txt ] && ln -sf config/requirements.txt requirements.txt
+          if [ ! -f package.json ] && [ -f config/package.json ]; then
+            ln -sf config/package.json package.json
+          fi
+          if [ ! -f package-lock.json ] && [ -f config/package-lock.json ]; then
+            ln -sf config/package-lock.json package-lock.json
+          fi
+          if [ ! -f requirements.txt ] && [ -f config/requirements.txt ]; then
+            ln -sf config/requirements.txt requirements.txt
+          fi
 
       - name: Detect package manager
         id: detect-pm
@@ -52,8 +58,12 @@ jobs:
             echo "lockfile=config/package-lock.json" >> $GITHUB_OUTPUT
             echo "cache-path=~/.npm" >> $GITHUB_OUTPUT
             # Create symlink if needed
-            [ ! -f package-lock.json ] && [ -f config/package-lock.json ] && ln -sf config/package-lock.json package-lock.json
-            [ ! -f package.json ] && [ -f config/package.json ] && ln -sf config/package.json package.json
+            if [ ! -f package-lock.json ] && [ -f config/package-lock.json ]; then
+              ln -sf config/package-lock.json package-lock.json
+            fi
+            if [ ! -f package.json ] && [ -f config/package.json ]; then
+              ln -sf config/package.json package.json
+            fi
           else
             echo "manager=npm" >> $GITHUB_OUTPUT
             echo "command=npm" >> $GITHUB_OUTPUT
@@ -156,8 +166,12 @@ jobs:
       - name: Setup repository structure
         run: |
           # Ensure symlinks exist for moved config files
-          [ ! -f package.json ] && [ -f config/package.json ] && ln -sf config/package.json package.json
-          [ ! -f package-lock.json ] && [ -f config/package-lock.json ] && ln -sf config/package-lock.json package-lock.json
+          if [ ! -f package.json ] && [ -f config/package.json ]; then
+            ln -sf config/package.json package.json
+          fi
+          if [ ! -f package-lock.json ] && [ -f config/package-lock.json ]; then
+            ln -sf config/package-lock.json package-lock.json
+          fi
 
       - name: Setup environment
         uses: actions/setup-node@v4
