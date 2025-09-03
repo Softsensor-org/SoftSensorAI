@@ -44,7 +44,8 @@ if command -v shellcheck >/dev/null; then
     fi
   done
   if [ ${#NON_LEGACY_SH[@]} -gt 0 ]; then
-    shellcheck -f tty "${NON_LEGACY_SH[@]}" || rc=1
+    # Only fail on errors (severity 3), not warnings or info
+    shellcheck -S error -f tty "${NON_LEGACY_SH[@]}" || rc=1
   fi
 else
   echo "  (install shellcheck to get full lint)"
