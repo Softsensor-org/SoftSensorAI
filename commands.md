@@ -8,31 +8,28 @@ every command
 
 ## Commands
 
-| Command | Description | Category | Source | Doc |
-| ------- | ----------- | -------- | ------ | --- |
-
-| `dp setup` | Add DevPilot to any project (smart detection) | setup | dp |
-[📖](docs/commands/dp/setup.md) | | `dp init` | Initialize project (doctor + profile + build) |
-setup | dp | [📖](docs/commands/dp/init.md) | | `dp doctor` | Comprehensive system health check |
-diagnostics | dp | [📖](docs/commands/dp/doctor.md) | | `dp project` | View/modify project
-configuration | config | dp | [📖](docs/commands/dp/project.md) | | `dp profile` | Change skill
-level and project phase | config | dp | [📖](docs/commands/dp/profile.md) | | `dp persona` | Manage
-AI personas for specialized help | config | dp | [📖](docs/commands/dp/persona.md) | | `dp review` |
-AI review of local changes before commit | review | dp | [📖](docs/commands/dp/review.md) | |
-`dp review --preview` | AI review with preview logs | review | dp | [📖](docs/commands/dp/review.md)
-| | `dp tickets` | Generate backlog from codebase (JSON/CSV) | planning | dp |
-[📖](docs/commands/dp/tickets.md) | | `dp score` | DevPilot Readiness Score (DPRS) | diagnostics |
-dp | [📖](docs/commands/dp/score.md) | | `dp detect` | Detect technology stack in repository |
-analysis | dp | [📖](docs/commands/dp/detect.md) | | `dp plan` | Preview what setup would create
-(dry run) | planning | dp | [📖](docs/commands/dp/plan.md) | | `dp palette` | Interactive command
-browser (fzf) | meta | dp | [📖](docs/commands/dp/palette.md) | | `dp ai` | Unified AI CLI interface
-| ai | dp | [📖](docs/commands/dp/ai.md) | | `dp sandbox` | Sandboxed code execution environment |
-ai | dp | [📖](docs/commands/dp/sandbox.md) | | `dp chain` | Execute multi-step command chains |
-automation | dp | [📖](docs/commands/dp/chain.md) | | `dp patterns` | Browse and apply design
-patterns | development | dp | [📖](docs/commands/dp/patterns.md) | | `dp worktree` | Manage git
-worktrees for parallel work | git | dp | [📖](docs/commands/dp/worktree.md) | | `dp release-check` |
-Assess release readiness | deployment | dp | [📖](docs/commands/dp/release-check.md) | | `dp help` |
-Show help and documentation | meta | dp | [📖](docs/commands/dp/help.md) |
+| Command               | Description                                               | Category    | Source | Doc                                     |
+| --------------------- | --------------------------------------------------------- | ----------- | ------ | --------------------------------------- |
+| `dp setup`            | Smart project setup (new or existing)                     | setup       | dp     | [📖](docs/commands/dp/setup.md)         |
+| `dp doctor`           | System health check and diagnostics                       | setup       | dp     | [📖](docs/commands/dp/doctor.md)        |
+| `dp init`             | Initialize project with doctor, profile, and system build | setup       | dp     | [📖](docs/commands/dp/init.md)          |
+| `dp project`          | View/modify project configuration                         | config      | dp     | [📖](docs/commands/dp/project.md)       |
+| `dp profile`          | Change skill level and project phase                      | config      | dp     | [📖](docs/commands/dp/profile.md)       |
+| `dp persona`          | Manage AI personas for specialized help                   | config      | dp     | [📖](docs/commands/dp/persona.md)       |
+| `dp review`           | AI review of local changes before commit                  | review      | dp     | [📖](docs/commands/dp/review.md)        |
+| `dp review --preview` | AI review with preview logs                               | review      | dp     | [📖](docs/commands/dp/review.md)        |
+| `dp tickets`          | Generate structured backlog (JSON/CSV)                    | planning    | dp     | [📖](docs/commands/dp/tickets.md)       |
+| `dp score`            | DevPilot Readiness Score (DPRS)                           | diagnostics | dp     | [📖](docs/commands/dp/score.md)         |
+| `dp detect`           | Detect technology stack in repository                     | analysis    | dp     | [📖](docs/commands/dp/detect.md)        |
+| `dp plan`             | Preview what setup would create (dry run)                 | planning    | dp     | [📖](docs/commands/dp/plan.md)          |
+| `dp palette`          | Open command palette                                      | meta        | dp     | [📖](docs/commands/dp/palette.md)       |
+| `dp ai`               | Unified AI CLI interface                                  | ai          | dp     | [📖](docs/commands/dp/ai.md)            |
+| `dp sandbox`          | Sandboxed code execution environment                      | ai          | dp     | [📖](docs/commands/dp/sandbox.md)       |
+| `dp chain`            | Execute multi-step command chains                         | automation  | dp     | [📖](docs/commands/dp/chain.md)         |
+| `dp patterns`         | Browse and apply design patterns                          | development | dp     | [📖](docs/commands/dp/patterns.md)      |
+| `dp worktree`         | Manage git worktrees for parallel work                    | git         | dp     | [📖](docs/commands/dp/worktree.md)      |
+| `dp release-check`    | Assess release readiness                                  | deployment  | dp     | [📖](docs/commands/dp/release-check.md) |
+| `dp help`             | Show help and documentation                               | meta        | dp     | [📖](docs/commands/dp/help.md)          |
 
 ## Categories
 

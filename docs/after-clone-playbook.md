@@ -495,57 +495,31 @@ Based on your answers, we'll customize:
 - **Security gates** - What blocks vs warns
 - **CI/CD config** - What runs automatically
 
-### Unified CLI Wrapper (dp)
+### Use the built-in `dp`
 
-Create a simple wrapper for consistent commands across teams:
+DevPilot ships a unified `dp` already. Don't create/overwrite `bin/dp`. Run `dp palette` to browse
+commands, or `just palette` if you prefer Just.
 
 ```bash
-#!/usr/bin/env bash
-# Save as bin/dp and chmod +x bin/dp
+# DevPilot's unified interface is already available:
+dp setup        # Smart project setup
+dp init         # Initialize with health check + profile + build
+dp doctor       # System health check
+dp palette      # Browse all commands interactively
+dp review       # AI code review
+dp tickets      # Generate backlog from codebase
 
-DEVPILOT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-
-case "$1" in
-  tickets)
-    just tickets
-    ;;
-  review-local|review)
-    just review-local "${2:-main}"
-    ;;
-  repo-review|scan)
-    just repo-review
-    ;;
-  setup)
-    # Load alignment if exists
-    if [[ -f .devpilot/alignment.yml ]]; then
-      echo "Loading custom alignment..."
-      ./scripts/apply_alignment.sh .devpilot/alignment.yml
-    else
-      echo "Run alignment questions first:"
-      echo "  dp align"
-    fi
-    ;;
-  align)
-    # Interactive alignment
-    ./scripts/alignment_wizard.sh
-    ;;
-  *)
-    echo "Usage: dp {tickets|review|scan|setup|align}"
-    ;;
-esac
+# For teams preferring Just:
+just tickets    # Same as dp tickets
+just review     # Same as dp review
 ```
 
-Now your team can use:
-
-- `dp align` - Run the 6 questions wizard
-- `dp tickets` - Generate backlog
-- `dp review` - Pre-PR review
-- `dp scan` - Full repo analysis
-- `dp setup` - Apply custom configuration
+The built-in `dp` command handles smart detection and routing to the appropriate scripts internally.
+No need to create your own wrapper - just use the provided CLI.
 
 ## See Also
 
-- [Quick Start Guide](QUICK_START.md) - Initial setup
+- [Quick Start Guide](quickstart.md) - Initial setup
 - [Profiles & Phases](profiles.md) - Customizing skill/phase
 - [DPRS](dprs.md) - Understanding readiness scores
 - [CI Integration](ci.md) - Automating reviews

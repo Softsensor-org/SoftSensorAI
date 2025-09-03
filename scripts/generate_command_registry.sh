@@ -115,22 +115,20 @@ parse_dp_commands() {
     return 0
   fi
 
-  echo "" >> "$OUTPUT"
-
   local -a dp_commands=(
-    "setup:Add DevPilot to any project (smart detection):setup"
-    "init:Initialize project (doctor + profile + build):setup"
-    "doctor:Comprehensive system health check:diagnostics"
+    "setup:Smart project setup (new or existing):setup"
+    "doctor:System health check and diagnostics:setup"
+    "init:Initialize project with doctor, profile, and system build:setup"
     "project:View/modify project configuration:config"
     "profile:Change skill level and project phase:config"
     "persona:Manage AI personas for specialized help:config"
     "review:AI review of local changes before commit:review"
     "review --preview:AI review with preview logs:review"
-    "tickets:Generate backlog from codebase (JSON/CSV):planning"
+    "tickets:Generate structured backlog (JSON/CSV):planning"
     "score:DevPilot Readiness Score (DPRS):diagnostics"
     "detect:Detect technology stack in repository:analysis"
     "plan:Preview what setup would create (dry run):planning"
-    "palette:Interactive command browser (fzf):meta"
+    "palette:Open command palette:meta"
     "ai:Unified AI CLI interface:ai"
     "sandbox:Sandboxed code execution environment:ai"
     "chain:Execute multi-step command chains:automation"

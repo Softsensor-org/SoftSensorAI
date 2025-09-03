@@ -2,7 +2,8 @@
 
 ## Overview
 
-DevPilot includes a **CLI-first, zero-secrets** AI PR review workflow that automatically reviews pull requests using installed AI CLIs (Claude, Codex, Gemini, or Grok).
+DevPilot includes a **CLI-first, zero-secrets** AI PR review workflow that automatically reviews
+pull requests using installed AI CLIs (Claude, Codex, Gemini, or Grok).
 
 ## Key Features
 
@@ -41,6 +42,7 @@ gh pr edit 123 --add-label ai-review
 The workflow tries CLIs in this order: Claude → Codex → Gemini → Grok
 
 ### Install Claude CLI
+
 ```bash
 pip install anthropic-cli
 # or
@@ -48,16 +50,19 @@ npm install -g @anthropic/cli
 ```
 
 ### Install Codex CLI
+
 ```bash
 npm install -g @openai/codex-cli
 ```
 
 ### Install Gemini CLI
+
 ```bash
 npm install -g @google/generative-ai-cli
 ```
 
 ### Install Grok CLI
+
 ```bash
 pip install grok-cli
 ```
@@ -85,9 +90,10 @@ on:
 jobs:
   ai-review:
     runs-on: ubuntu-latest
-    continue-on-error: true  # Non-blocking
-    if: ${{ vars.AI_REVIEW_ENABLED == 'true' ||
-            github.event.pull_request.labels.*.name contains 'ai-review' }}
+    continue-on-error: true # Non-blocking
+    if:
+      ${{ vars.AI_REVIEW_ENABLED == 'true' || contains(join(github.event.pull_request.labels.*.name,
+      ','), 'ai-review') }}
 ```
 
 ## Review Focus Areas
@@ -95,18 +101,21 @@ jobs:
 The AI reviewer checks for:
 
 - **Security Issues**
+
   - Hardcoded credentials
   - SQL injection vulnerabilities
   - XSS vulnerabilities
   - Insecure configurations
 
 - **Performance Problems**
+
   - N+1 queries
   - Memory leaks
   - Inefficient algorithms
   - Missing indexes
 
 - **Bugs**
+
   - Null/undefined checks
   - Race conditions
   - Logic errors
@@ -130,6 +139,7 @@ The default system prompt is minimal. To customize:
 You are an expert code reviewer for our team.
 
 Focus on:
+
 - Our specific coding standards
 - Domain-specific concerns
 - Performance requirements
@@ -158,26 +168,31 @@ When a PR is reviewed, you'll see a comment like:
 > ## 🤖 AI Review (Claude)
 >
 > **Security Concerns:**
+>
 > - Line 42: Potential SQL injection in user input handling
 > - Line 156: API key appears to be hardcoded
 >
 > **Performance Issues:**
+>
 > - Line 89: This loop could be optimized using map/filter
 > - Line 234: Consider caching this database query
 >
 > **Suggestions:**
+>
 > - Add input validation for user-provided data
 > - Move credentials to environment variables
 > - Add error handling for async operations
 >
 > ---
-> *This is an automated review. Please verify suggestions before implementing.*
+>
+> _This is an automated review. Please verify suggestions before implementing._
 
 ## Troubleshooting
 
 ### No Review Posted
 
 Check if:
+
 1. `AI_REVIEW_ENABLED` is set to `true` in repo variables
 2. PR has `ai-review` label (if using label method)
 3. At least one CLI is installed on the runner
@@ -185,12 +200,14 @@ Check if:
 ### Review Not Updating
 
 The workflow checks for existing comments and updates them. If you want a fresh review:
+
 1. Delete the existing bot comment
 2. Push a new commit or re-run the workflow
 
 ### CLI Not Found
 
 If you see "No AI CLI available" in the workflow logs:
+
 1. Install one of the supported CLIs on your runner
 2. Or use a custom runner with CLIs pre-installed
 3. Or add a setup step to install CLIs in the workflow
@@ -220,15 +237,15 @@ If you see "No AI CLI available" in the workflow logs:
 
 ## Comparison with Alternatives
 
-| Feature | DevPilot AI Review | GitHub Copilot | CodeRabbit | Traditional Review |
-|---------|-------------------|-----------------|------------|-------------------|
-| Setup Time | 2 minutes | 5 minutes | 15 minutes | N/A |
-| API Keys Required | ❌ No | ✅ Yes | ✅ Yes | ❌ No |
-| Multi-Provider | ✅ Yes | ❌ No | ❌ No | N/A |
-| Customizable | ✅ Yes | ⚠️ Limited | ✅ Yes | ✅ Yes |
-| Non-Blocking | ✅ Yes | ✅ Yes | ✅ Yes | ❌ No |
-| Response Time | 1-2 min | 1-2 min | 2-5 min | Hours/Days |
-| Cost | ~$0.01 | $10/month | $15/month | Developer time |
+| Feature           | DevPilot AI Review | GitHub Copilot | CodeRabbit | Traditional Review |
+| ----------------- | ------------------ | -------------- | ---------- | ------------------ |
+| Setup Time        | 2 minutes          | 5 minutes      | 15 minutes | N/A                |
+| API Keys Required | ❌ No              | ✅ Yes         | ✅ Yes     | ❌ No              |
+| Multi-Provider    | ✅ Yes             | ❌ No          | ❌ No      | N/A                |
+| Customizable      | ✅ Yes             | ⚠️ Limited     | ✅ Yes     | ✅ Yes             |
+| Non-Blocking      | ✅ Yes             | ✅ Yes         | ✅ Yes     | ❌ No              |
+| Response Time     | 1-2 min            | 1-2 min        | 2-5 min    | Hours/Days         |
+| Cost              | ~$0.01             | $10/month      | $15/month  | Developer time     |
 
 ## Next Steps
 

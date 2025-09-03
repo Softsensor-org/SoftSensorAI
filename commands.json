@@ -2,20 +2,20 @@
   "commands": [
     {
       "command": "dp setup",
-      "description": "Add DevPilot to any project (smart detection)",
-      "category": "setup",
-      "source": "dp"
-    },
-    {
-      "command": "dp init",
-      "description": "Initialize project (doctor + profile + build)",
+      "description": "Smart project setup (new or existing)",
       "category": "setup",
       "source": "dp"
     },
     {
       "command": "dp doctor",
-      "description": "Comprehensive system health check",
-      "category": "diagnostics",
+      "description": "System health check and diagnostics",
+      "category": "setup",
+      "source": "dp"
+    },
+    {
+      "command": "dp init",
+      "description": "Initialize project with doctor, profile, and system build",
+      "category": "setup",
       "source": "dp"
     },
     {
@@ -50,7 +50,7 @@
     },
     {
       "command": "dp tickets",
-      "description": "Generate backlog from codebase (JSON/CSV)",
+      "description": "Generate structured backlog (JSON/CSV)",
       "category": "planning",
       "source": "dp"
     },
@@ -74,7 +74,7 @@
     },
     {
       "command": "dp palette",
-      "description": "Interactive command browser (fzf)",
+      "description": "Open command palette",
       "category": "meta",
       "source": "dp"
     },

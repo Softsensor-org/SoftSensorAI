@@ -52,8 +52,9 @@ tickets:
   for cli in claude codex gemini grok; do
     if command -v $cli >/dev/null 2>&1; then
       echo "Using $cli..."
-      $cli --system-prompt .claude/commands/tickets-from-code.md \
-        "analyze entire codebase" > artifacts/tickets_raw.txt
+      cat .claude/commands/tickets-from-code.md > artifacts/tickets_prompt.txt
+      $cli --system-prompt system/active.md \
+        --input-file artifacts/tickets_prompt.txt > artifacts/tickets_raw.txt
 
       # Extract JSON and convert to CSV
       awk '/^{/,0' artifacts/tickets_raw.txt > artifacts/tickets.json || true
