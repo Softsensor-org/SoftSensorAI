@@ -544,6 +544,36 @@ cmd_release_check() {
   fi
 }
 
+cmd_migrate() {
+  # Migrate profiles
+  if [[ -x "$ROOT/scripts/profile_migrate.sh" ]]; then
+    "$ROOT/scripts/profile_migrate.sh" "$@"
+  else
+    say "Error: profile_migrate.sh not found"
+    exit 1
+  fi
+}
+
+cmd_graduate() {
+  # Track graduation criteria
+  if [[ -x "$ROOT/scripts/graduate.sh" ]]; then
+    "$ROOT/scripts/graduate.sh" "$@"
+  else
+    say "Error: graduate.sh not found"
+    exit 1
+  fi
+}
+
+cmd_agent() {
+  # Agentic coding assistant
+  if [[ -x "$ROOT/bin/dp-agent" ]]; then
+    "$ROOT/bin/dp-agent" "$@"
+  else
+    say "Error: dp-agent not found"
+    exit 1
+  fi
+}
+
 case "${1:-}" in
   setup)  shift; cmd_setup "$@";;
   doctor) shift; cmd_doctor "$@";;
@@ -558,11 +588,14 @@ case "${1:-}" in
   detect) shift; cmd_detect "$@";;
   plan)   shift; cmd_plan "$@";;
   ai)     shift; cmd_ai "$@";;
+  agent)  shift; cmd_agent "$@";;
   sandbox)shift; cmd_sandbox "$@";;
   chain)  shift; cmd_chain "$@";;
   patterns)shift; cmd_patterns "$@";;
   worktree)shift; cmd_worktree "$@";;
   release-check)shift; cmd_release_check "$@";;
+  migrate)shift; cmd_migrate "$@";;
+  graduate)shift; cmd_graduate "$@";;
   -h|--help|"")
     cat <<'HELP'
 DevPilot - Unified AI Development Interface
@@ -585,6 +618,7 @@ Development Workflow:
   dp review            # AI review of your changes
   dp review --preview  # Review with preview environment context
   dp ai                # Unified AI CLI interface
+  dp agent             # Agentic coding assistant
   dp sandbox           # Sandboxed code execution
   dp chain             # Execute multi-step command chains
   dp patterns          # Browse and apply design patterns
