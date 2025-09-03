@@ -1,6 +1,7 @@
 # DevPilot Architecture & Usage Guide
 
-A CLI-first AI development platform that standardizes how teams work with Claude, Codex, Gemini, Grok, and other AI assistants.
+A CLI-first AI development platform that standardizes how teams work with Claude, Codex, Gemini,
+Grok, and other AI assistants.
 
 ## Architecture at a Glance
 
@@ -47,20 +48,20 @@ gemini --context system/active.md "your request"
 
 Skills and phases control capabilities and CI gates:
 
-| Skill Level | Who It's For | Available Tools | Safety Rails |
-|------------|--------------|-----------------|--------------|
-| **vibe** | Experimenting | Everything | None |
-| **beginner** | Learning | Basic + teaching | Maximum |
-| **l1** | Junior dev | Core tools | Strong |
-| **l2** | Mid-level | Advanced tools | Moderate |
-| **expert** | Senior dev | Full access | Minimal |
+| Skill Level  | Who It's For  | Available Tools  | Safety Rails |
+| ------------ | ------------- | ---------------- | ------------ |
+| **vibe**     | Experimenting | Everything       | None         |
+| **beginner** | Learning      | Basic + teaching | Maximum      |
+| **l1**       | Junior dev    | Core tools       | Strong       |
+| **l2**       | Mid-level     | Advanced tools   | Moderate     |
+| **expert**   | Senior dev    | Full access      | Minimal      |
 
-| Project Phase | Use Case | CI Requirements | Security |
-|--------------|----------|-----------------|----------|
-| **poc** | Prototyping | None | Advisory |
-| **mvp** | Core features | Tests required | Advisory |
-| **beta** | Pre-production | Coverage ≥60% | Blocking |
-| **scale** | Production | Coverage ≥80% | Strict |
+| Project Phase | Use Case       | CI Requirements | Security |
+| ------------- | -------------- | --------------- | -------- |
+| **poc**       | Prototyping    | None            | Advisory |
+| **mvp**       | Core features  | Tests required  | Advisory |
+| **beta**      | Pre-production | Coverage ≥60%   | Blocking |
+| **scale**     | Production     | Coverage ≥80%   | Strict   |
 
 ### 4. Personas (Capability Packs)
 
@@ -92,6 +93,7 @@ commands/
 DevPilot is designed for **CLI usage**, not API integration. Here's how to use each assistant:
 
 ### Claude CLI
+
 ```bash
 # Install Claude CLI (if not already installed)
 npm install -g @anthropic-ai/claude-cli
@@ -104,15 +106,17 @@ claude --system-prompt .claude/commands/security-review.md "review auth flow"
 ```
 
 ### Codex CLI
+
 ```bash
 # Use with sandboxed execution
 codex --system system/active.md --sandbox "generate test suite"
 
 # Architecture generation
-codex --system .claude/commands/patterns/system-design.md "design payment service"
+codex --system .claude/commands/patterns/arch-spike.md "design payment service"
 ```
 
 ### Gemini CLI
+
 ```bash
 # With context
 gemini --context system/active.md "explain this codebase structure"
@@ -122,6 +126,7 @@ gemini --context .claude/personas/data-scientist/config.md "optimize this ML pip
 ```
 
 ### Grok CLI
+
 ```bash
 # Quick tasks
 grok --prompt system/active.md "add error handling to this function"
@@ -147,6 +152,7 @@ cd ~/devpilot
 ### B) Make a Repo "AI-Ready"
 
 #### Option 1: New Project (Clone & Setup)
+
 ```bash
 # Interactive wizard
 ~/devpilot/setup/repo_wizard.sh
@@ -161,6 +167,7 @@ cd ~/devpilot
 ```
 
 #### Option 2: Existing Project (Setup Only)
+
 ```bash
 # Navigate to your existing repo
 cd /path/to/your/repo
@@ -202,7 +209,7 @@ claude --system-prompt .claude/commands/automation/long-context-map-reduce.md "s
 
 ```bash
 # 1. Generate system design
-codex --system .claude/commands/patterns/system-design.md \
+codex --system .claude/commands/patterns/arch-spike.md \
   "design multi-tenant SaaS platform"
 
 # 2. Review with architect persona
@@ -245,30 +252,31 @@ gitleaks detect --baseline-path .gitleaksignore
 ### 1. Baseline Configuration
 
 Start all projects with:
+
 ```bash
 --skill l1 --phase mvp  # Safe defaults with room to grow
 ```
 
 ### 2. Persona Stacks
 
-| Project Type | Recommended Personas | Command |
-|-------------|---------------------|----------|
-| **Backend API** | architect, backend, devops | `for p in software-architect backend-developer devops-engineer; do ~/devpilot/scripts/persona_manager.sh add $p; done` |
-| **Microservices** | architect, backend, devops, security | `for p in software-architect backend-developer devops-engineer security-engineer; do ~/devpilot/scripts/persona_manager.sh add $p; done` |
-| **ML/Data Science** | data-scientist, backend, devops | `for p in data-scientist backend-developer devops-engineer; do ~/devpilot/scripts/persona_manager.sh add $p; done` |
-| **Full Stack** | frontend, backend, devops | `for p in frontend-developer backend-developer devops-engineer; do ~/devpilot/scripts/persona_manager.sh add $p; done` |
+| Project Type        | Recommended Personas                 | Command                                                                                                                                  |
+| ------------------- | ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| **Backend API**     | architect, backend, devops           | `for p in software-architect backend-developer devops-engineer; do ~/devpilot/scripts/persona_manager.sh add $p; done`                   |
+| **Microservices**   | architect, backend, devops, security | `for p in software-architect backend-developer devops-engineer security-engineer; do ~/devpilot/scripts/persona_manager.sh add $p; done` |
+| **ML/Data Science** | data-scientist, backend, devops      | `for p in data-scientist backend-developer devops-engineer; do ~/devpilot/scripts/persona_manager.sh add $p; done`                       |
+| **Full Stack**      | frontend, backend, devops            | `for p in frontend-developer backend-developer devops-engineer; do ~/devpilot/scripts/persona_manager.sh add $p; done`                   |
 
 ### 3. CI Gates by Phase
 
-| Tool | MVP | Beta | Scale |
-|------|-----|------|-------|
-| **Tests** | Required | Required | Required |
-| **Linting** | Required | Required | Required |
-| **Coverage** | None | ≥60% | ≥80% |
-| **Gitleaks** | Advisory | Blocks any | Blocks any |
-| **Semgrep** | Advisory | Blocks HIGH+ | Blocks MEDIUM+ |
-| **Trivy** | Advisory | Blocks CRITICAL/HIGH | Blocks all |
-| **License** | None | Check | Enforce |
+| Tool         | MVP      | Beta                 | Scale          |
+| ------------ | -------- | -------------------- | -------------- |
+| **Tests**    | Required | Required             | Required       |
+| **Linting**  | Required | Required             | Required       |
+| **Coverage** | None     | ≥60%                 | ≥80%           |
+| **Gitleaks** | Advisory | Blocks any           | Blocks any     |
+| **Semgrep**  | Advisory | Blocks HIGH+         | Blocks MEDIUM+ |
+| **Trivy**    | Advisory | Blocks CRITICAL/HIGH | Blocks all     |
+| **License**  | None     | Check                | Enforce        |
 
 ### 4. Command Usage Priority
 
@@ -283,6 +291,7 @@ Top 5 daily commands teams should use:
 ## Week with DevPilot
 
 ### Day 1: Setup & Orientation
+
 ```bash
 # Morning: Global install
 ~/devpilot/setup_all.sh
@@ -296,6 +305,7 @@ cat .claude/commands/think-hard.md
 ```
 
 ### Day 2: Feature Development
+
 ```bash
 # Use exploration workflow
 claude --system-prompt system/active.md \
@@ -307,6 +317,7 @@ claude --system-prompt .claude/commands/security-review.md \
 ```
 
 ### Day 3: Architecture & Design
+
 ```bash
 # Add architect persona
 ~/devpilot/scripts/persona_manager.sh add software-architect
@@ -317,6 +328,7 @@ claude --system-prompt system/active.md \
 ```
 
 ### Day 4: Testing & Quality
+
 ```bash
 # Generate comprehensive tests
 claude --system-prompt .claude/commands/patterns/test-comprehensive.md \
@@ -328,6 +340,7 @@ claude --system-prompt .claude/commands/audit-full.md \
 ```
 
 ### Day 5: Documentation & Tickets
+
 ```bash
 # Generate tickets from TODOs
 claude --system-prompt .claude/commands/tickets-from-code.md \
@@ -341,6 +354,7 @@ claude --system-prompt .claude/commands/patterns/api-contract.md \
 ## Advanced Patterns
 
 ### Multi-Repo Management
+
 ```bash
 # Apply consistent setup across repos
 for repo in api-gateway user-service payment-service; do
@@ -352,6 +366,7 @@ done
 ```
 
 ### Custom Commands
+
 ```bash
 # Add project-specific command
 cat > .claude/commands/custom-deploy.md << 'EOF'
@@ -369,6 +384,7 @@ claude --system-prompt .claude/commands/custom-deploy.md "deploy feature-xyz"
 ```
 
 ### Hook Integration
+
 ```bash
 # Install git hooks
 ~/devpilot/setup/install_hooks.sh
@@ -385,6 +401,7 @@ chmod +x .git/hooks/pre-push
 ```
 
 **Cross-Platform Compatibility:**
+
 - All DevPilot scripts use BSD-safe `sed` commands
 - Works on macOS, Linux, and BSD systems
 - Use `sed -i ''` (with empty string) for macOS compatibility
@@ -393,6 +410,7 @@ chmod +x .git/hooks/pre-push
 ## Troubleshooting
 
 ### CLI Not Finding System Prompt
+
 ```bash
 # Ensure system/active.md exists
 ls -la system/active.md
@@ -402,6 +420,7 @@ scripts/apply_profile.sh --skill l1 --phase mvp
 ```
 
 ### Persona Commands Not Available
+
 ```bash
 # Check active personas
 ~/devpilot/scripts/persona_manager.sh show
@@ -411,6 +430,7 @@ ls .claude/commands/personas/
 ```
 
 ### CI Failing Unexpectedly
+
 ```bash
 # Check current phase
 grep "PROJECT_PHASE" .env
@@ -422,6 +442,7 @@ cat .github/workflows/ci.yml | grep "exit-code"
 ## Next Steps
 
 1. **Review Detailed Guides**:
+
    - [Quickstart](quickstart.md) - Initial setup
    - [Profiles Guide](profiles.md) - Skill levels & phases
    - [Personas Guide](PERSONAS_GUIDE.md) - Specialized expertise
@@ -429,16 +450,18 @@ cat .github/workflows/ci.yml | grep "exit-code"
    - [CI Integration](ci.md) - Pipeline configuration
 
 2. **Customize for Your Team**:
+
    - Create custom personas in `.claude/personas/custom/`
    - Add team-specific commands to `.claude/commands/team/`
    - Define organization standards in `templates/`
 
 3. **Scale Adoption**:
-   - **Always preview first**: `~/devpilot/scripts/repo_plan.sh [base] [org] [category] [name] [url]`
+   - **Always preview first**:
+     `~/devpilot/scripts/repo_plan.sh [base] [org] [category] [name] [url]`
    - Use `--dry-run` flags: `~/devpilot/setup/repo_wizard.sh --dry-run`
    - Batch apply with `find` and `xargs`
    - Monitor with `validation/validate_agents.sh`
 
 ---
 
-*DevPilot: CLI-first AI development that scales with your team.*
+_DevPilot: CLI-first AI development that scales with your team._

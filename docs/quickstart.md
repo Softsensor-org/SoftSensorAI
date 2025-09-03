@@ -194,7 +194,7 @@ codex --system system/active.md --sandbox "generate unit tests"
 # Use specific commands from the catalog
 claude --system-prompt .claude/commands/security-review.md "review auth flow"
 claude --system-prompt .claude/commands/think-hard.md "should we use microservices?"
-codex --system .claude/commands/patterns/system-design.md "design payment service"
+codex --system .claude/commands/patterns/arch-spike.md "design payment service"
 ```
 
 ### 🎭 Managing Personas
