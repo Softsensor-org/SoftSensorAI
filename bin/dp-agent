@@ -385,6 +385,46 @@ cmd_pr() {
   say "✅ Branch pushed: $branch"
 }
 
+cmd_verify() {
+  # Standalone verification command
+  ensure_sys
+  local TASK_ID=""
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --id) TASK_ID="${2:-}"; shift 2;;
+      *) TASK_ID="$1"; shift;;
+    esac
+  done
+
+  # Get latest task if not specified
+  if [[ -z "$TASK_ID" ]]; then
+    # shellcheck disable=SC2010
+    TASK_ID=$(ls -t "$ART/agent" 2>/dev/null | grep '^task-' | head -1)
+    [[ -z "$TASK_ID" ]] && { echo "No task ID specified and no tasks found"; exit 2; }
+  fi
+
+  local dir="$ART/agent/$TASK_ID"
+  [[ ! -d "$dir" ]] && { echo "Task $TASK_ID not found"; exit 2; }
+
+  # Find worktree
+  local wt="$dir/worktree"
+  if [[ ! -d "$wt" ]]; then
+    wt="$HOME/.devpilot/worktrees/$TASK_ID"
+    [[ ! -d "$wt" ]] && { echo "Worktree not found for task $TASK_ID"; exit 2; }
+  fi
+
+  # Run verification and output result
+  verify_repo "$wt" "$TASK_ID" "$dir/verify.json"
+  cat "$dir/verify.json"
+
+  # Summary
+  if jq -e '.build.ok and .tests.ok and .lint.ok and .security.ok' "$dir/verify.json" >/dev/null 2>&1; then
+    say "✅ All checks passed"
+  else
+    say "⚠️  Some checks failed - see verify.json for details"
+  fi
+}
+
 cmd_eval() {
   shift
   # Simple local evaluation: read a suite YAML with a list of goals
@@ -417,6 +457,7 @@ usage() {
 dp agent — minimal agentic coding (P1)
   dp agent new --goal "<text>" [--base main]       # create task + SPEC
   dp agent run --id <task_id> [--auto] [--loops N] # PLAN + apply codemods → VERIFY
+  dp agent verify --id <task_id>                   # run verification only
   dp agent pr  --id <task_id> [--title ...]        # push branch + open PR
   dp agent eval .agent/suites/local/sample.yaml    # run a local eval suite
 
@@ -436,6 +477,7 @@ HELP
 case "${1:-}" in
   new)  shift; cmd_new "$@";;
   run)  shift; cmd_run "$@";;
+  verify) shift; cmd_verify "$@";;
   pr)   shift; cmd_pr "$@";;
   eval) cmd_eval "$@";;
   -h|--help|"")

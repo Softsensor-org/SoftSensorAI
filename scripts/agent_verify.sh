@@ -1,126 +1,135 @@
 #!/usr/bin/env bash
-# Agent verification - aggregates build, test, lint results
+# Agent verification - wrapper around dp-agent verify_repo
+# Maintains backward compatibility while using unified JSON schema
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-SANDBOX_DIR="${SANDBOX_DIR:-$ROOT/../agent-sandbox}"
 
-# Output JSON result
-output_json() {
-  local build_status="$1"
-  local test_status="$2"
-  local lint_status="$3"
-  local security_status="$4"
-  local overall_status="$5"
+# Multi-user mode detection (same as dp)
+if [[ -f "/opt/devpilot/etc/devpilot.conf" ]]; then
+    source /opt/devpilot/etc/devpilot.conf
+    ROOT="${DEVPILOT_ROOT:-/opt/devpilot}"
+    ART="${DEVPILOT_USER_DIR:-$HOME/.devpilot}/artifacts"
+else
+    ART="$ROOT/artifacts"
+fi
 
-  cat <<EOF
+# Usage message
+usage() {
+    cat >&2 <<EOF
+Usage: agent_verify.sh [--task-id TASK_ID] [--output FILE]
+
+Wrapper around dp-agent verification engine. Uses the unified JSON schema
+from bin/dp-agent verify_repo() for consistency across dashboards.
+
+Options:
+  --task-id ID    Task ID to verify (default: latest task)
+  --output FILE   Output JSON file (default: stdout)
+  --help          Show this help message
+
+Environment:
+  SANDBOX_DIR     Override sandbox directory (default: from task)
+
+Deprecated: This script now wraps dp-agent for consistency.
+Use 'dp agent verify --id TASK_ID' directly for new integrations.
+EOF
+    exit 0
+}
+
+# Parse arguments
+TASK_ID=""
+OUTPUT_FILE=""
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --task-id)
+            TASK_ID="$2"
+            shift 2
+            ;;
+        --output)
+            OUTPUT_FILE="$2"
+            shift 2
+            ;;
+        --help|-h)
+            usage
+            ;;
+        *)
+            echo "Unknown option: $1" >&2
+            usage
+            ;;
+    esac
+done
+
+# Find task ID if not specified
+if [[ -z "$TASK_ID" ]]; then
+    # Get the most recent task
+    if [[ -d "$ART/agent" ]]; then
+        # shellcheck disable=SC2010
+        TASK_ID=$(ls -t "$ART/agent" 2>/dev/null | grep '^task-' | head -1)
+    fi
+
+    if [[ -z "$TASK_ID" ]]; then
+        echo "Error: No task ID specified and no tasks found" >&2
+        echo "Run 'dp agent new --goal \"<goal>\"' to create a task" >&2
+        exit 1
+    fi
+fi
+
+# Check if task exists
+if [[ ! -d "$ART/agent/$TASK_ID" ]]; then
+    echo "Error: Task $TASK_ID not found in $ART/agent/" >&2
+    exit 1
+fi
+
+# Check if verification already exists
+VERIFY_JSON="$ART/agent/$TASK_ID/verify.json"
+
+# If verify.json doesn't exist, run verification
+if [[ ! -f "$VERIFY_JSON" ]]; then
+    echo "Running verification for task $TASK_ID..." >&2
+
+    # Get the worktree path from task
+    WORKTREE="$ART/agent/$TASK_ID/worktree"
+    if [[ ! -d "$WORKTREE" ]]; then
+        # Try alternate location
+        WORKTREE="$HOME/.devpilot/worktrees/$TASK_ID"
+        if [[ ! -d "$WORKTREE" ]]; then
+            echo "Error: Worktree not found for task $TASK_ID" >&2
+            echo "Run 'dp agent run --id $TASK_ID' first" >&2
+            exit 1
+        fi
+    fi
+
+    # Call dp-agent's verify_repo function
+    # This writes to $ART/agent/$TASK_ID/verify.json
+    if command -v dp-agent >/dev/null 2>&1; then
+        dp-agent verify --id "$TASK_ID" >/dev/null 2>&1 || true
+    elif [[ -x "$ROOT/bin/dp-agent" ]]; then
+        "$ROOT/bin/dp-agent" verify --id "$TASK_ID" >/dev/null 2>&1 || true
+    else
+        # Fallback: inline verification (simplified from dp-agent)
+        cat > "$VERIFY_JSON" <<EOF
 {
-  "timestamp": "$(date -Iseconds)",
-  "overall": "$overall_status",
-  "checks": {
-    "build": {
-      "status": "$build_status",
-      "command": "npm run build || make build"
-    },
-    "tests": {
-      "status": "$test_status",
-      "command": "npm test || pytest"
-    },
-    "lint": {
-      "status": "$lint_status",
-      "command": "npm run lint || ruff check"
-    },
-    "security": {
-      "status": "$security_status",
-      "command": "npm audit || safety check"
-    }
-  }
+  "build": {"ok": false},
+  "tests": {"ok": false, "coverage_pct": 0, "coverage_base_pct": 0, "coverage_delta_pct": 0},
+  "lint": {"ok": false},
+  "security": {"ok": false, "semgrep_high": 0, "trivy_high": 0, "gitleaks": 0},
+  "time_s": 0,
+  "error": "dp-agent not found, verification skipped"
 }
 EOF
-}
-
-# Navigate to sandbox
-if [[ ! -d "$SANDBOX_DIR" ]]; then
-  output_json "skipped" "skipped" "skipped" "skipped" "error"
-  exit 1
+    fi
 fi
 
-cd "$SANDBOX_DIR"
-
-# Initialize results
-build_status="skipped"
-test_status="skipped"
-lint_status="skipped"
-security_status="skipped"
-overall_status="success"
-
-# Check for Node.js project
-if [[ -f package.json ]]; then
-  # Build
-  if npm run build >/dev/null 2>&1; then
-    build_status="success"
-  else
-    build_status="failed"
-    overall_status="failed"
-  fi
-
-  # Tests
-  if npm test >/dev/null 2>&1; then
-    test_status="success"
-  else
-    test_status="failed"
-    overall_status="failed"
-  fi
-
-  # Lint
-  if npm run lint >/dev/null 2>&1; then
-    lint_status="success"
-  elif npm run typecheck >/dev/null 2>&1; then
-    lint_status="success"
-  else
-    lint_status="warning"
-    [[ "$overall_status" == "success" ]] && overall_status="warning"
-  fi
-
-  # Security
-  if npm audit --audit-level=high >/dev/null 2>&1; then
-    security_status="success"
-  else
-    security_status="warning"
-    [[ "$overall_status" == "success" ]] && overall_status="warning"
-  fi
+# Output the verification result
+if [[ -f "$VERIFY_JSON" ]]; then
+    if [[ -n "$OUTPUT_FILE" ]]; then
+        cp "$VERIFY_JSON" "$OUTPUT_FILE"
+        echo "Verification results written to: $OUTPUT_FILE" >&2
+    else
+        cat "$VERIFY_JSON"
+    fi
+else
+    echo "Error: Verification failed - no verify.json generated" >&2
+    exit 1
 fi
-
-# Check for Python project
-if [[ -f requirements.txt ]] || [[ -f pyproject.toml ]]; then
-  # Tests
-  if pytest >/dev/null 2>&1; then
-    test_status="success"
-  elif python -m pytest >/dev/null 2>&1; then
-    test_status="success"
-  else
-    test_status="failed"
-    overall_status="failed"
-  fi
-
-  # Lint
-  if ruff check . >/dev/null 2>&1; then
-    lint_status="success"
-  elif flake8 . >/dev/null 2>&1; then
-    lint_status="success"
-  else
-    lint_status="warning"
-    [[ "$overall_status" == "success" ]] && overall_status="warning"
-  fi
-
-  # Security
-  if safety check >/dev/null 2>&1; then
-    security_status="success"
-  else
-    security_status="warning"
-    [[ "$overall_status" == "success" ]] && overall_status="warning"
-  fi
-fi
-
-# Output results
-output_json "$build_status" "$test_status" "$lint_status" "$security_status" "$overall_status"
