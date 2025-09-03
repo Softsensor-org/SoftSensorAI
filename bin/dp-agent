@@ -12,6 +12,23 @@ say() { printf "%s\n" "$*"; }
 have() { command -v "$1" >/dev/null 2>&1; }
 now() { date -Iseconds 2>/dev/null || date '+%Y-%m-%dT%H:%M:%S'; }
 
+# Redact sensitive information from diffs before sending to AI or storing
+redact_secrets() {
+  # Patterns for common secrets and sensitive data
+  sed -E \
+    -e 's/(api[_-]?key|token|secret|password|passwd|pwd|auth|credential)[[:space:]]*[=:][[:space:]]*["\047]?[^"\047[:space:]]*/\1=REDACTED/gi' \
+    -e 's/(bearer|authorization)[[:space:]]*[:][[:space:]]*[^[:space:]]*/\1: REDACTED/gi' \
+    -e 's/[A-Za-z0-9+\/]{40,}=[=]?/REDACTED_BASE64/g' \
+    -e 's/sk-[a-zA-Z0-9]{48}/sk-REDACTED/g' \
+    -e 's/ghp_[a-zA-Z0-9]{36}/ghp_REDACTED/g' \
+    -e 's/ghs_[a-zA-Z0-9]{36}/ghs_REDACTED/g' \
+    -e 's/glpat-[a-zA-Z0-9]{20}/glpat-REDACTED/g' \
+    -e 's/\b[A-F0-9]{64}\b/REDACTED_SHA256/gi' \
+    -e 's/-----BEGIN[^-]*KEY-----[^-]*-----END[^-]*KEY-----/-----BEGIN KEY-----\nREDACTED\n-----END KEY-----/g' \
+    -e 's/ssh-[a-z0-9]* [^ ]*/ssh-TYPE REDACTED/g' \
+    -e 's/[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}/REDACTED_UUID/gi'
+}
+
 extract_json() {
   awk 'BEGIN{in=0} /^[[:space:]]*{/ && !in {in=1} in{print}' | \
   awk 'BEGIN{c=0} {print; for(i=1;i<=length($0);i++){ch=substr($0,i,1); if(ch=="{")c++; else if(ch=="}")c--;}} END{exit c!=0}'
@@ -61,12 +78,22 @@ verify_repo() {
   local t0
   t0=$(date +%s)
 
-  # Build / test / lint via Just or package scripts if present
-  pushd "$wt" >/dev/null
-  if have just && grep -q "^build:" Justfile 2>/dev/null; then just build || ok_build=false
-  elif have npm; then npm run -s build || ok_build=false; fi
+  # Parallel execution with background jobs
+  local build_pid="" test_pid="" lint_pid="" sec_pid=""
 
-  # Targeted tests (if CHANGED_FILES set)
+  pushd "$wt" >/dev/null
+
+  # Start build in background
+  (
+    if have just && grep -q "^build:" Justfile 2>/dev/null; then
+      just build > "$ART/agent/$TASK_ID/build.log" 2>&1 || echo "BUILD_FAILED" > "$ART/agent/$TASK_ID/build.status"
+    elif have npm; then
+      npm run -s build > "$ART/agent/$TASK_ID/build.log" 2>&1 || echo "BUILD_FAILED" > "$ART/agent/$TASK_ID/build.status"
+    fi
+  ) &
+  build_pid=$!
+
+  # Prepare test arguments for targeted testing
   local pytest_args="" jest_args="" cov=0 cov_base=0 cov_delta=0
   if [ -n "${CHANGED_FILES:-}" ]; then
     # Python: derive a -k pattern from changed module basenames
@@ -87,65 +114,122 @@ EOF
     fi
   fi
 
-  # Try pytest (with coverage if available)
-  if command -v pytest >/dev/null 2>&1; then
-    if pytest -q --help 2>/dev/null | grep -q -- --cov; then
-      # Baseline coverage (first time only)
-      if [ ! -f "$ART/agent/$TASK_ID/coverage.base.json" ]; then
-        pytest -q --maxfail=1 --cov=. --cov-report json:"$ART/agent/$TASK_ID/coverage.base.json" >/dev/null 2>&1 || true
+  # Start tests in background
+  (
+    if command -v pytest >/dev/null 2>&1; then
+      if pytest -q --help 2>/dev/null | grep -q -- --cov; then
+        # Get base SHA for caching
+        local base_sha
+        base_sha=$(git rev-parse "origin/${BASE_BRANCH:-main}" 2>/dev/null || echo "unknown")
+        local baseline_cache="$ART/agent/_baseline/${base_sha}/coverage.json"
+
+        # Use cached baseline if available, otherwise generate
+        if [ -f "$baseline_cache" ]; then
+          cp "$baseline_cache" "$ART/agent/$TASK_ID/coverage.base.json"
+        else
+          # Generate baseline coverage
+          mkdir -p "$(dirname "$baseline_cache")"
+          pytest -q --maxfail=1 --cov=. --cov-report json:"$ART/agent/$TASK_ID/coverage.base.json" >/dev/null 2>&1 || true
+          # Cache for future runs
+          cp "$ART/agent/$TASK_ID/coverage.base.json" "$baseline_cache" 2>/dev/null || true
+        fi
+        eval pytest -q --maxfail=1 --cov=. --cov-report json:"$ART/agent/$TASK_ID/coverage.json" "$pytest_args" > "$ART/agent/$TASK_ID/test.log" 2>&1 || echo "TEST_FAILED" > "$ART/agent/$TASK_ID/test.status"
+        echo "$ART/agent/$TASK_ID/coverage.json" > "$ART/agent/$TASK_ID/test.coverage"
+      else
+        eval pytest -q "$pytest_args" > "$ART/agent/$TASK_ID/test.log" 2>&1 || echo "TEST_FAILED" > "$ART/agent/$TASK_ID/test.status"
       fi
-      eval pytest -q --maxfail=1 --cov=. --cov-report json:"$ART/agent/$TASK_ID/coverage.json" "$pytest_args" || ok_test=false
-      cov=$(jq -r '.totals.percent_covered // 0' "$ART/agent/$TASK_ID/coverage.json" 2>/dev/null || echo 0)
-      cov_base=$(jq -r '.totals.percent_covered // 0' "$ART/agent/$TASK_ID/coverage.base.json" 2>/dev/null || echo 0)
-      cov_delta=$(awk -v a="$cov" -v b="$cov_base" 'BEGIN{printf "%.2f", a-b}')
-    else
-      eval pytest -q "$pytest_args" || ok_test=false
+    # Else try jest with coverage
+    elif command -v jest >/dev/null 2>&1; then
+      mkdir -p "$ART/agent/$TASK_ID/coverage"
+      eval jest --coverage --coverageReporters=json-summary --coverageDirectory "$ART/agent/$TASK_ID/coverage" "$jest_args" > "$ART/agent/$TASK_ID/test.log" 2>&1 || echo "TEST_FAILED" > "$ART/agent/$TASK_ID/test.status"
+      echo "$ART/agent/$TASK_ID/coverage/coverage-summary.json" > "$ART/agent/$TASK_ID/test.coverage.jest"
+    elif have just && grep -q "^test:" Justfile 2>/dev/null; then
+      just test > "$ART/agent/$TASK_ID/test.log" 2>&1 || echo "TEST_FAILED" > "$ART/agent/$TASK_ID/test.status"
+    elif have npm; then
+      npm test -s > "$ART/agent/$TASK_ID/test.log" 2>&1 || echo "TEST_FAILED" > "$ART/agent/$TASK_ID/test.status"
     fi
-  # Else try jest with coverage
-  elif command -v jest >/dev/null 2>&1; then
-    mkdir -p "$ART/agent/$TASK_ID/coverage"
-    eval jest --coverage --coverageReporters=json-summary --coverageDirectory "$ART/agent/$TASK_ID/coverage" "$jest_args" || ok_test=false
-    cov=$(jq -r '.total.lines.pct // 0' "$ART/agent/$TASK_ID/coverage/coverage-summary.json" 2>/dev/null || echo 0)
-    # No immediate baseline unless prior run exists
+  ) &
+  test_pid=$!
+
+  # Start lint in background
+  (
+    if have just && grep -q "^lint:" Justfile 2>/dev/null; then
+      just lint > "$ART/agent/$TASK_ID/lint.log" 2>&1 || echo "LINT_FAILED" > "$ART/agent/$TASK_ID/lint.status"
+    elif have npm; then
+      npm run -s lint > "$ART/agent/$TASK_ID/lint.log" 2>&1 || echo "LINT_FAILED" > "$ART/agent/$TASK_ID/lint.status"
+    fi
+  ) &
+  lint_pid=$!
+
+  # Start security scan in background
+  (
+    local semgrep_high=0 trivy_high=0 leaks=0
+
+    # Semgrep scan
+    if have semgrep; then
+      semgrep --json -q --config=auto > "$ART/agent/$TASK_ID/semgrep.json" 2>/dev/null || true
+      semgrep_high=$(jq '[.results[]|select(.extra.severity=="ERROR")] | length' "$ART/agent/$TASK_ID/semgrep.json" 2>/dev/null || echo 0)
+    fi
+
+    # Trivy scan
+    if have trivy; then
+      trivy fs --security-checks vuln --quiet --format json . > "$ART/agent/$TASK_ID/trivy.json" 2>/dev/null || true
+      trivy_high=$(jq '[.Results[].Vulnerabilities[]?|select(.Severity=="HIGH" or .Severity=="CRITICAL")] | length' "$ART/agent/$TASK_ID/trivy.json" 2>/dev/null || echo 0)
+    fi
+
+    # Gitleaks scan
+    if have gitleaks; then
+      gitleaks detect --quiet --no-git --format json > "$ART/agent/$TASK_ID/gitleaks.json" 2>/dev/null || true
+      leaks=$(jq '.[]|length' "$ART/agent/$TASK_ID/gitleaks.json" 2>/dev/null || echo 0)
+    fi
+
+    # Save security results
+    echo "{\"semgrep_high\": $semgrep_high, \"trivy_high\": $trivy_high, \"leaks\": $leaks}" > "$ART/agent/$TASK_ID/security.results"
+    [ "$semgrep_high" -gt 0 ] || [ "$trivy_high" -gt 0 ] || [ "$leaks" -gt 0 ] && echo "SEC_FAILED" > "$ART/agent/$TASK_ID/security.status"
+  ) &
+  sec_pid=$!
+
+  # Wait for all background jobs to complete
+  [ -n "$build_pid" ] && wait "$build_pid" 2>/dev/null
+  [ -n "$test_pid" ] && wait "$test_pid" 2>/dev/null
+  [ -n "$lint_pid" ] && wait "$lint_pid" 2>/dev/null
+  [ -n "$sec_pid" ] && wait "$sec_pid" 2>/dev/null
+
+  popd >/dev/null
+
+  # Check status files
+  [ -f "$ART/agent/$TASK_ID/build.status" ] && ok_build=false
+  [ -f "$ART/agent/$TASK_ID/test.status" ] && ok_test=false
+  [ -f "$ART/agent/$TASK_ID/lint.status" ] && ok_lint=false
+  [ -f "$ART/agent/$TASK_ID/security.status" ] && ok_sec=false
+
+  # Load coverage results
+  local cov=0 cov_base=0 cov_delta=0
+  if [ -f "$ART/agent/$TASK_ID/test.coverage" ]; then
+    local cov_file
+    cov_file=$(cat "$ART/agent/$TASK_ID/test.coverage")
+    cov=$(jq -r '.totals.percent_covered // 0' "$cov_file" 2>/dev/null || echo 0)
+    cov_base=$(jq -r '.totals.percent_covered // 0' "$ART/agent/$TASK_ID/coverage.base.json" 2>/dev/null || echo 0)
+    cov_delta=$(awk -v a="$cov" -v b="$cov_base" 'BEGIN{printf "%.2f", a-b}')
+  elif [ -f "$ART/agent/$TASK_ID/test.coverage.jest" ]; then
+    local cov_file
+    cov_file=$(cat "$ART/agent/$TASK_ID/test.coverage.jest")
+    cov=$(jq -r '.total.lines.pct // 0' "$cov_file" 2>/dev/null || echo 0)
     if [ -f "$ART/agent/$TASK_ID/coverage.base.json" ]; then
       cov_base=$(jq -r '.total.lines.pct // 0' "$ART/agent/$TASK_ID/coverage.base.json" 2>/dev/null || echo 0)
       cov_delta=$(awk -v a="$cov" -v b="$cov_base" 'BEGIN{printf "%.2f", a-b}')
     else
-      cp "$ART/agent/$TASK_ID/coverage/coverage-summary.json" "$ART/agent/$TASK_ID/coverage.base.json" 2>/dev/null || true
+      cp "$cov_file" "$ART/agent/$TASK_ID/coverage.base.json" 2>/dev/null || true
     fi
-  elif have just && grep -q "^test:" Justfile 2>/dev/null; then
-    just test || ok_test=false
-  elif have npm; then
-    npm test -s || ok_test=false
   fi
 
-  if have just && grep -q "^lint:" Justfile 2>/dev/null; then just lint || ok_lint=false
-  elif have npm; then npm run -s lint || ok_lint=false; fi
-
-  # Security (save artifacts first, then count)
+  # Load security results
   local semgrep_high=0 trivy_high=0 leaks=0
-
-  # Semgrep scan
-  if have semgrep; then
-    semgrep --json -q --config=auto > "$ART/agent/$TASK_ID/semgrep.json" 2>/dev/null || true
-    semgrep_high=$(jq '[.results[]|select(.extra.severity=="ERROR")] | length' "$ART/agent/$TASK_ID/semgrep.json" 2>/dev/null || echo 0)
+  if [ -f "$ART/agent/$TASK_ID/security.results" ]; then
+    semgrep_high=$(jq -r '.semgrep_high // 0' "$ART/agent/$TASK_ID/security.results" 2>/dev/null || echo 0)
+    trivy_high=$(jq -r '.trivy_high // 0' "$ART/agent/$TASK_ID/security.results" 2>/dev/null || echo 0)
+    leaks=$(jq -r '.leaks // 0' "$ART/agent/$TASK_ID/security.results" 2>/dev/null || echo 0)
   fi
-
-  # Trivy scan
-  if have trivy; then
-    trivy fs --security-checks vuln --quiet --format json . > "$ART/agent/$TASK_ID/trivy.json" 2>/dev/null || true
-    trivy_high=$(jq '[.Results[].Vulnerabilities[]?|select(.Severity=="HIGH" or .Severity=="CRITICAL")] | length' "$ART/agent/$TASK_ID/trivy.json" 2>/dev/null || echo 0)
-  fi
-
-  # Gitleaks scan
-  if have gitleaks; then
-    gitleaks detect --quiet --no-git --format json > "$ART/agent/$TASK_ID/gitleaks.json" 2>/dev/null || true
-    leaks=$(jq '.[]|length' "$ART/agent/$TASK_ID/gitleaks.json" 2>/dev/null || echo 0)
-  fi
-
-  popd >/dev/null
-
-  if [ "$semgrep_high" -gt 0 ] || [ "$trivy_high" -gt 0 ] || [ "$leaks" -gt 0 ]; then ok_sec=false; fi
   local t1
   t1=$(date +%s)
   cat >"$out" <<JSON
@@ -340,9 +424,9 @@ cmd_run() {
     if jq -e '.build.ok and .tests.ok and .lint.ok and .security.ok' "$vout" >/dev/null 2>&1; then
       # Commit once we are green
       (cd "$wt" && git commit -m "agent($TASK_ID): apply plan (attempt $attempt)") || true
-      # Keep a human-readable diff
-      (cd "$wt" && git diff HEAD~1..HEAD --patch) > "$dir/patch.diff" 2>/dev/null || true
-      say "✅ Green. Diff saved to $dir/patch.diff"
+      # Keep a human-readable diff (with secrets redacted)
+      (cd "$wt" && git diff HEAD~1..HEAD --patch) | redact_secrets > "$dir/patch.diff" 2>/dev/null || true
+      say "✅ Green. Diff saved to $dir/patch.diff (secrets redacted)"
       break
     else
       if [ "$AUTO" -eq 1 ]; then

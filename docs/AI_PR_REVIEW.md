@@ -80,9 +80,11 @@ jobs:
   ai-review:
     runs-on: ubuntu-latest
     continue-on-error: true # Non-blocking
-    if:
-      ${{ vars.AI_REVIEW_ENABLED == 'true' || contains(join(github.event.pull_request.labels.*.name,
-      ','), 'ai-review') }}
+    if: >-
+      ${{
+        vars.AI_REVIEW_ENABLED == 'true' ||
+        contains(join(github.event.pull_request.labels.*.name, ','), 'ai-review')
+      }}
 ```
 
 ## Review Focus Areas

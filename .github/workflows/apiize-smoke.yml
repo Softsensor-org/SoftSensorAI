@@ -1,0 +1,165 @@
+name: Apiize Smoke Tests
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "bin/dp-apiize"
+      - ".github/workflows/apiize-smoke.yml"
+  pull_request:
+    paths:
+      - "bin/dp-apiize"
+      - ".github/workflows/apiize-smoke.yml"
+
+jobs:
+  smoke-test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        test-case:
+          - name: sklearn-model
+            setup: |
+              mkdir -p model
+              cat > model/train.py << 'EOF'
+              import joblib
+              from sklearn.linear_model import LogisticRegression
+              import numpy as np
+              X = np.array([[0, 0], [1, 1], [1, 0], [0, 1]])
+              y = np.array([0, 1, 1, 0])
+              clf = LogisticRegression(random_state=42).fit(X, y)
+              joblib.dump(clf, 'model.pkl')
+              EOF
+              pip install -q scikit-learn joblib
+              python model/train.py
+
+          - name: pytorch-model
+            setup: |
+              mkdir -p model
+              cat > model/train.py << 'EOF'
+              import torch
+              import torch.nn as nn
+              class SimpleNet(nn.Module):
+                  def __init__(self):
+                      super().__init__()
+                      self.fc = nn.Linear(10, 2)
+                  def forward(self, x):
+                      return self.fc(x)
+              model = SimpleNet()
+              torch.save(model.state_dict(), 'model.pt')
+              EOF
+              pip install -q torch
+              python model/train.py
+
+          - name: onnx-model
+            setup: |
+              mkdir -p model
+              cat > model/train.py << 'EOF'
+              import torch
+              import torch.nn as nn
+              class SimpleNet(nn.Module):
+                  def __init__(self):
+                      super().__init__()
+                      self.fc = nn.Linear(10, 2)
+                  def forward(self, x):
+                      return self.fc(x)
+              model = SimpleNet()
+              dummy = torch.randn(1, 10)
+              torch.onnx.export(model, dummy, "model.onnx",
+                               input_names=['input'], output_names=['output'])
+              EOF
+              pip install -q torch
+              python model/train.py
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: Setup test environment
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq
+          pip install --upgrade pip
+
+      - name: Create test model
+        run: |
+          ${{ matrix.test-case.setup }}
+
+      - name: Run dp-apiize
+        run: |
+          ./bin/dp-apiize --name test-api --port 9876 --no-docker
+
+      - name: Verify API structure
+        run: |
+          # Check that main files were created
+          test -f app.py || { echo "app.py not found"; exit 1; }
+          test -f requirements.txt || { echo "requirements.txt not found"; exit 1; }
+          test -f README.md || { echo "README.md not found"; exit 1; }
+
+          # Check app.py has proper structure
+          grep -q "FastAPI" app.py || { echo "FastAPI not found in app.py"; exit 1; }
+          grep -q "/predict" app.py || { echo "/predict endpoint not found"; exit 1; }
+          grep -q "/health" app.py || { echo "/health endpoint not found"; exit 1; }
+
+          echo "✅ API structure verified"
+
+      - name: Test API locally
+        run: |
+          # Install dependencies
+          pip install -r requirements.txt
+
+          # Start API in background
+          python app.py &
+          API_PID=$!
+
+          # Wait for API to be ready
+          for i in {1..30}; do
+            if curl -s http://localhost:9876/health | grep -q "ok"; then
+              echo "✅ API is ready"
+              break
+            fi
+            sleep 1
+          done
+
+          # Test health endpoint
+          curl -s http://localhost:9876/health | jq -e '.status == "ok"' || {
+            echo "Health check failed";
+            kill $API_PID;
+            exit 1;
+          }
+
+          # Test docs endpoint
+          curl -s http://localhost:9876/docs | grep -q "swagger-ui" || {
+            echo "Docs endpoint failed";
+            kill $API_PID;
+            exit 1;
+          }
+
+          # Kill API
+          kill $API_PID
+
+          echo "✅ API smoke test passed"
+
+      - name: Verify Docker support
+        run: |
+          # Check Docker files exist (if not --no-docker)
+          if [ ! -f Dockerfile ]; then
+            echo "Note: Dockerfile not created (--no-docker flag used)"
+          else
+            # Validate Dockerfile syntax
+            docker run --rm -i hadolint/hadolint < Dockerfile || true
+          fi
+
+          if [ ! -f docker-compose.yml ]; then
+            echo "Note: docker-compose.yml not created (--no-docker flag used)"
+          else
+            # Validate docker-compose syntax
+            docker-compose config > /dev/null || {
+              echo "docker-compose.yml validation failed";
+              exit 1;
+            }
+          fi
