@@ -8,7 +8,7 @@ cd "$ROOT"
 echo "== finding shell scripts =="
 mapfile -t SH < <(git ls-files 2>/dev/null | grep -E '\\.sh$|/bin/|/scripts/' || true)
 if [ ${#SH[@]} -eq 0 ]; then
-  mapfile -t SH < <(find . -type f \( -name "*.sh" -o -path "*/bin/*" -o -path "*/scripts/*" \) -print | sort)
+  mapfile -t SH < <(find . -type f \( -name "*.sh" -o -path "*/bin/*" -o -path "*/scripts/*" \) -not -path "./.venv/*" -not -path "./node_modules/*" -not -path "./.git/*" -print | sort)
 fi
 printf "%s\n" "${SH[@]}" | sed 's/^/ - /' || true
 
