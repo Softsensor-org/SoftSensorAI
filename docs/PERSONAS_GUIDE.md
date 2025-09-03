@@ -562,7 +562,7 @@ dp persona add [persona-name]
 ls .claude/commands/sets/
 
 # Copy missing commands
-cp -r ~/setup-scripts/.claude/commands/sets/[persona]/ .claude/commands/
+cp -r ~/devpilot/.claude/commands/sets/[persona]/ .claude/commands/
 ```
 
 ### GPU Monitoring Not Working

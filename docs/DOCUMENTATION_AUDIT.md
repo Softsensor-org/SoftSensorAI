@@ -33,8 +33,8 @@
 
 2. **Updated Repository References**:
 
-   - Fixed references from `VivekLmd/setup-scripts` → `Softsensor-org/DevPilot`
-   - Fixed references from `yourusername/setup-scripts` → `Softsensor-org/DevPilot`
+   - Fixed references from `VivekLmd/devpilot` → `Softsensor-org/DevPilot`
+   - Fixed references from `yourusername/devpilot` → `Softsensor-org/DevPilot`
    - Updated in: README.md, RELEASE_NOTES.md, TROUBLESHOOTING.md, RELEASE_MANAGEMENT.md,
      MIGRATION.md
 

@@ -16,7 +16,7 @@
 ### Fixed Issues
 
 1. **profile_show.sh syntax error** - Fixed division by zero when PROFILE.md has no checklist items
-2. **Repository URL references** - Updated from setup-scripts to DevPilot
+2. **Repository URL references** - Updated from devpilot to DevPilot
 3. **curl commands** - Updated documentation to reflect that repository may be private
 
 ## ⚠️ Known Limitations

@@ -1,0 +1,48 @@
+name: Update Command Registry
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "bin/dp"
+      - "scripts/*.sh"
+      - "tools/*.sh"
+      - "Justfile"
+      - "justfile"
+      - ".github/workflows/update-registry.yml"
+  workflow_dispatch:
+
+jobs:
+  update-registry:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Generate command registry
+        run: |
+          echo "Generating command registry..."
+          ./scripts/generate_command_registry.sh
+
+      - name: Upload registry artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: command-registry
+          path: |
+            commands.md
+            commands.json
+          retention-days: 90
+
+      - name: Commit updated registry
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+
+          if git diff --quiet commands.md commands.json; then
+            echo "No changes to registry"
+          else
+            git add commands.md commands.json
+            git commit -m "chore: Update command registry [skip ci]"
+            git push
+          fi

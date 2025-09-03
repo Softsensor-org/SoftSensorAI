@@ -9,7 +9,7 @@
 ## Proposed New Structure
 
 ```
-setup-scripts/
+devpilot/
 ├── README.md                    # Keep in root (essential)
 ├── LICENSE                      # Keep in root (essential)
 ├── VERSION                      # Keep in root (essential)

@@ -56,7 +56,7 @@ brew install bash
 
 ```bash
 # Check installation location
-ls -la ~/setup-scripts/
+ls -la ~/devpilot/
 
 # If missing, clone again
 git clone https://github.com/Softsensor-org/DevPilot.git ~/devpilot
@@ -103,7 +103,7 @@ dp profile --skill beginner --phase mvp
 rm -rf .claude/ CLAUDE.md PROFILE.md
 
 # Rerun setup
-~/setup-scripts/setup/existing_repo_setup.sh
+~/devpilot/setup/existing_repo_setup.sh
 ```
 
 3. **Manual fix**:
@@ -202,7 +202,7 @@ nvidia-smi
 
 ```bash
 # Update process analyzer
-cd ~/setup-scripts
+cd ~/devpilot
 git pull origin main
 
 # Reinstall scripts
@@ -250,7 +250,7 @@ model = model.half()  # Convert to FP16
 
 ```bash
 # Manually specify during setup
-~/setup-scripts/setup/existing_repo_setup.sh
+~/devpilot/setup/existing_repo_setup.sh
 
 # When it detects wrong type, choose "Continue anyway"
 # Then manually configure
@@ -266,7 +266,7 @@ cp CLAUDE.md CLAUDE.md.backup
 cp -r .claude .claude.backup
 
 # Run setup
-~/setup-scripts/setup/existing_repo_setup.sh
+~/devpilot/setup/existing_repo_setup.sh
 
 # When prompted "Update/overwrite?", choose "No"
 ```
@@ -285,14 +285,14 @@ mv .claude.backup .claude
 
 ```bash
 # Directly specify path
-~/setup-scripts/setup/existing_repo_setup.sh
+~/devpilot/setup/existing_repo_setup.sh
 
 # When prompted for path, enter full path:
 /home/username/path/to/your/repo
 
 # Or navigate there first
 cd /your/repo
-~/setup-scripts/setup/existing_repo_setup.sh
+~/devpilot/setup/existing_repo_setup.sh
 # Choose "Setup configurations here"
 ```
 
@@ -440,7 +440,7 @@ apt-get update && apt-get install sudo
 
 ```bash
 # Run any script with debug output
-bash -x ~/setup-scripts/setup.sh
+bash -x ~/devpilot/setup.sh
 
 # Or enable in script
 set -x  # Add to top of script
@@ -492,7 +492,7 @@ tar czf ai-config-backup.tar.gz .claude/ CLAUDE.md PROFILE.md 2>/dev/null
 rm -rf .claude/ CLAUDE.md PROFILE.md system/
 
 # Fresh setup
-~/setup-scripts/setup/existing_repo_setup.sh
+~/devpilot/setup/existing_repo_setup.sh
 ```
 
 ---

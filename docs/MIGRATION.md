@@ -37,7 +37,7 @@ done
 **Before (v1.x):**
 
 ```
-setup-scripts/
+devpilot/
 ├── install_key_software_wsl.sh
 ├── install_ai_clis.sh
 ├── setup_agents_global.sh
