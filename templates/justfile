@@ -869,6 +869,8 @@ tickets-old:
   fi
 
 # Aliases for common commands
+# These provide standardized shortcuts across all DevPilot projects
+# Convention: short forms (t, l, f) and common alternatives (fmt for format)
 alias t := test
 alias l := lint
 alias f := format

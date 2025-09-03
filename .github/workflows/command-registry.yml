@@ -1,0 +1,69 @@
+name: Command Registry Check
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "bin/dp"
+      - "bin/dp-*"
+      - "scripts/generate_command_registry.sh"
+  pull_request:
+    paths:
+      - "bin/dp"
+      - "bin/dp-*"
+      - "scripts/generate_command_registry.sh"
+
+jobs:
+  check-registry:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup environment
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq
+
+      - name: Generate command registry
+        run: |
+          ./scripts/generate_command_registry.sh artifacts/commands.md artifacts/commands.json
+
+      - name: Check if registry is complete
+        run: |
+          # Extract all commands from dp help
+          ./bin/dp help --full | grep -E '^\s+dp\s+[a-z-]+' | awk '{print $2}' | sort -u > /tmp/commands_from_help.txt
+
+          # Extract commands from registry
+          jq -r '.commands[].command' artifacts/commands.json | sed 's/^dp //' | sort -u > /tmp/commands_from_registry.txt
+
+          # Compare
+          if ! diff -u /tmp/commands_from_help.txt /tmp/commands_from_registry.txt; then
+            echo "ERROR: Command registry is incomplete or out of sync"
+            echo "Missing commands in registry:"
+            comm -23 /tmp/commands_from_help.txt /tmp/commands_from_registry.txt
+            exit 1
+          fi
+
+          echo "✓ Command registry is complete"
+
+      - name: Check for undocumented commands
+        run: |
+          # Ensure all dp subcommands have documentation
+          for cmd in $(./bin/dp help --full | grep -E '^\s+dp\s+[a-z-]+' | awk '{print $2}'); do
+            if ! grep -q "\"command\": \"dp $cmd\"" artifacts/commands.json; then
+              echo "ERROR: Command 'dp $cmd' is not documented in the registry"
+              exit 1
+            fi
+          done
+
+          echo "✓ All commands are documented"
+
+      - name: Upload registry artifacts
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: command-registry
+          path: |
+            artifacts/commands.md
+            artifacts/commands.json

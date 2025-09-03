@@ -19,6 +19,9 @@ The `dp agent` command provides a structured workflow for AI-assisted developmen
 # Create a new task with a goal
 dp agent new --goal "Add rate limiting to the API endpoints"
 
+# Or from a specification file
+dp agent new task_spec.md
+
 # This creates a task with ID like: rate-limiting-api-20241203-123456
 # View the generated spec at: artifacts/agent/<task_id>/spec.md
 
@@ -31,13 +34,21 @@ dp agent pr --id <task_id> --title "feat: Add API rate limiting"
 
 ## Commands
 
-### `dp agent new --goal "<text>" [--base main]`
+### `dp agent new`
 
 Creates a new agent task with a specification.
+
+**Usage**:
+
+```bash
+dp agent new --goal "<text>" [--base main]
+dp agent new <spec-file> [--base main]
+```
 
 **Parameters**:
 
 - `--goal`: Natural language description of what to accomplish
+- `<spec-file>`: Path to a file containing the task specification
 - `--base`: Base branch to work from (default: main)
 
 **Output**:

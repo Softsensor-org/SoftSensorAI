@@ -127,6 +127,8 @@ if [ ${#MISSING_TOOLS[@]} -gt 0 ]; then
         rg) echo "brew install ripgrep" ;;
         fd) echo "brew install fd" ;;
         direnv) echo "brew install direnv" ;;
+        yq) echo "brew install yq" ;;
+        comby) echo "brew install comby" ;;
         node) echo "brew install node" ;;
         python3) echo "brew install python@3" ;;
       esac
@@ -143,6 +145,8 @@ if [ ${#MISSING_TOOLS[@]} -gt 0 ]; then
           rg) echo "curl -LO https://github.com/BurntSushi/ripgrep/releases/download/14.1.0/ripgrep_14.1.0-1_amd64.deb && sudo dpkg -i ripgrep_14.1.0-1_amd64.deb" ;;
           fd) echo "sudo apt-get install -y fd-find && sudo ln -s \$(which fdfind) /usr/local/bin/fd" ;;
           direnv) echo "sudo apt-get install -y direnv" ;;
+          yq) echo "sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 && sudo chmod +x /usr/local/bin/yq" ;;
+          comby) echo "bash <(curl -sL get.comby.dev)" ;;
           node) echo "curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash - && sudo apt-get install -y nodejs" ;;
           python3) echo "sudo apt-get install -y python3 python3-pip python3-venv" ;;
         esac
