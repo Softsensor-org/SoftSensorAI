@@ -36,7 +36,7 @@ show_example() {
 
 # 1. Basic Codex Setup
 show_example "Setting up Codex in a new project" \
-    "echo 'cp ~/setup-scripts/templates/CODEX.md .' && echo 'cp -r ~/setup-scripts/.codex .'"
+    "echo 'cp ~/devpilot/templates/CODEX.md .' && echo 'cp -r ~/devpilot/.codex .'"
 
 # 2. Activate Data Scientist Persona
 show_example "Activating Data Scientist persona for ML work" \

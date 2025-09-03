@@ -110,8 +110,8 @@ rm -rf .claude/ CLAUDE.md PROFILE.md
 
 ```bash
 # Copy templates manually
-cp -r ~/setup-scripts/templates/.claude .
-cp ~/setup-scripts/templates/CLAUDE.md .
+cp -r ~/devpilot/templates/.claude .
+cp ~/devpilot/templates/CLAUDE.md .
 ```
 
 ### Issue: "Persona commands not available"

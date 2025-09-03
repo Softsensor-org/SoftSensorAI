@@ -1,10 +1,12 @@
 # 🤖 Codex Integration Guide
 
-Complete integration of OpenAI Codex with the same level of support as Claude, including persona-based configurations and sandboxed execution.
+Complete integration of OpenAI Codex with the same level of support as Claude, including
+persona-based configurations and sandboxed execution.
 
 ## Overview
 
 Codex is fully integrated with:
+
 - **Persona System** - Same personas work across Claude and Codex
 - **Command Structure** - Unified command interface
 - **Sandbox Execution** - Safe, isolated code execution
@@ -20,8 +22,8 @@ Codex is fully integrated with:
 cd /your/project
 
 # Copy Codex templates
-cp ~/setup-scripts/templates/CODEX.md .
-cp -r ~/setup-scripts/.codex .
+cp ~/devpilot/templates/CODEX.md .
+cp -r ~/devpilot/.codex .
 
 # Apply personas (shared with Claude)
 ./scripts/persona_manager.sh add data-scientist
@@ -64,6 +66,7 @@ All Codex-generated code runs in a secure sandbox:
 When data-scientist persona is active, Codex provides:
 
 #### GPU-Optimized Code Generation
+
 ```python
 # Codex automatically generates:
 - CUDA kernels for custom operations
@@ -74,12 +77,14 @@ When data-scientist persona is active, Codex provides:
 ```
 
 #### Commands Available
+
 - `/codex-ml-pipeline` - Complete ML pipelines
 - `/codex-gpu-optimize` - GPU optimization
 - `/codex-distributed` - Distributed training setup
 - `/codex-data-pipeline` - ETL pipelines
 
 #### Example: Generate Distributed Training
+
 ```bash
 codex exec "Generate distributed training for BERT on 4 GPUs"
 
@@ -96,6 +101,7 @@ codex exec "Generate distributed training for BERT on 4 GPUs"
 When architect persona is active:
 
 #### System Design Generation
+
 ```yaml
 # Codex generates complete:
 - Microservice architectures
@@ -107,12 +113,14 @@ When architect persona is active:
 ```
 
 #### Commands Available
+
 - `/codex-system-design` - Full system architecture
 - `/codex-api-design` - RESTful/GraphQL APIs
 - `/codex-database-schema` - Optimized schemas
 - `/codex-infrastructure` - IaC generation
 
 #### Example: Generate Microservices
+
 ```bash
 codex exec "/codex-system-design --type microservices --scale large"
 
@@ -128,6 +136,7 @@ codex exec "/codex-system-design --type microservices --scale large"
 ### Backend Developer Persona
 
 #### API Generation
+
 ```python
 # Codex generates production-ready:
 - FastAPI/Flask/Express endpoints
@@ -140,6 +149,7 @@ codex exec "/codex-system-design --type microservices --scale large"
 ```
 
 #### Commands
+
 - `/codex-api-crud` - CRUD operations
 - `/codex-auth-system` - Authentication setup
 - `/codex-database-ops` - Optimized queries
@@ -174,10 +184,12 @@ Repository-specific instructions for Codex:
 # Codex Configuration
 
 ## Active Personas
+
 - data-scientist
 - backend-developer
 
 ## Code Generation Rules
+
 1. Match existing patterns
 2. Use established libraries
 3. Include comprehensive tests
@@ -269,6 +281,7 @@ Unified command interface:
 ## Multi-Persona Combinations
 
 ### ML Engineering Mode
+
 Combines Data Scientist + Backend + DevOps:
 
 ```bash
@@ -282,6 +295,7 @@ Combines Data Scientist + Backend + DevOps:
 ```
 
 ### Full Stack Mode
+
 Frontend + Backend:
 
 ```bash
@@ -295,6 +309,7 @@ Frontend + Backend:
 ## Best Practices
 
 ### 1. Start with Sandbox
+
 Always test generated code in sandbox first:
 
 ```bash
@@ -308,6 +323,7 @@ codex exec "complex algorithm" > algorithm.py
 ```
 
 ### 2. Use Appropriate Personas
+
 Switch personas based on task:
 
 ```bash
@@ -319,6 +335,7 @@ Switch personas based on task:
 ```
 
 ### 3. Review Generated Code
+
 Codex generates good code, but always review:
 
 - Security implications
@@ -327,6 +344,7 @@ Codex generates good code, but always review:
 - Edge cases
 
 ### 4. Combine with Claude
+
 Use both for best results:
 
 ```bash
@@ -340,6 +358,7 @@ claude "/security-review"
 ## Troubleshooting
 
 ### API Key Issues
+
 ```bash
 # Check if key is set
 echo $OPENAI_API_KEY
@@ -349,6 +368,7 @@ export OPENAI_API_KEY="sk-..."
 ```
 
 ### Sandbox Issues
+
 ```bash
 # Check Docker
 docker --version
@@ -359,6 +379,7 @@ docker info
 ```
 
 ### Persona Sync Issues
+
 ```bash
 # Verify personas
 cat .claude/personas/active.json
@@ -415,6 +436,7 @@ Add to GitHub Actions:
 ## Summary
 
 Codex is now fully integrated with:
+
 - ✅ Same persona system as Claude
 - ✅ Repository-specific configurations
 - ✅ Secure sandbox execution

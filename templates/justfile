@@ -287,8 +287,8 @@ preview ID="local":
   # Check for compose file
   if [ ! -f "compose.preview.yml" ] && [ ! -f "docker-compose.preview.yml" ]; then
     echo "Creating compose.preview.yml from template..."
-    if [ -f "$HOME/setup-scripts/templates/compose.preview.yml" ]; then
-      cp "$HOME/setup-scripts/templates/compose.preview.yml" compose.preview.yml
+    if [ -f "$HOME/devpilot/templates/compose.preview.yml" ]; then
+      cp "$HOME/devpilot/templates/compose.preview.yml" compose.preview.yml
     else
       echo "⚠️  No preview compose file found. Creating minimal..."
       cat > compose.preview.yml <<'EOF'
