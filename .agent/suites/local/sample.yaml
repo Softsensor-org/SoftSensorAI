@@ -1,0 +1,6 @@
+suite: local
+base: main
+goals:
+  - "Refactor: extract helper into utils for duplicate code in src/"
+  - "Add basic unit test for an uncovered module in src/"
+  - "Improve logging level for error paths in service handlers"
