@@ -199,7 +199,7 @@ claude --system-prompt .claude/commands/security-review.md "review changes"
 claude --system-prompt .claude/commands/tickets-from-code.md "analyze TODO comments"
 
 # Architecture decisions
-codex --system .claude/commands/patterns/architect-spike.md "evaluate caching strategies"
+codex --system .claude/commands/patterns/arch-spike.md "evaluate caching strategies"
 
 # Long context handling
 claude --system-prompt .claude/commands/automation/long-context-map-reduce.md "summarize all test failures"
@@ -217,7 +217,7 @@ codex --system .claude/commands/patterns/arch-spike.md \
 claude --system-prompt system/active.md "/architecture-review proposed-design.md"
 
 # 3. Generate IaC
-codex --system .claude/commands/patterns/iac-generator.md \
+codex --system .claude/commands/think-hard.md \
   "create Terraform for the approved design"
 
 # 4. Security review
@@ -331,7 +331,7 @@ claude --system-prompt system/active.md \
 
 ```bash
 # Generate comprehensive tests
-claude --system-prompt .claude/commands/patterns/test-comprehensive.md \
+claude --system-prompt .claude/commands/patterns/test-first.md \
   "cover all edge cases"
 
 # Run quality audit

@@ -3,8 +3,33 @@
 # Creates a searchable command palette for DevPilot
 set -euo pipefail
 
-OUTPUT="${1:-commands.md}"
-JSON_OUTPUT="${2:-commands.json}"
+# Parse arguments
+SHOW_INTERNAL=false
+OUTPUT="commands.md"
+JSON_OUTPUT="commands.json"
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --internal)
+      SHOW_INTERNAL=true
+      shift
+      ;;
+    --output)
+      OUTPUT="$2"
+      shift 2
+      ;;
+    --json)
+      JSON_OUTPUT="$2"
+      shift 2
+      ;;
+    *)
+      OUTPUT="${1:-commands.md}"
+      JSON_OUTPUT="${2:-commands.json}"
+      break
+      ;;
+  esac
+done
+
 FIRST_JSON=true
 
 # Extract description from file header comment
@@ -57,27 +82,29 @@ add_command() {
     "$command" "$description" "$category" "$source" >> "$JSON_OUTPUT"
 }
 
-# Process shell scripts in a directory (commented out - internal use only)
-# Scripts are now internal implementation details
-# Users should use dp commands instead
+# Process shell scripts in a directory
+# Only shown when --internal flag is used
 process_directory() {
-  # Skip processing - scripts are internal
-  return 0
+  local dir="$1"
+  local category="$2"
+  local header="$3"
 
-  # Original code kept for reference:
-  # local dir="$1"
-  # local category="$2"
-  # local header="$3"
-  # if [[ ! -d "$dir" ]]; then
-  #   return 0
-  # fi
-  # for script in "$dir"/*.sh; do
-  #   [[ -f "$script" ]] || continue
-  #   local basename="${script##*/}"
-  #   local name="${basename%.sh}"
-  #   local desc=$(extract_description "$script" "$name")
-  #   add_command "./$dir/$basename" "$desc" "$category" "$dir"
-  # done
+  # Skip unless --internal flag is set
+  if [[ "$SHOW_INTERNAL" != "true" ]]; then
+    return 0
+  fi
+
+  if [[ ! -d "$dir" ]]; then
+    return 0
+  fi
+
+  for script in "$dir"/*.sh; do
+    [[ -f "$script" ]] || continue
+    local basename="${script##*/}"
+    local name="${basename%.sh}"
+    local desc=$(extract_description "$script" "$name")
+    add_command "./$dir/$basename" "$desc" "$category" "$dir"
+  done
 }
 
 # Parse Justfile targets
@@ -169,6 +196,12 @@ process_directory "tools" "tool" "Tools"
 # Finalize outputs
 echo "" >> "$JSON_OUTPUT"
 echo "]}" >> "$JSON_OUTPUT"
+
+# Add note if internal commands are shown
+if [[ "$SHOW_INTERNAL" == "true" ]]; then
+  echo "" >> "$OUTPUT"
+  echo "**Note**: Internal scripts and tools are shown. These are implementation details - use \`dp\` commands for standard operations." >> "$OUTPUT"
+fi
 
 # Add footer to markdown
 cat >> "$OUTPUT" <<'EOF'

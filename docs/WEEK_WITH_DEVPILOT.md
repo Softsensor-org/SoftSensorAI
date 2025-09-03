@@ -73,7 +73,7 @@ gitleaks detect --source .
 semgrep --config=auto .
 
 # Fix any issues found
-claude --system-prompt .claude/commands/patterns/secure-fix.md \
+claude --system-prompt .claude/commands/patterns/bug-fix.md \
   "fix the SQL injection risk in preferences controller"
 ```
 
@@ -85,7 +85,7 @@ claude --system-prompt .claude/commands/audit-quick.md \
   "check code quality for the new endpoint"
 
 # Generate missing documentation
-claude --system-prompt .claude/commands/patterns/document-code.md \
+claude --system-prompt .claude/commands/think-hard.md \
   "add JSDoc comments to the preferences module"
 ```
 
@@ -123,14 +123,14 @@ npx @apidevtools/swagger-cli validate openapi.yaml
 
 ```bash
 # Generate edge case tests
-claude --system-prompt .claude/commands/patterns/test-comprehensive.md \
+claude --system-prompt .claude/commands/patterns/test-first.md \
   "create edge case tests for preferences endpoint"
 
 # Run tests with coverage
 npm test -- --coverage
 
 # If coverage < 80%, add more tests
-claude --system-prompt .claude/commands/patterns/test-driven.md \
+claude --system-prompt .claude/commands/patterns/test-first.md \
   "increase test coverage for uncovered branches"
 ```
 
@@ -164,7 +164,7 @@ describe('Preferences API', () => {
 
 ```bash
 # Analyze current architecture
-claude --system-prompt .claude/commands/patterns/architecture-review.md \
+claude --system-prompt .claude/commands/patterns/arch-spike.md \
   "review system architecture and identify bottlenecks"
 
 # Performance analysis
@@ -176,11 +176,11 @@ claude --system-prompt .claude/commands/patterns/performance-pass.md \
 
 ```bash
 # Design improvements
-codex --system .claude/commands/patterns/architect-spike.md \
+codex --system .claude/commands/patterns/arch-spike.md \
   "design caching strategy for preferences service"
 
 # Generate implementation plan
-claude --system-prompt .claude/commands/patterns/scale-analysis.md \
+claude --system-prompt .claude/commands/patterns/performance-pass.md \
   "plan migration to Redis for preference caching"
 ```
 
@@ -221,11 +221,11 @@ claude --system-prompt .claude/commands/tickets-from-code.md \
 
 ```bash
 # Add comprehensive logging
-claude --system-prompt .claude/commands/patterns/observability-pass.md \
+claude --system-prompt .claude/commands/audit-full.md \
   "add structured logging to preferences service"
 
 # Add metrics
-claude --system-prompt .claude/commands/patterns/metrics-instrumentation.md \
+claude --system-prompt .claude/commands/think-hard.md \
   "add Prometheus metrics for preference operations"
 ```
 
@@ -303,7 +303,7 @@ claude --system-prompt .claude/commands/automation/long-context-map-reduce.md \
 
 ```bash
 # Coordinate changes across services
-claude --system-prompt .claude/commands/patterns/multi-service-refactor.md \
+claude --system-prompt .claude/commands/patterns/safe-refactor.md \
   "split monolith authentication into microservice"
 ```
 

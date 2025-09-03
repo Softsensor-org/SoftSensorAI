@@ -106,7 +106,7 @@ claude --system-prompt system/active.md "/explore-plan-code-test implement [your
 claude --system-prompt .claude/commands/security-review.md "review my changes"
 
 # Generate tests
-claude --system-prompt .claude/commands/patterns/test-comprehensive.md "create tests for [feature]"
+claude --system-prompt .claude/commands/patterns/test-first.md "create tests for [feature]"
 ```
 
 ### 5. Submit Pull Request
