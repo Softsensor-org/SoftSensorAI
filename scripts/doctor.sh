@@ -37,11 +37,15 @@ case "$(uname -s)" in
 esac
 
 # Core tools
-for t in git jq rg fd direnv; do
+for t in git jq rg fd direnv yq comby; do
   if has "$t"; then
     ok "$t: $(command -v $t)"
   else
-    bad "$t not found"
+    if [[ "$t" == "yq" ]] || [[ "$t" == "comby" ]]; then
+      warn "$t not found (recommended for agent tasks)"
+    else
+      bad "$t not found"
+    fi
     MISSING_TOOLS+=("$t")
   fi
 done

@@ -18,6 +18,11 @@ jobs:
           chmod +x tests/test_os_compatibility.sh
           ./tests/test_os_compatibility.sh
 
+      - name: Validate command documentation
+        run: |
+          chmod +x scripts/validate_command_registry.sh
+          ./scripts/validate_command_registry.sh || true  # Non-blocking for now
+
   quality-gates:
     runs-on: ubuntu-latest
     needs: [os-compatibility]

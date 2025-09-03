@@ -203,6 +203,8 @@ cmd_review() {
 
     if [[ -n "$preview_context" ]]; then
       say "▸ Found preview context (errors/warnings will be included)"
+    else
+      say "▸ Preview logs not found—skipping"
     fi
   fi
 
@@ -619,6 +621,8 @@ cmd_doctor_install() {
       case "$tool" in
         rg) BREW_PKGS+=("ripgrep") ;;
         python3) BREW_PKGS+=("python@3") ;;
+        yq) BREW_PKGS+=("yq") ;;
+        comby) BREW_PKGS+=("comby") ;;
         *) BREW_PKGS+=("$tool") ;;
       esac
     done
@@ -634,6 +638,8 @@ cmd_doctor_install() {
         fd) APT_CMDS+=("&& ${NEEDS_SUDO} apt-get install -y fd-find && ${NEEDS_SUDO} ln -sf \$(which fdfind) /usr/local/bin/fd") ;;
         node) APT_CMDS+=("&& curl -fsSL https://deb.nodesource.com/setup_lts.x | ${NEEDS_SUDO} -E bash - && ${NEEDS_SUDO} apt-get install -y nodejs") ;;
         python3) APT_CMDS+=("&& ${NEEDS_SUDO} apt-get install -y python3 python3-pip python3-venv") ;;
+        yq) APT_CMDS+=("&& ${NEEDS_SUDO} wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 && ${NEEDS_SUDO} chmod +x /usr/local/bin/yq") ;;
+        comby) APT_CMDS+=("&& bash <(curl -sL get.comby.dev)") ;;
         *) APT_CMDS+=("&& ${NEEDS_SUDO} apt-get install -y $tool") ;;
       esac
     done
@@ -672,6 +678,8 @@ cmd_doctor_install() {
         direnv) echo "# Install direnv from: https://direnv.net/docs/installation.html" ;;
         node) echo "# Install Node.js from: https://nodejs.org/" ;;
         python3) echo "# Install Python from: https://www.python.org/downloads/" ;;
+        yq) echo "# Install yq from: https://github.com/mikefarah/yq#install" ;;
+        comby) echo "# Install comby from: https://comby.dev/docs/get-started#install" ;;
       esac
     done
   fi
