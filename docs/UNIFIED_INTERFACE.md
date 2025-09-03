@@ -33,9 +33,13 @@ Problems:
 dp setup          # Smart detection - works for ALL cases
 dp doctor         # System health check
 dp init           # Initialize project
-dp palette        # Discover all commands
+dp palette        # Discover all commands (alias: dpp)
 dp review         # AI code review
 dp tickets        # Generate backlog
+dp help           # Quick reference (7 essential commands)
+
+# Pro tip: Add this to ~/.bashrc for quick access:
+alias dpp='dp palette'
 ```
 
 ## How `dp setup` Works

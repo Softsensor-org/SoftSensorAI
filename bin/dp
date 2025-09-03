@@ -426,12 +426,140 @@ cmd_setup() {
 }
 
 cmd_doctor() {
-  # Run system health check
-  if [[ -x "$ROOT/scripts/doctor.sh" ]]; then
-    "$ROOT/scripts/doctor.sh" "$@"
+  # Run system health check or install missing tools
+  if [[ "${1:-}" == "--install" || "${1:-}" == "-i" ]]; then
+    cmd_doctor_install
   else
-    say "Error: doctor.sh not found"
-    exit 1
+    if [[ -x "$ROOT/scripts/doctor.sh" ]]; then
+      "$ROOT/scripts/doctor.sh" "$@"
+    else
+      say "Error: doctor.sh not found"
+      exit 1
+    fi
+  fi
+}
+
+cmd_doctor_install() {
+  # Detect missing tools and output one-liner install commands
+  echo "==> Checking for missing tools..."
+
+  local MISSING_TOOLS=()
+  has() { command -v "$1" >/dev/null 2>&1; }
+
+  # Check core tools
+  for t in git jq rg fd direnv node python3; do
+    if ! has "$t"; then
+      MISSING_TOOLS+=("$t")
+    fi
+  done
+
+  if [ ${#MISSING_TOOLS[@]} -eq 0 ]; then
+    echo "✅ All core tools are installed!"
+    return 0
+  fi
+
+  echo "Missing tools: ${MISSING_TOOLS[*]}"
+  echo ""
+
+  # Detect OS and package manager
+  local OS_TYPE="unknown"
+  local PKG_MGR="unknown"
+
+  if [[ "$(uname -s)" == "Darwin" ]]; then
+    OS_TYPE="macos"
+    if has brew; then
+      PKG_MGR="brew"
+    fi
+  elif [[ "$(uname -s)" == "Linux" ]] || [[ -n "${WSL_DISTRO_NAME:-}" ]]; then
+    OS_TYPE="linux"
+    if has apt-get; then
+      PKG_MGR="apt"
+    elif has dnf; then
+      PKG_MGR="dnf"
+    elif has pacman; then
+      PKG_MGR="pacman"
+    elif has apk; then
+      PKG_MGR="apk"
+    fi
+  fi
+
+  # Generate one-liner based on OS and package manager
+  echo "📦 One-liner installation command:"
+  echo ""
+
+  if [[ "$OS_TYPE" == "macos" && "$PKG_MGR" == "brew" ]]; then
+    local BREW_PKGS=()
+    for tool in "${MISSING_TOOLS[@]}"; do
+      case "$tool" in
+        rg) BREW_PKGS+=("ripgrep") ;;
+        python3) BREW_PKGS+=("python@3") ;;
+        *) BREW_PKGS+=("$tool") ;;
+      esac
+    done
+    echo "brew install ${BREW_PKGS[*]}"
+  elif [[ "$PKG_MGR" == "apt" ]]; then
+    local APT_CMDS=()
+    local NEEDS_SUDO="sudo"
+    [[ "$(id -u)" -eq 0 ]] && NEEDS_SUDO=""
+
+    for tool in "${MISSING_TOOLS[@]}"; do
+      case "$tool" in
+        rg) APT_CMDS+=("&& curl -LO https://github.com/BurntSushi/ripgrep/releases/download/14.1.0/ripgrep_14.1.0-1_amd64.deb && ${NEEDS_SUDO} dpkg -i ripgrep_14.1.0-1_amd64.deb && rm ripgrep_14.1.0-1_amd64.deb") ;;
+        fd) APT_CMDS+=("&& ${NEEDS_SUDO} apt-get install -y fd-find && ${NEEDS_SUDO} ln -sf \$(which fdfind) /usr/local/bin/fd") ;;
+        node) APT_CMDS+=("&& curl -fsSL https://deb.nodesource.com/setup_lts.x | ${NEEDS_SUDO} -E bash - && ${NEEDS_SUDO} apt-get install -y nodejs") ;;
+        python3) APT_CMDS+=("&& ${NEEDS_SUDO} apt-get install -y python3 python3-pip python3-venv") ;;
+        *) APT_CMDS+=("&& ${NEEDS_SUDO} apt-get install -y $tool") ;;
+      esac
+    done
+
+    echo "${NEEDS_SUDO} apt-get update ${APT_CMDS[*]}"
+  elif [[ "$PKG_MGR" == "dnf" ]]; then
+    local DNF_PKGS=()
+    for tool in "${MISSING_TOOLS[@]}"; do
+      case "$tool" in
+        rg) DNF_PKGS+=("ripgrep") ;;
+        fd) DNF_PKGS+=("fd-find") ;;
+        node) DNF_PKGS+=("nodejs") ;;
+        *) DNF_PKGS+=("$tool") ;;
+      esac
+    done
+    echo "sudo dnf install -y ${DNF_PKGS[*]}"
+  elif [[ "$PKG_MGR" == "pacman" ]]; then
+    local PACMAN_PKGS=()
+    for tool in "${MISSING_TOOLS[@]}"; do
+      case "$tool" in
+        rg) PACMAN_PKGS+=("ripgrep") ;;
+        node) PACMAN_PKGS+=("nodejs npm") ;;
+        python3) PACMAN_PKGS+=("python python-pip") ;;
+        *) PACMAN_PKGS+=("$tool") ;;
+      esac
+    done
+    echo "sudo pacman -S --noconfirm ${PACMAN_PKGS[*]}"
+  else
+    echo "# Package manager not detected. Here are generic instructions:"
+    for tool in "${MISSING_TOOLS[@]}"; do
+      case "$tool" in
+        git) echo "# Install git from: https://git-scm.com/downloads" ;;
+        jq) echo "# Install jq from: https://jqlang.github.io/jq/download/" ;;
+        rg) echo "# Install ripgrep from: https://github.com/BurntSushi/ripgrep#installation" ;;
+        fd) echo "# Install fd from: https://github.com/sharkdp/fd#installation" ;;
+        direnv) echo "# Install direnv from: https://direnv.net/docs/installation.html" ;;
+        node) echo "# Install Node.js from: https://nodejs.org/" ;;
+        python3) echo "# Install Python from: https://www.python.org/downloads/" ;;
+      esac
+    done
+  fi
+
+  echo ""
+  echo "After installation, run: dp doctor"
+
+  # WSL-specific guidance
+  if [[ -n "${WSL_DISTRO_NAME:-}" ]] || ([ -f /proc/version ] && grep -qi microsoft /proc/version 2>/dev/null); then
+    echo ""
+    echo "🪟 WSL Tips:"
+    echo " - Store repos in Linux filesystem (/home/user/) for 10x faster I/O"
+    echo " - Access from Windows: \\\\wsl$\\${WSL_DISTRO_NAME:-Ubuntu}\\home"
+    echo " - Use Windows Terminal for best experience"
   fi
 }
 
@@ -575,30 +703,38 @@ cmd_agent() {
   fi
 }
 
-case "${1:-}" in
-  setup)  shift; cmd_setup "$@";;
-  doctor) shift; cmd_doctor "$@";;
-  init)   shift; cmd_init "$@";;
-  tickets)shift; cmd_tickets "$@";;
-  review) shift; cmd_review "$@";;
-  project)shift; cmd_project "$@";;
-  palette)shift; cmd_palette "$@";;
-  profile)shift; cmd_profile "$@";;
-  persona)shift; cmd_persona "$@";;
-  score)  shift; cmd_score "$@";;
-  detect) shift; cmd_detect "$@";;
-  plan)   shift; cmd_plan "$@";;
-  ai)     shift; cmd_ai "$@";;
-  agent)  shift; cmd_agent "$@";;
-  sandbox)shift; cmd_sandbox "$@";;
-  chain)  shift; cmd_chain "$@";;
-  patterns)shift; cmd_patterns "$@";;
-  worktree)shift; cmd_worktree "$@";;
-  release-check)shift; cmd_release_check "$@";;
-  migrate)shift; cmd_migrate "$@";;
-  graduate)shift; cmd_graduate "$@";;
-  -h|--help|"")
-    cat <<'HELP'
+cmd_help() {
+  # Show quick help or full help
+  if [[ "${1:-}" == "--full" ]]; then
+    shift
+    show_full_help
+  else
+    show_quick_help
+  fi
+}
+
+show_quick_help() {
+  cat <<'QUICK'
+DevPilot Quick Start (7 essential commands):
+
+  dp doctor              # Check system & install missing tools
+  dp doctor --install    # One-liner to install all missing tools
+  dp setup               # Smart setup for new or existing repo
+  dp init                # Initialize with profile & AI config
+  dp tickets             # Generate backlog from codebase (JSON/CSV)
+  dp review              # AI review of local changes vs main
+  dp agent new "task"    # Create agent task from description
+  dp palette             # Interactive command browser (or alias: dpp)
+
+First time? Run: dp doctor --install && dp setup && dp init
+Need details? Run: dp help --full
+
+Pro tip: Add to ~/.bashrc: alias dpp='dp palette'
+QUICK
+}
+
+show_full_help() {
+  cat <<'HELP'
 DevPilot - Unified AI Development Interface
 
 Setup & Configuration:
@@ -646,6 +782,33 @@ Advanced (via just):
 
 Env: AI_MODEL_* override model names; TIMEOUT_SECS limits long runs
 HELP
+}
+
+case "${1:-}" in
+  setup)  shift; cmd_setup "$@";;
+  doctor) shift; cmd_doctor "$@";;
+  init)   shift; cmd_init "$@";;
+  tickets)shift; cmd_tickets "$@";;
+  review) shift; cmd_review "$@";;
+  project)shift; cmd_project "$@";;
+  palette)shift; cmd_palette "$@";;
+  profile)shift; cmd_profile "$@";;
+  persona)shift; cmd_persona "$@";;
+  score)  shift; cmd_score "$@";;
+  detect) shift; cmd_detect "$@";;
+  plan)   shift; cmd_plan "$@";;
+  ai)     shift; cmd_ai "$@";;
+  agent)  shift; cmd_agent "$@";;
+  sandbox)shift; cmd_sandbox "$@";;
+  chain)  shift; cmd_chain "$@";;
+  patterns)shift; cmd_patterns "$@";;
+  worktree)shift; cmd_worktree "$@";;
+  release-check)shift; cmd_release_check "$@";;
+  migrate)shift; cmd_migrate "$@";;
+  graduate)shift; cmd_graduate "$@";;
+  help)   shift; cmd_help "$@";;
+  -h|--help|"")
+    cmd_help "$@"
     ;;
   *) echo "unknown subcommand: $1" >&2; exit 2;;
 esac

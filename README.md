@@ -13,6 +13,7 @@ platforms.
 git clone https://github.com/Softsensor-org/DevPilot.git ~/devpilot
 cd ~/devpilot && ./setup_all.sh
 export PATH="$HOME/devpilot/bin:$PATH"  # Add to ~/.bashrc
+alias dpp='dp palette'                   # Add to ~/.bashrc for quick access
 
 # 2. Setup your project (any repo)
 cd your-project
@@ -20,9 +21,10 @@ dp setup        # Works for new or existing repos
 dp init         # Configure and initialize
 
 # 3. Start using AI features
-dp palette      # Browse all commands
+dpp             # Browse all commands (using alias)
 dp review       # AI code review
 dp tickets      # Generate backlog
+dp help         # Quick reference (7 essential commands)
 ```
 
 That's it! DevPilot is now configured for your project. See [Full Guide](#getting-started) for

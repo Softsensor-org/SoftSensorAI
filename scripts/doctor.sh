@@ -14,18 +14,27 @@ echo "==> Doctor: environment checks"
 
 # OS / Shell
 case "$(uname -s)" in
-  Linux) ok "OS: Linux" ;;
+  Linux)
+    if [ -n "${WSL_DISTRO_NAME:-}" ] || ([ -f /proc/version ] && grep -qi microsoft /proc/version 2>/dev/null); then
+      ok "OS: Linux (WSL - ${WSL_DISTRO_NAME:-Ubuntu})"
+      echo "  🪟 WSL Performance Tip: Store repos in /home/$USER/ (not /mnt/c/)"
+      echo "     Access from Windows: \\\\wsl$\\${WSL_DISTRO_NAME:-Ubuntu}\\home\\$USER"
+    else
+      ok "OS: Linux"
+    fi
+    ;;
   Darwin) ok "OS: macOS" ;;
   FreeBSD) ok "OS: FreeBSD" ;;
   OpenBSD) ok "OS: OpenBSD" ;;
   NetBSD) ok "OS: NetBSD" ;;
   SunOS) ok "OS: Solaris/illumos" ;;
-  CYGWIN*|MINGW*|MSYS*) warn "OS: Windows (via $(uname -s)) - Limited support" ;;
+  CYGWIN*|MINGW*|MSYS*)
+    warn "OS: Windows (via $(uname -s)) - Limited support"
+    echo "  ⚠️  Consider using WSL2 for better performance and compatibility"
+    echo "     Install: wsl --install -d Ubuntu"
+    ;;
   *) warn "OS: $(uname -s) (untested)" ;;
 esac
-if [ -n "${WSL_DISTRO_NAME:-}" ] || ([ -f /proc/version ] && grep -qi microsoft /proc/version 2>/dev/null); then
-  ok "WSL detected"
-fi
 
 # Core tools
 for t in git jq rg fd direnv; do
@@ -194,10 +203,20 @@ fi
 
 printf "\n==> Next steps:\n"
 if [ ${#MISSING_TOOLS[@]} -eq 0 ]; then
-  echo " ✓ All core tools installed!"
+  echo " ✅ All core tools installed!"
+else
+  echo " ⚠️  Missing ${#MISSING_TOOLS[@]} tools. Run: dp doctor --install"
 fi
-echo " - Clone a repo and run: ./setup/existing_repo_setup.sh"
-echo " - Or create new: ./setup/repo_wizard.sh"
-echo " - After setup: scripts/apply_profile.sh --skill l1 --phase mvp"
+echo " - Setup a project: dp setup [URL]"
+echo " - Initialize: dp init"
+echo " - Browse commands: dp palette (alias: dpp)"
+echo " - Quick help: dp help"
+
+# Shell alias reminder
+if ! alias dpp 2>/dev/null | grep -q 'dp palette'; then
+  echo ""
+  echo "💡 Pro tip: Add this to ~/.bashrc for quick access:"
+  echo "   alias dpp='dp palette'"
+fi
 
 exit 0
