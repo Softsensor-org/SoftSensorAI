@@ -1,138 +1,353 @@
 #!/usr/bin/env bash
-# DevPilot Agentic Coding Assistant
+# DevPilot Agentic Coding Assistant - P1 Enhanced
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 SHIM="$ROOT/tools/ai_shim.sh"
+SYS="$ROOT/system/active.md"
+ART="$ROOT/artifacts"
+mkdir -p "$ART"
 
 say() { printf "%s\n" "$*"; }
+have() { command -v "$1" >/dev/null 2>&1; }
+now() { date -Iseconds 2>/dev/null || date '+%Y-%m-%dT%H:%M:%S'; }
+
+extract_json() {
+  awk 'BEGIN{in=0} /^[[:space:]]*{/ && !in {in=1} in{print}' | \
+  awk 'BEGIN{c=0} {print; for(i=1;i<=length($0);i++){ch=substr($0,i,1); if(ch=="{")c++; else if(ch=="}")c--;}} END{exit c!=0}'
+}
+
+ensure_sys() {
+  [[ -f "$SYS" ]] || { say "error: $SYS not found. Run dp init."; exit 1; }
+}
+
+id_new() {
+  local base="${1:-main}"
+  local id="task-$(date +%Y%m%d%H%M%S)-$(head -c4 /dev/urandom | xxd -p 2>/dev/null || echo $$)"
+  echo "$id|$base"
+}
+
+sandbox_create() {
+  local id="$1" base="$2"
+  local wt="$ART/agent/$id/work"
+  mkdir -p "$ART/agent/$id"
+  git fetch --no-tags origin "$base" --depth=1 || true
+  if [ ! -d "$wt/.git" ]; then
+    git worktree add -B "agent/$id" "$wt" "origin/$base"
+  fi
+  echo "$wt"
+}
+
+# --- Context packer (lightweight) ---
+context_pack() {
+  local wt="$1" out="$ART/agent/$TASK_ID/context_pack.txt"
+  (
+    cd "$wt" || exit 0
+    echo "== tree (top 200) =="; git ls-files | head -n 200
+    echo; echo "== largest files =="; (du -ah . | sort -hr | head -n 25) 2>/dev/null || true
+    echo; echo "== json/yaml (top 40) =="; (find . -type f \( -name "*.json" -o -name "*.yml" -o -name "*.yaml" \) | head -n 40) 2>/dev/null || true
+    echo; echo "== last 20 package scripts =="; \
+      grep -nE '"(scripts|dev|build|test|lint)"' package.json 2>/dev/null | head -n 20 || true
+  ) > "$out"
+  echo "$out"
+}
+
+# --- Verify (build/test/lint/security -> verify.json) ---
+verify_repo() {
+  local wt="$1"; shift || true
+  local out="$ART/agent/$TASK_ID/verify.json"
+  local ok_build=true ok_test=true ok_lint=true ok_sec=true
+  local t0=$(date +%s)
+
+  # Build / test / lint via Just or package scripts if present
+  pushd "$wt" >/dev/null
+  if have just && grep -q "^build:" Justfile 2>/dev/null; then just build || ok_build=false
+  elif have npm; then npm run -s build || ok_build=false; fi
+
+  # Targeted tests (if CHANGED_FILES set)
+  local pytest_args="" jest_args="" cov=0 cov_base=0 cov_delta=0
+  if [ -n "${CHANGED_FILES:-}" ]; then
+    # Python: derive a -k pattern from changed module basenames
+    if command -v pytest >/dev/null 2>&1; then
+      local pat=""
+      while IFS= read -r f; do
+        base="${f##*/}"; base="${base%.*}"
+        [ -n "$pat" ] && pat="$pat or "
+        pat="$pat$base"
+      done <<EOF
+$CHANGED_FILES
+EOF
+      [ -n "$pat" ] && pytest_args="-k \"$pat\""
+    fi
+    # JS: use --findRelatedTests
+    if command -v jest >/dev/null 2>&1; then
+      jest_args="--findRelatedTests $(echo "$CHANGED_FILES" | tr '\n' ' ')"
+    fi
+  fi
+
+  # Try pytest (with coverage if available)
+  if command -v pytest >/dev/null 2>&1; then
+    if pytest -q --help 2>/dev/null | grep -q -- --cov; then
+      # Baseline coverage (first time only)
+      if [ ! -f "$ART/agent/$TASK_ID/coverage.base.json" ]; then
+        pytest -q --maxfail=1 --cov=. --cov-report json:"$ART/agent/$TASK_ID/coverage.base.json" >/dev/null 2>&1 || true
+      fi
+      eval pytest -q --maxfail=1 --cov=. --cov-report json:"$ART/agent/$TASK_ID/coverage.json" $pytest_args || ok_test=false
+      cov=$(jq -r '.totals.percent_covered // 0' "$ART/agent/$TASK_ID/coverage.json" 2>/dev/null || echo 0)
+      cov_base=$(jq -r '.totals.percent_covered // 0' "$ART/agent/$TASK_ID/coverage.base.json" 2>/dev/null || echo 0)
+      cov_delta=$(awk -v a="$cov" -v b="$cov_base" 'BEGIN{printf "%.2f", a-b}')
+    else
+      eval pytest -q $pytest_args || ok_test=false
+    fi
+  # Else try jest with coverage
+  elif command -v jest >/dev/null 2>&1; then
+    mkdir -p "$ART/agent/$TASK_ID/coverage"
+    eval jest --coverage --coverageReporters=json-summary --coverageDirectory "$ART/agent/$TASK_ID/coverage" $jest_args || ok_test=false
+    cov=$(jq -r '.total.lines.pct // 0' "$ART/agent/$TASK_ID/coverage/coverage-summary.json" 2>/dev/null || echo 0)
+    # No immediate baseline unless prior run exists
+    if [ -f "$ART/agent/$TASK_ID/coverage.base.json" ]; then
+      cov_base=$(jq -r '.total.lines.pct // 0' "$ART/agent/$TASK_ID/coverage.base.json" 2>/dev/null || echo 0)
+      cov_delta=$(awk -v a="$cov" -v b="$cov_base" 'BEGIN{printf "%.2f", a-b}')
+    else
+      cp "$ART/agent/$TASK_ID/coverage/coverage-summary.json" "$ART/agent/$TASK_ID/coverage.base.json" 2>/dev/null || true
+    fi
+  elif have just && grep -q "^test:" Justfile 2>/dev/null; then
+    just test || ok_test=false
+  elif have npm; then
+    npm test -s || ok_test=false
+  fi
+
+  if have just && grep -q "^lint:" Justfile 2>/dev/null; then just lint || ok_lint=false
+  elif have npm; then npm run -s lint || ok_lint=false; fi
+
+  # Security (advisory here; your CI may gate by phase)
+  local semgrep_high=0 trivy_high=0 leaks=0
+  if have semgrep; then semgrep_high=$(semgrep --json -q --config=auto | jq '[.results[]|select(.extra.severity=="ERROR")] | length' 2>/dev/null || echo 0); fi
+  if have trivy; then trivy_high=$(trivy fs --security-checks vuln --quiet --format json . | jq '[.Results[].Vulnerabilities[]?|select(.Severity=="HIGH" or .Severity=="CRITICAL")] | length' 2>/dev/null || echo 0); fi
+  if have gitleaks; then leaks=$(gitleaks detect --quiet --no-git --format json | jq '.[]|length' 2>/dev/null || echo 0); fi
+  popd >/dev/null
+
+  if [ "$semgrep_high" -gt 0 ] || [ "$trivy_high" -gt 0 ] || [ "$leaks" -gt 0 ]; then ok_sec=false; fi
+  local t1=$(date +%s)
+  cat >"$out" <<JSON
+{
+  "build": {"ok": $ok_build},
+  "tests": {"ok": $ok_test, "coverage_pct": $cov, "coverage_base_pct": $cov_base, "coverage_delta_pct": $cov_delta},
+  "lint":  {"ok": $ok_lint},
+  "security": {"ok": $ok_sec, "semgrep_high": $semgrep_high, "trivy_high": $trivy_high, "gitleaks": $leaks},
+  "time_s": $((t1-t0))
+}
+JSON
+  echo "$out"
+}
+
+# --- Codemod engine (prefers comby; falls back to literal edits) ---
+apply_step() {
+  local wt="$1" step_json="$2"
+  local method files count
+  method=$(echo "$step_json" | jq -r '.method // "edit"')
+  files=$(echo "$step_json" | jq -r '.files[]?')
+  count=0
+  case "$method" in
+    new_file)
+      while IFS= read -r f; do
+        [ -z "$f" ] && continue
+        mkdir -p "$wt/$(dirname "$f")"
+        # content if provided, else TODO stub
+        content=$(echo "$step_json" | jq -r '.content // empty')
+        if [ -n "$content" ]; then printf "%s\n" "$content" > "$wt/$f"; else printf "// TODO: agent created file: %s\n" "$f" > "$wt/$f"; fi
+        count=$((count+1))
+      done <<< "$files"
+      ;;
+    codemod)
+      local has_comby=0
+      command -v comby >/dev/null 2>&1 && has_comby=1
+      local match rewrite language
+      match=$(echo "$step_json" | jq -r '.comby.match // empty')
+      rewrite=$(echo "$step_json" | jq -r '.comby.rewrite // empty')
+      language=$(echo "$step_json" | jq -r '.comby.language // "."')
+      if [ "$has_comby" -eq 1 ] && [ -n "$match" ] && [ -n "$rewrite" ]; then
+        while IFS= read -r f; do
+          [ -z "$f" ] && continue
+          comby -in-place -matcher "$language" "$match" "$rewrite" -- "$wt/$f" >/dev/null 2>&1 || true
+          count=$((count+1))
+        done <<< "$files"
+      else
+        # fallback to literal replacements array
+        local edits; edits=$(echo "$step_json" | jq -c '.edits[]?' 2>/dev/null || true)
+        if [ -n "$edits" ]; then
+          while IFS= read -r e; do
+            local f search replace
+            f=$(echo "$e" | jq -r '.file'); search=$(echo "$e" | jq -r '.search'); replace=$(echo "$e" | jq -r '.replace')
+            [ -z "$f" ] && continue
+            # BSD-safe sed
+            sed -i'' -e "s|${search//|/\\|}|${replace//|/\\|}|g" "$wt/$f" 2>/dev/null || true
+            count=$((count+1))
+          done <<< "$edits"
+        fi
+      fi
+      ;;
+    edit|*)
+      # literal edits only
+      local edits; edits=$(echo "$step_json" | jq -c '.edits[]?' 2>/dev/null || true)
+      if [ -n "$edits" ]; then
+        while IFS= read -r e; do
+          local f search replace
+          f=$(echo "$e" | jq -r '.file'); search=$(echo "$e" | jq -r '.search'); replace=$(echo "$e" | jq -r '.replace')
+          [ -z "$f" ] && continue
+          sed -i'' -e "s|${search//|/\\|}|${replace//|/\\|}|g" "$wt/$f" 2>/dev/null || true
+          count=$((count+1))
+        done <<< "$edits"
+      fi
+      ;;
+  esac
+  echo "$count"
+}
 
 cmd_new() {
-  # Create a new agent task from spec
-  local spec_file="${1:-}"
+  ensure_sys
+  local GOAL="" BASE="${BASE_BRANCH:-main}"
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --goal) GOAL="${2:-}"; shift 2;;
+      --base) BASE="${2:-}"; shift 2;;
+      *) GOAL="$1"; shift;;
+    esac
+  done
+  [[ -n "${GOAL}" ]] || { echo "usage: dp agent new --goal '<goal>' [--base main]"; exit 2; }
 
-  if [[ -z "$spec_file" ]]; then
-    say "Usage: dp agent new <spec-file>"
-    say ""
-    say "Example:"
-    say "  echo 'Add unit tests for user authentication' > task.md"
-    say "  dp agent new task.md"
-    exit 1
-  fi
-
-  if [[ ! -f "$spec_file" ]]; then
-    say "Error: Spec file not found: $spec_file"
-    exit 1
-  fi
-
-  # Generate plan from spec
-  local spec_prompt="$ROOT/.claude/commands/agent/spec.md"
-  local plan_prompt="$ROOT/.claude/commands/agent/plan.md"
-
-  if [[ ! -f "$spec_prompt" ]] || [[ ! -f "$plan_prompt" ]]; then
-    say "Error: Agent prompts not found in .claude/commands/agent/"
-    exit 1
-  fi
-
-  # Create working directory
-  local work_dir="$ROOT/.agent-work"
-  mkdir -p "$work_dir"
-
-  # Generate plan
-  say "▸ Analyzing spec and generating plan..."
-  {
-    cat "$spec_prompt"
-    echo ""
-    echo "=== SPEC ==="
-    cat "$spec_file"
-  } | "$SHIM" --provider claude --model claude-3-opus-20240229 > "$work_dir/plan.md" 2>/dev/null || {
-    say "Error: Failed to generate plan"
-    exit 1
-  }
-
-  say "✅ Generated plan: $work_dir/plan.md"
-  say ""
-  say "Review the plan, then run:"
-  say "  dp agent run $work_dir/plan.md"
+  # Generate unique task ID
+  IFS='|' read -r TASK_ID BASE <<<"$(id_new "$BASE")"
+  local dir="$ART/agent/$TASK_ID"
+  mkdir -p "$dir"
+  echo "$GOAL" > "$dir/spec.md"
+  cat > "$dir/run.json" <<JSON
+{"task_id":"$TASK_ID","base":"$BASE","goal":"$GOAL","created":"$(now)"}
+JSON
+  say "✅ Task created: $TASK_ID"
+  say "  Goal: $GOAL"
+  say "  Base: $BASE"
+  say "  Artifacts: $dir/"
+  say "  Next: dp agent run --id $TASK_ID"
 }
 
 cmd_run() {
-  # Execute a plan in sandbox
-  local plan_file="${1:-}"
+  ensure_sys
+  local TASK_ID="" AUTO=0 BASE="${BASE_BRANCH:-main}" LOOPS=1
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --id) TASK_ID="${2:-}"; shift 2;;
+      --auto) AUTO=1; shift;;
+      --loops) LOOPS="${2:-1}"; shift 2;;
+      --base) BASE="${2:-}"; shift 2;;
+      *) echo "unknown flag: $1"; exit 2;;
+    esac
+  done
+  [[ -n "${TASK_ID}" ]] || { echo "usage: dp agent run --id <task_id> [--auto] [--loops N]"; exit 2; }
+  local dir="$ART/agent/$TASK_ID"; [[ -d "$dir" ]] || { echo "error: task not found: $TASK_ID"; exit 2; }
 
-  if [[ -z "$plan_file" ]]; then
-    say "Usage: dp agent run <plan-file>"
-    exit 1
-  fi
+  local wt; wt="$(sandbox_create "$TASK_ID" "$BASE")"
+  say "▸ Sandbox: $wt (branch agent/$TASK_ID)"
 
-  if [[ ! -f "$plan_file" ]]; then
-    say "Error: Plan file not found: $plan_file"
-    exit 1
-  fi
-
-  # Create sandbox
-  say "▸ Creating sandbox environment..."
-  if [[ -x "$ROOT/scripts/agent_sandbox.sh" ]]; then
-    "$ROOT/scripts/agent_sandbox.sh" create || {
-      say "Error: Failed to create sandbox"
-      exit 1
-    }
-  else
-    say "Error: agent_sandbox.sh not found"
-    exit 1
-  fi
-
-  # Execute plan
-  say "▸ Executing plan in sandbox..."
+  # PLAN
+  local plan_prompt="$dir/plan_prompt.txt" plan_raw="$dir/plan_raw.txt" plan_json="$dir/plan.json"
   {
-    cat "$ROOT/.claude/commands/agent/plan.md"
-    echo ""
-    echo "=== PLAN ==="
-    cat "$plan_file"
-  } | "$SHIM" --provider claude --model claude-3-opus-20240229 > "$ROOT/.agent-work/execution.log" 2>&1 || {
-    say "Error: Execution failed"
-    exit 1
-  }
+    echo "SPEC:"; cat "$dir/spec.md"
+    echo; echo "INSTRUCTIONS:"; cat "$ROOT/.claude/commands/agent/plan.md"
+  } > "$plan_prompt"
 
-  # Verify results
-  say "▸ Verifying results..."
-  if [[ -x "$ROOT/scripts/agent_verify.sh" ]]; then
-    "$ROOT/scripts/agent_verify.sh" > "$ROOT/.agent-work/verify.json" || {
-      say "Warning: Verification found issues"
-    }
+  say "▸ Generating plan..."
+  "$SHIM" --provider claude --model "${AI_MODEL_CLAUDE:-claude-3-opus-20240229}" --prompt-file "$plan_prompt" > "$plan_raw" 2>/dev/null || \
+  "$SHIM" --provider codex  --model "${AI_MODEL_CODEX:-codex-latest}" --prompt-file "$plan_prompt" > "$plan_raw" 2>/dev/null || \
+  "$SHIM" --provider gemini --model "${AI_MODEL_GEMINI:-gemini-1.5-pro-latest}" --prompt-file "$plan_prompt" > "$plan_raw" 2>/dev/null || \
+  "$SHIM" --provider grok   --model "${AI_MODEL_GROK:-grok-2-latest}" --prompt-file "$plan_prompt" > "$plan_raw" 2>/dev/null || true
+
+  if extract_json < "$plan_raw" > "$plan_json"; then
+    say "▸ Plan JSON written: $plan_json"
+  else
+    cp "$plan_raw" "$dir/plan.md"
+    say "⚠️  Plan is not JSON; saved as $dir/plan.md (continue manually)."
   fi
 
-  say "✅ Execution complete"
-  say "  Log: $ROOT/.agent-work/execution.log"
-  say "  Verification: $ROOT/.agent-work/verify.json"
-  say ""
-  say "If satisfied, run:"
-  say "  dp agent pr"
+  # P1: Codemod-first apply of steps (if JSON) with small repair loops
+  local attempt=1
+  while [ "$attempt" -le "$LOOPS" ]; do
+    say "▸ Attempt $attempt/$LOOPS"
+    # Context pack (helps humans & future prompts)
+    context_pack "$wt" >/dev/null || true
+
+    if [ -f "$plan_json" ]; then
+      local total=0
+      while IFS= read -r step; do
+        changed=$(apply_step "$wt" "$step")
+        total=$((total + changed))
+      done < <(jq -c '.steps[]?' "$plan_json" 2>/dev/null)
+      say "▸ Applied ~$total codemod/edit actions"
+    fi
+
+    # Stage changes & compute changed file list for targeted tests
+    (cd "$wt" && git add -A >/dev/null 2>&1 || true)
+    local changed_list; changed_list="$(cd "$wt" && git status --porcelain | awk '{print $2}' || true)"
+    export CHANGED_FILES="$changed_list"
+    export TASK_ID
+
+    # Verify
+    local vout; vout="$(verify_repo "$wt")"
+    say "▸ Verify report: $vout"
+    if jq -e '.build.ok and .tests.ok and .lint.ok and .security.ok' "$vout" >/dev/null 2>&1; then
+      # Commit once we are green
+      (cd "$wt" && git commit -m "agent($TASK_ID): apply plan (attempt $attempt)" || true)
+      # Keep a human-readable diff
+      (cd "$wt" && git diff HEAD~1..HEAD --patch) > "$dir/patch.diff" 2>/dev/null || true
+      say "✅ Green. Diff saved to $dir/patch.diff"
+      break
+    else
+      if [ "$AUTO" -eq 1 ]; then
+        say "⚠️  Not green; you can increase --loops or edit manually in: $wt"
+      else
+        say "ℹ️  Review failures, edit in: $wt  → re-run: dp agent run --id $TASK_ID"
+      fi
+    fi
+    attempt=$((attempt+1))
+  done
 }
 
 cmd_pr() {
-  # Create PR from sandbox changes
-  local title="${1:-Agent-generated changes}"
+  local TASK_ID="${1:-}"
+  local TITLE="${2:-}"
 
-  # Check sandbox exists
-  if [[ ! -d "$ROOT/../agent-sandbox" ]]; then
-    say "Error: No sandbox found. Run 'dp agent run' first."
+  if [[ -z "$TASK_ID" ]]; then
+    say "Usage: dp agent pr --id <task_id> [--title 'PR title']"
     exit 1
   fi
 
-  # Create branch and PR
-  say "▸ Creating pull request..."
-  cd "$ROOT/../agent-sandbox"
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --id) TASK_ID="${2:-}"; shift 2;;
+      --title) TITLE="${2:-}"; shift 2;;
+      *) shift;;
+    esac
+  done
 
-  local branch="agent/$(date +%Y%m%d-%H%M%S)"
-  git checkout -b "$branch"
-  git add -A
-  git commit -m "$title" -m "Generated by dp agent"
-  git push -u origin "$branch"
+  local dir="$ART/agent/$TASK_ID"
+  [[ -d "$dir" ]] || { echo "error: task not found: $TASK_ID"; exit 2; }
+
+  local wt="$ART/agent/$TASK_ID/work"
+  [[ -d "$wt" ]] || { echo "error: no sandbox found for $TASK_ID"; exit 2; }
+
+  # Default title from spec if not provided
+  if [[ -z "$TITLE" ]]; then
+    TITLE="agent($TASK_ID): $(head -n1 "$dir/spec.md" 2>/dev/null || echo "automated changes")"
+  fi
+
+  cd "$wt"
+  local branch="agent/$TASK_ID"
+  say "▸ Pushing branch: $branch"
+  git push -u origin "$branch" || { echo "error: failed to push branch"; exit 1; }
 
   # Create PR using gh if available
   if command -v gh >/dev/null 2>&1; then
-    gh pr create --title "$title" --body "Generated by dp agent" || {
+    gh pr create --title "$TITLE" --body "Generated by dp agent for task $TASK_ID" || {
       say "Created branch but failed to create PR. Create manually."
     }
   else
@@ -140,45 +355,53 @@ cmd_pr() {
     say "  Branch: $branch"
   fi
 
-  # Cleanup sandbox
-  say "▸ Cleaning up sandbox..."
-  cd "$ROOT"
-  if [[ -x "$ROOT/scripts/agent_sandbox.sh" ]]; then
-    "$ROOT/scripts/agent_sandbox.sh" cleanup
-  fi
+  say "✅ Branch pushed: $branch"
+}
 
-  say "✅ Pull request created"
+cmd_eval() {
+  shift
+  # Simple local evaluation: read a suite YAML with a list of goals
+  local suite="${1:-.agent/suites/local/sample.yaml}"
+  [ -f "$suite" ] || { echo "usage: dp agent eval <suite.yaml>"; exit 2; }
+  have yq || { echo "error: yq required to parse $suite"; exit 2; }
+  local base; base=$(yq -r '.base // "main"' "$suite")
+  local ts_id="eval-$(date +%Y%m%d%H%M%S)"
+  local rep="$ART/agent/$ts_id"; mkdir -p "$rep"
+  echo "{\"suite\":\"$suite\",\"base\":\"$base\",\"started\":\"$(now)\"}" > "$rep/report.json"
+  local pass=0 fail=0 total=0
+  while IFS= read -r goal; do
+    total=$((total+1))
+    IFS='|' read -r TASK_ID BASE <<<"$(id_new "$base")"
+    "$0" new --goal "$goal" --base "$base" >/dev/null
+    "$0" run --id "$TASK_ID" --auto --loops 1 >/dev/null
+    if jq -e '.build.ok and .tests.ok and .lint.ok and .security.ok' "$ART/agent/$TASK_ID/verify.json" >/dev/null 2>&1; then
+      pass=$((pass+1))
+    else
+      fail=$((fail+1))
+    fi
+  done < <(yq -r '.goals[]' "$suite")
+  echo "{\"suite\":\"$suite\",\"total\":$total,\"pass\":$pass,\"fail\":$fail}" > "$rep/summary.json"
+  echo "✅ Eval summary → $rep/summary.json   ($pass/$total pass)"
 }
 
 usage() {
-  cat <<'EOF'
-DevPilot Agent - Agentic Coding Assistant
+  cat <<'HELP'
+dp agent — minimal agentic coding (P1)
+  dp agent new --goal "<text>" [--base main]       # create task + SPEC
+  dp agent run --id <task_id> [--auto] [--loops N] # PLAN + apply codemods → VERIFY
+  dp agent pr  --id <task_id> [--title ...]        # push branch + open PR
+  dp agent eval .agent/suites/local/sample.yaml    # run a local eval suite
 
-Commands:
-  dp agent new <spec>    # Create new task from specification
-  dp agent run <plan>    # Execute plan in sandbox
-  dp agent pr [title]    # Create PR from sandbox changes
+Artifacts: artifacts/agent/<task_id>/{run.json,spec.md,plan.json,verify.json,work/}
 
-Workflow:
-  1. Write a task specification:
-     echo "Add OAuth2 authentication" > task.md
-
-  2. Generate execution plan:
-     dp agent new task.md
-
-  3. Review and execute plan:
-     dp agent run .agent-work/plan.md
-
-  4. Create pull request:
-     dp agent pr "feat: Add OAuth2 authentication"
-
-The agent uses:
-  - Git worktrees for safe sandboxing
-  - AI to plan and execute tasks
-  - Verification to ensure quality
-  - Clean PR creation workflow
-
-EOF
+Features:
+  - Codemod-first edits with comby support
+  - Targeted test execution for changed files
+  - Coverage tracking with delta reporting
+  - Context packing for better prompts
+  - Local evaluation suites
+  - Risk tagging support
+HELP
 }
 
 # Main routing
@@ -186,6 +409,7 @@ case "${1:-}" in
   new)  shift; cmd_new "$@";;
   run)  shift; cmd_run "$@";;
   pr)   shift; cmd_pr "$@";;
+  eval) cmd_eval "$@";;
   -h|--help|"")
     usage
     ;;
