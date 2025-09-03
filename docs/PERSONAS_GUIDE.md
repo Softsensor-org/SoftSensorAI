@@ -3,6 +3,7 @@
 This guide explains each persona in detail with step-by-step tutorials and real-world examples.
 
 ## Table of Contents
+
 - [Data Scientist Persona](#-data-scientist-persona)
 - [Software Architect Persona](#️-software-architect-persona)
 - [Software Developer Persona](#-software-developer-persona)
@@ -14,26 +15,30 @@ This guide explains each persona in detail with step-by-step tutorials and real-
 ## 🧬 Data Scientist Persona
 
 ### Overview
-The Data Scientist persona is optimized for ML/AI workflows with deep insights into GPU computing, parallelization, and process management.
+
+The Data Scientist persona is optimized for ML/AI workflows with deep insights into GPU computing,
+parallelization, and process management.
 
 ### Setup Instructions
 
 #### Step 1: Initial Configuration
+
 ```bash
 # Navigate to your ML project
 cd ~/projects/ml/your-model
 
 # Apply data scientist persona
-~/setup-scripts/scripts/apply_persona.sh data-scientist
+dp persona add data-scientist
 
 # OR use interactive menu
-~/setup-scripts/scripts/profile_menu.sh
+dp profile
 # Select: 3) Data Scientist
 ```
 
 #### Step 2: What Gets Installed
 
 Your project now has:
+
 ```
 your-ml-project/
 ├── scripts/
@@ -67,6 +72,7 @@ for batch in dataloader:
 ```
 
 **AI Assistant Response**:
+
 ```python
 # Optimized version with explanations:
 
@@ -120,6 +126,7 @@ $ scripts/analyze_process_impact.sh 12345
 ```
 
 **Output**:
+
 ```
 Process Impact Analysis - PID: 12345 (python train.py)
 ═══════════════════════════════════════════════════════
@@ -173,6 +180,7 @@ Recommendations:
 ```
 
 **AI Assistant Explanation**:
+
 ```
 Parallelization Architecture for Your Training
 ═══════════════════════════════════════════════
@@ -289,16 +297,17 @@ python -m torch.distributed.launch \
 ## 🏗️ Software Architect Persona
 
 ### Overview
+
 Focused on system design, scalability, performance optimization, and architectural decisions.
 
 ### Setup Instructions
 
 ```bash
 # Apply architect persona
-~/setup-scripts/scripts/apply_persona.sh software-architect
+dp persona add software-architect
 
 # OR interactive
-~/setup-scripts/scripts/profile_menu.sh
+dp profile
 # Select: 2) Software Architect
 ```
 
@@ -311,6 +320,7 @@ Focused on system design, scalability, performance optimization, and architectur
 **Example**: Reviewing a microservices architecture.
 
 **AI Response**:
+
 ```yaml
 Architecture Analysis
 ═══════════════════
@@ -369,6 +379,7 @@ Scalability Analysis:
 **Command**: `/performance-audit`
 
 **Example Output**:
+
 ```
 Performance Bottlenecks Identified:
 1. N+1 queries in User Service (345ms avg)
@@ -390,11 +401,13 @@ Optimization Plan:
 ### Skill Progression
 
 #### Beginner Level
+
 - Detailed explanations for every action
 - Safety checks before destructive operations
 - Guided workflows with teaching
 
 **Example**:
+
 ```bash
 # AI explains each step
 "Let me help you fix this bug. First, I'll write a test to reproduce it..."
@@ -403,16 +416,19 @@ Optimization Plan:
 ```
 
 #### Level 1 (L1)
+
 - Focus on testing and code quality
 - Linting and basic security checks
 - Structured development patterns
 
 #### Level 2 (L2)
+
 - Advanced features unlocked
 - Performance optimization tools
 - Migration capabilities
 
 #### Expert
+
 - Full access to all tools
 - Minimal hand-holding
 - Architecture-level decisions
@@ -422,12 +438,14 @@ Optimization Plan:
 ## 📊 Product Manager Persona
 
 ### Features
+
 - Requirements documentation
 - User story generation
 - Roadmap planning
 - Stakeholder communication templates
 
 ### Commands
+
 - `/generate-prd` - Product requirement docs
 - `/user-stories` - Create user stories from features
 - `/acceptance-criteria` - Define test criteria
@@ -438,12 +456,14 @@ Optimization Plan:
 ## 🎨 Designer Persona
 
 ### Features
+
 - UI/UX mockup generation
 - Accessibility checking
 - Design system documentation
 - Component specifications
 
 ### Commands
+
 - `/mock-screen` - Create UI mockups
 - `/design-system` - Document design patterns
 - `/accessibility-audit` - Check WCAG compliance
@@ -457,13 +477,13 @@ You can switch personas based on your current task:
 
 ```bash
 # Morning: Architecture planning
-~/setup-scripts/scripts/apply_persona.sh software-architect
+dp persona add software-architect
 
 # Afternoon: Coding implementation
-~/setup-scripts/scripts/apply_persona.sh developer
+dp persona add developer
 
 # Evening: Training ML model
-~/setup-scripts/scripts/apply_persona.sh data-scientist
+dp persona add data-scientist
 ```
 
 ## Customizing Personas
@@ -471,6 +491,7 @@ You can switch personas based on your current task:
 ### Creating Your Own Persona
 
 1. Create persona configuration:
+
 ```json
 // profiles/personas/my-role.json
 {
@@ -487,12 +508,14 @@ You can switch personas based on your current task:
 ```
 
 2. Add specialized commands:
+
 ```bash
 mkdir -p .claude/commands/sets/my-role
 echo "Custom prompt" > .claude/commands/sets/my-role/my-command.md
 ```
 
 3. Apply persona:
+
 ```bash
 scripts/apply_persona.sh my-role
 ```
@@ -500,18 +523,21 @@ scripts/apply_persona.sh my-role
 ## Best Practices
 
 ### For Data Scientists
+
 1. Always check process impact before killing
 2. Use checkpoint strategies for long runs
 3. Monitor GPU utilization continuously
 4. Profile before optimizing
 
 ### For Architects
+
 1. Document decisions in ADRs
 2. Consider CAP theorem trade-offs
 3. Plan for failure modes
 4. Measure before optimizing
 
 ### For Developers
+
 1. Write tests first
 2. Use appropriate skill level
 3. Follow project phase guidelines
@@ -520,15 +546,17 @@ scripts/apply_persona.sh my-role
 ## Troubleshooting
 
 ### Persona Not Applying
+
 ```bash
 # Check current persona
 cat .claude/persona.json
 
 # Reapply
-~/setup-scripts/scripts/apply_persona.sh [persona-name]
+dp persona add [persona-name]
 ```
 
 ### Commands Not Available
+
 ```bash
 # Verify command installation
 ls .claude/commands/sets/
@@ -538,6 +566,7 @@ cp -r ~/setup-scripts/.claude/commands/sets/[persona]/ .claude/commands/
 ```
 
 ### GPU Monitoring Not Working
+
 ```bash
 # Check NVIDIA drivers
 nvidia-smi

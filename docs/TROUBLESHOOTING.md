@@ -62,7 +62,7 @@ ls -la ~/setup-scripts/
 git clone https://github.com/Softsensor-org/DevPilot.git ~/devpilot
 
 # Add to PATH (optional)
-echo 'export PATH="$HOME/setup-scripts/scripts:$PATH"' >> ~/.bashrc
+echo 'export PATH="$HOME/devpilot/bin:$PATH"' >> ~/.bashrc
 source ~/.bashrc
 ```
 
@@ -93,7 +93,7 @@ cat .claude/persona.json | grep persona
 
 ```bash
 cd /your/project
-~/setup-scripts/scripts/apply_profile.sh --skill beginner --phase mvp
+dp profile --skill beginner --phase mvp
 ```
 
 2. **Reset and reapply**:
@@ -123,10 +123,10 @@ cp ~/devpilot/templates/CLAUDE.md .
 ls .claude/commands/sets/
 
 # For data scientist
-~/setup-scripts/scripts/apply_persona.sh data-scientist
+dp persona add data-scientist
 
 # For architect
-~/setup-scripts/scripts/apply_persona.sh software-architect
+dp persona add software-architect
 
 # Verify commands installed
 ls .claude/commands/sets/data-science/  # Should see gpu-optimize.md etc
@@ -141,9 +141,9 @@ ls .claude/commands/sets/data-science/  # Should see gpu-optimize.md etc
 grep "Skill Level" PROFILE.md
 
 # Change level
-~/setup-scripts/scripts/profile_menu.sh
+dp profile
 # OR
-~/setup-scripts/scripts/apply_profile.sh --skill l2 --phase beta
+dp profile --skill l2 --phase beta
 ```
 
 ---
@@ -207,7 +207,7 @@ git pull origin main
 
 # Reinstall scripts
 cd /your/project
-~/setup-scripts/scripts/apply_persona.sh data-scientist
+dp persona add data-scientist
 
 # Test with a dummy process
 python -c "import time; time.sleep(100)" &
