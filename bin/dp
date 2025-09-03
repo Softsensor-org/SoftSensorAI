@@ -175,7 +175,7 @@ cmd_review() {
   if [[ -x "$ROOT/tools/diff_risk.sh" ]]; then
     risk_tags=$("$ROOT/tools/diff_risk.sh" "origin/$base" 2>/dev/null || echo "")
     if [[ -n "$risk_tags" ]]; then
-      say "▸ Risk analysis: $risk_tags"
+      say "Risk analysis: $risk_tags"
 
       # Build risk-aware prelude based on detected tags
       risk_prelude="RISK: "
@@ -189,7 +189,7 @@ cmd_review() {
 
       risk_prelude+="\n"
     else
-      say "▸ Risk analysis: No risk tags detected (auth/db/infra/ml/security)"
+      say "Risk analysis: No risk tags detected"
     fi
   fi
 
