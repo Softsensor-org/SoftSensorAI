@@ -40,6 +40,27 @@ details.
 - **🔒 Checksum Verification** - Secure downloads with SHA256/SHA1/MD5 verification
 - **🧪 Sandboxed Execution** - Safe execution environment for AI-generated code
 
+## 🚀 Installation Options
+
+### Single-User (Default)
+
+For individual developers - installs in your project directory:
+
+```bash
+git clone https://github.com/Softsensor-org/DevPilot.git
+cd DevPilot && ./bin/dp init
+```
+
+### Multi-User / Team Installation
+
+For shared servers and teams - system-wide installation:
+
+```bash
+sudo ./scripts/install_multi_user.sh
+```
+
+See [Multi-User Guide](docs/MULTI_USER.md) for team deployments.
+
 ## 📋 System Requirements
 
 **Supported Systems:** ([Full compatibility guide](docs/OS_COMPATIBILITY.md))

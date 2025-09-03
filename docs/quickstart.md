@@ -2,6 +2,8 @@
 
 ## 🚀 2-Minute Setup
 
+### Option 1: Single User (Default)
+
 ```bash
 # 1. Clone and install DevPilot
 git clone https://github.com/Softsensor-org/DevPilot.git ~/devpilot
@@ -19,8 +21,24 @@ dp init    # Initialize with full configuration
 dp palette  # Discover all available commands
 ```
 
+### Option 2: Multi-User / Team Installation
+
+For shared servers and team deployments:
+
+```bash
+# Run as admin/root
+sudo ./scripts/install_multi_user.sh
+
+# Users then run:
+/opt/devpilot/scripts/user_setup.sh
+dp init
+```
+
+See [Multi-User Guide](./MULTI_USER.md) for details.
+
 ## 🆕 New Features
 
+- **👥 Multi-User Support**: System-wide installation for teams and shared servers
 - **🎮 GPU Detection**: Automatically detects NVIDIA/AMD/Apple Silicon GPUs
 - **🤖 AI Frameworks**: One-command installation of LangChain, AutoGen, CrewAI
 - **🔒 Checksum Verification**: Secure downloads with hash verification
