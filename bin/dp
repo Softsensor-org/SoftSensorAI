@@ -1,9 +1,21 @@
 #!/usr/bin/env bash
 # DevPilot meta-CLI: beautiful defaults for init, tickets, and review.
 set -euo pipefail
-ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+# Detect if running in multi-user mode
+if [[ -f "/opt/devpilot/etc/devpilot.conf" ]]; then
+    # Multi-user installation detected
+    source /opt/devpilot/etc/devpilot.conf
+    ROOT="${DEVPILOT_ROOT:-/opt/devpilot}"
+    ART="${DEVPILOT_USER_DIR:-$HOME/.devpilot}/artifacts"
+    USER_MODE=true
+else
+    # Single-user installation
+    ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+    ART="$ROOT/artifacts"
+    USER_MODE=false
+fi
+
 SHIM="$ROOT/tools/ai_shim.sh"
-ART="$ROOT/artifacts"
 mkdir -p "$ART"
 
 say() { printf "%s\n" "$*"; }
