@@ -73,6 +73,17 @@ cmd_init() {
   say "  ✓ System prompt built"
   say "  ✓ Repository analyzed"
   say ""
+  say "  Environment"
+  say "  ───────────"
+  if [[ "${USER_MODE:-false}" == "true" ]]; then
+    say "  Mode         : Multi-user"
+    say "  System root  : ${ROOT}"
+    say "  Your artifacts: ${ART}"
+  else
+    say "  Mode         : Single-user"
+    say "  Artifacts    : ${ART}"
+  fi
+  say ""
   say "  Next Steps"
   say "  ──────────"
   say "  1. dp tickets    → Generate structured backlog"
@@ -446,6 +457,114 @@ cmd_doctor() {
   fi
 }
 
+cmd_team_doctor() {
+  # Check multi-user setup health
+  echo ""
+  echo "DevPilot Team Setup Check"
+  echo "-------------------------"
+
+  local all_good=true
+
+  # Check multi-user mode
+  if [[ "${USER_MODE:-false}" == "true" ]]; then
+    echo "✓ Multi-user mode active"
+  else
+    echo "✗ Multi-user mode not active (single-user mode)"
+    echo "  → Run: sudo $ROOT/scripts/install_multi_user.sh"
+    all_good=false
+  fi
+
+  # Check system config
+  if [[ -f "/opt/devpilot/etc/devpilot.conf" ]]; then
+    if [[ -r "/opt/devpilot/etc/devpilot.conf" ]]; then
+      echo "✓ System config readable: /opt/devpilot/etc/devpilot.conf"
+    else
+      echo "✗ System config not readable: /opt/devpilot/etc/devpilot.conf"
+      echo "  → Check permissions: ls -la /opt/devpilot/etc/"
+      all_good=false
+    fi
+  else
+    echo "✗ System config not found: /opt/devpilot/etc/devpilot.conf"
+    echo "  → Run multi-user installer: sudo $ROOT/scripts/install_multi_user.sh"
+    all_good=false
+  fi
+
+  # Check system root
+  if [[ -d "${ROOT}" ]]; then
+    echo "✓ System root valid: ${ROOT}"
+  else
+    echo "✗ System root not found: ${ROOT}"
+    all_good=false
+  fi
+
+  # Check user directory
+  local user_dir="${DEVPILOT_USER_DIR:-$HOME/.devpilot}"
+  if [[ -d "$user_dir" ]]; then
+    if [[ -w "$user_dir" ]]; then
+      echo "✓ User directory writable: $user_dir"
+    else
+      echo "✗ User directory not writable: $user_dir"
+      echo "  → Fix permissions: chmod 755 $user_dir"
+      all_good=false
+    fi
+  else
+    echo "✗ User directory not found: $user_dir"
+    echo "  → Create it: mkdir -p $user_dir/{artifacts,cache,logs,config}"
+    all_good=false
+  fi
+
+  # Check artifacts directory
+  if [[ -d "${ART}" ]]; then
+    echo "✓ Artifacts directory exists: ${ART}"
+  else
+    echo "✗ Artifacts directory not found: ${ART}"
+    echo "  → Create it: mkdir -p ${ART}/{agent,review,build}"
+    all_good=false
+  fi
+
+  # Check AI CLI
+  local ai_found=false
+  for cli in anthropic claude openai gemini grok; do
+    if command -v "$cli" >/dev/null 2>&1; then
+      echo "✓ AI CLI available: $cli"
+      ai_found=true
+      break
+    fi
+  done
+
+  if [[ "$ai_found" == "false" ]]; then
+    echo "✗ No AI CLI found"
+    echo "  → Install one: pip install anthropic"
+    echo "  → See: $ROOT/docs/AI_CLI_INSTALL.md"
+    all_good=false
+  fi
+
+  # Check Git configuration
+  if git config --get user.name >/dev/null 2>&1; then
+    local git_user=$(git config --get user.name)
+    echo "✓ Git configured: user.name = $git_user"
+  else
+    echo "✗ Git user.name not configured"
+    echo "  → Set it: git config --global user.name 'Your Name'"
+    all_good=false
+  fi
+
+  # Check SSH key for GitHub
+  if [[ -f ~/.ssh/id_rsa ]] || [[ -f ~/.ssh/id_ed25519 ]]; then
+    echo "✓ SSH key exists for GitHub"
+  else
+    echo "⚠ No SSH key found (optional for HTTPS)"
+    echo "  → Create one: ssh-keygen -t ed25519 -C 'your-email@example.com'"
+  fi
+
+  echo ""
+  if [[ "$all_good" == "true" ]]; then
+    echo "All checks passed! Ready for team development."
+  else
+    echo "Some checks failed. Please address the issues above."
+  fi
+}
+
 cmd_doctor_install() {
   # Detect missing tools and output one-liner install commands
   echo "==> Checking for missing tools..."
@@ -794,6 +913,7 @@ HELP
 case "${1:-}" in
   setup)  shift; cmd_setup "$@";;
   doctor) shift; cmd_doctor "$@";;
+  team-doctor) shift; cmd_team_doctor "$@";;
   init)   shift; cmd_init "$@";;
   tickets)shift; cmd_tickets "$@";;
   review) shift; cmd_review "$@";;

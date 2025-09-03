@@ -1,0 +1,152 @@
+# DevPilot Multi-User Configuration Template
+#
+# This file configures DevPilot for multi-user/team installations.
+# Location: /opt/devpilot/etc/devpilot.conf
+#
+# After modifying, restart your shell or source /etc/profile.d/devpilot.sh
+
+# ============================================================================
+# CORE PATHS (Required)
+# ============================================================================
+
+# System installation root (where DevPilot is installed)
+DEVPILOT_ROOT=/opt/devpilot
+
+# Per-user data directory (artifacts, cache, logs)
+# Use $HOME to make it user-specific
+DEVPILOT_USER_DIR=$HOME/.devpilot
+
+# DevPilot version (updated by installer)
+DEVPILOT_VERSION=2.0.0
+
+# ============================================================================
+# COMPONENT PATHS (Optional - defaults shown)
+# ============================================================================
+
+# Templates directory for project initialization
+DEVPILOT_TEMPLATES=/opt/devpilot/templates
+
+# Utility scripts and tools
+DEVPILOT_TOOLS=/opt/devpilot/tools
+
+# Setup and maintenance scripts
+DEVPILOT_SCRIPTS=/opt/devpilot/scripts
+
+# ============================================================================
+# TEAM DEFAULTS (Optional - users can override)
+# ============================================================================
+
+# Default AI provider for code reviews and agent tasks
+# Options: anthropic, openai, gemini, grok
+# AI_PROVIDER=anthropic
+
+# Default AI model
+# Examples:
+#   - claude-3-7-sonnet-20250219 (Anthropic)
+#   - gpt-4 (OpenAI)
+#   - gemini-pro (Google)
+# AI_MODEL=claude-3-7-sonnet-20250219
+
+# Default base branch for agent tasks and PRs
+# BASE_BRANCH=main
+
+# Default skill level for new projects (l1, l2, l3, l4, l5)
+# DEFAULT_SKILL=l1
+
+# Default project phase (mvp, growth, scale, enterprise)
+# DEFAULT_PHASE=mvp
+
+# ============================================================================
+# SECURITY & COMPLIANCE (Optional)
+# ============================================================================
+
+# Audit logging (track all DevPilot commands)
+# Uncomment to enable audit logging
+# DEVPILOT_AUDIT_LOG=/var/log/devpilot/audit.log
+
+# Require API key encryption (force secure storage)
+# REQUIRE_ENCRYPTED_KEYS=false
+
+# Allowed AI providers (comma-separated list)
+# Leave empty to allow all providers
+# ALLOWED_PROVIDERS=anthropic,openai
+
+# ============================================================================
+# PERFORMANCE & LIMITS (Optional)
+# ============================================================================
+
+# Maximum artifact size in MB (prevent disk filling)
+# MAX_ARTIFACT_SIZE_MB=100
+
+# Artifact retention in days (auto-cleanup old artifacts)
+# ARTIFACT_RETENTION_DAYS=30
+
+# Maximum concurrent agent tasks per user
+# MAX_CONCURRENT_TASKS=3
+
+# Agent task timeout in seconds
+# AGENT_TASK_TIMEOUT=3600
+
+# ============================================================================
+# NETWORK & PROXY (Optional)
+# ============================================================================
+
+# HTTP proxy for external API calls
+# HTTP_PROXY=http://proxy.company.com:8080
+
+# HTTPS proxy for external API calls
+# HTTPS_PROXY=http://proxy.company.com:8080
+
+# No proxy hosts (comma-separated)
+# NO_PROXY=localhost,127.0.0.1,*.company.internal
+
+# ============================================================================
+# FEATURE FLAGS (Optional)
+# ============================================================================
+
+# Enable experimental features
+# ENABLE_EXPERIMENTAL=false
+
+# Enable debug logging
+# DEBUG_MODE=false
+
+# Enable telemetry (usage statistics)
+# ENABLE_TELEMETRY=false
+
+# ============================================================================
+# CUSTOM INTEGRATIONS (Optional)
+# ============================================================================
+
+# Jira integration
+# JIRA_URL=https://company.atlassian.net
+# JIRA_PROJECT_KEY=PROJ
+
+# GitHub Enterprise Server
+# GHE_URL=https://github.company.com
+
+# GitLab instance
+# GITLAB_URL=https://gitlab.company.com
+
+# Slack webhook for notifications
+# SLACK_WEBHOOK_URL=https://hooks.slack.com/services/...
+
+# ============================================================================
+# NOTES
+# ============================================================================
+#
+# 1. User Overrides:
+#    Users can override team defaults in ~/.devpilot/config/user.conf
+#
+# 2. API Keys:
+#    Never store API keys in this file. Users should set them in:
+#    - Environment variables (ANTHROPIC_API_KEY, etc.)
+#    - Encrypted storage via: /opt/devpilot/utils/secure_keys.sh
+#
+# 3. Updates:
+#    To update DevPilot:
+#    cd /opt/devpilot/src && sudo git pull
+#    sudo /opt/devpilot/scripts/install_multi_user.sh
+#
+# 4. Support:
+#    Documentation: /opt/devpilot/src/docs/MULTI_USER.md
+#    Issues: https://github.com/Softsensor-org/DevPilot/issues
