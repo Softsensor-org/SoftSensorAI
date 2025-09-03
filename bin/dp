@@ -162,24 +162,19 @@ cmd_review() {
   local risk_tags=""
   local risk_prelude=""
   if [[ -x "$ROOT/tools/diff_risk.sh" ]]; then
-    risk_tags=$("$ROOT/tools/diff_risk.sh" "$ART/review_diff.patch" tags 2>/dev/null || echo "")
+    risk_tags=$("$ROOT/tools/diff_risk.sh" "origin/$base" 2>/dev/null || echo "")
     if [[ -n "$risk_tags" ]]; then
       say "▸ Risk analysis: $risk_tags"
 
-      # Build risk-aware prelude
+      # Build risk-aware prelude based on detected tags
       risk_prelude="RISK: "
-      if [[ "$risk_tags" =~ "level:critical" ]]; then
-        risk_prelude+="⛔ CRITICAL changes detected. "
-      elif [[ "$risk_tags" =~ "level:high" ]]; then
-        risk_prelude+="🔴 HIGH risk changes. "
-      fi
 
-      # Add specific risk focus
-      [[ "$risk_tags" =~ "risk:auth" ]] && risk_prelude+="Auth flows modified - check for bypasses. "
-      [[ "$risk_tags" =~ "risk:db" ]] && risk_prelude+="Database changes - verify migrations and queries. "
-      [[ "$risk_tags" =~ "risk:payment" ]] && risk_prelude+="Payment code - audit thoroughly. "
-      [[ "$risk_tags" =~ "risk:security" ]] && risk_prelude+="Security-sensitive - check for vulnerabilities. "
-      [[ "$risk_tags" =~ "risk:api" ]] && risk_prelude+="API changes - verify backwards compatibility. "
+      # Map simple tags to risk messages
+      [[ "$risk_tags" =~ "auth" ]] && risk_prelude+="Auth flows modified - check for bypasses. "
+      [[ "$risk_tags" =~ "db" ]] && risk_prelude+="Database changes - verify migrations and queries. "
+      [[ "$risk_tags" =~ "infra" ]] && risk_prelude+="Infrastructure changes - review deployment impacts. "
+      [[ "$risk_tags" =~ "ml" ]] && risk_prelude+="ML/AI changes - validate model behavior. "
+      [[ "$risk_tags" =~ "security" ]] && risk_prelude+="Security-sensitive changes - thorough review required. "
 
       risk_prelude+="\n"
     fi
