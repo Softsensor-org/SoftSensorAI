@@ -226,7 +226,8 @@ cmd_project() {
     say "Creating devpilot.project.yml with sensible defaults..."
 
     # Detect current project name
-    local project_name=$(basename "$PWD")
+    local project_name
+    project_name=$(basename "$PWD")
 
     # Create from template
     if [[ -f "$ROOT/templates/devpilot.project.yml" ]]; then
@@ -310,7 +311,7 @@ EOF
   # Interactive selection with fzf
   local selected
   if [[ -n "$query" ]]; then
-    selected=$(cat "$commands_file" | fzf --query="$query" --select-1 --exit-0 \
+    selected=$(fzf --query="$query" --select-1 --exit-0 < "$commands_file" \
       --prompt="DevPilot ▸ " \
       --header="Select command (ESC to cancel)" \
       --preview-window=hidden \
@@ -318,7 +319,7 @@ EOF
       --layout=reverse \
       --border=rounded)
   else
-    selected=$(cat "$commands_file" | fzf \
+    selected=$(fzf < "$commands_file" \
       --prompt="DevPilot ▸ " \
       --header="Select command (ESC to cancel)" \
       --preview-window=hidden \

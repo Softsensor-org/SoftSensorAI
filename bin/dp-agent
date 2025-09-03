@@ -23,7 +23,8 @@ ensure_sys() {
 
 id_new() {
   local base="${1:-main}"
-  local id="task-$(date +%Y%m%d%H%M%S)-$(head -c4 /dev/urandom | xxd -p 2>/dev/null || echo $$)"
+  local id
+  id="task-$(date +%Y%m%d%H%M%S)-$(head -c4 /dev/urandom | xxd -p 2>/dev/null || echo $$)"
   echo "$id|$base"
 }
 
@@ -57,7 +58,8 @@ verify_repo() {
   local wt="$1"; shift || true
   local out="$ART/agent/$TASK_ID/verify.json"
   local ok_build=true ok_test=true ok_lint=true ok_sec=true
-  local t0=$(date +%s)
+  local t0
+  t0=$(date +%s)
 
   # Build / test / lint via Just or package scripts if present
   pushd "$wt" >/dev/null
@@ -92,17 +94,17 @@ EOF
       if [ ! -f "$ART/agent/$TASK_ID/coverage.base.json" ]; then
         pytest -q --maxfail=1 --cov=. --cov-report json:"$ART/agent/$TASK_ID/coverage.base.json" >/dev/null 2>&1 || true
       fi
-      eval pytest -q --maxfail=1 --cov=. --cov-report json:"$ART/agent/$TASK_ID/coverage.json" $pytest_args || ok_test=false
+      eval pytest -q --maxfail=1 --cov=. --cov-report json:"$ART/agent/$TASK_ID/coverage.json" "$pytest_args" || ok_test=false
       cov=$(jq -r '.totals.percent_covered // 0' "$ART/agent/$TASK_ID/coverage.json" 2>/dev/null || echo 0)
       cov_base=$(jq -r '.totals.percent_covered // 0' "$ART/agent/$TASK_ID/coverage.base.json" 2>/dev/null || echo 0)
       cov_delta=$(awk -v a="$cov" -v b="$cov_base" 'BEGIN{printf "%.2f", a-b}')
     else
-      eval pytest -q $pytest_args || ok_test=false
+      eval pytest -q "$pytest_args" || ok_test=false
     fi
   # Else try jest with coverage
   elif command -v jest >/dev/null 2>&1; then
     mkdir -p "$ART/agent/$TASK_ID/coverage"
-    eval jest --coverage --coverageReporters=json-summary --coverageDirectory "$ART/agent/$TASK_ID/coverage" $jest_args || ok_test=false
+    eval jest --coverage --coverageReporters=json-summary --coverageDirectory "$ART/agent/$TASK_ID/coverage" "$jest_args" || ok_test=false
     cov=$(jq -r '.total.lines.pct // 0' "$ART/agent/$TASK_ID/coverage/coverage-summary.json" 2>/dev/null || echo 0)
     # No immediate baseline unless prior run exists
     if [ -f "$ART/agent/$TASK_ID/coverage.base.json" ]; then
@@ -128,7 +130,8 @@ EOF
   popd >/dev/null
 
   if [ "$semgrep_high" -gt 0 ] || [ "$trivy_high" -gt 0 ] || [ "$leaks" -gt 0 ]; then ok_sec=false; fi
-  local t1=$(date +%s)
+  local t1
+  t1=$(date +%s)
   cat >"$out" <<JSON
 {
   "build": {"ok": $ok_build},
@@ -286,8 +289,9 @@ cmd_run() {
     fi
 
     # Stage changes & compute changed file list for targeted tests
-    (cd "$wt" && git add -A >/dev/null 2>&1 || true)
-    local changed_list; changed_list="$(cd "$wt" && git status --porcelain | awk '{print $2}' || true)"
+    (cd "$wt" && git add -A >/dev/null 2>&1) || true
+    local changed_list
+    changed_list="$(cd "$wt" && git status --porcelain | awk '{print $2}')" || true
     export CHANGED_FILES="$changed_list"
     export TASK_ID
 
@@ -296,7 +300,7 @@ cmd_run() {
     say "▸ Verify report: $vout"
     if jq -e '.build.ok and .tests.ok and .lint.ok and .security.ok' "$vout" >/dev/null 2>&1; then
       # Commit once we are green
-      (cd "$wt" && git commit -m "agent($TASK_ID): apply plan (attempt $attempt)" || true)
+      (cd "$wt" && git commit -m "agent($TASK_ID): apply plan (attempt $attempt)") || true
       # Keep a human-readable diff
       (cd "$wt" && git diff HEAD~1..HEAD --patch) > "$dir/patch.diff" 2>/dev/null || true
       say "✅ Green. Diff saved to $dir/patch.diff"
@@ -365,7 +369,8 @@ cmd_eval() {
   [ -f "$suite" ] || { echo "usage: dp agent eval <suite.yaml>"; exit 2; }
   have yq || { echo "error: yq required to parse $suite"; exit 2; }
   local base; base=$(yq -r '.base // "main"' "$suite")
-  local ts_id="eval-$(date +%Y%m%d%H%M%S)"
+  local ts_id
+  ts_id="eval-$(date +%Y%m%d%H%M%S)"
   local rep="$ART/agent/$ts_id"; mkdir -p "$rep"
   echo "{\"suite\":\"$suite\",\"base\":\"$base\",\"started\":\"$(now)\"}" > "$rep/report.json"
   local pass=0 fail=0 total=0
