@@ -92,17 +92,18 @@ commands/
 
 DevPilot is designed for **CLI usage**, not API integration. Here's how to use each assistant:
 
-### Claude CLI
+### AI CLI Integration
+
+For detailed installation and usage, see the [AI CLI Installation Guide](./AI_CLI_INSTALL.md).
 
 ```bash
-# Install Claude CLI (if not already installed)
-npm install -g @anthropic-ai/claude-cli
+# Quick setup with Anthropic CLI
+pip install anthropic
+export ANTHROPIC_API_KEY="sk-ant-..."
 
-# Use with DevPilot system prompt
-claude --system-prompt system/active.md "implement user authentication"
-
-# Use with specific command
-claude --system-prompt .claude/commands/security-review.md "review auth flow"
+# Use with DevPilot
+dp review  # Uses AI for code review
+dp agent new --goal "implement user authentication"  # Creates AI-guided task
 ```
 
 ### Codex CLI

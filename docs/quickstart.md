@@ -133,34 +133,20 @@ points to `system/active.md` for consistent behavior.
 
 ### Installing AI CLIs (Required)
 
-**Important**: DevPilot requires CLI tools, not direct API access.
+**Important**: DevPilot requires CLI tools, not direct API access. See
+[AI CLI Installation Guide](./AI_CLI_INSTALL.md) for detailed instructions.
 
 ```bash
-# Claude CLI
-npm install -g @anthropic-ai/claude-cli
-# or
-curl -fsSL https://claude.ai/install.sh | sh
+# Quick install (Anthropic recommended)
+pip install anthropic
+export ANTHROPIC_API_KEY="sk-ant-..."
 
-# Codex CLI (with sandbox support)
-npm install -g @openai/codex-cli
-# or
-pip install openai-codex-cli
-
-# Gemini CLI
-pip install google-generativeai-cli
-# or
-npm install -g @google-ai/gemini-cli
-
-# Grok CLI
-cargo install grok-cli
-# or download from: https://grok.x.ai/cli
-
-# Verify installations
-which claude codex gemini grok
+# Verify installation
+command -v anthropic && echo "✓ Ready to use AI features"
 ```
 
-**Note**: CLI availability varies by provider. Check each provider's documentation for latest
-installation methods.
+For other providers (OpenAI, Gemini, Grok) and troubleshooting, see the
+[AI CLI Installation Guide](./AI_CLI_INSTALL.md).
 
 ### Daily Usage: Always Target system/active.md
 

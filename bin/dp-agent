@@ -122,11 +122,27 @@ EOF
   if have just && grep -q "^lint:" Justfile 2>/dev/null; then just lint || ok_lint=false
   elif have npm; then npm run -s lint || ok_lint=false; fi
 
-  # Security (advisory here; your CI may gate by phase)
+  # Security (save artifacts first, then count)
   local semgrep_high=0 trivy_high=0 leaks=0
-  if have semgrep; then semgrep_high=$(semgrep --json -q --config=auto | jq '[.results[]|select(.extra.severity=="ERROR")] | length' 2>/dev/null || echo 0); fi
-  if have trivy; then trivy_high=$(trivy fs --security-checks vuln --quiet --format json . | jq '[.Results[].Vulnerabilities[]?|select(.Severity=="HIGH" or .Severity=="CRITICAL")] | length' 2>/dev/null || echo 0); fi
-  if have gitleaks; then leaks=$(gitleaks detect --quiet --no-git --format json | jq '.[]|length' 2>/dev/null || echo 0); fi
+
+  # Semgrep scan
+  if have semgrep; then
+    semgrep --json -q --config=auto > "$ART/agent/$TASK_ID/semgrep.json" 2>/dev/null || true
+    semgrep_high=$(jq '[.results[]|select(.extra.severity=="ERROR")] | length' "$ART/agent/$TASK_ID/semgrep.json" 2>/dev/null || echo 0)
+  fi
+
+  # Trivy scan
+  if have trivy; then
+    trivy fs --security-checks vuln --quiet --format json . > "$ART/agent/$TASK_ID/trivy.json" 2>/dev/null || true
+    trivy_high=$(jq '[.Results[].Vulnerabilities[]?|select(.Severity=="HIGH" or .Severity=="CRITICAL")] | length' "$ART/agent/$TASK_ID/trivy.json" 2>/dev/null || echo 0)
+  fi
+
+  # Gitleaks scan
+  if have gitleaks; then
+    gitleaks detect --quiet --no-git --format json > "$ART/agent/$TASK_ID/gitleaks.json" 2>/dev/null || true
+    leaks=$(jq '.[]|length' "$ART/agent/$TASK_ID/gitleaks.json" 2>/dev/null || echo 0)
+  fi
+
   popd >/dev/null
 
   if [ "$semgrep_high" -gt 0 ] || [ "$trivy_high" -gt 0 ] || [ "$leaks" -gt 0 ]; then ok_sec=false; fi
@@ -214,10 +230,17 @@ cmd_new() {
     case "$1" in
       --goal) GOAL="${2:-}"; shift 2;;
       --base) BASE="${2:-}"; shift 2;;
-      *) GOAL="$1"; shift;;
+      *)
+        # If arg is a readable file, use its contents as the goal
+        if [[ -f "$1" && -r "$1" ]]; then
+          GOAL="$(cat "$1")"
+        else
+          GOAL="$1"
+        fi
+        shift;;
     esac
   done
-  [[ -n "${GOAL}" ]] || { echo "usage: dp agent new --goal '<goal>' [--base main]"; exit 2; }
+  [[ -n "${GOAL}" ]] || { echo "usage: dp agent new --goal '<goal>' [--base main]  OR  dp agent new <spec-file>"; exit 2; }
 
   # Generate unique task ID
   IFS='|' read -r TASK_ID BASE <<<"$(id_new "$BASE")"
@@ -260,7 +283,7 @@ cmd_run() {
   } > "$plan_prompt"
 
   say "▸ Generating plan..."
-  "$SHIM" --provider claude --model "${AI_MODEL_CLAUDE:-claude-3-opus-20240229}" --prompt-file "$plan_prompt" > "$plan_raw" 2>/dev/null || \
+  "$SHIM" --provider claude --model "${AI_MODEL_CLAUDE:-claude-3-7-sonnet-20250219}" --prompt-file "$plan_prompt" > "$plan_raw" 2>/dev/null || \
   "$SHIM" --provider codex  --model "${AI_MODEL_CODEX:-codex-latest}" --prompt-file "$plan_prompt" > "$plan_raw" 2>/dev/null || \
   "$SHIM" --provider gemini --model "${AI_MODEL_GEMINI:-gemini-1.5-pro-latest}" --prompt-file "$plan_prompt" > "$plan_raw" 2>/dev/null || \
   "$SHIM" --provider grok   --model "${AI_MODEL_GROK:-grok-2-latest}" --prompt-file "$plan_prompt" > "$plan_raw" 2>/dev/null || true

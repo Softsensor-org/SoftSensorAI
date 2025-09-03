@@ -41,30 +41,19 @@ gh pr edit 123 --add-label ai-review
 
 The workflow tries CLIs in this order: Claude → Codex → Gemini → Grok
 
-### Install Claude CLI
+For detailed installation instructions, see the [AI CLI Installation Guide](./AI_CLI_INSTALL.md).
+
+### Quick Setup
 
 ```bash
-pip install anthropic-cli
-# or
-npm install -g @anthropic/cli
-```
+# Install Anthropic CLI (recommended)
+pip install anthropic
 
-### Install Codex CLI
+# Set API key
+export ANTHROPIC_API_KEY="sk-ant-..."
 
-```bash
-npm install -g @openai/codex-cli
-```
-
-### Install Gemini CLI
-
-```bash
-npm install -g @google/generative-ai-cli
-```
-
-### Install Grok CLI
-
-```bash
-pip install grok-cli
+# Verify
+command -v anthropic && echo "✓ Ready for AI reviews"
 ```
 
 ## How It Works
