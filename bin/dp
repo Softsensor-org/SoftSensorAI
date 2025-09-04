@@ -861,6 +861,16 @@ cmd_apiize() {
   fi
 }
 
+cmd_testgen() {
+  # Generate tests from diffs, contracts, and risk analysis
+  if [[ -x "$ROOT/bin/dp-testgen" ]]; then
+    "$ROOT/bin/dp-testgen" "$@"
+  else
+    say "Error: dp-testgen not found"
+    exit 1
+  fi
+}
+
 cmd_help() {
   # Show quick help or full help
   if [[ "${1:-}" == "--full" ]]; then
@@ -915,6 +925,7 @@ Development Workflow:
   dp ai                # Unified AI CLI interface
   dp agent             # Agentic coding assistant
   dp apiize            # Convert ML model to FastAPI service
+  dp testgen           # Generate tests from diffs & contracts
   dp sandbox           # Sandboxed code execution
   dp chain             # Execute multi-step command chains
   dp patterns          # Browse and apply design patterns
@@ -961,6 +972,7 @@ case "${1:-}" in
   agent)  shift; cmd_agent "$@";;
   sandbox)shift; cmd_sandbox "$@";;
   apiize) shift; cmd_apiize "$@";;
+  testgen)shift; cmd_testgen "$@";;
   chain)  shift; cmd_chain "$@";;
   patterns)shift; cmd_patterns "$@";;
   worktree)shift; cmd_worktree "$@";;

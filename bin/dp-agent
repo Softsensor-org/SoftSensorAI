@@ -418,6 +418,17 @@ cmd_run() {
     export CHANGED_FILES="$changed_list"
     export TASK_ID
 
+    # Generate tests if coverage dropped or new code lacks tests
+    if [ -f "$dir/verify.json" ]; then
+      local cov_delta
+      cov_delta=$(jq -r '.tests.coverage_delta_pct // 0' "$dir/verify.json" 2>/dev/null || echo 0)
+      if (( $(echo "$cov_delta < -1" | bc -l) )); then
+        say "▸ Coverage dropped by ${cov_delta}%, generating tests..."
+        (cd "$wt" && git diff HEAD > "$dir/changes.diff")
+        "$ROOT/bin/dp-testgen" --diff "$dir/changes.diff" --coverage "$dir/verify.json" --risk "${RISK_TAGS:-}" > "$dir/testgen_task.txt" 2>&1 || true
+      fi
+    fi
+
     # Verify
     local vout; vout="$(verify_repo "$wt")"
     say "▸ Verify report: $vout"
