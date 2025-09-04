@@ -1,33 +1,33 @@
-# DevPilot - AI-Powered Development Platform
+# SoftSensorAI - AI-Powered Development Platform
 
-[![CI](https://github.com/Softsensor-org/DevPilot/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Softsensor-org/DevPilot/actions/workflows/ci.yml)
+[![CI](https://github.com/Softsensor-org/SoftSensorAI/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Softsensor-org/SoftSensorAI/actions/workflows/ci.yml)
 
-Transform how you work with AI coding assistants. DevPilot automatically configures Claude, Codex,
-Gemini, Grok, and Copilot for your skill level and project needs - with full parity across all
-platforms.
+Transform how you work with AI coding assistants. SoftSensorAI automatically configures Claude,
+Codex, Gemini, Grok, and Copilot for your skill level and project needs - with full parity across
+all platforms.
 
 ## 🚀 Quick Start (3 Steps)
 
 ```bash
-# 1. Install DevPilot (one-time)
-git clone https://github.com/Softsensor-org/DevPilot.git ~/devpilot
-cd ~/devpilot && ./setup_all.sh
-export PATH="$HOME/devpilot/bin:$PATH"  # Add to ~/.bashrc
-alias dpp='dp palette'                   # Add to ~/.bashrc for quick access
+# 1. Install SoftSensorAI (one-time)
+git clone https://github.com/Softsensor-org/SoftSensorAI.git ~/softsensorai
+cd ~/softsensorai && ./setup_all.sh
+export PATH="$HOME/softsensorai/bin:$PATH"  # Add to ~/.bashrc
+alias ssp='ss palette'                   # Add to ~/.bashrc for quick access
 
 # 2. Setup your project (any repo)
 cd your-project
-dp setup        # Works for new or existing repos
-dp init         # Configure and initialize
+ss setup        # Works for new or existing repos
+ss init         # Configure and initialize
 
 # 3. Start using AI features
-dpp             # Browse all commands (using alias)
-dp review       # AI code review
-dp tickets      # Generate backlog
-dp help         # Quick reference (7 essential commands)
+ssp             # Browse all commands (using alias)
+ss review       # AI code review
+ss tickets      # Generate backlog
+ss help         # Quick reference (7 essential commands)
 ```
 
-That's it! DevPilot is now configured for your project. See [Full Guide](#getting-started) for
+That's it! SoftSensorAI is now configured for your project. See [Full Guide](#getting-started) for
 details.
 
 ## 🆕 Latest Features
@@ -47,8 +47,8 @@ details.
 For individual developers - installs in your project directory:
 
 ```bash
-git clone https://github.com/Softsensor-org/DevPilot.git
-cd DevPilot && ./bin/dp init
+git clone https://github.com/Softsensor-org/SoftSensorAI.git
+cd SoftSensorAI && ./bin/ss init
 ```
 
 ### Multi-User / Team Installation
@@ -80,11 +80,11 @@ See [Multi-User Guide](docs/MULTI_USER.md) for team deployments.
 - Internet connection for tool downloads
 - 2GB free disk space
 
-## 🚀 What DevPilot Actually Unlocks
+## 🚀 What SoftSensorAI Actually Unlocks
 
 ### Concrete Gains (Measurable Impact)
 
-| **Pain Today**                      | **DevPilot Capability**                       | **Typical Impact**                                    |
+| **Pain Today**                      | **SoftSensorAI Capability**                   | **Typical Impact**                                    |
 | ----------------------------------- | --------------------------------------------- | ----------------------------------------------------- |
 | Inconsistent AI prompts per dev     | Single prompt stack (`system/active.md`)      | ↓ variance, fewer "why did it say that?" moments      |
 | Spinning up a repo takes hours      | Repo wizard + profiles/phases                 | **60-90 min → 10-15 min**                             |
@@ -103,7 +103,7 @@ See [Multi-User Guide](docs/MULTI_USER.md) for team deployments.
 - **Run AI reviews in CI without secrets** - Stock CLIs, neutral fallback
 - **Onboard juniors at senior velocity** - Commands encode senior expectations
 
-### Why DevPilot vs "Just Using CLIs"
+### Why SoftSensorAI vs "Just Using CLIs"
 
 1. **Deterministic org-wide AI behavior** - One canonical system file across
    Claude/Codex/Gemini/Grok
@@ -116,7 +116,7 @@ See [Multi-User Guide](docs/MULTI_USER.md) for team deployments.
 
 ## 👀 What You Get
 
-DevPilot works at two levels:
+SoftSensorAI works at two levels:
 
 ### 1️⃣ Global Setup (One-time, on YOUR computer)
 
@@ -126,7 +126,7 @@ After running `setup_all.sh`, you get:
 Your Home Directory:
 ├── ~/.claude/           # Global Claude settings
 ├── ~/.gemini/           # Global Gemini settings
-├── ~/devpilot/          # DevPilot tools & wizards
+├── ~/softsensorai/          # SoftSensorAI tools & wizards
 │   ├── setup/           # Project setup wizards
 │   ├── scripts/         # Helper scripts
 │   └── templates/       # Reusable templates
@@ -158,11 +158,11 @@ Before installing, run our diagnostic tool to ensure your system is ready:
 
 ```bash
 # Option 1: If you have access to the repository, clone and run locally
-git clone https://github.com/Softsensor-org/DevPilot.git ~/devpilot
-cd ~/devpilot && ./bin/dp doctor
+git clone https://github.com/Softsensor-org/SoftSensorAI.git ~/softsensorai
+cd ~/softsensorai && ./bin/ss doctor
 
 # Option 2: Quick download and run (when repository is public)
-# curl -sL https://raw.githubusercontent.com/Softsensor-org/DevPilot/main/scripts/doctor.sh | bash
+# curl -sL https://raw.githubusercontent.com/Softsensor-org/SoftSensorAI/main/scripts/doctor.sh | bash
 ```
 
 **All green? You're ready!** 🟢
@@ -178,15 +178,15 @@ cd ~/devpilot && ./bin/dp doctor
 ✓ GPU: NVIDIA RTX 4090 (CUDA 12.2)
 ✓ Disk space: 42G available
 
-All checks passed! Ready for DevPilot installation.
+All checks passed! Ready for SoftSensorAI installation.
 ```
 
-### Step 1: Install DevPilot Globally (One-time only!)
+### Step 1: Install SoftSensorAI Globally (One-time only!)
 
 ```bash
 # This installs tools on YOUR computer, not in any project
-git clone https://github.com/Softsensor-org/DevPilot.git ~/devpilot
-cd ~/devpilot
+git clone https://github.com/Softsensor-org/SoftSensorAI.git ~/softsensorai
+cd ~/softsensorai
 ./setup_all.sh
 
 # Optional: Only if building AI/ML applications
@@ -229,7 +229,7 @@ What this does:
 
 - ✅ Installs ALL the tools above globally
 - ✅ Creates AI configurations in ~/.claude, ~/.gemini, etc.
-- ✅ Sets up the DevPilot toolkit in ~/devpilot
+- ✅ Sets up the SoftSensorAI toolkit in ~/softsensorai
 - ❌ Does NOT touch any of your projects
 - ❌ Does NOT clone any repositories
 
@@ -248,7 +248,7 @@ What this does:
 
 ### Step 2: Set Up Your Project
 
-#### 📋 How DevPilot Setup Works
+#### 📋 How SoftSensorAI Setup Works
 
 ```mermaid
 graph LR
@@ -282,7 +282,7 @@ graph LR
 **The Process:**
 
 1. **Repository First** - Either clone a new repo OR navigate to existing one
-2. **Add DevPilot Files** - Creates CLAUDE.md, settings, commands inside the repo
+2. **Add SoftSensorAI Files** - Creates CLAUDE.md, settings, commands inside the repo
 3. **Handle Conflicts** - For existing files, you choose: merge, skip, or backup
 4. **Ready to Code** - Your repo now works seamlessly with AI assistants
 
@@ -296,7 +296,7 @@ graph LR
 #### Quick Start: One Command Setup
 
 ```bash
-# DevPilot handles everything with smart detection:
+# SoftSensorAI handles everything with smart detection:
 dp setup
 
 # Or with a URL:
@@ -506,7 +506,7 @@ See [CI Integrations](docs/ci.md#ai-pr-review-setup) for details.
 
 ## 🎯 Skill Levels Explained
 
-DevPilot adapts to YOUR experience level:
+SoftSensorAI adapts to YOUR experience level:
 
 | Level        | Who it's for             | What changes                        |
 | ------------ | ------------------------ | ----------------------------------- |
@@ -518,7 +518,7 @@ DevPilot adapts to YOUR experience level:
 
 ## 📈 Project Phases Explained
 
-DevPilot adapts to your PROJECT's maturity:
+SoftSensorAI adapts to your PROJECT's maturity:
 
 | Phase     | When to use                   | What changes                    |
 | --------- | ----------------------------- | ------------------------------- |
@@ -529,8 +529,9 @@ DevPilot adapts to your PROJECT's maturity:
 
 ## 🎭 AI Personas - Specialized Expertise
 
-DevPilot's **Multi-Persona System** lets you activate specialized AI personalities that understand
-domain-specific best practices. You can combine multiple personas for comprehensive assistance.
+SoftSensorAI's **Multi-Persona System** lets you activate specialized AI personalities that
+understand domain-specific best practices. You can combine multiple personas for comprehensive
+assistance.
 
 ### Available Personas
 
@@ -623,14 +624,14 @@ Quick reference for what gets enforced at each project phase:
 ## 🚀 AI Development Environment **[Optional Module]**
 
 > **Note:** This section is for AI/ML projects only. Most web/backend projects can skip this
-> entirely. Run `~/devpilot/scripts/install_ai_frameworks.sh` only if you need ML capabilities.
+> entirely. Run `~/softsensorai/scripts/install_ai_frameworks.sh` only if you need ML capabilities.
 
-DevPilot includes comprehensive AI/ML development support with GPU acceleration and secure package
-management.
+SoftSensorAI includes comprehensive AI/ML development support with GPU acceleration and secure
+package management.
 
 ### GPU Detection & Optimization
 
-DevPilot automatically detects your GPU hardware and optimizes installations:
+SoftSensorAI automatically detects your GPU hardware and optimizes installations:
 
 - **NVIDIA GPUs** - CUDA detection and PyTorch CUDA builds
 - **AMD GPUs** - ROCm support for ML workloads
@@ -675,9 +676,9 @@ See [Security Guide](docs/SECURITY.md#checksum-verification) for details.
 
 ## 🧠 AI Command System - Your Productivity Multiplier
 
-DevPilot provides **60+ specialized AI commands** that transform how Claude, Cursor, and other AI
-assistants work. These aren't just prompts - they're battle-tested workflows that ensure consistent,
-high-quality outputs.
+SoftSensorAI provides **60+ specialized AI commands** that transform how Claude, Cursor, and other
+AI assistants work. These aren't just prompts - they're battle-tested workflows that ensure
+consistent, high-quality outputs.
 
 ### How Commands Work
 
@@ -908,13 +909,13 @@ Install additional tools based on your needs:
 
 ```bash
 # Install ALL productivity extras (takes ~10 minutes)
-~/devpilot/install/productivity_extras.sh
+~/softsensorai/install/productivity_extras.sh
 
 # Or install specific categories:
-~/devpilot/install/productivity_extras.sh --api      # API tools
-~/devpilot/install/productivity_extras.sh --data     # Data/ML tools
-~/devpilot/install/productivity_extras.sh --security # Security scanners
-~/devpilot/install/productivity_extras.sh --k8s      # Kubernetes tools
+~/softsensorai/install/productivity_extras.sh --api      # API tools
+~/softsensorai/install/productivity_extras.sh --data     # Data/ML tools
+~/softsensorai/install/productivity_extras.sh --security # Security scanners
+~/softsensorai/install/productivity_extras.sh --k8s      # Kubernetes tools
 ```
 
 What each category includes:
@@ -952,7 +953,7 @@ dp init --skill expert --phase scale
 <details>
 <summary><b>Project Organization</b></summary>
 
-DevPilot organizes your projects intelligently:
+SoftSensorAI organizes your projects intelligently:
 
 ```
 ~/projects/
@@ -970,10 +971,10 @@ DevPilot organizes your projects intelligently:
 <details>
 <summary><b>Project Profiles</b></summary>
 
-DevPilot supports per-project customization through profile YAML files:
+SoftSensorAI supports per-project customization through profile YAML files:
 
 ```yaml
-# .devpilot/project.yml
+# .softsensorai/project.yml
 project:
   name: ocr-service
   type: ml-pipeline
@@ -1018,10 +1019,10 @@ Apply project-specific settings:
 
 ```bash
 # Load project profile
-devpilot profile --from-file .devpilot/project.yml
+ss profile --from-file .softsensorai/project.yml
 
 # Or auto-detect and apply
-devpilot setup --auto-detect
+ss setup --auto-detect
 ```
 
 </details>
@@ -1048,7 +1049,7 @@ devpilot setup --auto-detect
 
 ## 🧰 Additional Power Tools
 
-DevPilot includes many advanced tools not covered above:
+SoftSensorAI includes many advanced tools not covered above:
 
 ### Diagnostics & Health Checks
 
@@ -1063,7 +1064,7 @@ dp project
 
 # Validate all AI agent configurations across projects (if needed)
 # Note: This is an internal validation tool
-# ~/devpilot/validation/validate_agents.sh --fix
+# ~/softsensorai/validation/validate_agents.sh --fix
 ```
 
 ### Skill Progression
@@ -1119,14 +1120,14 @@ scripts/pattern_selector.sh
 
 ```bash
 # Manage multiple branches simultaneously
-~/devpilot/tools/worktree_helper.sh add feature-branch
-~/devpilot/tools/worktree_helper.sh list
-~/devpilot/tools/worktree_helper.sh remove feature-branch
+~/softsensorai/tools/worktree_helper.sh add feature-branch
+~/softsensorai/tools/worktree_helper.sh list
+~/softsensorai/tools/worktree_helper.sh remove feature-branch
 ```
 
 ### Templates & Scaffolding
 
-DevPilot includes templates for:
+SoftSensorAI includes templates for:
 
 - **Justfile**: Task runner configuration with pre-defined recipes
 - **CLAUDE.md**: AI instruction templates for different project types
@@ -1138,23 +1139,23 @@ DevPilot includes templates for:
 Access templates:
 
 ```bash
-ls ~/devpilot/templates/
-cp ~/devpilot/templates/justfile ./
+ls ~/softsensorai/templates/
+cp ~/softsensorai/templates/justfile ./
 
 # Copy GitHub Actions workflows
-cp ~/devpilot/.github/workflows/ci.yml .github/workflows/
-cp ~/devpilot/.github/workflows/security-review.yml .github/workflows/
+cp ~/softsensorai/.github/workflows/ci.yml .github/workflows/
+cp ~/softsensorai/.github/workflows/security-review.yml .github/workflows/
 ```
 
 ### AI CLI Tools
 
 ```bash
 # Install additional AI command-line tools
-~/devpilot/install/ai_clis.sh
+~/softsensorai/install/ai_clis.sh
 # Installs: aider, sgpt, chatgpt-cli, and more
 
 # Install Codex CLI (sandboxed AI execution)
-~/devpilot/install/codex_cli.sh
+~/softsensorai/install/codex_cli.sh
 # Provides safe, isolated AI code execution
 
 # Run Codex in sandbox (requires Docker)
@@ -1166,23 +1167,23 @@ scripts/codex_sandbox.sh
 
 ```bash
 # Install entire language ecosystems
-~/devpilot/install/stacks.sh --with-api   # API development stack
-~/devpilot/install/stacks.sh --with-ml    # Machine learning stack
-~/devpilot/install/stacks.sh --with-sec   # Security tools stack
-~/devpilot/install/stacks.sh --with-k8s   # Kubernetes stack
-~/devpilot/install/stacks.sh --all        # Everything
+~/softsensorai/install/stacks.sh --with-api   # API development stack
+~/softsensorai/install/stacks.sh --with-ml    # Machine learning stack
+~/softsensorai/install/stacks.sh --with-sec   # Security tools stack
+~/softsensorai/install/stacks.sh --with-k8s   # Kubernetes stack
+~/softsensorai/install/stacks.sh --all        # Everything
 ```
 
 ## 🐳 Dev Container Support
 
-DevPilot works seamlessly in containerized environments:
+SoftSensorAI works seamlessly in containerized environments:
 
 ### GitHub Codespaces
 
 ```bash
 # In your Codespace terminal
-git clone https://github.com/Softsensor-org/DevPilot.git ~/devpilot
-cd ~/devpilot
+git clone https://github.com/Softsensor-org/SoftSensorAI.git ~/softsensorai
+cd ~/softsensorai
 ./setup_all.sh
 ```
 
@@ -1192,7 +1193,7 @@ Add to `.devcontainer/devcontainer.json`:
 
 ```json
 {
-  "postCreateCommand": "git clone https://github.com/Softsensor-org/DevPilot.git ~/devpilot && ~/devpilot/setup_all.sh",
+  "postCreateCommand": "git clone https://github.com/Softsensor-org/SoftSensorAI.git ~/softsensorai && ~/softsensorai/setup_all.sh",
   "features": {
     "ghcr.io/devcontainers/features/github-cli:1": {},
     "ghcr.io/devcontainers/features/common-utils:2": {}
@@ -1205,8 +1206,8 @@ Add to `.devcontainer/devcontainer.json`:
 ```dockerfile
 FROM ubuntu:22.04
 RUN apt-get update && apt-get install -y git curl
-RUN git clone https://github.com/Softsensor-org/DevPilot.git /devpilot
-RUN cd /devpilot && ./setup_all.sh
+RUN git clone https://github.com/Softsensor-org/SoftSensorAI.git /softsensorai
+RUN cd /softsensorai && ./setup_all.sh
 ```
 
 ## 🔧 Troubleshooting
@@ -1224,14 +1225,14 @@ source ~/.bashrc  # or ~/.zshrc for Zsh
 
 ```bash
 # Some tools need sudo for global installation
-sudo ~/devpilot/install/key_software_$(uname -s | tr '[:upper:]' '[:lower:]').sh
+sudo ~/softsensorai/install/key_software_$(uname -s | tr '[:upper:]' '[:lower:]').sh
 ```
 
 **'dp init' fails to configure profile**
 
 ```bash
 # Pull latest fixes
-cd ~/devpilot
+cd ~/softsensorai
 git pull origin main
 ```
 
@@ -1255,13 +1256,13 @@ python3 -m ensurepip  # Python
 
 ### Getting Help
 
-- Check existing issues: [GitHub Issues](https://github.com/Softsensor-org/DevPilot/issues)
+- Check existing issues: [GitHub Issues](https://github.com/Softsensor-org/SoftSensorAI/issues)
 - Review the [validation script](validation/validate_agents.sh) output
-- Run diagnostics: `~/devpilot/scripts/diagnose.sh`
+- Run diagnostics: `~/softsensorai/scripts/diagnose.sh`
 
 ## 🧪 Testing & CI
 
-DevPilot includes comprehensive testing across all supported platforms:
+SoftSensorAI includes comprehensive testing across all supported platforms:
 
 ### OS Compatibility Testing
 
@@ -1279,11 +1280,11 @@ DevPilot includes comprehensive testing across all supported platforms:
 - **AI PR Review**: Automated code review (when AI CLI available)
 
 View test results:
-[![CI](https://github.com/Softsensor-org/DevPilot/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Softsensor-org/DevPilot/actions/workflows/ci.yml)
+[![CI](https://github.com/Softsensor-org/SoftSensorAI/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Softsensor-org/SoftSensorAI/actions/workflows/ci.yml)
 
 ### Documentation Requirements
 
-DevPilot includes an optional documentation check system:
+SoftSensorAI includes an optional documentation check system:
 
 **Features:**
 
@@ -1311,7 +1312,8 @@ DevPilot includes an optional documentation check system:
 
 ### Getting Started
 
-- **[DevPilot Overview (PDF)](docs/DevPilot.pdf)** - Comprehensive platform overview and strategy
+- **[SoftSensorAI Overview (PDF)](docs/SoftSensorAI.pdf)** - Comprehensive platform overview and
+  strategy
 - **[Day in the Life Guide](tutorials/day-in-the-life.md)** - See real before/after scenarios
 - **[Quick Start This Week](tutorials/quick-start-this-week.md)** - Start seeing value in 5 days
 - **[Benefits & ROI](docs/BENEFITS.md)** - Detailed metrics and cost savings
@@ -1332,7 +1334,7 @@ DevPilot includes an optional documentation check system:
 
 ## 🤝 Support & Feedback
 
-- **Report Issues**: [GitHub Issues](https://github.com/Softsensor-org/DevPilot/issues)
+- **Report Issues**: [GitHub Issues](https://github.com/Softsensor-org/SoftSensorAI/issues)
 - **Feature Requests**: Create an issue with [Feature Request] tag
 - **Questions**: Open a discussion in the Issues tab
 - **Star the repo** if it helps your productivity!

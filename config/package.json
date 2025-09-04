@@ -1,10 +1,10 @@
 {
-  "name": "devpilot",
+  "name": "softsensorai",
   "version": "2.0.0",
-  "description": "DevPilot - AI-First Development Toolkit",
+  "description": "SoftSensorAI - AI-First Development Toolkit",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Softsensor-org/DevPilot.git"
+    "url": "git+https://github.com/Softsensor-org/SoftSensorAI.git"
   },
   "keywords": [
     "devops",
@@ -15,9 +15,9 @@
   "author": "Softsensor",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Softsensor-org/DevPilot/issues"
+    "url": "https://github.com/Softsensor-org/SoftSensorAI/issues"
   },
-  "homepage": "https://github.com/Softsensor-org/DevPilot#readme",
+  "homepage": "https://github.com/Softsensor-org/SoftSensorAI#readme",
   "scripts": {
     "lint": "shellcheck scripts/*.sh tools/*.sh bin/* 2>/dev/null || true",
     "test": "bash tools/audit_setup_scripts.sh",
