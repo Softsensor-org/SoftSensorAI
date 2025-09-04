@@ -2,8 +2,15 @@
 set -euo pipefail
 
 # Test generation orchestrator for DevPilot
-ROOT="${DEVPILOT_ROOT:-/opt/devpilot}"
-ART="${DEVPILOT_ARTIFACTS:-$ROOT/artifacts}"
+# Detect multi-user vs single-user installation
+if [[ -f "/opt/devpilot/etc/devpilot.conf" ]]; then
+  source /opt/devpilot/etc/devpilot.conf
+  ROOT="${DEVPILOT_ROOT:-/opt/devpilot}"
+  ART="${DEVPILOT_ARTIFACTS:-${DEVPILOT_USER_DIR:-$HOME/.devpilot}/artifacts}"
+else
+  ROOT="$(git rev-parse --show-toplevel 2>/dev/null || cd "$(dirname "$0")/.." && pwd)"
+  ART="$ROOT/artifacts"
+fi
 SHIM="$ROOT/tools/ai_shim.sh"
 
 # Support functions
@@ -17,30 +24,45 @@ extract_json() {
   awk 'BEGIN{c=0} {print; for(i=1;i<=length($0);i++){ch=substr($0,i,1); if(ch=="{")c++; else if(ch=="}")c--;}} END{exit c!=0}'
 }
 
-# Detect language and test runner
+# Detect language and test runner (supports monorepos)
 detect_stack() {
   local lang="unknown" runner="unknown"
+  local has_py=0 has_js=0 has_go=0 has_java=0
 
-  # Detect language
-  if [ -f "package.json" ]; then
+  # Check for multiple languages (monorepo)
+  [ -f "requirements.txt" ] || [ -f "pyproject.toml" ] || [ -f "setup.py" ] && has_py=1
+  [ -f "package.json" ] && has_js=1
+  [ -f "go.mod" ] && has_go=1
+  [ -f "pom.xml" ] || [ -f "build.gradle" ] || [ -f "build.gradle.kts" ] && has_java=1
+
+  # Determine language(s) and runner(s)
+  local lang_count=$((has_py + has_js + has_go + has_java))
+
+  if [ "$lang_count" -gt 1 ]; then
+    lang="mixed"
+    runner="multi"
+  elif [ "$has_js" -eq 1 ]; then
     lang="javascript"
     if grep -q '"jest"' package.json 2>/dev/null; then
       runner="jest"
     elif grep -q '"vitest"' package.json 2>/dev/null; then
       runner="vitest"
+    else
+      runner="npm-test"
     fi
-  elif [ -f "requirements.txt" ] || [ -f "pyproject.toml" ] || [ -f "setup.py" ]; then
+  elif [ "$has_py" -eq 1 ]; then
     lang="python"
     runner="pytest"
-  elif [ -f "go.mod" ]; then
+  elif [ "$has_go" -eq 1 ]; then
     lang="go"
     runner="go-test"
-  elif [ -f "pom.xml" ]; then
+  elif [ "$has_java" -eq 1 ]; then
     lang="java"
-    runner="mvn-surefire"
-  elif [ -f "build.gradle" ] || [ -f "build.gradle.kts" ]; then
-    lang="java"
-    runner="gradle"
+    if [ -f "pom.xml" ]; then
+      runner="mvn-surefire"
+    else
+      runner="gradle"
+    fi
   fi
 
   echo "{\"language\":\"$lang\",\"runner\":\"$runner\"}"
@@ -186,16 +208,35 @@ JSON
       cat "$ROOT/.claude/commands/testgen/$prompt_name"
     } > "$sub_prompt"
 
-    # Call sub-prompt
+    # Call sub-prompt with full fallback chain
     if [ -f "$SHIM" ]; then
       "$SHIM" --provider claude --model "${AI_MODEL_CLAUDE:-claude-3-7-sonnet-20250219}" \
         --prompt-file "$sub_prompt" > "$sub_out" 2>/dev/null || \
       "$SHIM" --provider codex --model "${AI_MODEL_CODEX:-codex-latest}" \
+        --prompt-file "$sub_prompt" > "$sub_out" 2>/dev/null || \
+      "$SHIM" --provider gemini --model "${AI_MODEL_GEMINI:-gemini-1.5-pro-latest}" \
+        --prompt-file "$sub_prompt" > "$sub_out" 2>/dev/null || \
+      "$SHIM" --provider grok --model "${AI_MODEL_GROK:-grok-2-latest}" \
         --prompt-file "$sub_prompt" > "$sub_out" 2>/dev/null || true
     fi
 
     # Parse and apply results
     if extract_json < "$sub_out" > "$sub_json"; then
+      # Validate JSON schema if ajv is available
+      local schema_file="$ROOT/config/schemas/testgen_output.schema.json"
+      if command -v ajv >/dev/null 2>&1 && [ -f "$schema_file" ]; then
+        if ! ajv validate -s "$schema_file" -d "$sub_json" >/dev/null 2>&1; then
+          say "⚠️  Invalid JSON from $prompt_name; skipping"
+          continue
+        fi
+      elif command -v jq >/dev/null 2>&1; then
+        # Basic validation with jq if ajv not available
+        if ! jq -e '.files and .commands' "$sub_json" >/dev/null 2>&1; then
+          say "⚠️  Malformed JSON from $prompt_name; skipping"
+          continue
+        fi
+      fi
+
       # Write test files
       jq -c '.files[]?' "$sub_json" 2>/dev/null | while IFS= read -r file_spec; do
         local path content overwrite
@@ -209,10 +250,31 @@ JSON
           continue
         fi
 
-        # Handle overwrite policy
-        if [ "$overwrite" = "create_if_absent" ] && [ -f "$path" ]; then
-          say "  → Skipping existing: $path"
+        # Handle overwrite policy with safety checks
+        if [ -f "$path" ]; then
+          case "$overwrite" in
+            create_if_absent)
+              say "  → Skipping existing: $path"
+              ;;
+            overwrite)
+              # Check for safe-overwrite marker
+              if head -n 3 "$path" | grep -q 'DEVPILOT:SAFE-OVERWRITE'; then
+                echo "$content" > "$path"
+                say "  → Overwrote (marked safe): $path"
+                total_files=$((total_files + 1))
+              else
+                say "  → Denied overwrite (no marker): $path"
+              fi
+              ;;
+            append)
+              echo "" >> "$path"
+              echo "$content" >> "$path"
+              say "  → Appended to: $path"
+              total_files=$((total_files + 1))
+              ;;
+          esac
         else
+          # New file
           mkdir -p "$(dirname "$path")"
           echo "$content" > "$path"
           say "  → Created: $path"
@@ -229,13 +291,43 @@ JSON
 
   say "▸ Generated $total_files test files"
 
-  # Run test commands
+  # Run test commands with time budget and deterministic settings
   if [ -s "$all_commands" ]; then
     say "▸ Running test commands..."
     local test_log="$dir/test_run.log"
+
+    # Set environment for deterministic and bounded execution
+    export PYTHONHASHSEED=0
+    export NODE_OPTIONS="--max-old-space-size=2048"
+    export NO_NET=1
+    export CI=1
+
     while IFS= read -r cmd; do
-      say "  → $cmd"
-      if eval "$cmd" >> "$test_log" 2>&1; then
+      # Add timeout wrapper if available
+      local cmd_wrapped="$cmd"
+      if command -v timeout >/dev/null 2>&1; then
+        # 120s timeout for test suites
+        cmd_wrapped="timeout 120s $cmd"
+      fi
+
+      # Add common test flags for speed/determinism
+      case "$cmd" in
+        pytest*)
+          # Add pytest flags for speed and determinism
+          cmd_wrapped="${cmd_wrapped} -q --tb=short --maxfail=5 -o timeout=90"
+          ;;
+        jest*|vitest*)
+          # Add JS test flags
+          cmd_wrapped="${cmd_wrapped} --maxWorkers=2 --no-coverage"
+          ;;
+        "go test"*)
+          # Add Go test flags
+          cmd_wrapped="${cmd_wrapped} -timeout=90s -short"
+          ;;
+      esac
+
+      say "  → $cmd_wrapped"
+      if eval "$cmd_wrapped" >> "$test_log" 2>&1; then
         say "    ✓ Passed"
       else
         say "    ✗ Failed (see $test_log)"

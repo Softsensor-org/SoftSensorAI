@@ -5,10 +5,12 @@ INPUTS:
 - DIFF (unified, may be truncated)
 - COVERAGE (optional: JSON/summary)
 - RISK_TAGS (comma list like "auth,db,ml,infra")
-- LANGUAGE (python|ts|js|go|java|mixed)
-- RUNNER (pytest|jest|vitest|go-test|junit|mvn-surefire|gradle)
+- LANGUAGE (python|ts|js|go|java|mixed) - auto-detected, mixed for monorepos
+- RUNNER (pytest|jest|vitest|go-test|junit|mvn-surefire|gradle|multi)
 - CONTRACT (optional: openapi.yaml)
 - CONTEXT (paths of changed files, test dirs available)
+
+PATH POLICY: Tests ONLY under tests/**, **tests**/**, test/**, src/test/**
 
 WHEN INFO MISSING → ASK & STOP: Print only: QUESTIONS:
 

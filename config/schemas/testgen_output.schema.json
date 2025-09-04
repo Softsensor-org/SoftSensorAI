@@ -1,0 +1,50 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "TestGen Output Schema",
+  "type": "object",
+  "required": ["files", "commands"],
+  "properties": {
+    "files": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path", "content"],
+        "properties": {
+          "path": {
+            "type": "string",
+            "pattern": "^(tests?/|__tests__/|src/test/)"
+          },
+          "content": {
+            "type": "string"
+          },
+          "overwrite": {
+            "type": "string",
+            "enum": ["create_if_absent", "overwrite", "append"],
+            "default": "create_if_absent"
+          }
+        }
+      }
+    },
+    "commands": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["run"],
+        "properties": {
+          "run": {
+            "type": "string"
+          },
+          "if_exists": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "notes": {
+      "type": "string"
+    }
+  }
+}
