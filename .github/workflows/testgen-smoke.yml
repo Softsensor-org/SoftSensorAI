@@ -1,0 +1,96 @@
+name: TestGen Smoke Tests
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "bin/dp-testgen"
+      - ".claude/commands/testgen/**"
+      - "config/schemas/testgen_output.schema.json"
+      - ".github/workflows/testgen-smoke.yml"
+  pull_request:
+    paths:
+      - "bin/dp-testgen"
+      - ".claude/commands/testgen/**"
+      - "config/schemas/testgen_output.schema.json"
+
+jobs:
+  testgen-smoke:
+    runs-on: ubuntu-latest
+    continue-on-error: true # Non-blocking during MVP
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup environment
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq
+
+      - name: Create test diff
+        run: |
+          cat > /tmp/test.diff << 'EOF'
+          diff --git a/src/calculator.py b/src/calculator.py
+          index 1234567..abcdefg 100644
+          --- a/src/calculator.py
+          +++ b/src/calculator.py
+          @@ -1,4 +1,8 @@
+           def add(a, b):
+               return a + b
+          +
+          +def multiply(a, b):
+          +    """Multiply two numbers"""
+          +    return a * b
+          EOF
+
+      - name: Test testgen orchestration
+        run: |
+          # Create minimal test environment
+          mkdir -p tests
+          touch requirements.txt
+
+          # Run testgen with test diff
+          ./bin/dp-testgen --diff /tmp/test.diff --risk "none" > /tmp/testgen.out 2>&1 || true
+
+          # Check output
+          if grep -q "Task ID:" /tmp/testgen.out; then
+            echo "✅ TestGen orchestration worked"
+          else
+            echo "⚠️  TestGen did not complete (expected in CI without AI keys)"
+            cat /tmp/testgen.out
+          fi
+
+      - name: Validate JSON schema exists
+        run: |
+          test -f config/schemas/testgen_output.schema.json || {
+            echo "Schema file missing";
+            exit 1;
+          }
+
+          # Validate schema is valid JSON
+          jq . config/schemas/testgen_output.schema.json > /dev/null || {
+            echo "Invalid JSON schema";
+            exit 1;
+          }
+
+          echo "✅ Schema validation passed"
+
+      - name: Check testgen help
+        run: |
+          ./bin/dp-testgen --help | grep -q "Generate tests" || {
+            echo "Help text missing or incorrect";
+            exit 1;
+          }
+
+          echo "✅ Help text verified"
+
+      - name: Upload artifacts
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: testgen-smoke-artifacts
+          path: |
+            /tmp/testgen.out
+            /tmp/test.diff
+          retention-days: 7
