@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+. "$(dirname "$0")/../lib/sh/brand_compat.sh"
 # DevPilot meta-CLI: beautiful defaults for init, tickets, and review.
 set -euo pipefail
 # Detect if running in multi-user mode

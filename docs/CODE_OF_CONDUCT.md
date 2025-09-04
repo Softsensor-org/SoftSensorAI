@@ -2,7 +2,7 @@
 
 ## Our Commitment
 
-We as members, contributors, and maintainers pledge to make participation in DevPilot a
+We as members, contributors, and maintainers pledge to make participation in SoftSensorAI a
 harassment-free experience for everyone, regardless of age, body size, disability, ethnicity, sex
 characteristics, gender identity and expression, level of experience, education, socio-economic
 status, nationality, personal appearance, race, religion, or sexual identity and orientation.
@@ -48,7 +48,7 @@ Examples of representing our community include:
 - Using an official project e-mail address
 - Posting via an official social media account
 - Acting as an appointed representative at an event
-- Contributing to the DevPilot repository
+- Contributing to the SoftSensorAI repository
 - Participating in community discussions
 
 ## Reporting Guidelines
@@ -99,14 +99,14 @@ individuals.
 
 **Consequence**: A permanent ban from any sort of public interaction within the community.
 
-## DevPilot-Specific Guidelines
+## SoftSensorAI-Specific Guidelines
 
 ### Technical Discussions
 
 - **Stay Constructive**: Focus on improving the project, not criticizing people
 - **Be Specific**: Provide clear examples and reproduction steps
-- **Share Knowledge**: Help others learn and understand DevPilot concepts
-- **Respect Skill Levels**: Remember DevPilot supports beginners through experts
+- **Share Knowledge**: Help others learn and understand SoftSensorAI concepts
+- **Respect Skill Levels**: Remember SoftSensorAI supports beginners through experts
 
 ### AI Ethics
 

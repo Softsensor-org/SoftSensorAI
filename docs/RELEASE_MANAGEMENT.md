@@ -1,8 +1,8 @@
-# DevPilot Release Management
+# SoftSensorAI Release Management
 
 ## Version Numbering
 
-DevPilot follows [Semantic Versioning](https://semver.org/):
+SoftSensorAI follows [Semantic Versioning](https://semver.org/):
 
 - **MAJOR.MINOR.PATCH** (e.g., 2.0.0)
   - **MAJOR**: Breaking changes, architectural shifts
@@ -57,10 +57,10 @@ git push origin v2.0.0
 
 ### 3. GitHub Release
 
-1. Go to https://github.com/Softsensor-org/DevPilot/releases
+1. Go to https://github.com/Softsensor-org/SoftSensorAI/releases
 2. Click "Draft a new release"
 3. Choose tag: `v2.0.0`
-4. Title: `DevPilot v2.0.0 - Platform Redesign`
+4. Title: `SoftSensorAI v2.0.0 - Platform Redesign`
 5. Copy content from `RELEASE_NOTES.md`
 6. Attach any binaries if applicable
 7. Mark as pre-release if beta
@@ -149,9 +149,9 @@ git branch -d release/v2.0.0
 ### Release Announcement Template
 
 ````markdown
-# DevPilot vX.Y.Z Released!
+# SoftSensorAI vX.Y.Z Released!
 
-We're excited to announce DevPilot vX.Y.Z with [key feature].
+We're excited to announce SoftSensorAI vX.Y.Z with [key feature].
 
 ## What's New
 
@@ -196,11 +196,11 @@ git checkout abc123def
 
 ## Version Compatibility
 
-| DevPilot | Claude CLI | Gemini | Grok | Minimum OS   |
-| -------- | ---------- | ------ | ---- | ------------ |
-| 2.0.x    | 0.5+       | 2.0+   | 1.0+ | Ubuntu 20.04 |
-| 1.5.x    | 0.4+       | 1.5+   | 0.9+ | Ubuntu 18.04 |
-| 1.0.x    | 0.3+       | 1.0+   | 0.5+ | Ubuntu 18.04 |
+| SoftSensorAI | Claude CLI | Gemini | Grok | Minimum OS   |
+| ------------ | ---------- | ------ | ---- | ------------ |
+| 2.0.x        | 0.5+       | 2.0+   | 1.0+ | Ubuntu 20.04 |
+| 1.5.x        | 0.4+       | 1.5+   | 0.9+ | Ubuntu 18.04 |
+| 1.0.x        | 0.3+       | 1.0+   | 0.5+ | Ubuntu 18.04 |
 
 ## Deprecation Policy
 
@@ -251,4 +251,4 @@ Each release should include:
 
 ---
 
-**Remember**: Every release should make DevPilot better for users. Quality over quantity!
+**Remember**: Every release should make SoftSensorAI better for users. Quality over quantity!

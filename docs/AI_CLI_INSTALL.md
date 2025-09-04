@@ -1,10 +1,11 @@
 # AI CLI Installation Guide
 
-This guide provides standardized installation instructions for AI provider CLIs used by DevPilot.
+This guide provides standardized installation instructions for AI provider CLIs used by
+SoftSensorAI.
 
 ## Required CLIs by Provider
 
-DevPilot's AI integration (`dp review`, `dp agent`) requires one of these CLI tools installed:
+SoftSensorAI's AI integration (`dp review`, `dp agent`) requires one of these CLI tools installed:
 
 ### Claude (Anthropic)
 
@@ -90,10 +91,10 @@ export GOOGLE_API_KEY="..."
 export GROK_API_KEY="..."
 ```
 
-For persistent configuration, add to your shell profile or use DevPilot's secure key storage:
+For persistent configuration, add to your shell profile or use SoftSensorAI's secure key storage:
 
 ```bash
-# Store keys securely with DevPilot
+# Store keys securely with SoftSensorAI
 ./utils/secure_keys.sh store
 ```
 
@@ -141,7 +142,7 @@ If CLIs aren't found after installation:
    echo ${ANTHROPIC_API_KEY:0:10}...  # Shows first 10 chars
    ```
 
-2. **Test Direct CLI**: Bypass DevPilot to test CLI directly
+2. **Test Direct CLI**: Bypass SoftSensorAI to test CLI directly
    ```bash
    echo "Hello" | anthropic messages create --model claude-3-sonnet-20240229
    ```

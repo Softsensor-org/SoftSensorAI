@@ -1,6 +1,6 @@
-# Agentic Coding with DevPilot
+# Agentic Coding with SoftSensorAI
 
-DevPilot's agent capability enables autonomous task execution with built-in safety and quality
+SoftSensorAI's agent capability enables autonomous task execution with built-in safety and quality
 controls.
 
 ## Overview
@@ -420,6 +420,6 @@ Planned improvements:
 
 ## See Also
 
-- [Command Registry](commands/README.md) - All DevPilot commands
+- [Command Registry](commands/README.md) - All SoftSensorAI commands
 - [AI CLI Guide](AI_CLI.md) - Using AI tools directly
 - [Multi-User Setup](MULTI_USER_SETUP.md) - Shared server installations

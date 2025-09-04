@@ -1,11 +1,11 @@
-# A Week with DevPilot: Daily Runbook
+# A Week with SoftSensorAI: Daily Runbook
 
-Your first week using DevPilot for real development work. Follow this day-by-day guide to master the
-essential workflows.
+Your first week using SoftSensorAI for real development work. Follow this day-by-day guide to master
+the essential workflows.
 
 ## Prerequisites
 
-- DevPilot globally installed (`~/devpilot/setup_all.sh` completed)
+- SoftSensorAI globally installed (`~/devpilot/setup_all.sh` completed)
 - AI CLI tools installed (claude, codex, gemini, grok)
 - A project to work on
 
@@ -40,14 +40,14 @@ claude --system-prompt system/active.md \
 
 **Before/After Example:**
 
-Before DevPilot:
+Before SoftSensorAI:
 
 ```
 You: "Add a user preferences endpoint"
 AI: "Here's some code..." [No structure, no tests, no consistency]
 ```
 
-After DevPilot:
+After SoftSensorAI:
 
 ```
 You: /explore-plan-code-test implement user preferences endpoint
@@ -377,7 +377,7 @@ gates
 
 ## Measuring Success
 
-After one week with DevPilot, you should see:
+After one week with SoftSensorAI, you should see:
 
 - ✅ **50% faster** feature development (explore → plan → code → test)
 - ✅ **Zero security issues** reaching code review (security-review catches them)
@@ -394,4 +394,4 @@ After one week with DevPilot, you should see:
 
 ---
 
-_By the end of Week 1, DevPilot will feel like a senior developer pair programming with you._
+_By the end of Week 1, SoftSensorAI will feel like a senior developer pair programming with you._

@@ -1,8 +1,8 @@
-# DevPilot Multi-User Installation Guide
+# SoftSensorAI Multi-User Installation Guide
 
 ## Overview
 
-DevPilot supports two installation models:
+SoftSensorAI supports two installation models:
 
 1. **Single-User Mode** (default) - Personal installation in user's home directory
 2. **Multi-User Mode** (NEW) - System-wide shared installation with per-user configurations
@@ -54,11 +54,11 @@ This guide covers the multi-user installation model, ideal for:
 
 ```bash
 # Download and run multi-user installation script
-sudo curl -L https://github.com/Softsensor-org/DevPilot/raw/main/install/multi_user_setup.sh | sudo bash
+sudo curl -L https://github.com/Softsensor-org/SoftSensorAI/raw/main/install/multi_user_setup.sh | sudo bash
 
 # Or clone and run locally
-git clone https://github.com/Softsensor-org/DevPilot.git
-cd DevPilot
+git clone https://github.com/Softsensor-org/SoftSensorAI.git
+cd SoftSensorAI
 sudo ./install/multi_user_setup.sh
 ```
 
@@ -66,7 +66,7 @@ This will:
 
 - Install system dependencies (git, jq, ripgrep, fd, direnv)
 - Create `/opt/devpilot` directory structure
-- Install DevPilot core components
+- Install SoftSensorAI core components
 - Set up system-wide configuration
 - Create admin utilities (`dp-admin`)
 - Configure logging and auditing
@@ -77,9 +77,9 @@ Each user runs their personal setup:
 
 ```bash
 # Run user setup script
-curl -L https://github.com/Softsensor-org/DevPilot/raw/main/install/user_setup.sh | bash
+curl -L https://github.com/Softsensor-org/SoftSensorAI/raw/main/install/user_setup.sh | bash
 
-# Or if DevPilot is already installed system-wide
+# Or if SoftSensorAI is already installed system-wide
 dp setup-user
 ```
 
@@ -168,7 +168,7 @@ All operations logged to `/var/log/devpilot/`:
 System administrators can use `dp-admin`:
 
 ```bash
-# List all DevPilot users
+# List all SoftSensorAI users
 sudo dp-admin list-users
 
 # Show usage statistics
@@ -177,7 +177,7 @@ sudo dp-admin stats
 # Clean all user caches
 sudo dp-admin clean-cache
 
-# Update DevPilot system-wide
+# Update SoftSensorAI system-wide
 sudo dp-admin update
 
 # Monitor real-time usage

@@ -1,20 +1,20 @@
 # Multi-User / Team Installation Guide
 
-DevPilot supports both single-user (developer laptop) and multi-user (shared server) installations.
-This guide covers the multi-user model for teams.
+SoftSensorAI supports both single-user (developer laptop) and multi-user (shared server)
+installations. This guide covers the multi-user model for teams.
 
 ## Installation Modes
 
 ### Single-User Mode (Default)
 
-- DevPilot lives in your repository
+- SoftSensorAI lives in your repository
 - Artifacts stored in `./artifacts/`
 - Perfect for individual developers
 - No special permissions required
 
 ### Multi-User Mode (Teams)
 
-- DevPilot installed system-wide at `/opt/devpilot`
+- SoftSensorAI installed system-wide at `/opt/devpilot`
 - Per-user artifacts in `~/.devpilot/artifacts/`
 - Shared templates and tools
 - Centralized updates by admins
@@ -51,7 +51,7 @@ fi
 
 ```bash
 # Download and run the multi-user installer
-curl -fsSL https://raw.githubusercontent.com/Softsensor-org/DevPilot/main/scripts/install_multi_user.sh | sudo bash
+curl -fsSL https://raw.githubusercontent.com/Softsensor-org/SoftSensorAI/main/scripts/install_multi_user.sh | sudo bash
 ```
 
 ### Manual Install
@@ -60,8 +60,8 @@ curl -fsSL https://raw.githubusercontent.com/Softsensor-org/DevPilot/main/script
 # 1. Create system directories
 sudo mkdir -p /opt/devpilot/{bin,tools,templates,scripts,etc}
 
-# 2. Clone DevPilot
-sudo git clone https://github.com/Softsensor-org/DevPilot.git /opt/devpilot/src
+# 2. Clone SoftSensorAI
+sudo git clone https://github.com/Softsensor-org/SoftSensorAI.git /opt/devpilot/src
 
 # 3. Copy components
 sudo cp -r /opt/devpilot/src/bin/* /opt/devpilot/bin/
@@ -71,7 +71,7 @@ sudo cp -r /opt/devpilot/src/scripts/* /opt/devpilot/scripts/
 
 # 4. Create configuration
 sudo tee /opt/devpilot/etc/devpilot.conf > /dev/null <<'EOF'
-# DevPilot Multi-User Configuration
+# SoftSensorAI Multi-User Configuration
 DEVPILOT_ROOT=/opt/devpilot
 DEVPILOT_USER_DIR=$HOME/.devpilot
 DEVPILOT_VERSION=2.0.0
@@ -91,7 +91,7 @@ echo 'export PATH="/opt/devpilot/bin:$PATH"' | sudo tee /etc/profile.d/devpilot.
 
 ## User Setup
 
-Each user needs to initialize their personal DevPilot environment:
+Each user needs to initialize their personal SoftSensorAI environment:
 
 ```bash
 # 1. Create user directories
@@ -118,7 +118,7 @@ dp doctor
 # Required settings
 DEVPILOT_ROOT=/opt/devpilot           # System installation path
 DEVPILOT_USER_DIR=$HOME/.devpilot     # Per-user data directory
-DEVPILOT_VERSION=2.0.0                 # DevPilot version
+DEVPILOT_VERSION=2.0.0                 # SoftSensorAI version
 
 # Optional team defaults
 AI_PROVIDER=anthropic                  # Default AI provider
@@ -174,11 +174,11 @@ EDITOR=nvim                             # Preferred editor
 
 ## Status Display
 
-When running DevPilot commands, the mode and paths are displayed:
+When running SoftSensorAI commands, the mode and paths are displayed:
 
 ```bash
 $ dp init
-✓ DevPilot initialized for project: my-app
+✓ SoftSensorAI initialized for project: my-app
   Version      : 2.0.0
   Mode         : Multi-user
   System root  : /opt/devpilot
@@ -223,7 +223,7 @@ Check multi-user setup health:
 ```bash
 $ dp team doctor
 
-DevPilot Team Setup Check
+SoftSensorAI Team Setup Check
 -------------------------
 ✓ Multi-user mode active
 ✓ System config readable: /opt/devpilot/etc/devpilot.conf
@@ -239,7 +239,7 @@ All checks passed! Ready for team development.
 
 ## Maintenance
 
-### Updating DevPilot (Admin)
+### Updating SoftSensorAI (Admin)
 
 ```bash
 # 1. Pull latest changes
@@ -252,7 +252,7 @@ sudo cp -r tools/* /opt/devpilot/tools/
 sudo cp -r templates/* /opt/devpilot/templates/
 
 # 3. Notify users
-echo "DevPilot updated to $(cat VERSION)" | wall
+echo "SoftSensorAI updated to $(cat VERSION)" | wall
 ```
 
 ### Backup Strategy
@@ -359,7 +359,7 @@ sudo chmod 666 /var/log/devpilot/audit.log
 ### From Single-User to Multi-User
 
 ```bash
-# 1. Admin installs system-wide DevPilot
+# 1. Admin installs system-wide SoftSensorAI
 sudo ./scripts/install_multi_user.sh
 
 # 2. Users migrate their artifacts
@@ -375,8 +375,8 @@ dp doctor
 ### From Multi-User to Single-User
 
 ```bash
-# 1. Clone DevPilot locally
-git clone https://github.com/Softsensor-org/DevPilot.git .
+# 1. Clone SoftSensorAI locally
+git clone https://github.com/Softsensor-org/SoftSensorAI.git .
 
 # 2. Copy artifacts back
 cp -r ~/.devpilot/artifacts/* ./artifacts/
@@ -390,7 +390,7 @@ sudo rm /opt/devpilot/etc/devpilot.conf
 
 ## See Also
 
-- [Quick Start Guide](./quickstart.md) - Getting started with DevPilot
+- [Quick Start Guide](./quickstart.md) - Getting started with SoftSensorAI
 - [AI CLI Installation](./AI_CLI_INSTALL.md) - Setting up AI providers
 - [Architecture Overview](./ARCHITECTURE_OVERVIEW.md) - System design
 - [Troubleshooting](./TROUBLESHOOTING.md) - Common issues and solutions

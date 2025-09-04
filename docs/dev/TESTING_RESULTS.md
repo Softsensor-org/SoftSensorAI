@@ -1,4 +1,4 @@
-# DevPilot Testing Results
+# SoftSensorAI Testing Results
 
 ## ✅ Commands Tested and Working
 
@@ -16,14 +16,14 @@
 ### Fixed Issues
 
 1. **profile_show.sh syntax error** - Fixed division by zero when PROFILE.md has no checklist items
-2. **Repository URL references** - Updated from devpilot to DevPilot
+2. **Repository URL references** - Updated from devpilot to SoftSensorAI
 3. **curl commands** - Updated documentation to reflect that repository may be private
 
 ## ⚠️ Known Limitations
 
 ### Repository Access
 
-- The repository is currently **private** at `https://github.com/Softsensor-org/DevPilot`
+- The repository is currently **private** at `https://github.com/Softsensor-org/SoftSensorAI`
 - Direct curl commands like `curl -sL https://raw.githubusercontent.com/...` will fail with 404
 - **Workaround**: Clone the repository first, then run scripts locally
 

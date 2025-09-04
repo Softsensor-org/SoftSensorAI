@@ -1,31 +1,31 @@
-# Contributing to DevPilot
+# Contributing to SoftSensorAI
 
-Thank you for your interest in contributing to DevPilot! This guide will help you get started.
+Thank you for your interest in contributing to SoftSensorAI! This guide will help you get started.
 
 ## 📖 Documentation First
 
 Before contributing, please review our comprehensive documentation:
 
-- **[Architecture Overview](docs/ARCHITECTURE_OVERVIEW.md)** - Understanding DevPilot's design
-- **[Quickstart Guide](docs/quickstart.md)** - Getting DevPilot running
-- **[Week with DevPilot](docs/WEEK_WITH_DEVPILOT.md)** - Daily workflow examples
+- **[Architecture Overview](docs/ARCHITECTURE_OVERVIEW.md)** - Understanding SoftSensorAI's design
+- **[Quickstart Guide](docs/quickstart.md)** - Getting SoftSensorAI running
+- **[Week with SoftSensorAI](docs/WEEK_WITH_DEVPILOT.md)** - Daily workflow examples
 
 ## 🚀 Quick Start for Contributors
 
 1. **Fork and clone the repository**
 
    ```bash
-   git clone https://github.com/your-username/DevPilot.git
-   cd DevPilot
+   git clone https://github.com/your-username/SoftSensorAI.git
+   cd SoftSensorAI
    ```
 
-2. **Set up DevPilot on itself** (dogfooding!)
+2. **Set up SoftSensorAI on itself** (dogfooding!)
 
    ```bash
-   # Install DevPilot globally
+   # Install SoftSensorAI globally
    ./setup_all.sh
 
-   # Setup this repo with DevPilot
+   # Setup this repo with SoftSensorAI
    ./setup/existing_repo_setup.sh --skill expert --phase beta
 
    # Add development personas
@@ -62,7 +62,7 @@ Before contributing, please review our comprehensive documentation:
 
 ### Current Priorities
 
-Check our [GitHub Issues](https://github.com/Softsensor-org/DevPilot/issues) for:
+Check our [GitHub Issues](https://github.com/Softsensor-org/SoftSensorAI/issues) for:
 
 - Issues labeled `good first issue` for newcomers
 - Issues labeled `help wanted` for experienced contributors
@@ -96,7 +96,7 @@ git checkout -b feature/your-feature-name
 shellcheck setup/*.sh scripts/*.sh
 ```
 
-### 4. Use DevPilot for Development
+### 4. Use SoftSensorAI for Development
 
 ```bash
 # Generate implementation plan
@@ -208,19 +208,19 @@ We use these labels to categorize PRs:
 
 ## 🆘 Getting Help
 
-- **Questions**: Open a [Discussion](https://github.com/Softsensor-org/DevPilot/discussions)
-- **Bugs**: Open an [Issue](https://github.com/Softsensor-org/DevPilot/issues)
+- **Questions**: Open a [Discussion](https://github.com/Softsensor-org/SoftSensorAI/discussions)
+- **Bugs**: Open an [Issue](https://github.com/Softsensor-org/SoftSensorAI/issues)
 - **Chat**: Join our community discussions
 - **Documentation**: Check [docs/](docs/) directory first
 
 ## 📜 License
 
-By contributing to DevPilot, you agree that your contributions will be licensed under the same
+By contributing to SoftSensorAI, you agree that your contributions will be licensed under the same
 license as the project.
 
 ## 🙏 Recognition
 
-Contributors are recognized in our README and release notes. Thank you for helping make DevPilot
+Contributors are recognized in our README and release notes. Thank you for helping make SoftSensorAI
 better for everyone!
 
 ---

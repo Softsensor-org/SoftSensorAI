@@ -2,8 +2,8 @@
 
 ## Overview
 
-Smart repository setup that automatically detects your context and adds DevPilot capabilities to any
-project.
+Smart repository setup that automatically detects your context and adds SoftSensorAI capabilities to
+any project.
 
 ## Usage
 
@@ -15,7 +15,7 @@ dp setup [URL] [OPTIONS]
 
 1. **Detects Context** - Automatically determines if you're in an existing repo, have a URL, or need
    guidance
-2. **Adds DevPilot Files** - Creates CLAUDE.md, AGENTS.md, .claude/ directory structure
+2. **Adds SoftSensorAI Files** - Creates CLAUDE.md, AGENTS.md, .claude/ directory structure
 3. **Handles Conflicts** - Smart merging for existing files (skip, merge, backup, or diff)
 4. **Preserves Your Structure** - Never moves or reorganizes your existing files
 
@@ -38,7 +38,7 @@ dp setup
 dp setup https://github.com/user/new-project
 # ✓ Cloning repository...
 # ✓ Entering new-project/
-# ✓ Creating DevPilot files...
+# ✓ Creating SoftSensorAI files...
 # ✓ Setup complete!
 ```
 
@@ -90,7 +90,7 @@ After `dp setup`, run `dp init` to:
 
 ## Troubleshooting
 
-### "Already has DevPilot files"
+### "Already has SoftSensorAI files"
 
 ```bash
 # Option 1: Skip setup (files already exist)

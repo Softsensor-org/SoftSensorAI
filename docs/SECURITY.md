@@ -2,8 +2,8 @@
 
 ## 📋 Security Overview
 
-DevPilot takes security seriously. This document outlines our security practices and how to report
-vulnerabilities.
+SoftSensorAI takes security seriously. This document outlines our security practices and how to
+report vulnerabilities.
 
 ## 🔒 Comprehensive Security Guide
 
@@ -40,7 +40,7 @@ Instead, report security vulnerabilities via:
 
 1. **GitHub Security Advisories** (Preferred)
 
-   - Go to https://github.com/Softsensor-org/DevPilot/security/advisories
+   - Go to https://github.com/Softsensor-org/SoftSensorAI/security/advisories
    - Click "Report a vulnerability"
    - Fill out the form with details
 
@@ -70,7 +70,7 @@ When reporting vulnerabilities, please include:
 
 ## 🛡️ Security Features
 
-DevPilot includes several built-in security features:
+SoftSensorAI includes several built-in security features:
 
 ### Download Security
 
@@ -101,7 +101,7 @@ DevPilot includes several built-in security features:
 
 ## 🔍 Security Scanning
 
-DevPilot includes automated security scanning:
+SoftSensorAI includes automated security scanning:
 
 ```bash
 # Run security scans locally
@@ -115,7 +115,7 @@ claude --system-prompt .claude/commands/security-review.md "comprehensive securi
 
 ## 🏆 Security Best Practices
 
-When using DevPilot:
+When using SoftSensorAI:
 
 1. **Keep Updated**: Regularly update to the latest version
 2. **Secure API Keys**: Never commit API keys to repositories
@@ -136,8 +136,8 @@ We appreciate security researchers and welcome:
 
 - [OWASP Top 10 for LLM Applications](https://owasp.org/www-project-top-10-for-large-language-model-applications/)
 - [NIST Cybersecurity Framework](https://www.nist.gov/cyberframework)
-- [DevPilot Security Guide](docs/SECURITY.md) - Complete security documentation
+- [SoftSensorAI Security Guide](docs/SECURITY.md) - Complete security documentation
 
 ---
 
-**Security is a shared responsibility. Thank you for helping keep DevPilot secure!** 🛡️
+**Security is a shared responsibility. Thank you for helping keep SoftSensorAI secure!** 🛡️

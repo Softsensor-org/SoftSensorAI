@@ -1,8 +1,8 @@
-# DevPilot Unified Interface Design
+# SoftSensorAI Unified Interface Design
 
 ## Philosophy: One Interface, Smart Detection
 
-Instead of exposing multiple shell scripts that confuse users, DevPilot provides a single,
+Instead of exposing multiple shell scripts that confuse users, SoftSensorAI provides a single,
 intelligent interface through the `dp` command.
 
 ## Before vs After
@@ -53,7 +53,7 @@ graph TD
     Detect --> Empty{Empty Dir?}
 
     InRepo -->|Yes| Analyze[Analyze Project]
-    Analyze --> CheckFiles{DevPilot Files?}
+    Analyze --> CheckFiles{SoftSensorAI Files?}
     CheckFiles -->|Exist| Merge[Smart Merge]
     CheckFiles -->|Missing| Create[Create Files]
 
@@ -82,7 +82,7 @@ The `dp setup` command automatically:
 
    ```bash
    if git rev-parse --is-inside-work-tree; then
-     # Existing repo - add DevPilot
+     # Existing repo - add SoftSensorAI
    elif [[ -n "$1" ]]; then
      # URL provided - clone first
    else
@@ -136,8 +136,8 @@ Internal (hidden from users):
 ### First Time User
 
 ```bash
-# 1. Install DevPilot globally
-git clone https://github.com/Softsensor-org/DevPilot ~/devpilot
+# 1. Install SoftSensorAI globally
+git clone https://github.com/Softsensor-org/SoftSensorAI ~/devpilot
 cd ~/devpilot
 ./setup_all.sh
 
@@ -204,7 +204,7 @@ cmd_setup() {
 
   # Smart detection cascade
   if git rev-parse --is-inside-work-tree 2>/dev/null; then
-    # In repo: analyze and add DevPilot
+    # In repo: analyze and add SoftSensorAI
     detect_project_type
     check_existing_files
     apply_merge_strategy
@@ -280,7 +280,7 @@ dp setup
 
 ## Conclusion
 
-The unified `dp` interface transforms DevPilot from a collection of scripts into a cohesive
+The unified `dp` interface transforms SoftSensorAI from a collection of scripts into a cohesive
 development platform. Users interact with one intelligent command that handles all complexity
 internally, making AI-assisted development accessible to everyone.
 

@@ -1,17 +1,17 @@
-# 📋 DevPilot Setup Workflow Guide
+# 📋 SoftSensorAI Setup Workflow Guide
 
 ## Overview
 
-DevPilot provides two main paths for setting up AI-assisted development in your repositories:
+SoftSensorAI provides two main paths for setting up AI-assisted development in your repositories:
 
 1. **New Repository** - Clone and configure a fresh repo
-2. **Existing Repository** - Add DevPilot to your current project
+2. **Existing Repository** - Add SoftSensorAI to your current project
 
 ## 🔄 Setup Workflow Diagram
 
 ```mermaid
 graph TD
-    Start([Start DevPilot Setup]) --> DpSetup[dp setup]
+    Start([Start SoftSensorAI Setup]) --> DpSetup[dp setup]
 
     %% Smart Detection
     DpSetup --> Detect{Smart Detection}
@@ -81,7 +81,7 @@ dp setup https://github.com/user/repo
    cd TARGET
    ```
 
-3. **📁 Create DevPilot Configuration**
+3. **📁 Create SoftSensorAI Configuration**
 
    ```
    ├── CLAUDE.md           # AI assistant instructions
@@ -117,14 +117,14 @@ dp setup
    ```
    → Verify current directory is a git repository
    → Detect project type (Node.js, Python, Go, etc.)
-   → Check for existing DevPilot files
+   → Check for existing SoftSensorAI files
    ```
 
 2. **🔍 Conflict Detection** For each file to be created:
 
    ```
    IF file exists:
-     → Check for DevPilot markers
+     → Check for SoftSensorAI markers
      → Determine merge strategy
      → Show diff to user (if needed)
    ELSE:
@@ -133,13 +133,13 @@ dp setup
 
 3. **🔀 Merge Strategies**
 
-   | File Type    | Default Strategy | Behavior                                        |
-   | ------------ | ---------------- | ----------------------------------------------- |
-   | CLAUDE.md    | Merge            | Preserves custom sections, adds DevPilot config |
-   | .gitignore   | Merge            | Appends new patterns without duplicates         |
-   | package.json | Diff             | Shows changes, prompts user                     |
-   | .env         | Skip             | Never overwrites sensitive files                |
-   | .env.example | Backup           | Creates backup before updating                  |
+   | File Type    | Default Strategy | Behavior                                            |
+   | ------------ | ---------------- | --------------------------------------------------- |
+   | CLAUDE.md    | Merge            | Preserves custom sections, adds SoftSensorAI config |
+   | .gitignore   | Merge            | Appends new patterns without duplicates             |
+   | package.json | Diff             | Shows changes, prompts user                         |
+   | .env         | Skip             | Never overwrites sensitive files                    |
+   | .env.example | Backup           | Creates backup before updating                      |
 
 4. **📝 File Creation/Merge** Same files as new repo, but with intelligent handling of existing
    content
@@ -156,12 +156,12 @@ Differences:
 +++ new
 @@ -1,3 +1,5 @@
  # AI Assistant Configuration
-+<!-- DevPilot Merged: 2025-09-02 -->
++<!-- SoftSensorAI Merged: 2025-09-02 -->
 +
  ## Custom Instructions
  [your existing content preserved]
-+## DevPilot Configuration
-+[new DevPilot standards added]
++## SoftSensorAI Configuration
++[new SoftSensorAI standards added]
 
 Options:
   [s] Skip - Keep existing file
@@ -247,19 +247,19 @@ Q: Do you need to clone a remote repository?
 
 - Starting a new project from a template
 - Cloning a team repository for the first time
-- You want the full DevPilot setup with all features
+- You want the full SoftSensorAI setup with all features
 - You prefer guided, interactive setup
 
 **Use `existing_repo_setup.sh` when:**
 
-- Adding DevPilot to an established project
+- Adding SoftSensorAI to an established project
 - You have custom configurations to preserve
 - You want granular control over what gets added
 - Migrating from another AI assistant setup
 
 ### Handling Sensitive Files
 
-DevPilot NEVER overwrites:
+SoftSensorAI NEVER overwrites:
 
 - `.env` files (contains secrets)
 - `credentials/*` files
@@ -314,7 +314,7 @@ MERGE_STRATEGY=skip ./setup/existing_repo_setup.sh
 After setup completes, verify:
 
 ```bash
-# Check DevPilot files were created
+# Check SoftSensorAI files were created
 ls -la CLAUDE.md .claude/ .mcp.json
 
 # Run DPRS to check repository readiness
@@ -367,4 +367,4 @@ sudo apt-get install git jq curl
 
 ---
 
-_Last updated: 2025-09-02 | DevPilot v2.0_
+_Last updated: 2025-09-02 | SoftSensorAI v2.0_

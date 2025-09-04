@@ -1,11 +1,11 @@
 # Existing Repository Setup Guide
 
-The fastest way to add DevPilot to your already-cloned repositories without reorganizing your
+The fastest way to add SoftSensorAI to your already-cloned repositories without reorganizing your
 directory structure.
 
 ## When to Use This
 
-DevPilot automatically detects if you're in an existing repository:
+SoftSensorAI automatically detects if you're in an existing repository:
 
 - ✅ Already have a repository cloned locally
 - ✅ Want to keep your current directory structure
@@ -24,13 +24,13 @@ dp setup
 # Initialize with your preferences
 dp init --skill l1 --phase mvp
 
-# That's it! DevPilot is configured for your project
+# That's it! SoftSensorAI is configured for your project
 dp palette  # Browse available commands
 ```
 
 ## What Gets Added
 
-The script adds DevPilot configurations **without** moving or cloning your repository:
+The script adds SoftSensorAI configurations **without** moving or cloning your repository:
 
 ```
 your-existing-repo/
@@ -234,12 +234,12 @@ The script works with non-git directories but shows a warning:
 # Initialize git if needed
 git init
 git add .
-git commit -m "Initial commit with DevPilot"
+git commit -m "Initial commit with SoftSensorAI"
 ```
 
 ### "Configuration already exists"
 
-If DevPilot was previously configured:
+If SoftSensorAI was previously configured:
 
 ```bash
 # Force overwrite (careful!)
@@ -283,7 +283,7 @@ setup_my_project() {
   local project_dir="$1"
   cd "$project_dir"
 
-  # Apply DevPilot
+  # Apply SoftSensorAI
   ~/devpilot/setup/existing_repo_setup.sh --skill expert --phase scale
 
   # Add standard personas
@@ -304,9 +304,9 @@ setup_my_project ~/projects/new-service
 
 ```bash
 # In your CI pipeline (e.g., GitHub Actions)
-- name: Setup DevPilot
+- name: Setup SoftSensorAI
   run: |
-    git clone https://github.com/Softsensor-org/DevPilot.git ~/devpilot
+    git clone https://github.com/Softsensor-org/SoftSensorAI.git ~/devpilot
     ~/devpilot/setup/existing_repo_setup.sh --skill l2 --phase beta --no-hooks
 
 - name: Run AI Security Review

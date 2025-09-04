@@ -3,7 +3,7 @@
 ## Overview
 
 Comprehensive system health check that verifies your development environment is properly configured
-for DevPilot.
+for SoftSensorAI.
 
 ## Usage
 
@@ -27,7 +27,7 @@ Performs 15+ checks across:
 ```bash
 dp doctor
 
-🏥 DevPilot Health Check
+🏥 SoftSensorAI Health Check
 ========================
 
 System Information:
@@ -144,7 +144,7 @@ All critical checks passed! Optional tools can be installed with:
 
 ## When to Use
 
-- **Before installing DevPilot** - Verify system compatibility
+- **Before installing SoftSensorAI** - Verify system compatibility
 - **Troubleshooting issues** - Identify missing dependencies
 - **CI/CD pipelines** - Validate environment
 - **Team onboarding** - Ensure consistent setup
@@ -245,7 +245,7 @@ wsl --version
 ## Related Commands
 
 - [`dp init`](init.md) - Runs doctor as first step
-- [`dp setup`](setup.md) - Add DevPilot to project
+- [`dp setup`](setup.md) - Add SoftSensorAI to project
 - [`scripts/dprs.sh`](../../scripts/dprs.md) - Repository readiness score
 
 ## Implementation

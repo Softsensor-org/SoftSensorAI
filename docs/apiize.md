@@ -1,4 +1,4 @@
-# DevPilot Apiize: Model-to-API Conversion
+# SoftSensorAI Apiize: Model-to-API Conversion
 
 Convert ML models into production-ready FastAPI services with a single command.
 
@@ -210,7 +210,7 @@ async def update_model(version: str):
 
 ## Integration Examples
 
-### With DevPilot Agent
+### With SoftSensorAI Agent
 
 ```bash
 # Create agent task for model deployment

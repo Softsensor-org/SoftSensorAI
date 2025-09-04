@@ -1,12 +1,12 @@
-# DevPilot Quickstart Guide
+# SoftSensorAI Quickstart Guide
 
 ## 🚀 2-Minute Setup
 
 ### Option 1: Single User (Default)
 
 ```bash
-# 1. Clone and install DevPilot
-git clone https://github.com/Softsensor-org/DevPilot.git ~/devpilot
+# 1. Clone and install SoftSensorAI
+git clone https://github.com/Softsensor-org/SoftSensorAI.git ~/devpilot
 cd ~/devpilot && ./setup_all.sh
 
 # 2. Add dp command to PATH
@@ -17,7 +17,7 @@ cd your-project
 dp setup   # Smart detection for any project
 dp init    # Initialize with full configuration
 
-# 4. Start using DevPilot
+# 4. Start using SoftSensorAI
 dp palette  # Discover all available commands
 ```
 
@@ -133,7 +133,7 @@ Only use this if you need to clone a repository first:
 
 ## 🎓 Skill Levels Explained
 
-DevPilot adapts to your experience:
+SoftSensorAI adapts to your experience:
 
 | Level        | Who It's For     | What You Get                             |
 | ------------ | ---------------- | ---------------------------------------- |
@@ -146,12 +146,12 @@ Start with `beginner` if unsure - you can change anytime!
 
 ## 🤖 Using AI Assistants (CLI-First)
 
-**Important**: DevPilot uses the **CLI versions** of AI assistants, not raw APIs. Each assistant
+**Important**: SoftSensorAI uses the **CLI versions** of AI assistants, not raw APIs. Each assistant
 points to `system/active.md` for consistent behavior.
 
 ### Installing AI CLIs (Required)
 
-**Important**: DevPilot requires CLI tools, not direct API access. See
+**Important**: SoftSensorAI requires CLI tools, not direct API access. See
 [AI CLI Installation Guide](./AI_CLI_INSTALL.md) for detailed instructions.
 
 ```bash
@@ -188,7 +188,7 @@ codex --system system/active.md --sandbox "generate unit tests"
 **Why system/active.md?**
 
 - ✅ Contains your skill level, project phase, and personas
-- ✅ Merges global DevPilot guidance + your project specifics
+- ✅ Merges global SoftSensorAI guidance + your project specifics
 - ✅ Ensures consistent AI behavior across all assistants
 - ✅ Automatically updated when you change profiles/personas
 
@@ -234,7 +234,7 @@ source ~/.bashrc
 
 ## 📦 Project Commands
 
-Every DevPilot project gets these commands:
+Every SoftSensorAI project gets these commands:
 
 ```bash
 just          # Show available tasks

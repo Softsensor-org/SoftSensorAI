@@ -11,9 +11,9 @@ structure and user workflow.
 
 ### User Workflow
 
-1. **DevPilot is installed to `~/devpilot`** - Users clone the repo once to their home directory
-2. **Scripts run FROM DevPilot directory** - Commands like `~/devpilot/setup/repo_wizard.sh`
-3. **Configuration applied TO other repos** - DevPilot configures projects without moving them
+1. **SoftSensorAI is installed to `~/devpilot`** - Users clone the repo once to their home directory
+2. **Scripts run FROM SoftSensorAI directory** - Commands like `~/devpilot/setup/repo_wizard.sh`
+3. **Configuration applied TO other repos** - SoftSensorAI configures projects without moving them
 4. **`dp` CLI is the main interface** - Located at `~/devpilot/bin/dp`
 
 ### Command Structure
@@ -75,14 +75,14 @@ The command palette (`dp palette`) works with:
 Since the repository is private:
 
 - ❌ `curl` commands won't work without authentication
-- ✅ Users must clone via SSH: `git@github.com:Softsensor-org/DevPilot.git`
+- ✅ Users must clone via SSH: `git@github.com:Softsensor-org/SoftSensorAI.git`
 - ✅ Documentation correctly notes this limitation
 
 ## Documentation Health
 
 ### Strengths
 
-- Clear separation between DevPilot directory and user projects
+- Clear separation between SoftSensorAI directory and user projects
 - Comprehensive command documentation
 - Good examples and scenarios
 - Proper skill level progression

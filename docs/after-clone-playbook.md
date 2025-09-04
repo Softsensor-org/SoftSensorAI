@@ -1,8 +1,8 @@
 # After Clone Playbook
 
 A practical, CLI-first workflow for immediate productivity after cloning any repository. This
-playbook fits DevPilot's architecture (system/active.md, profiles/phases, personas, zero-secrets CI)
-and gives you an immediate repo review plus the best commands to keep shipping fast.
+playbook fits SoftSensorAI's architecture (system/active.md, profiles/phases, personas, zero-secrets
+CI) and gives you an immediate repo review plus the best commands to keep shipping fast.
 
 ## 0) Bootstrap (Once Per Repo)
 
@@ -241,7 +241,7 @@ artifacts-all:
 
 # Show current configuration
 config-show:
-  @echo "Current DevPilot Configuration:"
+  @echo "Current SoftSensorAI Configuration:"
   @./scripts/profile_show.sh
   @echo ""
   @echo "Active Personas:"
@@ -300,10 +300,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup DevPilot
+      - name: Setup SoftSensorAI
         run: |
           # Note: For private repo, clone first:
-          # git clone git@github.com:Softsensor-org/DevPilot.git ~/devpilot
+          # git clone git@github.com:Softsensor-org/SoftSensorAI.git ~/devpilot
           ~/devpilot/scripts/doctor.sh
           ./scripts/apply_profile.sh --skill l2 --phase beta
 
@@ -497,11 +497,11 @@ Based on your answers, we'll customize:
 
 ### Use the built-in `dp`
 
-DevPilot ships a unified `dp` already. Don't create/overwrite `bin/dp`. Run `dp palette` to browse
-commands, or `just palette` if you prefer Just.
+SoftSensorAI ships a unified `dp` already. Don't create/overwrite `bin/dp`. Run `dp palette` to
+browse commands, or `just palette` if you prefer Just.
 
 ```bash
-# DevPilot's unified interface is already available:
+# SoftSensorAI's unified interface is already available:
 dp setup        # Smart project setup
 dp init         # Initialize with health check + profile + build
 dp doctor       # System health check

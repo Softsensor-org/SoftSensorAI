@@ -2,7 +2,7 @@
 
 ## Current Status
 
-- **Repository**: Softsensor-org/DevPilot (Private)
+- **Repository**: Softsensor-org/SoftSensorAI (Private)
 - **Collaborators**: 9 users with mixed access levels
 - **Your Role**: Admin
 
@@ -34,7 +34,7 @@ This will:
 1. **Go to Repository Settings**:
 
    ```
-   https://github.com/Softsensor-org/DevPilot/settings
+   https://github.com/Softsensor-org/SoftSensorAI/settings
    ```
 
 2. **Navigate to "Manage access"**:
@@ -61,13 +61,13 @@ This will:
 
 ```bash
 # Enable issues
-gh api --method PATCH repos/Softsensor-org/DevPilot \
+gh api --method PATCH repos/Softsensor-org/SoftSensorAI \
   -f has_issues=true \
   -f has_discussions=true
 
 # Add all org members with read access
 gh api orgs/Softsensor-org/members --jq '.[].login' | while read member; do
-  gh api --method PUT repos/Softsensor-org/DevPilot/collaborators/$member \
+  gh api --method PUT repos/Softsensor-org/SoftSensorAI/collaborators/$member \
     -f permission="pull"
 done
 
@@ -77,7 +77,7 @@ gh api --method POST orgs/Softsensor-org/teams \
   -f description="Core development team" \
   -f privacy="closed"
 
-gh api --method PUT orgs/Softsensor-org/teams/developers/repos/Softsensor-org/DevPilot \
+gh api --method PUT orgs/Softsensor-org/teams/developers/repos/Softsensor-org/SoftSensorAI \
   -f permission="push"
 ```
 
@@ -104,7 +104,7 @@ If you want ANYONE (including external users) to submit issues, you need to:
 1. **Make the repository public**:
 
    ```bash
-   gh api --method PATCH repos/Softsensor-org/DevPilot -f private=false
+   gh api --method PATCH repos/Softsensor-org/SoftSensorAI -f private=false
    ```
 
 2. **Or keep it private** and individually invite external contributors

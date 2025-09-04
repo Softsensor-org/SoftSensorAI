@@ -1,8 +1,8 @@
 # Migration Guide
 
-## Migrating from DevPilot v1.x to v2.0
+## Migrating from SoftSensorAI v1.x to v2.0
 
-DevPilot 2.0 is a major release with significant improvements. While we've maintained backward
+SoftSensorAI 2.0 is a major release with significant improvements. While we've maintained backward
 compatibility where possible, some changes require migration steps.
 
 ## Quick Migration (5 minutes)
@@ -13,7 +13,7 @@ cp -r ~/.claude ~/.claude.v1.backup
 cp -r ~/.gemini ~/.gemini.v1.backup
 cp -r ~/.grok ~/.grok.v1.backup
 
-# 2. Get DevPilot 2.0
+# 2. Get SoftSensorAI 2.0
 cd ~/devpilot  # or wherever you installed it
 git fetch origin
 git checkout v2.0.0
@@ -235,9 +235,9 @@ git checkout v1.5.0
 
 1. Check validation: `~/devpilot/validation/validate_agents.sh`
 2. Review docs: `~/devpilot/docs/`
-3. Open issue: https://github.com/Softsensor-org/DevPilot/issues
+3. Open issue: https://github.com/Softsensor-org/SoftSensorAI/issues
 
 ---
 
-**Welcome to DevPilot 2.0!** The migration is worth it for the enhanced features and better
+**Welcome to SoftSensorAI 2.0!** The migration is worth it for the enhanced features and better
 development experience.

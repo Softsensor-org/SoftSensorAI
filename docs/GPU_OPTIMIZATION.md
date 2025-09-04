@@ -3,6 +3,7 @@
 Understanding GPU acceleration for ML/AI workloads and development optimization strategies.
 
 ## Table of Contents
+
 - [Overview](#overview)
 - [GPU Detection](#gpu-detection)
 - [Understanding GPU Architecture](#understanding-gpu-architecture)
@@ -14,6 +15,7 @@ Understanding GPU acceleration for ML/AI workloads and development optimization 
 ## Overview
 
 This guide explains GPU optimization at a technical level, helping developers understand:
+
 - How GPUs accelerate ML workloads
 - What happens during parallelization
 - Impact of process management decisions
@@ -21,7 +23,7 @@ This guide explains GPU optimization at a technical level, helping developers un
 
 ## GPU Detection
 
-DevPilot automatically detects your GPU during setup:
+SoftSensorAI automatically detects your GPU during setup:
 
 ### Detection Methods
 
@@ -62,12 +64,14 @@ print(f"TF GPUs: {tf.config.list_physical_devices('GPU')}")
 ### CUDA Cores vs CPU Cores
 
 **CPU Cores (4-32 cores typically):**
+
 - Complex, independent processing units
 - Optimized for sequential tasks
 - Large cache, branch prediction
 - ~2-5 GHz clock speed
 
 **CUDA Cores (1000s of cores):**
+
 - Simple, parallel processing units
 - Optimized for parallel tasks
 - Shared memory architecture
@@ -736,25 +740,27 @@ class ModelServer:
 
 ### Common Issues and Solutions
 
-| Issue | Cause | Solution |
-|-------|-------|----------|
-| OOM Error | Batch too large | Reduce batch size or use gradient accumulation |
-| Slow Training | CPU bottleneck | Use DataLoader optimizations |
-| Memory Leak | Gradient accumulation | Call optimizer.zero_grad() |
-| Low GPU Utilization | Small batch size | Increase batch size or use mixed precision |
-| Inconsistent Results | Non-deterministic ops | Set torch.use_deterministic_algorithms(True) |
-| Kernel Launch Failure | Driver issue | Update CUDA drivers |
-| Distributed Training Hang | Process sync issue | Check dist.barrier() calls |
+| Issue                     | Cause                 | Solution                                       |
+| ------------------------- | --------------------- | ---------------------------------------------- |
+| OOM Error                 | Batch too large       | Reduce batch size or use gradient accumulation |
+| Slow Training             | CPU bottleneck        | Use DataLoader optimizations                   |
+| Memory Leak               | Gradient accumulation | Call optimizer.zero_grad()                     |
+| Low GPU Utilization       | Small batch size      | Increase batch size or use mixed precision     |
+| Inconsistent Results      | Non-deterministic ops | Set torch.use_deterministic_algorithms(True)   |
+| Kernel Launch Failure     | Driver issue          | Update CUDA drivers                            |
+| Distributed Training Hang | Process sync issue    | Check dist.barrier() calls                     |
 
 ## Summary
 
 GPU optimization involves understanding:
+
 1. **Hardware**: CUDA cores, memory hierarchy, bandwidth limits
 2. **Software**: Parallelization strategies, memory management
 3. **Process Impact**: Safe termination, resource cleanup
 4. **Monitoring**: Profiling, debugging, performance analysis
 
 Key takeaways:
+
 - Always profile before optimizing
 - Memory bandwidth often more limiting than compute
 - Batch size significantly impacts performance
@@ -763,4 +769,4 @@ Key takeaways:
 
 ---
 
-*For framework-specific optimization, see [AI_FRAMEWORKS.md](AI_FRAMEWORKS.md)*
+_For framework-specific optimization, see [AI_FRAMEWORKS.md](AI_FRAMEWORKS.md)_

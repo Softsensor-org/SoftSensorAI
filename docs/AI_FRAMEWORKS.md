@@ -1,8 +1,9 @@
 # 🤖 AI Frameworks Installation Guide
 
-Complete guide for setting up a professional AI/ML development environment with DevPilot.
+Complete guide for setting up a professional AI/ML development environment with SoftSensorAI.
 
 ## Table of Contents
+
 - [Overview](#overview)
 - [Prerequisites](#prerequisites)
 - [Quick Start](#quick-start)
@@ -14,18 +15,19 @@ Complete guide for setting up a professional AI/ML development environment with 
 
 ## Overview
 
-The AI Frameworks installer provides a comprehensive, GPU-optimized development environment for building AI agents, LLM applications, and machine learning projects.
+The AI Frameworks installer provides a comprehensive, GPU-optimized development environment for
+building AI agents, LLM applications, and machine learning projects.
 
 ### What Gets Installed
 
-| Category | Packages | Purpose |
-|----------|----------|---------|
-| **LLM APIs** | `anthropic`, `openai`, `groq` | Access to Claude, GPT, Groq models |
-| **Agent Frameworks** | `langchain`, `autogen`, `crewai` | Build multi-agent systems |
-| **ML/DL** | `torch`, `transformers`, `tensorflow` | Deep learning and NLP |
-| **Vector Stores** | `chromadb`, `faiss-cpu/gpu` | Semantic search and RAG |
-| **Development** | `jupyter`, `streamlit`, `gradio` | Notebooks and UI development |
-| **Utilities** | `tiktoken`, `python-dotenv`, `pydantic` | Token counting, config, validation |
+| Category             | Packages                                | Purpose                            |
+| -------------------- | --------------------------------------- | ---------------------------------- |
+| **LLM APIs**         | `anthropic`, `openai`, `groq`           | Access to Claude, GPT, Groq models |
+| **Agent Frameworks** | `langchain`, `autogen`, `crewai`        | Build multi-agent systems          |
+| **ML/DL**            | `torch`, `transformers`, `tensorflow`   | Deep learning and NLP              |
+| **Vector Stores**    | `chromadb`, `faiss-cpu/gpu`             | Semantic search and RAG            |
+| **Development**      | `jupyter`, `streamlit`, `gradio`        | Notebooks and UI development       |
+| **Utilities**        | `tiktoken`, `python-dotenv`, `pydantic` | Token counting, config, validation |
 
 ## Prerequisites
 
@@ -86,6 +88,7 @@ nano .env
 ```
 
 Add your keys:
+
 ```env
 OPENAI_API_KEY=sk-...
 ANTHROPIC_API_KEY=sk-ant-...
@@ -580,4 +583,4 @@ results = asyncio.run(async_generate(prompts))
 
 ---
 
-*Last updated: September 2025*
+_Last updated: September 2025_

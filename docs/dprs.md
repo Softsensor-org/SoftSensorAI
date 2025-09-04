@@ -1,10 +1,10 @@
-# DevPilot Readiness Score (DPRS)
+# SoftSensorAI Readiness Score (DPRS)
 
 ## Overview
 
-The DevPilot Readiness Score (DPRS) is a quantitative measure of repository maturity and production
-readiness. It provides an objective assessment across four key dimensions to help teams understand
-their progress and identify improvement areas.
+The SoftSensorAI Readiness Score (DPRS) is a quantitative measure of repository maturity and
+production readiness. It provides an objective assessment across four key dimensions to help teams
+understand their progress and identify improvement areas.
 
 ## Quick Start
 
@@ -98,7 +98,7 @@ Measures developer tooling and automation:
 
 ## Phase Thresholds
 
-DPRS maps scores to DevPilot project phases:
+DPRS maps scores to SoftSensorAI project phases:
 
 | Phase            | Score | Description                           | Typical Characteristics                                           |
 | ---------------- | ----- | ------------------------------------- | ----------------------------------------------------------------- |
@@ -108,7 +108,7 @@ DPRS maps scores to DevPilot project phases:
 | 🔬 **POC**       | 40-59 | Concept proven, exploring viability   | Some structure, early documentation                               |
 | 💡 **INCEPTION** | <40   | Early exploration phase               | Minimal structure, experimenting                                  |
 
-## Integration with DevPilot
+## Integration with SoftSensorAI
 
 ### Automatic Profile Selection
 
@@ -149,7 +149,7 @@ jobs:
 
       - name: Calculate DPRS
         run: |
-          curl -sL https://raw.githubusercontent.com/Softsensor-org/DevPilot/main/scripts/dprs.sh | bash
+          curl -sL https://raw.githubusercontent.com/Softsensor-org/SoftSensorAI/main/scripts/dprs.sh | bash
 
       - name: Comment on PR
         uses: actions/github-script@v7
@@ -309,7 +309,7 @@ check_custom_metric() {
 
 ## Comparison with Other Metrics
 
-| Metric              | Focus                  | DevPilot Integration        |
+| Metric              | Focus                  | SoftSensorAI Integration    |
 | ------------------- | ---------------------- | --------------------------- |
 | **DPRS**            | Overall maturity       | Native, drives profiles     |
 | **Code Coverage**   | Test completeness      | Component of Tests score    |
@@ -331,6 +331,6 @@ business needs
 
 ## See Also
 
-- [Profiles & Phases](profiles.md) - How DPRS maps to DevPilot profiles
+- [Profiles & Phases](profiles.md) - How DPRS maps to SoftSensorAI profiles
 - [CI Integration](ci.md) - Automating DPRS in pipelines
 - [Benefits](BENEFITS.md) - ROI and metrics tracking

@@ -1,14 +1,14 @@
-# DevPilot Documentation
+# SoftSensorAI Documentation
 
-This directory contains comprehensive guides to help you install, configure, and use the DevPilot AI
-development platform.
+This directory contains comprehensive guides to help you install, configure, and use the
+SoftSensorAI AI development platform.
 
 ## 📖 Guide Overview
 
 ### Platform Documentation
 
-- **[DevPilot.pdf](DevPilot.pdf)** - **COMPREHENSIVE OVERVIEW** - Complete platform strategy,
-  architecture, and implementation guide
+- **[SoftSensorAI.pdf](SoftSensorAI.pdf)** - **COMPREHENSIVE OVERVIEW** - Complete platform
+  strategy, architecture, and implementation guide
 
 ### Getting Started
 
@@ -58,13 +58,13 @@ development platform.
 
 ## 🚀 Getting Started
 
-**New to DevPilot?** Start with **[ARCHITECTURE_OVERVIEW.md](ARCHITECTURE_OVERVIEW.md)** to
+**New to SoftSensorAI?** Start with **[ARCHITECTURE_OVERVIEW.md](ARCHITECTURE_OVERVIEW.md)** to
 understand the system.
 
 **Ready to install?** Jump to **[quickstart.md](quickstart.md)** for immediate setup.
 
-**Have an existing repo?** Use **[existing_repo_setup.md](existing_repo_setup.md)** to add DevPilot
-without cloning.
+**Have an existing repo?** Use **[existing_repo_setup.md](existing_repo_setup.md)** to add
+SoftSensorAI without cloning.
 
 For comprehensive setup, the recommended reading order is:
 

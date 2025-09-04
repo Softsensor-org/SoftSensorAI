@@ -1,4 +1,4 @@
-# DevPilot Architecture & Usage Guide
+# SoftSensorAI Architecture & Usage Guide
 
 A CLI-first AI development platform that standardizes how teams work with Claude, Codex, Gemini,
 Grok, and other AI assistants.
@@ -7,7 +7,7 @@ Grok, and other AI assistants.
 
 ### 1. Two-Tier Install Model
 
-DevPilot separates global tooling from project-specific configuration:
+SoftSensorAI separates global tooling from project-specific configuration:
 
 ```
 ┌─────────────────────────────────────────────────────────┐
@@ -90,7 +90,7 @@ commands/
 
 ## CLI-First Usage
 
-DevPilot is designed for **CLI usage**, not API integration. Here's how to use each assistant:
+SoftSensorAI is designed for **CLI usage**, not API integration. Here's how to use each assistant:
 
 ### AI CLI Integration
 
@@ -101,7 +101,7 @@ For detailed installation and usage, see the [AI CLI Installation Guide](./AI_CL
 pip install anthropic
 export ANTHROPIC_API_KEY="sk-ant-..."
 
-# Use with DevPilot
+# Use with SoftSensorAI
 dp review  # Uses AI for code review
 dp agent new --goal "implement user authentication"  # Creates AI-guided task
 ```
@@ -142,7 +142,7 @@ grok --prompt .claude/commands/patterns/bug-fix.md "fix null pointer issue"
 
 ```bash
 # 1. Clone and install globally (one time only)
-git clone https://github.com/Softsensor-org/DevPilot.git ~/devpilot
+git clone https://github.com/Softsensor-org/SoftSensorAI.git ~/devpilot
 cd ~/devpilot
 ./setup_all.sh
 
@@ -289,7 +289,7 @@ Top 5 daily commands teams should use:
 4. `/api-contract` - OpenAPI/GraphQL updates
 5. `/long-context-map-reduce` - Handle large diffs/logs
 
-## Week with DevPilot
+## Week with SoftSensorAI
 
 ### Day 1: Setup & Orientation
 
@@ -403,7 +403,7 @@ chmod +x .git/hooks/pre-push
 
 **Cross-Platform Compatibility:**
 
-- All DevPilot scripts use BSD-safe `sed` commands
+- All SoftSensorAI scripts use BSD-safe `sed` commands
 - Works on macOS, Linux, and BSD systems
 - Use `sed -i ''` (with empty string) for macOS compatibility
 - Git hooks are portable across all platforms

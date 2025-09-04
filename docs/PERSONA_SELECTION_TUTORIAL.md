@@ -3,6 +3,7 @@
 A step-by-step guide to selecting and combining AI personas for optimal development assistance.
 
 ## Table of Contents
+
 - [Overview](#overview)
 - [Understanding Personas](#understanding-personas)
 - [Interactive Selection](#interactive-selection)
@@ -13,24 +14,27 @@ A step-by-step guide to selecting and combining AI personas for optimal developm
 
 ## Overview
 
-DevPilot's persona system allows you to customize AI assistance based on your project needs. Each persona provides specialized knowledge, tools, and permissions tailored to specific development domains.
+SoftSensorAI's persona system allows you to customize AI assistance based on your project needs.
+Each persona provides specialized knowledge, tools, and permissions tailored to specific development
+domains.
 
 ## Understanding Personas
 
 ### Available Personas
 
-| Persona | Focus Area | Key Features |
-|---------|------------|--------------|
-| **Data Scientist** | ML/AI Development | GPU optimization, ML frameworks, data analysis tools |
-| **Software Architect** | System Design | Architecture patterns, scalability analysis, design reviews |
-| **Backend Developer** | Server-Side | API design, database optimization, microservices |
-| **Frontend Developer** | UI/UX | React/Vue expertise, responsive design, performance |
-| **DevOps Engineer** | Infrastructure | CI/CD, Kubernetes, monitoring, deployment |
-| **Security Engineer** | Application Security | Vulnerability scanning, secure coding, threat modeling |
+| Persona                | Focus Area           | Key Features                                                |
+| ---------------------- | -------------------- | ----------------------------------------------------------- |
+| **Data Scientist**     | ML/AI Development    | GPU optimization, ML frameworks, data analysis tools        |
+| **Software Architect** | System Design        | Architecture patterns, scalability analysis, design reviews |
+| **Backend Developer**  | Server-Side          | API design, database optimization, microservices            |
+| **Frontend Developer** | UI/UX                | React/Vue expertise, responsive design, performance         |
+| **DevOps Engineer**    | Infrastructure       | CI/CD, Kubernetes, monitoring, deployment                   |
+| **Security Engineer**  | Application Security | Vulnerability scanning, secure coding, threat modeling      |
 
 ### Persona Components
 
 Each persona includes:
+
 - **Permissions**: File access patterns and allowed operations
 - **Commands**: Specialized AI commands for the domain
 - **Tools**: Domain-specific development tools
@@ -142,6 +146,7 @@ done
 ### Multi-Persona Benefits
 
 Combining personas gives you:
+
 - **Merged permissions**: Access patterns from all personas
 - **Combined commands**: Full command set across domains
 - **Broader expertise**: AI assistance across multiple areas
@@ -149,6 +154,7 @@ Combining personas gives you:
 ### Common Combinations
 
 #### Full-Stack ML Application
+
 ```bash
 ~/devpilot/scripts/persona_manager.sh add data-scientist
 ~/devpilot/scripts/persona_manager.sh add backend-developer
@@ -156,11 +162,13 @@ Combining personas gives you:
 ```
 
 Benefits:
+
 - ML model development and optimization
 - API design for model serving
 - Deployment and scaling strategies
 
 #### Secure Web Application
+
 ```bash
 ~/devpilot/scripts/persona_manager.sh add backend-developer
 ~/devpilot/scripts/persona_manager.sh add frontend-developer
@@ -168,11 +176,13 @@ Benefits:
 ```
 
 Benefits:
+
 - Full-stack development support
 - Security best practices throughout
 - Vulnerability prevention
 
 #### Scalable Microservices
+
 ```bash
 ~/devpilot/scripts/persona_manager.sh add software-architect
 ~/devpilot/scripts/persona_manager.sh add backend-developer
@@ -180,6 +190,7 @@ Benefits:
 ```
 
 Benefits:
+
 - System design and architecture
 - Service implementation
 - Container orchestration
@@ -407,4 +418,4 @@ codex "generate Docker compose for development"
 
 ---
 
-*Personas make AI assistance more focused and effective. Choose wisely based on your project needs.*
+_Personas make AI assistance more focused and effective. Choose wisely based on your project needs._

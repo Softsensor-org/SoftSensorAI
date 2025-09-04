@@ -1,4 +1,4 @@
-# DevPilot Project Profiles
+# SoftSensorAI Project Profiles
 
 Zero-friction, per-repository defaults (like Xcode's scheme file, but text).
 
@@ -277,16 +277,16 @@ profile:
 
 ## Comparison to Other Tools
 
-| Tool         | File                      | Approach                     |
-| ------------ | ------------------------- | ---------------------------- |
-| **DevPilot** | `devpilot.project.yml`    | Zero-friction, auto-detected |
-| Xcode        | `.xcscheme`               | GUI-based, complex           |
-| VS Code      | `.vscode/settings.json`   | Editor-specific              |
-| EditorConfig | `.editorconfig`           | Format-only                  |
-| Pre-commit   | `.pre-commit-config.yaml` | Hooks-only                   |
+| Tool             | File                      | Approach                     |
+| ---------------- | ------------------------- | ---------------------------- |
+| **SoftSensorAI** | `devpilot.project.yml`    | Zero-friction, auto-detected |
+| Xcode            | `.xcscheme`               | GUI-based, complex           |
+| VS Code          | `.vscode/settings.json`   | Editor-specific              |
+| EditorConfig     | `.editorconfig`           | Format-only                  |
+| Pre-commit       | `.pre-commit-config.yaml` | Hooks-only                   |
 
-DevPilot profiles are holistic—they configure AI behavior, CI/CD, team conventions, and development
-environment in one place.
+SoftSensorAI profiles are holistic—they configure AI behavior, CI/CD, team conventions, and
+development environment in one place.
 
 ## Troubleshooting
 

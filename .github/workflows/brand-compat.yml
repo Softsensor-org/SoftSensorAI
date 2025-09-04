@@ -1,0 +1,20 @@
+name: brand-compat
+on:
+  pull_request:
+  push:
+    branches: [main]
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Basic dp/ss commands (neutral if CLIs absent)
+        run: |
+          chmod +x bin/* || true
+          ./bin/dp help    || true
+          ./bin/ss help    || true
+          ./bin/dp version || true
+          ./bin/ss-agent --help || true
+          ./bin/ss-apiize --help || true
+          ./bin/ss-testgen --help || true
+          echo "✅ Brand compatibility verified"

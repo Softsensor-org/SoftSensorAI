@@ -1,6 +1,6 @@
 # 🔧 Troubleshooting Guide
 
-Complete solutions for common issues with DevPilot.
+Complete solutions for common issues with SoftSensorAI.
 
 ## Table of Contents
 
@@ -59,7 +59,7 @@ brew install bash
 ls -la ~/devpilot/
 
 # If missing, clone again
-git clone https://github.com/Softsensor-org/DevPilot.git ~/devpilot
+git clone https://github.com/Softsensor-org/SoftSensorAI.git ~/devpilot
 
 # Add to PATH (optional)
 echo 'export PATH="$HOME/devpilot/bin:$PATH"' >> ~/.bashrc
@@ -522,7 +522,7 @@ bash -x problematic_script.sh 2>&1 | tee error.log
 
 ### Report Issues
 
-1. Check existing issues: [GitHub Issues](https://github.com/Softsensor-org/DevPilot/issues)
+1. Check existing issues: [GitHub Issues](https://github.com/Softsensor-org/SoftSensorAI/issues)
 2. Include debug information
 3. Describe what you expected vs what happened
 4. Include steps to reproduce

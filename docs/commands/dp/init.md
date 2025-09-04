@@ -181,7 +181,7 @@ npm install --verbose
 
 ## Related Commands
 
-- [`dp setup`](setup.md) - Add DevPilot to a project (run before init)
+- [`dp setup`](setup.md) - Add SoftSensorAI to a project (run before init)
 - [`dp doctor`](doctor.md) - Health check only
 - [`dp project`](project.md) - View current configuration
 - [`scripts/apply_profile.sh`](../../scripts/apply_profile.md) - Change profile later

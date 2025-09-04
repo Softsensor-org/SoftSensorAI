@@ -8,11 +8,11 @@
 - `.github/workflows/security-review.yml` — SAST, secrets, Dockerfile linting with tool-specific
   labels
 - `.github/workflows/ai-review.yml` — CLI-first AI PR reviews (no API keys required)
-- `.github/workflows/dprs-report.yml` — DevPilot Readiness Score tracking
+- `.github/workflows/dprs-report.yml` — SoftSensorAI Readiness Score tracking
 
 ## OS Compatibility Testing
 
-The `os-compatibility.yml` workflow ensures DevPilot works across all supported platforms:
+The `os-compatibility.yml` workflow ensures SoftSensorAI works across all supported platforms:
 
 ### Test Matrix
 

@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to DevPilot will be documented in this file.
+All notable changes to SoftSensorAI will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project
 adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
@@ -9,7 +9,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### 🎉 Major Release - Complete Platform Redesign
 
-This release transforms DevPilot from a collection of setup scripts into a comprehensive AI
+This release transforms SoftSensorAI from a collection of setup scripts into a comprehensive AI
 development platform with skill-based progression, project phase management, and enterprise
 features.
 

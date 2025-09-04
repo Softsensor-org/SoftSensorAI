@@ -2,7 +2,7 @@
 
 ## Supported Operating Systems
 
-DevPilot has been tested and verified to work on the following platforms:
+SoftSensorAI has been tested and verified to work on the following platforms:
 
 ### Tier 1 - Full Support
 
@@ -78,7 +78,7 @@ Each platform is tested for:
 2. Package manager detection
 3. Architecture detection (x86_64, arm64, etc.)
 4. Core script execution (doctor.sh, setup_all.sh)
-5. DevPilot CLI functionality
+5. SoftSensorAI CLI functionality
 6. Installation script compatibility
 7. Shell script syntax validation
 
@@ -159,7 +159,7 @@ View results in the GitHub Actions tab under "OS Compatibility Tests" workflow.
 1. Run diagnostic: `./scripts/doctor.sh`
 2. Check test results: `./tests/test_os_compatibility.sh`
 3. View CI logs: Check GitHub Actions for detailed error messages
-4. Report issues: https://github.com/Softsensor-org/DevPilot/issues
+4. Report issues: https://github.com/Softsensor-org/SoftSensorAI/issues
 
 ## Contributing
 

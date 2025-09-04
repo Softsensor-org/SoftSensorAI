@@ -2,7 +2,7 @@
 
 ## Overview
 
-DevPilot includes a **CLI-first, zero-secrets** AI PR review workflow that automatically reviews
+SoftSensorAI includes a **CLI-first, zero-secrets** AI PR review workflow that automatically reviews
 pull requests using installed AI CLIs (Claude, Codex, Gemini, or Grok).
 
 ## Key Features
@@ -228,15 +228,15 @@ If you see "No AI CLI available" in the workflow logs:
 
 ## Comparison with Alternatives
 
-| Feature           | DevPilot AI Review | GitHub Copilot | CodeRabbit | Traditional Review |
-| ----------------- | ------------------ | -------------- | ---------- | ------------------ |
-| Setup Time        | 2 minutes          | 5 minutes      | 15 minutes | N/A                |
-| API Keys Required | ❌ No              | ✅ Yes         | ✅ Yes     | ❌ No              |
-| Multi-Provider    | ✅ Yes             | ❌ No          | ❌ No      | N/A                |
-| Customizable      | ✅ Yes             | ⚠️ Limited     | ✅ Yes     | ✅ Yes             |
-| Non-Blocking      | ✅ Yes             | ✅ Yes         | ✅ Yes     | ❌ No              |
-| Response Time     | 1-2 min            | 1-2 min        | 2-5 min    | Hours/Days         |
-| Cost              | ~$0.01             | $10/month      | $15/month  | Developer time     |
+| Feature           | SoftSensorAI AI Review | GitHub Copilot | CodeRabbit | Traditional Review |
+| ----------------- | ---------------------- | -------------- | ---------- | ------------------ |
+| Setup Time        | 2 minutes              | 5 minutes      | 15 minutes | N/A                |
+| API Keys Required | ❌ No                  | ✅ Yes         | ✅ Yes     | ❌ No              |
+| Multi-Provider    | ✅ Yes                 | ❌ No          | ❌ No      | N/A                |
+| Customizable      | ✅ Yes                 | ⚠️ Limited     | ✅ Yes     | ✅ Yes             |
+| Non-Blocking      | ✅ Yes                 | ✅ Yes         | ✅ Yes     | ❌ No              |
+| Response Time     | 1-2 min                | 1-2 min        | 2-5 min    | Hours/Days         |
+| Cost              | ~$0.01                 | $10/month      | $15/month  | Developer time     |
 
 ## Next Steps
 
@@ -248,6 +248,6 @@ If you see "No AI CLI available" in the workflow logs:
 
 ## Support
 
-- **Issues**: [GitHub Issues](https://github.com/Softsensor-org/DevPilot/issues)
+- **Issues**: [GitHub Issues](https://github.com/Softsensor-org/SoftSensorAI/issues)
 - **Workflow**: `.github/workflows/ai-review.yml`
 - **Customization**: See "Customizing the Review" section above

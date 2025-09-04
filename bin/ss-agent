@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# Prefer new brand if present; fallback to dp
+if [ -x "$DIR/dp-${0##*/ss}" ]; then exec "$DIR/dp-${0##*/ss}" "$@"; fi
+if [ -x "$DIR/dp" ] && [ "${0##*/}" = "ss" ]; then exec "$DIR/dp" "$@"; fi
+echo "error: dp not found near $DIR"; exit 127

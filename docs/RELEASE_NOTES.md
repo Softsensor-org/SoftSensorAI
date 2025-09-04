@@ -1,13 +1,13 @@
-# DevPilot v2.0.0 Release Notes
+# SoftSensorAI v2.0.0 Release Notes
 
 **Release Date:** August 31, 2024 **Type:** Major Release **Breaking Changes:** Yes (see Migration
 section)
 
 ## 🚀 Highlights
 
-DevPilot 2.0 is a complete reimagining of the platform, transforming it from a collection of setup
-scripts into a comprehensive AI development environment that adapts to your skill level and project
-needs.
+SoftSensorAI 2.0 is a complete reimagining of the platform, transforming it from a collection of
+setup scripts into a comprehensive AI development environment that adapts to your skill level and
+project needs.
 
 ### Key Features
 
@@ -53,8 +53,8 @@ needs.
 ## 💡 Quick Start
 
 ```bash
-# Install DevPilot
-git clone https://github.com/Softsensor-org/DevPilot.git ~/devpilot
+# Install SoftSensorAI
+git clone https://github.com/Softsensor-org/SoftSensorAI.git ~/devpilot
 cd ~/devpilot
 ./setup_all.sh
 
@@ -77,7 +77,7 @@ cd ~/devpilot
 cp -r ~/.claude ~/.claude.backup
 cp -r ~/.gemini ~/.gemini.backup
 
-# 2. Install DevPilot 2.0
+# 2. Install SoftSensorAI 2.0
 cd ~/devpilot
 git pull origin main
 ./setup_all.sh
@@ -181,11 +181,11 @@ Thanks to all contributors and users who provided feedback for this major releas
 
 ## 📞 Support
 
-- **Issues**: https://github.com/Softsensor-org/DevPilot/issues
+- **Issues**: https://github.com/Softsensor-org/SoftSensorAI/issues
 - **Documentation**: See `/docs` directory
 - **Validation**: Run `./validation/validate_agents.sh`
 
 ---
 
-**Upgrade Today!** DevPilot 2.0 is the most significant update yet, designed to grow with you from
-your first line of code to architecting complex systems.
+**Upgrade Today!** SoftSensorAI 2.0 is the most significant update yet, designed to grow with you
+from your first line of code to architecting complex systems.

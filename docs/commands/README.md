@@ -1,6 +1,6 @@
-# DevPilot Command Reference
+# SoftSensorAI Command Reference
 
-Complete documentation for all DevPilot commands with examples, use cases, and troubleshooting.
+Complete documentation for all SoftSensorAI commands with examples, use cases, and troubleshooting.
 
 ## 🎯 Quick Navigation
 
@@ -8,7 +8,7 @@ Complete documentation for all DevPilot commands with examples, use cases, and t
 
 | Command                       | Purpose                           | Documentation               |
 | ----------------------------- | --------------------------------- | --------------------------- |
-| [`dp setup`](dp/setup.md)     | Add DevPilot to any project       | [Full Guide](dp/setup.md)   |
+| [`dp setup`](dp/setup.md)     | Add SoftSensorAI to any project   | [Full Guide](dp/setup.md)   |
 | [`dp init`](dp/init.md)       | Initialize and configure project  | [Full Guide](dp/init.md)    |
 | [`dp doctor`](dp/doctor.md)   | Check system health               | [Full Guide](dp/doctor.md)  |
 | [`dp palette`](dp/palette.md) | Browse all commands interactively | [Full Guide](dp/palette.md) |
@@ -73,8 +73,8 @@ Complete documentation for all DevPilot commands with examples, use cases, and t
 ### First Time Setup
 
 ```bash
-# 1. Install DevPilot
-git clone https://github.com/Softsensor-org/DevPilot ~/devpilot
+# 1. Install SoftSensorAI
+git clone https://github.com/Softsensor-org/SoftSensorAI ~/devpilot
 cd ~/devpilot && ./setup_all.sh
 
 # 2. Add to PATH
@@ -82,7 +82,7 @@ export PATH="$HOME/devpilot/bin:$PATH"
 
 # 3. Setup your project
 cd your-project
-dp setup        # Add DevPilot files
+dp setup        # Add SoftSensorAI files
 dp init         # Configure and build
 
 # 4. Explore commands
@@ -201,7 +201,7 @@ dp palette test      # Find test commands
 
 ## 🚀 Getting Started
 
-1. **New to DevPilot?** Start with [`dp setup`](dp/setup.md)
+1. **New to SoftSensorAI?** Start with [`dp setup`](dp/setup.md)
 2. **Need help?** Run [`dp doctor`](dp/doctor.md)
 3. **Want to explore?** Use [`dp palette`](dp/palette.md)
 4. **Ready to code?** Check [`dp review`](dp/review.md)
@@ -210,7 +210,7 @@ dp palette test      # Find test commands
 
 ### Beginner
 
-1. [`dp setup`](dp/setup.md) - Add DevPilot
+1. [`dp setup`](dp/setup.md) - Add SoftSensorAI
 2. [`dp init`](dp/init.md) - Configure project
 3. [`dp doctor`](dp/doctor.md) - Verify setup
 4. [`dp palette`](dp/palette.md) - Explore commands
@@ -253,6 +253,6 @@ To add documentation for a new command:
 
 ## 📞 Support
 
-- **Issues**: [GitHub Issues](https://github.com/Softsensor-org/DevPilot/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/Softsensor-org/DevPilot/discussions)
+- **Issues**: [GitHub Issues](https://github.com/Softsensor-org/SoftSensorAI/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/Softsensor-org/SoftSensorAI/discussions)
 - **Documentation**: [Main Docs](../../README.md)
