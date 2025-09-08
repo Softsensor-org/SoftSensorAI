@@ -19,6 +19,8 @@ alias ssp='ss palette'                   # Add to ~/.bashrc for quick access
 cd your-project
 ss setup        # Works for new or existing repos
 ss init         # Configure and initialize
+# Or for customer projects with multiple repos:
+ss customer-project  # Setup org/customer/project structure
 
 # 3. Start using AI features
 ssp             # Browse all commands (using alias)

@@ -329,9 +329,10 @@ if check_existing_repo && [ "$NON_INTERACTIVE" -eq 0 ]; then
   echo "Options:"
   echo "  1) Setup agent configs for THIS existing project"
   echo "  2) Clone a NEW repository (continue with wizard)"
-  echo "  3) Exit"
+  echo "  3) Setup customer project (multiple repos)"
+  echo "  4) Exit"
   echo ""
-  read -p "Choose option (1-3): " existing_choice
+  read -p "Choose option (1-4): " existing_choice
 
   case "$existing_choice" in
     1)
@@ -348,6 +349,15 @@ if check_existing_repo && [ "$NON_INTERACTIVE" -eq 0 ]; then
       say "Continuing with new repository setup..."
       ;;
     3)
+      # Launch customer project wizard
+      if [ -f "$SCRIPT_DIR/customer_project_wizard.sh" ]; then
+        exec "$SCRIPT_DIR/customer_project_wizard.sh"
+      else
+        err "Customer project wizard not found"
+        exit 1
+      fi
+      ;;
+    4)
       say "Exiting..."
       exit 0
       ;;
@@ -401,10 +411,14 @@ if [[ -z "$ORG" && "$DRY" -eq 0 ]]; then
     fi
   else
     say "Choose an org"
-    ORG=$(select_menu "${ORGS[@]}" "Create new…" "Setup existing repo")
+    ORG=$(select_menu "${ORGS[@]}" "Create new…" "Setup existing repo" "Customer project (multiple repos)")
     if [[ "$ORG" == "Setup existing repo" ]]; then
       if [ -f "$SCRIPT_DIR/existing_repo_setup.sh" ]; then
         exec "$SCRIPT_DIR/existing_repo_setup.sh"
+      fi
+    elif [[ "$ORG" == "Customer project (multiple repos)" ]]; then
+      if [ -f "$SCRIPT_DIR/customer_project_wizard.sh" ]; then
+        exec "$SCRIPT_DIR/customer_project_wizard.sh"
       fi
     elif [[ "$ORG" == "Create new…" ]]; then
       read -rp "Enter new org slug: " ORG

@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# Customer project setup wrapper for ss command
+set -euo pipefail
+
+# Find the SoftSensorAI installation directory
+if [ -n "${SOFTSENSORAI_HOME:-}" ]; then
+  SS_HOME="$SOFTSENSORAI_HOME"
+elif [ -f "$HOME/softsensorai/setup/customer_project_wizard.sh" ]; then
+  SS_HOME="$HOME/softsensorai"
+elif [ -f "$HOME/repos/setup-scripts-fresh/setup/customer_project_wizard.sh" ]; then
+  SS_HOME="$HOME/repos/setup-scripts-fresh"
+else
+  # Try to find relative to this script
+  SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+  SS_HOME="$(dirname "$SCRIPT_DIR")"
+fi
+
+# Launch the customer project wizard
+if [ -f "$SS_HOME/setup/customer_project_wizard.sh" ]; then
+  exec "$SS_HOME/setup/customer_project_wizard.sh" "$@"
+else
+  echo "Error: Customer project wizard not found"
+  echo "Expected at: $SS_HOME/setup/customer_project_wizard.sh"
+  exit 1
+fi
