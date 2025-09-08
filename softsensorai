@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# DevPilot - Unified CLI entry point
-# Provides cohesive interface to all DevPilot commands
+# SoftSensorAI - Unified CLI entry point
+# Provides cohesive interface to all SoftSensorAI commands
 
-DEVPILOT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SOFTSENSORAI_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 VERSION="2.0.0"
 
 # Colors for output
@@ -17,10 +17,10 @@ NC='\033[0m' # No Color
 # Display help
 show_help() {
     cat << EOF
-DevPilot v${VERSION} - AI-First Development Toolkit
+SoftSensorAI v${VERSION} - AI-Powered Development Platform
 
 USAGE:
-    devpilot <command> [options]
+    softsensorai <command> [options]
 
 CORE COMMANDS:
     doctor              Check system setup and dependencies
@@ -31,16 +31,17 @@ CORE COMMANDS:
 
 WORKFLOW COMMANDS:
     persona             Apply AI persona configurations
-    dprs                Calculate DevPilot Readiness Score
+    dprs                Calculate SoftSensorAI Readiness Score
     audit               Run security and quality audits
     commands            Generate AI command registry
 
 EXAMPLES:
-    devpilot doctor                         # Check system health
-    devpilot setup --existing               # Set up current repo
-    devpilot profile --skill l2 --phase beta # Change profile
-    devpilot tickets --from-code            # Generate backlog
-    devpilot review --diff HEAD~3           # Review recent changes
+    softsensorai doctor                     # Check system health
+    softsensorai setup                      # Set up repository (interactive)
+    softsensorai setup git@github.com:org/repo  # Set up with URL directly
+    softsensorai profile --skill l2 --phase beta # Change profile
+    softsensorai tickets --from-code        # Generate backlog
+    softsensorai review --diff HEAD~3       # Review recent changes
 
 OPTIONS:
     -h, --help          Show this help message
@@ -48,9 +49,9 @@ OPTIONS:
     --debug             Enable debug output
 
 For detailed help on any command:
-    devpilot <command> --help
+    softsensorai <command> --help
 
-Documentation: https://github.com/Softsensor-org/DevPilot
+Documentation: https://github.com/Softsensor-org/SoftSensorAI
 EOF
 }
 
@@ -59,27 +60,22 @@ case "${1:-}" in
     doctor)
         shift
         echo -e "${GREEN}Running system diagnostics...${NC}"
-        exec "$DEVPILOT_ROOT/scripts/doctor.sh" "$@"
+        exec "$SOFTSENSORAI_ROOT/scripts/doctor.sh" "$@"
         ;;
 
     setup)
         shift
-        # Parse setup options
-        if [[ "${1:-}" == "--existing" ]] || [[ "${1:-}" == "-e" ]]; then
-            shift
-            exec "$DEVPILOT_ROOT/setup/existing_repo_setup.sh" "$@"
-        else
-            exec "$DEVPILOT_ROOT/setup/repo_wizard.sh" "$@"
-        fi
+        # Use simplified setup by default
+        exec "$SOFTSENSORAI_ROOT/setup/simplified_setup.sh" "$@"
         ;;
 
     profile)
         shift
         # Route to apply_profile.sh or profile_menu.sh
         if [[ $# -eq 0 ]]; then
-            exec "$DEVPILOT_ROOT/scripts/profile_menu.sh"
+            exec "$SOFTSENSORAI_ROOT/scripts/profile_menu.sh"
         else
-            exec "$DEVPILOT_ROOT/scripts/apply_profile.sh" "$@"
+            exec "$SOFTSENSORAI_ROOT/scripts/apply_profile.sh" "$@"
         fi
         ;;
 
@@ -89,14 +85,14 @@ case "${1:-}" in
         case "${1:-}" in
             --from-code|from-code)
                 shift
-                exec "$DEVPILOT_ROOT/scripts/generate_tickets.sh" --from-code "$@"
+                exec "$SOFTSENSORAI_ROOT/scripts/generate_tickets.sh" --from-code "$@"
                 ;;
             --from-diff|from-diff)
                 shift
-                exec "$DEVPILOT_ROOT/scripts/generate_tickets.sh" --from-diff "$@"
+                exec "$SOFTSENSORAI_ROOT/scripts/generate_tickets.sh" --from-diff "$@"
                 ;;
             *)
-                exec "$DEVPILOT_ROOT/scripts/generate_tickets.sh" "$@"
+                exec "$SOFTSENSORAI_ROOT/scripts/generate_tickets.sh" "$@"
                 ;;
         esac
         ;;
@@ -153,12 +149,12 @@ case "${1:-}" in
 
     persona)
         shift
-        exec "$DEVPILOT_ROOT/scripts/persona_manager.sh" "$@"
+        exec "$SOFTSENSORAI_ROOT/scripts/persona_manager.sh" "$@"
         ;;
 
     dprs)
         shift
-        exec "$DEVPILOT_ROOT/scripts/dprs.sh" "$@"
+        exec "$SOFTSENSORAI_ROOT/scripts/dprs.sh" "$@"
         ;;
 
     audit)
@@ -186,7 +182,7 @@ case "${1:-}" in
 
     commands)
         shift
-        exec "$DEVPILOT_ROOT/scripts/generate_command_registry.sh" "$@"
+        exec "$SOFTSENSORAI_ROOT/scripts/generate_command_registry.sh" "$@"
         ;;
 
     -h|--help|help)
@@ -194,7 +190,7 @@ case "${1:-}" in
         ;;
 
     -v|--version|version)
-        echo "DevPilot v${VERSION}"
+        echo "SoftSensorAI v${VERSION}"
         ;;
 
     "")

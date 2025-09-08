@@ -15,11 +15,15 @@ else
   SS_HOME="$(dirname "$SCRIPT_DIR")"
 fi
 
-# Launch the customer project wizard
-if [ -f "$SS_HOME/setup/customer_project_wizard.sh" ]; then
+# Launch the simplified setup (handles multi-repo projects)
+if [ -f "$SS_HOME/setup/simplified_setup.sh" ]; then
+  echo "Tip: For multi-repo projects, just paste multiple URLs when prompted"
+  exec "$SS_HOME/setup/simplified_setup.sh" "$@"
+elif [ -f "$SS_HOME/setup/customer_project_wizard.sh" ]; then
+  # Fallback to old wizard if simplified doesn't exist
   exec "$SS_HOME/setup/customer_project_wizard.sh" "$@"
 else
-  echo "Error: Customer project wizard not found"
-  echo "Expected at: $SS_HOME/setup/customer_project_wizard.sh"
+  echo "Error: Setup script not found"
+  echo "Expected at: $SS_HOME/setup/simplified_setup.sh"
   exit 1
 fi

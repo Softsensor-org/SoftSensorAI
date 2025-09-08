@@ -1,4 +1,4 @@
-# DevPilot Command Registry
+# SoftSensorAI Command Registry
 
 Quick reference for all available commands. Use `dp palette` or `just palette` to search interactively.
 
@@ -17,7 +17,7 @@ Quick reference for all available commands. Use `dp palette` or `just palette` t
 | `dp review` | AI review of local changes before commit | review | dp | [📖](docs/commands/dp/review.md) |
 | `dp review --preview` | AI review with preview logs | review | dp | [📖](docs/commands/dp/review.md) |
 | `dp tickets` | Generate structured backlog (JSON/CSV) | planning | dp | [📖](docs/commands/dp/tickets.md) |
-| `dp score` | DevPilot Readiness Score (DPRS) | diagnostics | dp | [📖](docs/commands/dp/score.md) |
+| `dp score` | SoftSensorAI Readiness Score (SSRS) | diagnostics | dp | [📖](docs/commands/dp/score.md) |
 | `dp detect` | Detect technology stack in repository | analysis | dp | [📖](docs/commands/dp/detect.md) |
 | `dp plan` | Preview what setup would create (dry run) | planning | dp | [📖](docs/commands/dp/plan.md) |
 | `dp palette` | Open command palette | meta | dp | [📖](docs/commands/dp/palette.md) |

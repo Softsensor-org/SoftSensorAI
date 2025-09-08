@@ -1,8 +1,8 @@
-# DevPilot Migration Guide
+# SoftSensorAI Migration Guide
 
 ## Legacy Script Migration
 
-As of 2025-09-03, DevPilot has consolidated all functionality under the unified `dp` CLI command.
+As of 2025-09-03, SoftSensorAI has consolidated all functionality under the unified `ss` CLI command.
 Legacy scripts are being phased out in favor of the new structure.
 
 ### Maintained Compatibility Wrappers
@@ -66,7 +66,7 @@ The following scripts have been removed or archived:
 
 ### Benefits of Migration
 
-- **Unified interface**: Single entry point for all DevPilot functionality
+- **Unified interface**: Single entry point for all SoftSensorAI functionality
 - **Better discovery**: `dp help` shows all available commands
 - **Consistent behavior**: Shared configuration and error handling
 - **Improved performance**: Optimized command routing
@@ -77,4 +77,4 @@ The following scripts have been removed or archived:
 For help with migration:
 
 - Run `dp help` for command documentation
-- Report issues at https://github.com/Softsensor-org/DevPilot/issues
+- Report issues at https://github.com/Softsensor-org/SoftSensorAI/issues

@@ -15,12 +15,12 @@ cd ~/softsensorai && ./setup_all.sh
 export PATH="$HOME/softsensorai/bin:$PATH"  # Add to ~/.bashrc
 alias ssp='ss palette'                   # Add to ~/.bashrc for quick access
 
-# 2. Setup your project (any repo)
-cd your-project
-ss setup        # Works for new or existing repos
-ss init         # Configure and initialize
-# Or for customer projects with multiple repos:
-ss customer-project  # Setup org/customer/project structure
+# 2. Setup your project - ONE command!
+ss setup        # Interactive - just paste GitHub URL
+# Or with URL directly:
+ss setup git@github.com:org/repo.git
+# Or for existing repo:
+cd your-project && ss setup
 
 # 3. Start using AI features
 ssp             # Browse all commands (using alias)
@@ -44,13 +44,19 @@ details.
 
 ## 🚀 Installation Options
 
-### Single-User (Default)
+### Quick Setup (Simplified)
 
-For individual developers - installs in your project directory:
+One command setup - automatically detects context:
 
 ```bash
-git clone https://github.com/Softsensor-org/SoftSensorAI.git
-cd SoftSensorAI && ./bin/ss init
+git clone https://github.com/Softsensor-org/SoftSensorAI.git ~/softsensorai
+cd ~/softsensorai && ./setup_all.sh
+export PATH="$HOME/softsensorai/bin:$PATH"  # Add to ~/.bashrc
+```
+
+Then for any project:
+```bash
+ss setup  # Just paste GitHub URL when prompted
 ```
 
 ### Multi-User / Team Installation
