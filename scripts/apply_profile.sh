@@ -147,7 +147,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 # Validate inputs
-VALID_SKILLS="vibe beginner l1 l2 expert"
+VALID_SKILLS="vibe beginner l1 l2 expert custom"
 VALID_PHASES="poc mvp beta scale"
 
 if ! echo "$VALID_SKILLS" | grep -w "$SKILL" > /dev/null; then
@@ -167,6 +167,9 @@ if [ -z "$TEACH_MODE" ]; then
   case "$SKILL" in
     vibe|beginner)
       TEACH_MODE="on"
+      ;;
+    custom)
+      TEACH_MODE="off"  # Default to off for custom, can be overridden
       ;;
     *)
       TEACH_MODE="off"
@@ -291,6 +294,18 @@ case "$SKILL" in
 - `/mock-a-screen` - Create UI mockups
 - `/generate-readme` - Write documentation
 - `/draft-api-from-text` - Design APIs from descriptions
+EOF
+    ;;
+  custom)
+    cat >> PROFILE.md <<'EOF'
+**For**: Flexible configuration based on specific needs
+**Capabilities**: Customizable based on project requirements
+**Restrictions**: Defined by custom configuration
+**Focus**: Tailored to specific workflow needs
+
+### Available Commands
+- Commands configured based on custom requirements
+- Check .claude/commands/ for available commands
 EOF
     ;;
   beginner)
@@ -432,6 +447,14 @@ case "$SKILL" in
 - [ ] Understand Plan→Code→Test workflow
 - [ ] Can run `pnpm test` independently
 - [ ] Ready to write simple code changes
+EOF
+    ;;
+  custom)
+    cat >> PROFILE.md <<'EOF'
+Custom skill level - graduation criteria depends on your configuration:
+- [ ] Review your specific requirements
+- [ ] Define clear advancement goals
+- [ ] Consider moving to a standard skill level
 EOF
     ;;
   beginner)
