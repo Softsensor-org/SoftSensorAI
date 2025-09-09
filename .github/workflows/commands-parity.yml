@@ -1,0 +1,57 @@
+name: Command Documentation Parity
+
+on:
+  pull_request:
+    paths:
+      - 'bin/**'
+      - 'docs/commands/**'
+      - 'scripts/commands_parity.mjs'
+      - '.github/workflows/commands-parity.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'bin/**'
+      - 'docs/commands/**'
+
+jobs:
+  check-parity:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: Check command/documentation parity
+        run: |
+          echo "🔍 Checking command/documentation parity..."
+          node scripts/commands_parity.mjs
+      
+      - name: Generate detailed report
+        if: always()
+        run: |
+          echo ""
+          echo "📊 Generating detailed report..."
+          node scripts/commands_parity.mjs --detailed || true
+      
+      - name: Suggest fixes
+        if: failure()
+        run: |
+          echo ""
+          echo "💡 How to fix parity issues:"
+          echo ""
+          echo "1. For undocumented commands:"
+          echo "   - Create docs/commands/dp/<command>.md"
+          echo "   - Document usage, options, and examples"
+          echo ""
+          echo "2. For documented but unimplemented commands:"
+          echo "   - Implement the command in bin/dp"
+          echo "   - Or remove the stale documentation"
+          echo ""
+          echo "3. Run locally to test:"
+          echo "   npm run commands:parity"

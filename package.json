@@ -15,6 +15,7 @@
     "budgets:check": "node scripts/contract_budgets_and_telemetry.mjs",
     "perf:probe": "node scripts/utils/performance_probe.mjs --save",
     "bundle:analyze": "node scripts/utils/bundle_analyzer.mjs",
+    "commands:parity": "node scripts/commands_parity.mjs",
     "test": "echo 'No tests configured yet'"
   },
   "dependencies": {
