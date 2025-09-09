@@ -93,6 +93,107 @@ HOOK
     fi
 }
 
+setup_project_configs() {
+    local project_path="$1"
+    shift
+    local repo_urls=("$@")
+    
+    # Create project-level .claude directory
+    mkdir -p "$project_path/.claude"
+    mkdir -p "$project_path/.codex"
+    
+    # Create project-level CLAUDE.md
+    cat > "$project_path/CLAUDE.md" <<'EOF'
+# Project-Level AI Assistant Configuration
+
+This is a multi-repository project. When working from this directory, you have access to all repositories below.
+
+## Project Structure
+EOF
+    
+    # Add repo list to CLAUDE.md
+    for url in "${repo_urls[@]}"; do
+        local repo_name
+        if [[ "$url" == local:* ]]; then
+            repo_name="${url#local:}"
+        else
+            repo_name=$(extract_repo_name "$url")
+        fi
+        echo "- \`./$repo_name/\` - $(detect_repo_purpose "$repo_name")" >> "$project_path/CLAUDE.md"
+    done
+    
+    cat >> "$project_path/CLAUDE.md" <<'EOF'
+
+## Cross-Repository Operations
+
+When running AI commands from this directory:
+- You can analyze code across all repositories
+- You can refactor shared interfaces
+- You can generate documentation spanning multiple services
+- You can find dependencies between services
+
+## Guidelines
+
+1. **Architecture Analysis**: Look at the big picture across all repos
+2. **Consistency Checks**: Ensure APIs, types, and patterns match across repos
+3. **Dependency Mapping**: Understand how services interact
+4. **Global Refactoring**: Make coordinated changes across repos
+
+## Common Tasks
+
+- "Find all API endpoints across all services"
+- "Check for version mismatches in shared dependencies"
+- "Generate architecture diagram from code"
+- "Find all database queries across repos"
+- "Standardize error handling across all services"
+EOF
+    
+    # Create project-level settings
+    if [ -f "$SETUP_ROOT/.claude/settings.json" ]; then
+        cp "$SETUP_ROOT/.claude/settings.json" "$project_path/.claude/"
+        # Modify settings for project-level operations
+        if command -v jq >/dev/null 2>&1; then
+            jq '.env.PROJECT_ROOT = "true" | .env.MULTI_REPO = "true"' \
+                "$project_path/.claude/settings.json" > "$project_path/.claude/settings.json.tmp" && \
+                mv "$project_path/.claude/settings.json.tmp" "$project_path/.claude/settings.json"
+        fi
+    fi
+    
+    # Create PROJECT.json for tracking
+    cat > "$project_path/PROJECT.json" <<EOF
+{
+  "type": "multi-repo",
+  "created": "$(date -Iseconds)",
+  "repositories": [
+EOF
+    
+    local first=1
+    for url in "${repo_urls[@]}"; do
+        local repo_name=$(extract_repo_name "$url")
+        [[ $first -eq 1 ]] && first=0 || echo "," >> "$project_path/PROJECT.json"
+        echo -n "    { \"name\": \"$repo_name\", \"url\": \"$url\" }" >> "$project_path/PROJECT.json"
+    done
+    
+    cat >> "$project_path/PROJECT.json" <<EOF
+
+  ]
+}
+EOF
+}
+
+detect_repo_purpose() {
+    local name="$1"
+    case "$name" in
+        *api*|*backend*|*server*) echo "Backend API service" ;;
+        *ui*|*frontend*|*web*|*client*) echo "Frontend application" ;;
+        *mobile*|*app*|*ios*|*android*) echo "Mobile application" ;;
+        *lib*|*common*|*shared*) echo "Shared library" ;;
+        *docs*|*documentation*) echo "Documentation" ;;
+        *infra*|*terraform*|*k8s*) echo "Infrastructure" ;;
+        *) echo "Service" ;;
+    esac
+}
+
 bootstrap_dependencies() {
     local repo_path="$1"
     cd "$repo_path"
@@ -122,18 +223,44 @@ bootstrap_dependencies() {
 main() {
     echo -e "${BOLD}${BLUE}🚀 SoftSensorAI Quick Setup${NC}\n"
     
-    # Check if we're in an existing repo
-    if [ -z "$URL" ] && is_git_repo; then
-        local repo_name=$(basename "$(git rev-parse --show-toplevel)")
-        say "Detected repository: ${BOLD}$repo_name${NC}"
-        
-        read -p "Add SoftSensorAI configurations here? (Y/n): " confirm
-        if [[ ! "$confirm" =~ ^[Nn] ]]; then
-            setup_repo_configs "."
-            success "Repository configured!"
-            echo -e "\n${BOLD}Next:${NC} Start coding with your AI assistant"
+    # Check current directory context
+    if [ -z "$URL" ]; then
+        # Check if we're in a git repo
+        if is_git_repo; then
+            local repo_name=$(basename "$(git rev-parse --show-toplevel)")
+            say "Detected repository: ${BOLD}$repo_name${NC}"
+            
+            read -p "Add SoftSensorAI configurations here? (Y/n): " confirm
+            if [[ ! "$confirm" =~ ^[Nn] ]]; then
+                setup_repo_configs "."
+                success "Repository configured!"
+                echo -e "\n${BOLD}Next:${NC} Start coding with your AI assistant"
+            fi
+            exit 0
         fi
-        exit 0
+        
+        # Check if we're in a project folder with multiple repos
+        local repo_count=$(find . -maxdepth 2 -name ".git" -type d 2>/dev/null | wc -l)
+        if [ "$repo_count" -gt 1 ]; then
+            say "Detected project folder with ${BOLD}$repo_count repositories${NC}"
+            echo "Repositories found:"
+            for repo_dir in $(find . -maxdepth 2 -name ".git" -type d 2>/dev/null | xargs -I {} dirname {}); do
+                echo "  • $(basename "$repo_dir")"
+            done
+            
+            read -p "Add project-level AI configurations for cross-repo operations? (Y/n): " confirm
+            if [[ ! "$confirm" =~ ^[Nn] ]]; then
+                # Build URLs array from existing repos
+                local fake_urls=()
+                for repo_dir in $(find . -maxdepth 2 -name ".git" -type d 2>/dev/null | xargs -I {} dirname {}); do
+                    fake_urls+=("local:$(basename "$repo_dir")")
+                done
+                setup_project_configs "." "${fake_urls[@]}"
+                success "Project-level configurations added!"
+                echo -e "\n${CYAN}You can now run AI commands from this folder to work across all repos${NC}"
+            fi
+            exit 0
+        fi
     fi
     
     # If no URL provided, ask for it
@@ -193,9 +320,17 @@ main() {
         
         wait  # Wait for all background bootstraps
         
+        # Add project-level configurations for cross-repo operations
+        say "Adding project-level AI configurations..."
+        setup_project_configs "$project_path" "${URLS[@]}"
+        
         success "Project setup complete!"
         echo -e "\n${BOLD}Location:${NC} $project_path"
         echo -e "${BOLD}Open in VS Code:${NC} code \"$project_path\""
+        echo -e "\n${CYAN}Tip:${NC} You can run AI commands from the project folder to work across all repos:"
+        echo -e "  cd $project_path"
+        echo -e "  claude 'analyze architecture across all services'"
+        echo -e "  codex 'find all API endpoints'"
         
     else
         # Single repo setup
