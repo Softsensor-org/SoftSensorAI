@@ -1,4 +1,4 @@
-# SoftSensorAI Command Registry
+# DevPilot Command Registry
 
 Quick reference for all available commands. Use `dp palette` or `just palette` to search interactively.
 
@@ -17,7 +17,7 @@ Quick reference for all available commands. Use `dp palette` or `just palette` t
 | `dp review` | AI review of local changes before commit | review | dp | [📖](docs/commands/dp/review.md) |
 | `dp review --preview` | AI review with preview logs | review | dp | [📖](docs/commands/dp/review.md) |
 | `dp tickets` | Generate structured backlog (JSON/CSV) | planning | dp | [📖](docs/commands/dp/tickets.md) |
-| `dp score` | SoftSensorAI Readiness Score (SSRS) | diagnostics | dp | [📖](docs/commands/dp/score.md) |
+| `dp score` | DevPilot Readiness Score (DPRS) | diagnostics | dp | [📖](docs/commands/dp/score.md) |
 | `dp detect` | Detect technology stack in repository | analysis | dp | [📖](docs/commands/dp/detect.md) |
 | `dp plan` | Preview what setup would create (dry run) | planning | dp | [📖](docs/commands/dp/plan.md) |
 | `dp palette` | Open command palette | meta | dp | [📖](docs/commands/dp/palette.md) |
@@ -28,8 +28,6 @@ Quick reference for all available commands. Use `dp palette` or `just palette` t
 | `dp worktree` | Manage git worktrees for parallel work | git | dp | [📖](docs/commands/dp/worktree.md) |
 | `dp release-check` | Assess release readiness | deployment | dp | [📖](docs/commands/dp/release-check.md) |
 | `dp help` | Show help and documentation | meta | dp | [📖](docs/commands/dp/help.md) |
-| `softsensorai multi-review` | Review multiple repos for security/performance | review | softsensorai | [📖](docs/commands/softsensorai/multi-review.md) |
-| `softsensorai issues` | GitHub issue picker and solver | automation | softsensorai | [📖](docs/commands/softsensorai/issues.md) |
 
 ## Categories
 
