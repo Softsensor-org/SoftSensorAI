@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# Legacy wizard for those who prefer the old interactive flow
+set -euo pipefail
+
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(cd "$DIR/.." && pwd)"
+
+echo "Note: This is the legacy wizard. For simpler setup, just use: ss setup"
+echo ""
+
+# Launch the old wizard
+if [ -f "$ROOT_DIR/setup/repo_wizard.sh" ]; then
+    exec "$ROOT_DIR/setup/repo_wizard.sh" "$@"
+else
+    echo "Error: Legacy wizard not found"
+    exit 1
+fi

@@ -1,7 +1,15 @@
 #!/usr/bin/env bash
 set -euo pipefail
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-# Prefer new brand if present; fallback to dp
-if [ -x "$DIR/dp-${0##*/ss}" ]; then exec "$DIR/dp-${0##*/ss}" "$@"; fi
-if [ -x "$DIR/dp" ] && [ "${0##*/}" = "ss" ]; then exec "$DIR/dp" "$@"; fi
-echo "error: dp not found near $DIR"; exit 127
+ROOT_DIR="$(cd "$DIR/.." && pwd)"
+
+# Route to softsensorai for main commands
+if [ -x "$ROOT_DIR/softsensorai" ]; then
+    exec "$ROOT_DIR/softsensorai" "$@"
+elif [ -x "$DIR/dp" ] && [ "${0##*/}" = "ss" ]; then
+    # Fallback to dp if softsensorai doesn't exist
+    exec "$DIR/dp" "$@"
+else
+    echo "error: softsensorai not found at $ROOT_DIR"
+    exit 127
+fi
