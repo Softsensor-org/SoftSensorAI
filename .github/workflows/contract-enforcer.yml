@@ -112,3 +112,14 @@ jobs:
         run: |
           echo "Running full test suite..."
           npm test || true  # Continue even if no tests defined
+      
+      - name: Check budgets and telemetry
+        if: always()  # Run even if tests fail
+        run: |
+          echo "Checking performance budgets and telemetry..."
+          
+          # Export contract IDs for the script
+          export CONTRACT_IDS="${{ steps.commit.outputs.contract_ids }}"
+          
+          # Run budget and telemetry checks
+          node scripts/contract_budgets_and_telemetry.mjs || true  # Optional, don't fail build

@@ -12,6 +12,9 @@
     "vibe:end": "node scripts/vibe_end.mjs",
     "vibe:promote": "node scripts/vibe_promote.mjs",
     "agent:task": "node scripts/agent_wrapper.mjs",
+    "budgets:check": "node scripts/contract_budgets_and_telemetry.mjs",
+    "perf:probe": "node scripts/utils/performance_probe.mjs --save",
+    "bundle:analyze": "node scripts/utils/bundle_analyzer.mjs",
     "test": "echo 'No tests configured yet'"
   },
   "dependencies": {

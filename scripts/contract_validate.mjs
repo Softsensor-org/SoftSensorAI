@@ -64,6 +64,41 @@ function validateContract(contract) {
     }
   }
   
+  // Validate optional budgets
+  if (frontMatter.budgets) {
+    if (typeof frontMatter.budgets !== 'object') {
+      errors.push('budgets must be an object');
+    } else {
+      if (frontMatter.budgets.latency_ms_p50 !== undefined) {
+        if (typeof frontMatter.budgets.latency_ms_p50 !== 'number') {
+          errors.push('budgets.latency_ms_p50 must be a number');
+        }
+      }
+      if (frontMatter.budgets.bundle_kb_delta_max !== undefined) {
+        if (typeof frontMatter.budgets.bundle_kb_delta_max !== 'number') {
+          errors.push('budgets.bundle_kb_delta_max must be a number');
+        }
+      }
+    }
+  }
+  
+  // Validate optional telemetry
+  if (frontMatter.telemetry) {
+    if (typeof frontMatter.telemetry !== 'object') {
+      errors.push('telemetry must be an object');
+    } else if (frontMatter.telemetry.events) {
+      if (!Array.isArray(frontMatter.telemetry.events)) {
+        errors.push('telemetry.events must be an array');
+      } else {
+        frontMatter.telemetry.events.forEach((event, index) => {
+          if (typeof event !== 'string') {
+            errors.push(`telemetry.events[${index}] must be a string`);
+          }
+        });
+      }
+    }
+  }
+  
   return errors;
 }
 
@@ -72,7 +107,9 @@ function computeContractHash(frontMatter) {
   const hashInput = {
     id: frontMatter.id,
     allowed_globs: frontMatter.allowed_globs,
-    acceptance_criteria: frontMatter.acceptance_criteria
+    acceptance_criteria: frontMatter.acceptance_criteria,
+    budgets: frontMatter.budgets || null,
+    telemetry: frontMatter.telemetry || null
   };
   
   const jsonString = JSON.stringify(hashInput, null, 0);
