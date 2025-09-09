@@ -11,6 +11,7 @@
     "vibe:snapshot": "node scripts/vibe_snapshot.mjs",
     "vibe:end": "node scripts/vibe_end.mjs",
     "vibe:promote": "node scripts/vibe_promote.mjs",
+    "agent:task": "node scripts/agent_wrapper.mjs",
     "test": "echo 'No tests configured yet'"
   },
   "dependencies": {

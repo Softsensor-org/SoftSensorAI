@@ -1,0 +1,5 @@
+{
+  "contract_id": "APC-AGENT",
+  "allowed_globs": ["scripts/**", ".softsensor/**"],
+  "forbidden_globs": ["src/**", "bin/**"]
+}
