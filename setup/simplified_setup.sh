@@ -45,6 +45,64 @@ extract_repo_name() {
     basename -s .git "${url##*/}"
 }
 
+# Convert HTTPS URL to SSH format
+convert_to_ssh_url() {
+    local url="$1"
+    if [[ "$url" =~ ^https://github\.com/(.+)$ ]]; then
+        echo "git@github.com:${BASH_REMATCH[1]}"
+    else
+        echo "$url"
+    fi
+}
+
+# Check GitHub CLI authentication
+check_gh_auth() {
+    if command -v gh >/dev/null 2>&1; then
+        if gh auth status >/dev/null 2>&1; then
+            return 0
+        else
+            warn "GitHub CLI (gh) is installed but not authenticated"
+            echo "Run: gh auth login"
+            return 1
+        fi
+    else
+        warn "GitHub CLI (gh) not installed. Install it for better GitHub integration"
+        echo "Install with: brew install gh (macOS) or apt install gh (Linux)"
+        return 1
+    fi
+}
+
+# Clone repository with fallback methods
+clone_repository() {
+    local url="$1"
+    local target="$2"
+    
+    # Convert HTTPS to SSH
+    local ssh_url=$(convert_to_ssh_url "$url")
+    
+    # Try SSH first (most reliable for private repos)
+    if git clone -q "$ssh_url" "$target" 2>/dev/null; then
+        return 0
+    fi
+    
+    # Try gh CLI if available
+    if command -v gh >/dev/null 2>&1 && gh auth status >/dev/null 2>&1; then
+        if [[ "$url" =~ github\.com[:/]([^/]+)/([^/.]+) ]]; then
+            local repo="${BASH_REMATCH[1]}/${BASH_REMATCH[2]}"
+            if gh repo clone "$repo" "$target" -- -q 2>/dev/null; then
+                return 0
+            fi
+        fi
+    fi
+    
+    # Last resort: try original URL (will prompt for credentials)
+    if git clone -q "$url" "$target" 2>/dev/null; then
+        return 0
+    fi
+    
+    return 1
+}
+
 extract_org_from_url() {
     local url="$1"
     if [[ "$url" =~ github\.com[:/]([^/]+)/ ]]; then
@@ -223,6 +281,14 @@ bootstrap_dependencies() {
 main() {
     echo -e "${BOLD}${BLUE}🚀 SoftSensorAI Quick Setup${NC}\n"
     
+    # Check GitHub authentication upfront for better UX
+    if ! check_gh_auth; then
+        echo ""
+        warn "GitHub authentication recommended for private repositories"
+        echo "You can continue, but may need to enter credentials for each repo"
+        echo ""
+    fi
+    
     # Check current directory context
     if [ -z "$URL" ]; then
         # Check if we're in a git repo
@@ -266,8 +332,11 @@ main() {
     # If no URL provided, ask for it
     if [ -z "$URL" ]; then
         echo -e "${BOLD}Enter GitHub URL${NC} (or 'local' for current directory):"
+        echo -e "  ${GREEN}Tip: You can use HTTPS or SSH format${NC}"
         read -p "> " URL
         [ -z "$URL" ] && { err "No URL provided"; exit 1; }
+        # Convert HTTPS to SSH for better authentication
+        URL=$(convert_to_ssh_url "$URL")
     fi
     
     # Handle local directory
@@ -288,6 +357,8 @@ main() {
         while true; do
             read -p "> " extra_url
             [ -z "$extra_url" ] && break
+            # Convert HTTPS to SSH for better authentication
+            extra_url=$(convert_to_ssh_url "$extra_url")
             URLS+=("$extra_url")
         done
     fi
@@ -311,7 +382,11 @@ main() {
             say "Cloning $repo_name..."
             
             cd "$project_path"
-            git clone -q "$url" "$repo_name" 2>/dev/null || { warn "Failed to clone $url"; continue; }
+            if ! clone_repository "$url" "$repo_name"; then
+                warn "Failed to clone $url"
+                warn "Check your SSH keys or GitHub authentication"
+                continue
+            fi
             
             setup_repo_configs "$project_path/$repo_name"
             bootstrap_dependencies "$project_path/$repo_name" &
@@ -345,9 +420,9 @@ main() {
         # Clone
         say "Cloning repository..."
         cd "$BASE/$org"
-        if ! git clone -q "$URL" "$repo_name" 2>/dev/null; then
+        if ! clone_repository "$URL" "$repo_name"; then
             err "Failed to clone $URL"
-            err "Please check the URL and your SSH keys"
+            err "Please check your SSH keys or GitHub authentication"
             exit 1
         fi
         
