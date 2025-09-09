@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+MSG="$1"
+# Remove Claude/AI signatures
+sed -i'' -e '/Generated with \[Claude Code\]/d' "$MSG" 2>/dev/null || true
+sed -i'' -e '/Co-Authored-By:.*Claude/d' "$MSG" 2>/dev/null || true
+exit 0

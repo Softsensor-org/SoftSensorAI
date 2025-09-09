@@ -1,0 +1,5 @@
+{
+  "contract_id": "APC-GUARD",
+  "allowed_globs": [".git/hooks/**", "scripts/**", ".softsensor/**", "package.json"],
+  "forbidden_globs": ["src/**"]
+}

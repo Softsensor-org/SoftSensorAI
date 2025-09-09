@@ -4,11 +4,13 @@
   "type": "module",
   "description": "SoftSensorAI - AI-Powered Development Platform",
   "scripts": {
-    "contracts:validate": "node scripts/contract_validate.mjs"
+    "contracts:validate": "node scripts/contract_validate.mjs",
+    "hooks:install": "node scripts/install_hooks.mjs"
   },
   "dependencies": {
     "glob": "^10.3.10",
-    "js-yaml": "^4.1.0"
+    "js-yaml": "^4.1.0",
+    "minimatch": "^9.0.3"
   },
   "engines": {
     "node": ">=16.0.0"

@@ -1,1 +1,1 @@
-/home/vivek/repos/setup-scripts-fresh/.claude/commands/sets/l1/think-deep.md
+/home/vivek/repos/setup-scripts-fresh/.claude/commands/sets/l2/think-deep.md
