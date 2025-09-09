@@ -200,16 +200,16 @@ else
   fi
 fi
 
-# Test 13: devpilot CLI test
-run_test "devpilot CLI"
-if [ -f "$PROJECT_ROOT/devpilot" ]; then
-  if bash "$PROJECT_ROOT/devpilot" --help &>/dev/null; then
-    pass "devpilot CLI works"
+# Test 13: softsensorai CLI test
+run_test "softsensorai CLI"
+if [ -f "$PROJECT_ROOT/softsensorai" ]; then
+  if bash "$PROJECT_ROOT/softsensorai" --help &>/dev/null; then
+    pass "softsensorai CLI works"
   else
-    fail "devpilot CLI failed"
+    fail "softsensorai CLI failed"
   fi
 else
-  fail "devpilot CLI not found"
+  fail "softsensorai CLI not found"
 fi
 
 # Print summary
