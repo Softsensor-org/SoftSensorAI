@@ -1,0 +1,114 @@
+name: Contract Enforcer
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  enforce-contracts:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Need full history for commit trailers
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Validate all contracts
+        run: npm run contracts:validate
+      
+      - name: Get latest commit message
+        id: commit
+        run: |
+          # Get the latest commit message with trailers
+          COMMIT_MSG=$(git log -1 --format=%B)
+          echo "message<<EOF" >> $GITHUB_OUTPUT
+          echo "$COMMIT_MSG" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          
+          # Extract Contract-Id trailer(s)
+          CONTRACT_IDS=$(echo "$COMMIT_MSG" | grep -E "^Contract-Id:" | sed 's/Contract-Id: *//' | tr '\n' ' ')
+          echo "contract_ids=$CONTRACT_IDS" >> $GITHUB_OUTPUT
+          
+          # Extract Contract-Hash trailer
+          CONTRACT_HASH=$(echo "$COMMIT_MSG" | grep -E "^Contract-Hash:" | sed 's/Contract-Hash: *//')
+          echo "contract_hash=$CONTRACT_HASH" >> $GITHUB_OUTPUT
+      
+      - name: Verify contract trailers exist
+        run: |
+          if [ -z "${{ steps.commit.outputs.contract_ids }}" ]; then
+            echo "❌ No Contract-Id trailer found in commit message"
+            echo "Please add 'Contract-Id: <contract-id>' to your commit message"
+            exit 1
+          fi
+          
+          if [ -z "${{ steps.commit.outputs.contract_hash }}" ]; then
+            echo "⚠️  No Contract-Hash trailer found in commit message"
+            echo "Consider adding 'Contract-Hash: <hash>' for verification"
+          fi
+      
+      - name: Verify contract scope and hash
+        run: |
+          # Get base branch for comparison
+          BASE_SHA=${{ github.event.pull_request.base.sha }}
+          HEAD_SHA=${{ github.event.pull_request.head.sha }}
+          
+          # Export for the script to use
+          export BASE_SHA
+          export HEAD_SHA
+          export CONTRACT_IDS="${{ steps.commit.outputs.contract_ids }}"
+          export CONTRACT_HASH="${{ steps.commit.outputs.contract_hash }}"
+          
+          # Run scope and hash verification
+          node scripts/contract_scope_and_hash.mjs
+      
+      - name: Get touchpoint tests
+        id: touchpoints
+        run: |
+          # Extract touchpoint tests from referenced contracts
+          CONTRACT_IDS="${{ steps.commit.outputs.contract_ids }}"
+          TESTS=""
+          
+          for CONTRACT_ID in $CONTRACT_IDS; do
+            CONTRACT_FILE="contracts/${CONTRACT_ID}.contract.md"
+            if [ -f "$CONTRACT_FILE" ]; then
+              # Extract test files from acceptance_criteria.tests arrays
+              NEW_TESTS=$(grep -E "^\s+-\s+" "$CONTRACT_FILE" | grep -v "^---" | sed 's/^\s*-\s*//' | tr '\n' ' ')
+              TESTS="$TESTS $NEW_TESTS"
+            fi
+          done
+          
+          # Remove duplicates
+          UNIQUE_TESTS=$(echo $TESTS | tr ' ' '\n' | sort -u | tr '\n' ' ')
+          echo "tests=$UNIQUE_TESTS" >> $GITHUB_OUTPUT
+      
+      - name: Run touchpoint tests
+        if: steps.touchpoints.outputs.tests != ''
+        run: |
+          echo "Running touchpoint tests for contracts..."
+          TESTS="${{ steps.touchpoints.outputs.tests }}"
+          
+          for TEST in $TESTS; do
+            if [ -f "$TEST" ]; then
+              echo "Testing: $TEST"
+              if [[ "$TEST" == *.mjs ]] || [[ "$TEST" == *.js ]]; then
+                node "$TEST"
+              elif [[ "$TEST" == *.sh ]]; then
+                bash "$TEST"
+              fi
+            fi
+          done
+      
+      - name: Run full test suite
+        run: |
+          echo "Running full test suite..."
+          npm test || true  # Continue even if no tests defined

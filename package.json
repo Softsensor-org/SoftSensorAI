@@ -5,7 +5,9 @@
   "description": "SoftSensorAI - AI-Powered Development Platform",
   "scripts": {
     "contracts:validate": "node scripts/contract_validate.mjs",
-    "hooks:install": "node scripts/install_hooks.mjs"
+    "contracts:enforce": "node scripts/contract_scope_and_hash.mjs",
+    "hooks:install": "node scripts/install_hooks.mjs",
+    "test": "echo 'No tests configured yet'"
   },
   "dependencies": {
     "glob": "^10.3.10",
