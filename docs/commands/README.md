@@ -185,12 +185,6 @@ dp palette test      # Find test commands
 
 - Short, verb-based names
 - Common developer actions
-- Examples: `setup`, `init`, `review`, `doctor`
-
-### dp Commands
-
-- Short, verb-based names
-- Common developer actions
 - Examples: `setup`, `init`, `review`, `doctor`, `tickets`
 
 ### Internal Scripts (Not User-Facing)

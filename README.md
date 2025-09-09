@@ -13,21 +13,21 @@ all platforms.
 git clone https://github.com/Softsensor-org/SoftSensorAI.git ~/devpilot
 cd ~/devpilot && ./setup_all.sh
 export PATH="$HOME/devpilot/bin:$PATH"  # Add to ~/.bashrc
-# ss is the main command, dp is legacy compatibility
+# dp is the main command, ss is a compatibility alias
 
 # 2. Setup your project - ONE command!
-ss setup        # Interactive - just paste GitHub URL
+dp setup        # Interactive - just paste GitHub URL
 # Or with URL directly:
-ss setup git@github.com:org/repo.git
+dp setup git@github.com:org/repo.git
 # Or for existing repo:
-cd your-project && ss setup
+cd your-project && dp setup
 
 # 3. Start using AI features
-ss              # Main command
-ss setup        # Setup repos
-ss review       # AI code review  
-ss tickets      # Generate backlog
-ss help         # Quick reference
+dp              # Main command (ss also works as alias)
+dp setup        # Setup repos
+dp review       # AI code review  
+dp tickets      # Generate backlog
+dp help         # Quick reference
 ```
 
 That's it! SoftSensorAI is now configured for your project. See [Full Guide](#getting-started) for

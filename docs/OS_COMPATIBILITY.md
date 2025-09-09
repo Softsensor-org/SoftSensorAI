@@ -178,7 +178,7 @@ To add support for a new OS:
 | ------------ | ----- | ----- | ------------- | --- | ------ | ------- |
 | doctor.sh    | ✅    | ✅    | ✅            | ✅  | ✅     | ✅      |
 | setup_all.sh | ✅    | ✅    | ✅            | ✅  | ✅     | ⚠️      |
-| devpilot CLI | ✅    | ✅    | ✅            | ✅  | ✅     | ✅      |
+| SoftSensorAI CLI | ✅    | ✅    | ✅            | ✅  | ✅     | ✅      |
 | Auto-install | ✅    | ✅    | ✅            | ⚠️  | ✅     | ⚠️      |
 | Git hooks    | ✅    | ✅    | ✅            | ✅  | ✅     | ✅      |
 | AI CLIs      | ✅    | ✅    | ✅            | ⚠️  | ⚠️     | ⚠️      |

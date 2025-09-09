@@ -10,13 +10,13 @@ understand their progress and identify improvement areas.
 
 ```bash
 # Calculate score for current repository
-devpilot dprs
+dp score
 
 # Or use the script directly
 ~/devpilot/scripts/dprs.sh
 
 # Generate detailed report
-devpilot dprs --verbose --output artifacts/
+dp score --verbose --output artifacts/
 ```
 
 ## Scoring Dimensions

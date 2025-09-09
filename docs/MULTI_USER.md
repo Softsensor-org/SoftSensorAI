@@ -50,8 +50,12 @@ fi
 ### Quick Install
 
 ```bash
-# Download and run the multi-user installer
+# Download and run the multi-user installer (public repos only)
 curl -fsSL https://raw.githubusercontent.com/Softsensor-org/SoftSensorAI/main/scripts/install_multi_user.sh | sudo bash
+
+# For private repos, clone first then run:
+git clone https://github.com/Softsensor-org/SoftSensorAI.git
+sudo bash SoftSensorAI/scripts/install_multi_user.sh
 ```
 
 ### Manual Install

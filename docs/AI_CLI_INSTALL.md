@@ -24,14 +24,16 @@ pipx install anthropic
 # Check Anthropic's documentation for latest installation method
 ```
 
-### OpenAI Codex
+### OpenAI
 
 ```bash
-# Note: Codex is deprecated, use OpenAI API instead
+# Install OpenAI CLI (replaces deprecated Codex)
 pip install openai
 # or
 pipx install openai
 ```
+
+**Legacy Note**: Codex references in scripts are maintained for backward compatibility but map to OpenAI models.
 
 ### Google Gemini
 
