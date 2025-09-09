@@ -297,13 +297,12 @@ main() {
         # Multiple repos = project setup
         say "Setting up project with ${#URLS[@]} repositories..."
         
-        # Extract project name from first repo
-        local first_repo=$(extract_repo_name "${URLS[0]}")
-        local project_name="${first_repo%-*}"  # Remove suffix like -api, -ui
+        # For multiple repos, just use org as the project folder
+        # Don't create another nested level
         local org=$(extract_org_from_url "${URLS[0]}")
         
-        # Create project structure
-        local project_path="$BASE/$org/$project_name"
+        # The project path IS the org path (no extra nesting)
+        local project_path="$BASE/$org"
         mkdir -p "$project_path"
         
         # Clone each repo
