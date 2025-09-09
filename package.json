@@ -16,10 +16,12 @@
     "perf:probe": "node scripts/utils/performance_probe.mjs --save",
     "bundle:analyze": "node scripts/utils/bundle_analyzer.mjs",
     "commands:parity": "node scripts/commands_parity.mjs",
+    "contracts:comment": "node scripts/pr_contract_comment.mjs",
     "test": "echo 'No tests configured yet'"
   },
   "dependencies": {
     "glob": "^10.3.10",
+    "gray-matter": "^4.0.3",
     "js-yaml": "^4.1.0",
     "minimatch": "^9.0.3"
   },

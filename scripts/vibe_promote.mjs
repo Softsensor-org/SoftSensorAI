@@ -25,9 +25,34 @@ function generateContractId() {
   return `F-${timestamp}-${random}`;
 }
 
-// Infer acceptance criteria from files
-function inferAcceptanceCriteria(files) {
+// Infer acceptance criteria from files and git diff analysis
+async function inferAcceptanceCriteria(files, contractId) {
   const criteria = [];
+  const telemetryEvents = [];
+  
+  // Get heuristic suggestions from git diff analysis
+  try {
+    const { analyzeGitDiff } = await import('./promotion_heuristics.mjs');
+    const baseSha = process.env.BASE_SHA || 'HEAD~1';
+    const headSha = process.env.HEAD_SHA || 'HEAD';
+    const suggestions = analyzeGitDiff(baseSha, headSha);
+    
+    // Add suggested criteria from heuristics
+    for (const criterion of suggestions.criteria) {
+      // Replace <ID> placeholder with actual contract ID
+      criterion.tests = criterion.tests.map(t => t.replace('<ID>', contractId));
+      criteria.push(criterion);
+    }
+    
+    // Collect telemetry events
+    if (suggestions.telemetry && suggestions.telemetry.events) {
+      telemetryEvents.push(...suggestions.telemetry.events);
+    }
+  } catch (error) {
+    console.log('   Note: Heuristics analysis skipped (module not found)');
+  }
+  
+  // Original pattern-based criteria
   const patterns = {
     config: files.some(f => f.match(/\.(json|yml|yaml|conf)$/)),
     scripts: files.some(f => f.match(/\.(sh|mjs|js|py)$/)),
@@ -36,50 +61,50 @@ function inferAcceptanceCriteria(files) {
     workflows: files.some(f => f.includes('.github/workflows'))
   };
   
-  let criterionId = 1;
+  let criterionId = criteria.length + 1;
   
-  if (patterns.config) {
+  if (patterns.config && !criteria.find(c => c.text.includes('onfiguration'))) {
     criteria.push({
       id: `AC-${criterionId++}`,
       must: 'MUST update configuration',
       text: 'Configuration files are properly formatted and valid',
-      tests: [`tests/contract/F-*/config.contract.spec.ts`]
+      tests: [`tests/contract/${contractId}/config.contract.spec.ts`]
     });
   }
   
-  if (patterns.scripts) {
+  if (patterns.scripts && !criteria.find(c => c.text.includes('script'))) {
     criteria.push({
       id: `AC-${criterionId++}`,
       must: 'MUST implement required scripts',
       text: 'Scripts execute without errors and produce expected output',
-      tests: [`tests/contract/F-*/scripts.contract.spec.ts`]
+      tests: [`tests/contract/${contractId}/scripts.contract.spec.ts`]
     });
   }
   
-  if (patterns.tests) {
+  if (patterns.tests && !criteria.find(c => c.text.includes('test'))) {
     criteria.push({
       id: `AC-${criterionId++}`,
       must: 'MUST pass all tests',
       text: 'New and existing tests pass successfully',
-      tests: [`tests/contract/F-*/tests.contract.spec.ts`]
+      tests: [`tests/contract/${contractId}/tests.contract.spec.ts`]
     });
   }
   
-  if (patterns.docs) {
+  if (patterns.docs && !criteria.find(c => c.text.includes('ocumentation'))) {
     criteria.push({
       id: `AC-${criterionId++}`,
       must: 'MUST update documentation',
       text: 'Documentation accurately reflects implementation',
-      tests: [`tests/contract/F-*/docs.contract.spec.ts`]
+      tests: [`tests/contract/${contractId}/docs.contract.spec.ts`]
     });
   }
   
-  if (patterns.workflows) {
+  if (patterns.workflows && !criteria.find(c => c.text.includes('workflow'))) {
     criteria.push({
       id: `AC-${criterionId++}`,
       must: 'MUST configure CI/CD',
       text: 'GitHub Actions workflows are valid and functional',
-      tests: [`tests/contract/F-*/ci.contract.spec.ts`]
+      tests: [`tests/contract/${contractId}/ci.contract.spec.ts`]
     });
   }
   
@@ -89,15 +114,15 @@ function inferAcceptanceCriteria(files) {
       id: 'AC-1',
       must: 'MUST implement core functionality',
       text: 'Feature works as intended without breaking existing functionality',
-      tests: [`tests/contract/F-*/core.contract.spec.ts`]
+      tests: [`tests/contract/${contractId}/core.contract.spec.ts`]
     });
   }
   
-  return criteria;
+  return { criteria, telemetryEvents };
 }
 
 // Create contract markdown
-function createContractMarkdown(contractId, session, globs, criteria) {
+function createContractMarkdown(contractId, session, globs, criteria, telemetryEvents = []) {
   const yaml = `---
 id: ${contractId}
 title: ${session.title}
@@ -110,10 +135,10 @@ forbidden_globs:
   - src/**
 acceptance_criteria:
 ${criteria.map(c => `  - id: ${c.id}
-    must: ${c.must}
-    text: ${c.text}
+    must: ${typeof c.must === 'boolean' ? c.must : c.must}
+    text: ${c.text}${c.suggested ? '\n    suggested: true' : ''}
     tests:
-${c.tests.map(t => `      - ${t.replace('F-*', contractId)}`).join('\n')}`).join('\n')}
+${c.tests.map(t => `      - ${t.replace('F-*', contractId)}`).join('\n')}`).join('\n')}${telemetryEvents.length > 0 ? `\ntelemetry:\n  events:\n${telemetryEvents.map(e => `    - ${e}`).join('\n')}` : ''}
 checkpoints:
   - id: CP-1
     date: ${new Date().toISOString().split('T')[0]}
@@ -223,12 +248,15 @@ async function promoteVibeSession() {
   
   // Get changed files for criteria inference
   const changedFiles = session.impact?.directories?.map(d => d) || [];
-  const criteria = inferAcceptanceCriteria(changedFiles);
+  const { criteria, telemetryEvents } = await inferAcceptanceCriteria(changedFiles, contractId);
   console.log(`   Acceptance criteria: ${criteria.length} generated`);
+  if (telemetryEvents && telemetryEvents.length > 0) {
+    console.log(`   Telemetry events: ${telemetryEvents.length} detected`);
+  }
   
   // Create contract file
   const contractPath = path.join('contracts', `${contractId}.contract.md`);
-  const contractContent = createContractMarkdown(contractId, session, globs, criteria);
+  const contractContent = createContractMarkdown(contractId, session, globs, criteria, telemetryEvents || []);
   
   await fs.mkdir('contracts', { recursive: true });
   await fs.writeFile(contractPath, contractContent);
@@ -237,6 +265,20 @@ async function promoteVibeSession() {
   // Create test scaffolds
   const testDir = path.join('tests', 'contract', contractId);
   await fs.mkdir(testDir, { recursive: true });
+  
+  // Generate scaffolds for heuristic-suggested tests
+  try {
+    const { analyzeGitDiff, generateTestScaffold: generateHeuristicScaffold } = await import('./promotion_heuristics.mjs');
+    const suggestions = analyzeGitDiff(process.env.BASE_SHA || 'HEAD~1', process.env.HEAD_SHA || 'HEAD');
+    for (const testInfo of suggestions.tests) {
+      const testPath = path.join(testDir, testInfo.file);
+      const scaffold = generateHeuristicScaffold(testInfo, contractId);
+      await fs.writeFile(testPath, scaffold);
+      console.log(`${colors.green}✅ Created test scaffold: ${testPath}${colors.reset}`);
+    }
+  } catch (error) {
+    // Fall through to original test generation
+  }
   
   const testTypes = {
     'config': criteria.find(c => c.text.includes('onfiguration')),
