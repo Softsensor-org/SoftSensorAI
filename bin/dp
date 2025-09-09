@@ -23,8 +23,8 @@ say() { printf "%s\n" "$*"; }
 have(){ command -v "$1" >/dev/null 2>&1; }
 
 pick_cli() {
-  # Prefer anthropic, then codex, gemini, grok
-  for p in anthropic codex gemini grok; do
+  # Prefer claude, then codex, gemini, grok
+  for p in claude codex gemini grok; do
     if have "$p"; then echo "$p"; return; fi
   done
   echo ""
@@ -123,15 +123,15 @@ cmd_tickets() {
   local raw="$ART/tickets_raw.txt" json="$ART/tickets.json" csv="$ART/tickets.csv"
   : > "$raw"
 
-  say "▸ Generating tickets (CLI fallback: codex→claude→gemini→grok) …"
+  say "▸ Generating tickets (CLI fallback: claude→codex→gemini→grok) …"
   # Try providers via shim; neutral if none exist
-  "$SHIM" --provider codex  --model "${AI_MODEL_CODEX:-codex-latest}"             --prompt-file "$prompt" > "$raw" 2> "$ART/tickets_codex.err"  || true
-  [[ -s "$raw" ]] || "$SHIM" --provider claude --model "${AI_MODEL_CLAUDE:-claude-3-7-sonnet-20250219}" --prompt-file "$prompt" > "$raw" 2> "$ART/tickets_claude.err" || true
+  "$SHIM" --provider claude --model "${AI_MODEL_CLAUDE:-claude-3-7-sonnet-20250219}" --prompt-file "$prompt" > "$raw" 2> "$ART/tickets_claude.err" || true
+  [[ -s "$raw" ]] || "$SHIM" --provider codex  --model "${AI_MODEL_CODEX:-codex-latest}"             --prompt-file "$prompt" > "$raw" 2> "$ART/tickets_codex.err"  || true
   [[ -s "$raw" ]] || "$SHIM" --provider gemini --model "${AI_MODEL_GEMINI:-gemini-1.5-pro-latest}"     --prompt-file "$prompt" > "$raw" 2> "$ART/tickets_gemini.err" || true
   [[ -s "$raw" ]] || "$SHIM" --provider grok   --model "${AI_MODEL_GROK:-grok-2-latest}"               --prompt-file "$prompt" > "$raw" 2> "$ART/tickets_grok.err"   || true
 
   if [[ ! -s "$raw" ]]; then
-    say "ℹ️  No AI CLI produced output. Install anthropic/codex/gemini/grok CLIs or run in CI with those CLIs."
+    say "ℹ️  No AI CLI produced output. Install claude/codex/gemini/grok CLIs or run in CI with those CLIs."
     exit 0
   fi
   if extract_json < "$raw" > "$json"; then
