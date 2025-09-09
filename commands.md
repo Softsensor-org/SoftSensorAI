@@ -28,6 +28,8 @@ Quick reference for all available commands. Use `dp palette` or `just palette` t
 | `dp worktree` | Manage git worktrees for parallel work | git | dp | [📖](docs/commands/dp/worktree.md) |
 | `dp release-check` | Assess release readiness | deployment | dp | [📖](docs/commands/dp/release-check.md) |
 | `dp help` | Show help and documentation | meta | dp | [📖](docs/commands/dp/help.md) |
+| `softsensorai multi-review` | Review multiple repos for security/performance | review | softsensorai | [📖](docs/commands/softsensorai/multi-review.md) |
+| `softsensorai issues` | GitHub issue picker and solver | automation | softsensorai | [📖](docs/commands/softsensorai/issues.md) |
 
 ## Categories
 

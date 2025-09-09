@@ -34,6 +34,8 @@ WORKFLOW COMMANDS:
     dprs                Calculate SoftSensorAI Readiness Score
     audit               Run security and quality audits
     commands            Generate AI command registry
+    multi-review        Review multiple repositories in project
+    issues              GitHub issue picker and solver
 
 EXAMPLES:
     softsensorai doctor                     # Check system health
@@ -42,6 +44,8 @@ EXAMPLES:
     softsensorai profile --skill l2 --phase beta # Change profile
     softsensorai tickets --from-code        # Generate backlog
     softsensorai review --diff HEAD~3       # Review recent changes
+    softsensorai multi-review security      # Review all repos for security
+    softsensorai issues pick                # Pick GitHub issue to work on
 
 OPTIONS:
     -h, --help          Show this help message
@@ -183,6 +187,16 @@ case "${1:-}" in
     commands)
         shift
         exec "$SOFTSENSORAI_ROOT/scripts/generate_command_registry.sh" "$@"
+        ;;
+
+    multi-review)
+        shift
+        exec "$SOFTSENSORAI_ROOT/scripts/multi_repo_review.sh" "$@"
+        ;;
+
+    issues)
+        shift
+        exec "$SOFTSENSORAI_ROOT/scripts/github_issue_solver.sh" "$@"
         ;;
 
     -h|--help|help)
