@@ -54,9 +54,12 @@ check_gpu() {
   fi
 
   # Check for AMD GPU (ROCm)
+  local rocm_available=false
   if command -v rocm-smi &>/dev/null; then
     has_gpu=true
+    rocm_available=true
     success "AMD GPU detected (ROCm)"
+    # Note: ROCm support varies by package, will use CPU fallback where needed
   fi
 
   # Check for Apple Silicon
@@ -110,6 +113,8 @@ install_core_libraries() {
 # Install GPU-specific packages
 install_gpu_packages() {
   local cuda_available="$1"
+  local rocm_available="${2:-false}"
+  local is_apple="${3:-false}"
 
   if [ "$cuda_available" = "true" ]; then
     say "Installing CUDA-optimized packages..."
@@ -117,16 +122,41 @@ install_gpu_packages() {
     # PyTorch with CUDA
     python3 -m pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
 
-    # CUDA-optimized FAISS
-    python3 -m pip install faiss-gpu
+    # CUDA-optimized FAISS (only for CUDA)
+    python3 -m pip install faiss-gpu || warn "FAISS-GPU installation failed, using CPU version"
 
-    # Flash Attention for faster transformers
-    python3 -m pip install flash-attn --no-build-isolation || warn "Flash Attention installation failed (normal on some systems)"
+    # Flash Attention for faster transformers (CUDA only)
+    python3 -m pip install flash-attn --no-build-isolation || warn "Flash Attention requires CUDA build environment"
 
-    success "GPU-optimized packages installed"
+    success "CUDA-optimized packages installed"
+  elif [ "$rocm_available" = "true" ]; then
+    say "Installing ROCm-optimized packages..."
+    
+    # PyTorch with ROCm support
+    python3 -m pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/rocm5.7 || {
+      warn "ROCm PyTorch failed, falling back to CPU version"
+      python3 -m pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
+    }
+    
+    # FAISS CPU version for ROCm (no ROCm-specific build available)
+    python3 -m pip install faiss-cpu
+    
+    success "ROCm packages installed (with CPU fallbacks where needed)"
+  elif [ "$is_apple" = "true" ]; then
+    say "Installing Apple Silicon optimized packages..."
+    
+    # PyTorch for Apple Silicon (uses Metal Performance Shaders)
+    python3 -m pip install torch torchvision torchaudio
+    
+    # FAISS CPU version for Apple Silicon
+    python3 -m pip install faiss-cpu
+    
+    success "Apple Silicon packages installed"
   else
     say "Installing CPU-optimized packages..."
     python3 -m pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
+    python3 -m pip install faiss-cpu
+    success "CPU packages installed"
   fi
 }
 
@@ -243,16 +273,16 @@ main() {
   case $choice in
     1)
       install_core_libraries
-      install_gpu_packages "$cuda_available"
+      install_gpu_packages "$cuda_available" "$rocm_available" "$([[ "$(uname -s)" == "Darwin" ]] && echo "true" || echo "false")"
       ;;
     2)
       install_core_libraries
-      install_gpu_packages "$cuda_available"
+      install_gpu_packages "$cuda_available" "$rocm_available" "$([[ "$(uname -s)" == "Darwin" ]] && echo "true" || echo "false")"
       install_ml_tools
       ;;
     3)
       install_core_libraries
-      install_gpu_packages "$cuda_available"
+      install_gpu_packages "$cuda_available" "$rocm_available" "$([[ "$(uname -s)" == "Darwin" ]] && echo "true" || echo "false")"
       install_ml_tools
       install_dev_tools
       ;;

@@ -21,8 +21,6 @@ Quick reference for all available commands. Use `dp palette` or `just palette` t
 | `dp detect` | Detect technology stack in repository | analysis | dp | [📖](docs/commands/dp/detect.md) |
 | `dp plan` | Preview what setup would create (dry run) | planning | dp | [📖](docs/commands/dp/plan.md) |
 | `dp palette` | Open command palette | meta | dp | [📖](docs/commands/dp/palette.md) |
-| `dp ai` | Unified AI CLI interface | ai | dp | [📖](docs/commands/dp/ai.md) |
-| `dp sandbox` | Sandboxed code execution environment | ai | dp | [📖](docs/commands/dp/sandbox.md) |
 | `dp chain` | Execute multi-step command chains | automation | dp | [📖](docs/commands/dp/chain.md) |
 | `dp patterns` | Browse and apply design patterns | development | dp | [📖](docs/commands/dp/patterns.md) |
 | `dp worktree` | Manage git worktrees for parallel work | git | dp | [📖](docs/commands/dp/worktree.md) |

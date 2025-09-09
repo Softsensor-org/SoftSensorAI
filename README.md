@@ -13,7 +13,7 @@ all platforms.
 git clone https://github.com/Softsensor-org/SoftSensorAI.git ~/softsensorai
 cd ~/softsensorai && ./setup_all.sh
 export PATH="$HOME/softsensorai/bin:$PATH"  # Add to ~/.bashrc
-alias ssp='ss palette'                   # Add to ~/.bashrc for quick access
+# ss is the main command, dp is legacy compatibility
 
 # 2. Setup your project - ONE command!
 ss setup        # Interactive - just paste GitHub URL
@@ -23,10 +23,11 @@ ss setup git@github.com:org/repo.git
 cd your-project && ss setup
 
 # 3. Start using AI features
-ssp             # Browse all commands (using alias)
-ss review       # AI code review
+ss              # Main command
+ss setup        # Setup repos
+ss review       # AI code review  
 ss tickets      # Generate backlog
-ss help         # Quick reference (7 essential commands)
+ss help         # Quick reference
 ```
 
 That's it! SoftSensorAI is now configured for your project. See [Full Guide](#getting-started) for

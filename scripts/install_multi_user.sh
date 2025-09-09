@@ -10,7 +10,7 @@ NC='\033[0m' # No Color
 
 # Configuration
 DEVPILOT_ROOT="/opt/devpilot"
-DEVPILOT_REPO="https://github.com/Softsensor-org/DevPilot.git"
+SOFTSENSORAI_REPO="https://github.com/Softsensor-org/SoftSensorAI.git"
 DEVPILOT_BRANCH="main"
 
 # Helper functions
@@ -60,7 +60,7 @@ install_devpilot() {
         git pull origin "$DEVPILOT_BRANCH"
     else
         echo "Cloning DevPilot repository..."
-        git clone "$DEVPILOT_REPO" "$DEVPILOT_ROOT/src"
+        git clone "$SOFTSENSORAI_REPO" "$DEVPILOT_ROOT/src"
         cd "$DEVPILOT_ROOT/src"
         git checkout "$DEVPILOT_BRANCH"
     fi
