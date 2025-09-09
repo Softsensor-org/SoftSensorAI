@@ -887,6 +887,56 @@ cmd_testgen() {
   fi
 }
 
+cmd_vibe() {
+  # Vibe lane exploration commands
+  local subcmd="${1:-}"
+  shift || true
+  
+  case "$subcmd" in
+    start)
+      if [[ -x "$ROOT/scripts/vibe_start.mjs" ]]; then
+        node "$ROOT/scripts/vibe_start.mjs" "$@"
+      else
+        say "Error: vibe_start.mjs not found"
+        exit 1
+      fi
+      ;;
+    snapshot)
+      if [[ -x "$ROOT/scripts/vibe_snapshot.mjs" ]]; then
+        node "$ROOT/scripts/vibe_snapshot.mjs" "$@"
+      else
+        say "Error: vibe_snapshot.mjs not found"
+        exit 1
+      fi
+      ;;
+    end)
+      if [[ -x "$ROOT/scripts/vibe_end.mjs" ]]; then
+        node "$ROOT/scripts/vibe_end.mjs" "$@"
+      else
+        say "Error: vibe_end.mjs not found"
+        exit 1
+      fi
+      ;;
+    promote)
+      if [[ -x "$ROOT/scripts/vibe_promote.mjs" ]]; then
+        node "$ROOT/scripts/vibe_promote.mjs" "$@"
+      else
+        say "Error: vibe_promote.mjs not found"
+        exit 1
+      fi
+      ;;
+    *)
+      say "Usage: dp vibe <command> [options]"
+      say ""
+      say "Commands:"
+      say "  start <title>    Start exploration session with WARN mode"
+      say "  snapshot [note]  Create snapshot of current state"
+      say "  end              End session and generate impact report"
+      say "  promote          Convert exploration to formal contract"
+      ;;
+  esac
+}
+
 cmd_help() {
   # Show quick help or full help
   if [[ "${1:-}" == "--full" ]]; then
@@ -997,6 +1047,7 @@ case "${1:-}" in
   release-check)shift; cmd_release_check "$@";;
   migrate)shift; cmd_migrate "$@";;
   graduate)shift; cmd_graduate "$@";;
+  vibe)   shift; cmd_vibe "$@";;
   help)   shift; cmd_help "$@";;
   -h|--help|"")
     cmd_help "$@"

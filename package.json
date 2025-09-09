@@ -7,6 +7,10 @@
     "contracts:validate": "node scripts/contract_validate.mjs",
     "contracts:enforce": "node scripts/contract_scope_and_hash.mjs",
     "hooks:install": "node scripts/install_hooks.mjs",
+    "vibe:start": "node scripts/vibe_start.mjs",
+    "vibe:snapshot": "node scripts/vibe_snapshot.mjs",
+    "vibe:end": "node scripts/vibe_end.mjs",
+    "vibe:promote": "node scripts/vibe_promote.mjs",
     "test": "echo 'No tests configured yet'"
   },
   "dependencies": {
