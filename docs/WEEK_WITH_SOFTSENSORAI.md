@@ -5,7 +5,7 @@ the essential workflows.
 
 ## Prerequisites
 
-- SoftSensorAI globally installed (`~/devpilot/setup_all.sh` completed)
+- SoftSensorAI globally installed (`~/softsensorai/setup_all.sh` completed)
 - AI CLI tools installed (claude, codex, gemini, grok)
 - A project to work on
 
@@ -340,7 +340,7 @@ claude --system-prompt .claude/commands/patterns/performance-pass.md \
 1. **Start each day** by checking your profile and personas:
 
    ```bash
-   scripts/profile_show.sh && ~/devpilot/scripts/persona_manager.sh show
+   scripts/profile_show.sh && ~/softsensorai/scripts/persona_manager.sh show
    ```
 
 2. **Before coding**, always use explore-plan pattern:

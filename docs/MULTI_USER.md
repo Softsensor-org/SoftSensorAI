@@ -14,7 +14,7 @@ installations. This guide covers the multi-user model for teams.
 
 ### Multi-User Mode (Teams)
 
-- SoftSensorAI installed system-wide at `/opt/devpilot`
+- SoftSensorAI installed system-wide at `/opt/softsensorai`
 - Per-user artifacts in `~/.devpilot/artifacts/`
 - Shared templates and tools
 - Centralized updates by admins
@@ -22,15 +22,15 @@ installations. This guide covers the multi-user model for teams.
 ## How Mode Detection Works
 
 The `dp` command automatically detects multi-user installations by checking for
-`/opt/devpilot/etc/devpilot.conf`:
+`/opt/softsensorai/etc/softsensorai.conf`:
 
 ```bash
 # Mode detection in bin/dp
-if [[ -f "/opt/devpilot/etc/devpilot.conf" ]]; then
+if [[ -f "/opt/softsensorai/etc/softsensorai.conf" ]]; then
     # Multi-user mode
-    source /opt/devpilot/etc/devpilot.conf
-    ROOT="${DEVPILOT_ROOT:-/opt/devpilot}"
-    ART="${DEVPILOT_USER_DIR:-$HOME/.devpilot}/artifacts"
+    source /opt/softsensorai/etc/softsensorai.conf
+    ROOT="${SOFTSENSORAI_ROOT:-/opt/softsensorai}"
+    ART="${SOFTSENSORAI_USER_DIR:-$HOME/.softsensorai}/artifacts"
 else
     # Single-user mode
     ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -62,23 +62,23 @@ sudo bash SoftSensorAI/scripts/install_multi_user.sh
 
 ```bash
 # 1. Create system directories
-sudo mkdir -p /opt/devpilot/{bin,tools,templates,scripts,etc}
+sudo mkdir -p /opt/softsensorai/{bin,tools,templates,scripts,etc}
 
 # 2. Clone SoftSensorAI
-sudo git clone https://github.com/Softsensor-org/SoftSensorAI.git /opt/devpilot/src
+sudo git clone https://github.com/Softsensor-org/SoftSensorAI.git /opt/softsensorai/src
 
 # 3. Copy components
-sudo cp -r /opt/devpilot/src/bin/* /opt/devpilot/bin/
-sudo cp -r /opt/devpilot/src/tools/* /opt/devpilot/tools/
-sudo cp -r /opt/devpilot/src/templates/* /opt/devpilot/templates/
-sudo cp -r /opt/devpilot/src/scripts/* /opt/devpilot/scripts/
+sudo cp -r /opt/softsensorai/src/bin/* /opt/softsensorai/bin/
+sudo cp -r /opt/softsensorai/src/tools/* /opt/softsensorai/tools/
+sudo cp -r /opt/softsensorai/src/templates/* /opt/softsensorai/templates/
+sudo cp -r /opt/softsensorai/src/scripts/* /opt/softsensorai/scripts/
 
 # 4. Create configuration
-sudo tee /opt/devpilot/etc/devpilot.conf > /dev/null <<'EOF'
+sudo tee /opt/softsensorai/etc/softsensorai.conf > /dev/null <<'EOF'
 # SoftSensorAI Multi-User Configuration
-DEVPILOT_ROOT=/opt/devpilot
-DEVPILOT_USER_DIR=$HOME/.devpilot
-DEVPILOT_VERSION=2.0.0
+SOFTSENSORAI_ROOT=/opt/softsensorai
+SOFTSENSORAI_USER_DIR=$HOME/.softsensorai
+SOFTSENSORAI_VERSION=2.0.0
 
 # Optional: Shared AI provider (users can override)
 # AI_PROVIDER=anthropic
@@ -86,11 +86,11 @@ DEVPILOT_VERSION=2.0.0
 EOF
 
 # 5. Set permissions
-sudo chmod 755 /opt/devpilot/bin/*
-sudo chmod 644 /opt/devpilot/etc/devpilot.conf
+sudo chmod 755 /opt/softsensorai/bin/*
+sudo chmod 644 /opt/softsensorai/etc/softsensorai.conf
 
 # 6. Add to system PATH
-echo 'export PATH="/opt/devpilot/bin:$PATH"' | sudo tee /etc/profile.d/devpilot.sh
+echo 'export PATH="/opt/softsensorai/bin:$PATH"' | sudo tee /etc/profile.d/softsensorai.sh
 ```
 
 ## User Setup
@@ -104,7 +104,7 @@ mkdir -p ~/.devpilot/{artifacts,cache,logs,config}
 # 2. Set up API keys (if not using shared keys)
 export ANTHROPIC_API_KEY="sk-ant-..."
 # Or use secure storage
-/opt/devpilot/utils/secure_keys.sh store
+/opt/softsensorai/utils/secure_keys.sh store
 
 # 3. Initialize a project
 cd ~/my-project
@@ -116,13 +116,13 @@ dp doctor
 
 ## Configuration File Reference
 
-### System Configuration (`/opt/devpilot/etc/devpilot.conf`)
+### System Configuration (`/opt/softsensorai/etc/softsensorai.conf`)
 
 ```bash
 # Required settings
-DEVPILOT_ROOT=/opt/devpilot           # System installation path
-DEVPILOT_USER_DIR=$HOME/.devpilot     # Per-user data directory
-DEVPILOT_VERSION=2.0.0                 # SoftSensorAI version
+SOFTSENSORAI_ROOT=/opt/softsensorai           # System installation path
+SOFTSENSORAI_USER_DIR=$HOME/.softsensorai     # Per-user data directory
+SOFTSENSORAI_VERSION=2.0.0                 # SoftSensorAI version
 
 # Optional team defaults
 AI_PROVIDER=anthropic                  # Default AI provider
@@ -130,9 +130,9 @@ AI_MODEL=claude-3-7-sonnet-20250219   # Default model
 BASE_BRANCH=main                       # Default base branch for agents
 
 # Optional paths (rarely changed)
-DEVPILOT_TEMPLATES=/opt/devpilot/templates
-DEVPILOT_TOOLS=/opt/devpilot/tools
-DEVPILOT_SCRIPTS=/opt/devpilot/scripts
+SOFTSENSORAI_TEMPLATES=/opt/softsensorai/templates
+SOFTSENSORAI_TOOLS=/opt/softsensorai/tools
+SOFTSENSORAI_SCRIPTS=/opt/softsensorai/scripts
 ```
 
 ### User Configuration (`~/.devpilot/config/user.conf`)
@@ -151,13 +151,13 @@ EDITOR=nvim                             # Preferred editor
 ### System Directories (root-owned)
 
 ```
-/opt/devpilot/
+/opt/softsensorai/
 ├── bin/                # Executables (dp, dp-agent)
 ├── tools/              # Utility scripts
 ├── templates/          # Project templates
 ├── scripts/            # Setup and maintenance scripts
 ├── etc/                # Configuration
-│   └── devpilot.conf   # System config
+│   └── softsensorai.conf   # System config
 └── src/                # Source repository (for updates)
 ```
 
@@ -185,7 +185,7 @@ $ dp init
 ✓ SoftSensorAI initialized for project: my-app
   Version      : 2.0.0
   Mode         : Multi-user
-  System root  : /opt/devpilot
+  System root  : /opt/softsensorai
   Your artifacts: /home/alice/.devpilot/artifacts
 ```
 
@@ -214,7 +214,7 @@ Admins can add team-specific templates:
 
 ```bash
 # Admin adds a template
-sudo cp company-template.md /opt/devpilot/templates/
+sudo cp company-template.md /opt/softsensorai/templates/
 
 # Users can use it
 dp init --template company-template
@@ -230,8 +230,8 @@ $ dp team doctor
 SoftSensorAI Team Setup Check
 -------------------------
 ✓ Multi-user mode active
-✓ System config readable: /opt/devpilot/etc/devpilot.conf
-✓ System root valid: /opt/devpilot
+✓ System config readable: /opt/softsensorai/etc/softsensorai.conf
+✓ System root valid: /opt/softsensorai
 ✓ User directory writable: ~/.devpilot
 ✓ Artifacts directory exists: ~/.devpilot/artifacts
 ✓ AI CLI available: anthropic
@@ -247,13 +247,13 @@ All checks passed! Ready for team development.
 
 ```bash
 # 1. Pull latest changes
-cd /opt/devpilot/src
+cd /opt/softsensorai/src
 sudo git pull
 
 # 2. Update components
-sudo cp -r bin/* /opt/devpilot/bin/
-sudo cp -r tools/* /opt/devpilot/tools/
-sudo cp -r templates/* /opt/devpilot/templates/
+sudo cp -r bin/* /opt/softsensorai/bin/
+sudo cp -r tools/* /opt/softsensorai/tools/
+sudo cp -r templates/* /opt/softsensorai/templates/
 
 # 3. Notify users
 echo "SoftSensorAI updated to $(cat VERSION)" | wall
@@ -263,8 +263,8 @@ echo "SoftSensorAI updated to $(cat VERSION)" | wall
 
 Regular backups should include:
 
-- `/opt/devpilot/etc/` - Configuration
-- `/opt/devpilot/templates/` - Custom templates
+- `/opt/softsensorai/etc/` - Configuration
+- `/opt/softsensorai/templates/` - Custom templates
 - `~/.devpilot/` - User data (each user)
 
 ### Monitoring Usage
@@ -288,8 +288,8 @@ If users get permission errors:
 
 ```bash
 # Fix system directory permissions
-sudo chmod 755 /opt/devpilot/{bin,tools,scripts}/*
-sudo chmod 644 /opt/devpilot/etc/devpilot.conf
+sudo chmod 755 /opt/softsensorai/{bin,tools,scripts}/*
+sudo chmod 644 /opt/softsensorai/etc/softsensorai.conf
 
 # User should own their directory
 chown -R $USER:$USER ~/.devpilot
@@ -301,14 +301,14 @@ If `dp` doesn't detect multi-user mode:
 
 ```bash
 # Check config exists and is readable
-ls -la /opt/devpilot/etc/devpilot.conf
+ls -la /opt/softsensorai/etc/softsensorai.conf
 
 # Verify it's being sourced
-grep "devpilot.conf" $(which dp)
+grep "softsensorai.conf" $(which dp)
 
 # Test manually
-source /opt/devpilot/etc/devpilot.conf
-echo $DEVPILOT_ROOT  # Should show /opt/devpilot
+source /opt/softsensorai/etc/softsensorai.conf
+echo $SOFTSENSORAI_ROOT  # Should show /opt/softsensorai
 ```
 
 ### Artifacts Missing
@@ -330,7 +330,7 @@ mkdir -p ~/.devpilot/artifacts
 
 ### API Key Management
 
-- **Never** store API keys in `/opt/devpilot/etc/devpilot.conf`
+- **Never** store API keys in `/opt/softsensorai/etc/softsensorai.conf`
 - Users should set keys in their shell environment or use encrypted storage
 - Consider using a secrets management system for production
 
@@ -338,7 +338,7 @@ mkdir -p ~/.devpilot/artifacts
 
 ```bash
 # System files (root-owned, world-readable)
-/opt/devpilot/**: root:root 755 (dirs), 644 (files), 755 (executables)
+/opt/softsensorai/**: root:root 755 (dirs), 644 (files), 755 (executables)
 
 # User files (user-owned, user-only)
 ~/.devpilot/**: $USER:$USER 700 (dirs), 600 (files)
@@ -349,8 +349,8 @@ mkdir -p ~/.devpilot/artifacts
 Enable audit logging for compliance:
 
 ```bash
-# Add to devpilot.conf
-DEVPILOT_AUDIT_LOG=/var/log/devpilot/audit.log
+# Add to softsensorai.conf
+SOFTSENSORAI_AUDIT_LOG=/var/log/devpilot/audit.log
 
 # Create log directory
 sudo mkdir -p /var/log/devpilot
@@ -386,7 +386,7 @@ git clone https://github.com/Softsensor-org/SoftSensorAI.git .
 cp -r ~/.devpilot/artifacts/* ./artifacts/
 
 # 3. Remove multi-user config (admin)
-sudo rm /opt/devpilot/etc/devpilot.conf
+sudo rm /opt/softsensorai/etc/softsensorai.conf
 
 # 4. Verify single-user mode
 ./bin/dp doctor

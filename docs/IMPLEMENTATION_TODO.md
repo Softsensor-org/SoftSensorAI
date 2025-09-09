@@ -68,10 +68,10 @@ Users should now use `dp` commands instead of directly calling scripts:
 
 | Old Way                                 | New Way      |
 | --------------------------------------- | ------------ |
-| `~/devpilot/scripts/apply_profile.sh`   | `dp profile` |
-| `~/devpilot/scripts/persona_manager.sh` | `dp persona` |
-| `~/devpilot/scripts/dprs.sh`            | `dp score`   |
-| `~/devpilot/scripts/doctor.sh`          | `dp doctor`  |
+| `~/softsensorai/scripts/apply_profile.sh`   | `dp profile` |
+| `~/softsensorai/scripts/persona_manager.sh` | `dp persona` |
+| `~/softsensorai/scripts/dprs.sh`            | `dp score`   |
+| `~/softsensorai/scripts/doctor.sh`          | `dp doctor`  |
 
 ### Backward Compatibility
 

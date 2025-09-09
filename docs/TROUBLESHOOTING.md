@@ -56,10 +56,10 @@ brew install bash
 
 ```bash
 # Check installation location
-ls -la ~/devpilot/
+ls -la ~/softsensorai/
 
 # If missing, clone again
-git clone https://github.com/Softsensor-org/SoftSensorAI.git ~/devpilot
+git clone https://github.com/Softsensor-org/SoftSensorAI.git ~/softsensorai
 
 # Add to PATH (optional)
 echo 'export PATH="$HOME/devpilot/bin:$PATH"' >> ~/.bashrc
@@ -103,15 +103,15 @@ dp profile --skill beginner --phase mvp
 rm -rf .claude/ CLAUDE.md PROFILE.md
 
 # Rerun setup
-~/devpilot/setup/existing_repo_setup.sh
+~/softsensorai/setup/existing_repo_setup.sh
 ```
 
 3. **Manual fix**:
 
 ```bash
 # Copy templates manually
-cp -r ~/devpilot/templates/.claude .
-cp ~/devpilot/templates/CLAUDE.md .
+cp -r ~/softsensorai/templates/.claude .
+cp ~/softsensorai/templates/CLAUDE.md .
 ```
 
 ### Issue: "Persona commands not available"
@@ -202,7 +202,7 @@ nvidia-smi
 
 ```bash
 # Update process analyzer
-cd ~/devpilot
+cd ~/softsensorai
 git pull origin main
 
 # Reinstall scripts
@@ -250,7 +250,7 @@ model = model.half()  # Convert to FP16
 
 ```bash
 # Manually specify during setup
-~/devpilot/setup/existing_repo_setup.sh
+~/softsensorai/setup/existing_repo_setup.sh
 
 # When it detects wrong type, choose "Continue anyway"
 # Then manually configure
@@ -266,7 +266,7 @@ cp CLAUDE.md CLAUDE.md.backup
 cp -r .claude .claude.backup
 
 # Run setup
-~/devpilot/setup/existing_repo_setup.sh
+~/softsensorai/setup/existing_repo_setup.sh
 
 # When prompted "Update/overwrite?", choose "No"
 ```
@@ -285,14 +285,14 @@ mv .claude.backup .claude
 
 ```bash
 # Directly specify path
-~/devpilot/setup/existing_repo_setup.sh
+~/softsensorai/setup/existing_repo_setup.sh
 
 # When prompted for path, enter full path:
 /home/username/path/to/your/repo
 
 # Or navigate there first
 cd /your/repo
-~/devpilot/setup/existing_repo_setup.sh
+~/softsensorai/setup/existing_repo_setup.sh
 # Choose "Setup configurations here"
 ```
 
@@ -440,7 +440,7 @@ apt-get update && apt-get install sudo
 
 ```bash
 # Run any script with debug output
-bash -x ~/devpilot/setup.sh
+bash -x ~/softsensorai/setup.sh
 
 # Or enable in script
 set -x  # Add to top of script
@@ -492,7 +492,7 @@ tar czf ai-config-backup.tar.gz .claude/ CLAUDE.md PROFILE.md 2>/dev/null
 rm -rf .claude/ CLAUDE.md PROFILE.md system/
 
 # Fresh setup
-~/devpilot/setup/existing_repo_setup.sh
+~/softsensorai/setup/existing_repo_setup.sh
 ```
 
 ---
@@ -549,7 +549,7 @@ between projects.
 **Q: How do I completely uninstall?** A:
 
 ```bash
-rm -rf ~/devpilot
+rm -rf ~/softsensorai
 rm -rf ~/.claude ~/.gemini
 # Remove from projects:
 rm -rf .claude/ CLAUDE.md PROFILE.md

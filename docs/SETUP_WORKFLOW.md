@@ -194,10 +194,10 @@ Choose action [s/o/b/m/v]: m
 ```bash
 # From within your repository
 cd ~/my-existing-project
-~/devpilot/setup/existing_repo_setup.sh
+~/softsensorai/setup/existing_repo_setup.sh
 
 # With automatic merge (no prompts)
-~/devpilot/setup/existing_repo_setup.sh --auto-merge
+~/softsensorai/setup/existing_repo_setup.sh --auto-merge
 ```
 
 ## 📊 File Creation Order & Priority

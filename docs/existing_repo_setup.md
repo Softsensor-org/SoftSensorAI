@@ -54,7 +54,7 @@ your-existing-repo/
 
 ```bash
 cd your-project
-~/devpilot/setup/existing_repo_setup.sh
+~/softsensorai/setup/existing_repo_setup.sh
 ```
 
 You'll be prompted for:
@@ -67,7 +67,7 @@ You'll be prompted for:
 
 ```bash
 cd your-project
-~/devpilot/setup/existing_repo_setup.sh \
+~/softsensorai/setup/existing_repo_setup.sh \
   --skill l2 \
   --phase beta \
   --no-hooks
@@ -91,11 +91,11 @@ cd your-project
 # Setup all services with consistent configuration
 for service in auth-service user-service payment-service; do
   cd ~/microservices/$service
-  ~/devpilot/setup/existing_repo_setup.sh --skill l2 --phase beta
+  ~/softsensorai/setup/existing_repo_setup.sh --skill l2 --phase beta
 
   # Add same personas to all services
   for persona in software-architect backend-developer devops-engineer; do
-    ~/devpilot/scripts/persona_manager.sh add $persona
+    ~/softsensorai/scripts/persona_manager.sh add $persona
   done
 done
 ```
@@ -105,13 +105,13 @@ done
 ```bash
 # Setup at monorepo root
 cd ~/company/monorepo
-~/devpilot/setup/existing_repo_setup.sh --skill expert --phase scale
+~/softsensorai/setup/existing_repo_setup.sh --skill expert --phase scale
 
 # Add all relevant personas
-~/devpilot/scripts/persona_manager.sh add software-architect
-~/devpilot/scripts/persona_manager.sh add backend-developer
-~/devpilot/scripts/persona_manager.sh add frontend-developer
-~/devpilot/scripts/persona_manager.sh add devops-engineer
+~/softsensorai/scripts/persona_manager.sh add software-architect
+~/softsensorai/scripts/persona_manager.sh add backend-developer
+~/softsensorai/scripts/persona_manager.sh add frontend-developer
+~/softsensorai/scripts/persona_manager.sh add devops-engineer
 ```
 
 ### Scenario 3: Legacy Project
@@ -119,10 +119,10 @@ cd ~/company/monorepo
 ```bash
 # Start with low skill level for safety
 cd ~/legacy/old-app
-~/devpilot/setup/existing_repo_setup.sh --skill beginner --phase poc
+~/softsensorai/setup/existing_repo_setup.sh --skill beginner --phase poc
 
 # Add security persona for vulnerability scanning
-~/devpilot/scripts/persona_manager.sh add security-engineer
+~/softsensorai/scripts/persona_manager.sh add security-engineer
 
 # Run security audit
 claude --system-prompt .claude/commands/security-review.md "audit entire codebase"
@@ -136,7 +136,7 @@ git clone git@github.com:you/forked-project.git
 cd forked-project
 
 # Setup with appropriate level
-~/devpilot/setup/existing_repo_setup.sh --skill l1 --phase mvp
+~/softsensorai/setup/existing_repo_setup.sh --skill l1 --phase mvp
 
 # Use to understand codebase
 claude --system-prompt system/active.md "/explore-codebase explain the architecture"
@@ -243,11 +243,11 @@ If SoftSensorAI was previously configured:
 
 ```bash
 # Force overwrite (careful!)
-~/devpilot/setup/existing_repo_setup.sh --force
+~/softsensorai/setup/existing_repo_setup.sh --force
 
 # Or remove old config first
 rm -rf .claude/ CLAUDE.md AGENTS.md scripts/apply_profile.sh
-~/devpilot/setup/existing_repo_setup.sh
+~/softsensorai/setup/existing_repo_setup.sh
 ```
 
 ### "Dependencies not installing"
@@ -271,7 +271,7 @@ find ~/code -name "requirements.txt" -type f | while read req; do
   dir=$(dirname "$req")
   echo "Setting up $dir"
   cd "$dir"
-  ~/devpilot/setup/existing_repo_setup.sh --skill l2 --phase mvp --no-hooks
+  ~/softsensorai/setup/existing_repo_setup.sh --skill l2 --phase mvp --no-hooks
 done
 ```
 
@@ -284,11 +284,11 @@ setup_my_project() {
   cd "$project_dir"
 
   # Apply SoftSensorAI
-  ~/devpilot/setup/existing_repo_setup.sh --skill expert --phase scale
+  ~/softsensorai/setup/existing_repo_setup.sh --skill expert --phase scale
 
   # Add standard personas
   for persona in software-architect backend-developer devops-engineer security-engineer; do
-    ~/devpilot/scripts/persona_manager.sh add $persona
+    ~/softsensorai/scripts/persona_manager.sh add $persona
   done
 
   # Custom configurations
@@ -306,8 +306,8 @@ setup_my_project ~/projects/new-service
 # In your CI pipeline (e.g., GitHub Actions)
 - name: Setup SoftSensorAI
   run: |
-    git clone https://github.com/Softsensor-org/SoftSensorAI.git ~/devpilot
-    ~/devpilot/setup/existing_repo_setup.sh --skill l2 --phase beta --no-hooks
+    git clone https://github.com/Softsensor-org/SoftSensorAI.git ~/softsensorai
+    ~/softsensorai/setup/existing_repo_setup.sh --skill l2 --phase beta --no-hooks
 
 - name: Run AI Security Review
   run: |

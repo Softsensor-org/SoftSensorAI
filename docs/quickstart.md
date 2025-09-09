@@ -6,8 +6,8 @@
 
 ```bash
 # 1. Clone and install SoftSensorAI
-git clone https://github.com/Softsensor-org/SoftSensorAI.git ~/devpilot
-cd ~/devpilot && ./setup_all.sh
+git clone https://github.com/Softsensor-org/SoftSensorAI.git ~/softsensorai
+cd ~/softsensorai && ./setup_all.sh
 
 # 2. Add dp command to PATH
 export PATH="$HOME/devpilot/bin:$PATH"  # Add to ~/.bashrc
@@ -97,11 +97,11 @@ Creates in your home directory:
 cd /path/to/your/existing/repo
 
 # Run setup without cloning (keeps your structure intact)
-~/devpilot/setup/existing_repo_setup.sh --skill l1 --phase mvp
+~/softsensorai/setup/existing_repo_setup.sh --skill l1 --phase mvp
 
 # Add personas for your project type
-~/devpilot/scripts/persona_manager.sh add backend-developer
-~/devpilot/scripts/persona_manager.sh add devops-engineer
+~/softsensorai/scripts/persona_manager.sh add backend-developer
+~/softsensorai/scripts/persona_manager.sh add devops-engineer
 ```
 
 **Why this is better:**
@@ -117,7 +117,7 @@ Only use this if you need to clone a repository first:
 
 ```bash
 # Interactive wizard that clones then sets up
-~/devpilot/setup/repo_wizard.sh
+~/softsensorai/setup/repo_wizard.sh
 ```
 
 ### One-Line Setup
@@ -206,14 +206,14 @@ codex --system .claude/commands/patterns/arch-spike.md "design payment service"
 ```bash
 # Add personas to your project
 cd your-project
-~/devpilot/scripts/persona_manager.sh add data-scientist
-~/devpilot/scripts/persona_manager.sh add software-architect
+~/softsensorai/scripts/persona_manager.sh add data-scientist
+~/softsensorai/scripts/persona_manager.sh add software-architect
 
 # View active personas
-~/devpilot/scripts/persona_manager.sh show
+~/softsensorai/scripts/persona_manager.sh show
 
 # Remove a persona
-~/devpilot/scripts/persona_manager.sh remove data-scientist
+~/softsensorai/scripts/persona_manager.sh remove data-scientist
 ```
 
 ## 🔑 API Keys (Optional but Recommended)
@@ -260,31 +260,31 @@ In Claude, type `/` to see available commands:
 ```bash
 # Interactive profile selection
 cd your-project
-~/devpilot/scripts/apply_profile.sh
+~/softsensorai/scripts/apply_profile.sh
 
 # Direct profile application
-~/devpilot/scripts/apply_profile.sh --skill l2 --phase beta
+~/softsensorai/scripts/apply_profile.sh --skill l2 --phase beta
 
 # Add specialized personas
-~/devpilot/scripts/persona_manager.sh add data-scientist
-~/devpilot/scripts/persona_manager.sh add software-architect
+~/softsensorai/scripts/persona_manager.sh add data-scientist
+~/softsensorai/scripts/persona_manager.sh add software-architect
 ```
 
 ### Install Extra Tools
 
 ```bash
 # Database, ML, Kubernetes tools
-~/devpilot/install/productivity_extras.sh
+~/softsensorai/install/productivity_extras.sh
 
 # AI Frameworks (with GPU optimization)
-~/devpilot/scripts/setup_ai_frameworks.sh
+~/softsensorai/scripts/setup_ai_frameworks.sh
 ```
 
 ## ✅ Verify Setup
 
 ```bash
 # Check everything is configured
-~/devpilot/validation/validate_agents.sh
+~/softsensorai/validation/validate_agents.sh
 
 # See all your projects
 ls ~/projects/
@@ -305,15 +305,15 @@ source ~/.bashrc
 
 ```bash
 # Make scripts executable
-chmod +x ~/devpilot/**/*.sh
+chmod +x ~/softsensorai/**/*.sh
 ```
 
 ### Missing tools
 
 ```bash
 # Re-run setup for your platform
-~/devpilot/install/key_software_linux.sh  # Linux/WSL
-~/devpilot/install/key_software_macos.sh  # macOS
+~/softsensorai/install/key_software_linux.sh  # Linux/WSL
+~/softsensorai/install/key_software_macos.sh  # macOS
 ```
 
 ## 📚 Next Steps
@@ -336,4 +336,4 @@ claude "let's build something amazing"
 
 ---
 
-**Need help?** Run `~/devpilot/validation/validate_agents.sh` to diagnose issues.
+**Need help?** Run `~/softsensorai/validation/validate_agents.sh` to diagnose issues.

@@ -162,7 +162,7 @@ We're excited to announce SoftSensorAI vX.Y.Z with [key feature].
 ## Upgrade
 
 ```bash
-cd ~/devpilot
+cd ~/softsensorai
 git pull origin main
 ./setup_all.sh
 ```

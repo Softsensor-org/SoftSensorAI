@@ -74,11 +74,11 @@ Complete documentation for all SoftSensorAI commands with examples, use cases, a
 
 ```bash
 # 1. Install SoftSensorAI
-git clone https://github.com/Softsensor-org/SoftSensorAI ~/devpilot
-cd ~/devpilot && ./setup_all.sh
+git clone https://github.com/Softsensor-org/SoftSensorAI ~/softsensorai
+cd ~/softsensorai && ./setup_all.sh
 
 # 2. Add to PATH
-export PATH="$HOME/devpilot/bin:$PATH"
+export PATH="$HOME/softsensorai/bin:$PATH"
 
 # 3. Setup your project
 cd your-project

@@ -48,7 +48,7 @@ When setting up a new project, use the interactive profile selector:
 
 ```bash
 cd your-project
-~/devpilot/scripts/apply_profile.sh
+~/softsensorai/scripts/apply_profile.sh
 ```
 
 You'll see an interactive menu:
@@ -83,7 +83,7 @@ After initial setup, add specialized personas:
 
 ```bash
 # Interactive persona selection
-~/devpilot/scripts/persona_manager.sh
+~/softsensorai/scripts/persona_manager.sh
 
 # You'll see:
 ========================================
@@ -118,16 +118,16 @@ Skip the interactive menu with direct commands:
 
 ```bash
 # Add a persona
-~/devpilot/scripts/persona_manager.sh add data-scientist
+~/softsensorai/scripts/persona_manager.sh add data-scientist
 
 # Remove a persona
-~/devpilot/scripts/persona_manager.sh remove frontend-developer
+~/softsensorai/scripts/persona_manager.sh remove frontend-developer
 
 # Show active personas
-~/devpilot/scripts/persona_manager.sh show
+~/softsensorai/scripts/persona_manager.sh show
 
 # Switch to single persona (removes others)
-~/devpilot/scripts/persona_manager.sh switch software-architect
+~/softsensorai/scripts/persona_manager.sh switch software-architect
 ```
 
 ### Batch Operations
@@ -137,7 +137,7 @@ Add multiple personas at once:
 ```bash
 # Add multiple personas for full-stack ML project
 for persona in data-scientist backend-developer devops-engineer; do
-  ~/devpilot/scripts/persona_manager.sh add $persona
+  ~/softsensorai/scripts/persona_manager.sh add $persona
 done
 ```
 
@@ -156,9 +156,9 @@ Combining personas gives you:
 #### Full-Stack ML Application
 
 ```bash
-~/devpilot/scripts/persona_manager.sh add data-scientist
-~/devpilot/scripts/persona_manager.sh add backend-developer
-~/devpilot/scripts/persona_manager.sh add devops-engineer
+~/softsensorai/scripts/persona_manager.sh add data-scientist
+~/softsensorai/scripts/persona_manager.sh add backend-developer
+~/softsensorai/scripts/persona_manager.sh add devops-engineer
 ```
 
 Benefits:
@@ -170,9 +170,9 @@ Benefits:
 #### Secure Web Application
 
 ```bash
-~/devpilot/scripts/persona_manager.sh add backend-developer
-~/devpilot/scripts/persona_manager.sh add frontend-developer
-~/devpilot/scripts/persona_manager.sh add security-engineer
+~/softsensorai/scripts/persona_manager.sh add backend-developer
+~/softsensorai/scripts/persona_manager.sh add frontend-developer
+~/softsensorai/scripts/persona_manager.sh add security-engineer
 ```
 
 Benefits:
@@ -184,9 +184,9 @@ Benefits:
 #### Scalable Microservices
 
 ```bash
-~/devpilot/scripts/persona_manager.sh add software-architect
-~/devpilot/scripts/persona_manager.sh add backend-developer
-~/devpilot/scripts/persona_manager.sh add devops-engineer
+~/softsensorai/scripts/persona_manager.sh add software-architect
+~/softsensorai/scripts/persona_manager.sh add backend-developer
+~/softsensorai/scripts/persona_manager.sh add devops-engineer
 ```
 
 Benefits:
@@ -202,13 +202,13 @@ Benefits:
 ```bash
 # 1. Initial setup
 cd ~/projects/ml-project
-~/devpilot/scripts/apply_profile.sh --skill l2 --phase mvp
+~/softsensorai/scripts/apply_profile.sh --skill l2 --phase mvp
 
 # 2. Add data science persona
-~/devpilot/scripts/persona_manager.sh add data-scientist
+~/softsensorai/scripts/persona_manager.sh add data-scientist
 
 # 3. Install AI frameworks
-~/devpilot/scripts/setup_ai_frameworks.sh
+~/softsensorai/scripts/setup_ai_frameworks.sh
 
 # 4. Use specialized commands
 claude /gpu-optimize "optimize this PyTorch training loop"
@@ -220,12 +220,12 @@ claude /explain-parallelization "how would this scale to multiple GPUs"
 ```bash
 # 1. Initial setup
 cd ~/projects/microservices
-~/devpilot/scripts/apply_profile.sh --skill expert --phase production
+~/softsensorai/scripts/apply_profile.sh --skill expert --phase production
 
 # 2. Add relevant personas
-~/devpilot/scripts/persona_manager.sh add software-architect
-~/devpilot/scripts/persona_manager.sh add backend-developer
-~/devpilot/scripts/persona_manager.sh add devops-engineer
+~/softsensorai/scripts/persona_manager.sh add software-architect
+~/softsensorai/scripts/persona_manager.sh add backend-developer
+~/softsensorai/scripts/persona_manager.sh add devops-engineer
 
 # 3. Use architecture commands
 claude /design-review "review this service mesh configuration"
@@ -237,7 +237,7 @@ claude /scale-analysis "analyze bottlenecks in this architecture"
 ```bash
 # 1. Add security persona to existing project
 cd ~/projects/web-app
-~/devpilot/scripts/persona_manager.sh add security-engineer
+~/softsensorai/scripts/persona_manager.sh add security-engineer
 
 # 2. Run security commands
 claude /security-review "audit this authentication flow"
@@ -253,10 +253,10 @@ Begin with one or two personas, add more as needed:
 
 ```bash
 # Start with core persona
-~/devpilot/scripts/persona_manager.sh add backend-developer
+~/softsensorai/scripts/persona_manager.sh add backend-developer
 
 # Add specialized support later
-~/devpilot/scripts/persona_manager.sh add data-scientist  # When adding ML features
+~/softsensorai/scripts/persona_manager.sh add data-scientist  # When adding ML features
 ```
 
 ### 2. Match Project Phase
@@ -265,13 +265,13 @@ Adjust personas as your project evolves:
 
 ```bash
 # MVP phase: Focus on development
-~/devpilot/scripts/persona_manager.sh switch backend-developer
+~/softsensorai/scripts/persona_manager.sh switch backend-developer
 
 # Beta phase: Add operations
-~/devpilot/scripts/persona_manager.sh add devops-engineer
+~/softsensorai/scripts/persona_manager.sh add devops-engineer
 
 # Production: Add security
-~/devpilot/scripts/persona_manager.sh add security-engineer
+~/softsensorai/scripts/persona_manager.sh add security-engineer
 ```
 
 ### 3. Regular Review
@@ -280,10 +280,10 @@ Periodically review active personas:
 
 ```bash
 # Check current setup
-~/devpilot/scripts/persona_manager.sh show
+~/softsensorai/scripts/persona_manager.sh show
 
 # Remove unused personas
-~/devpilot/scripts/persona_manager.sh remove frontend-developer
+~/softsensorai/scripts/persona_manager.sh remove frontend-developer
 ```
 
 ### 4. Project Templates
@@ -309,7 +309,7 @@ echo "## Required Personas
 - backend-developer
 - devops-engineer
 
-Run: ~/devpilot/scripts/persona_manager.sh add [persona]" >> README.md
+Run: ~/softsensorai/scripts/persona_manager.sh add [persona]" >> README.md
 ```
 
 ## Troubleshooting
@@ -322,7 +322,7 @@ ls -la .claude/personas/
 
 # Recreate if missing
 mkdir -p .claude/personas
-~/devpilot/scripts/persona_manager.sh add data-scientist
+~/softsensorai/scripts/persona_manager.sh add data-scientist
 ```
 
 ### Command Conflicts
@@ -331,10 +331,10 @@ If commands conflict between personas:
 
 ```bash
 # Check which personas are active
-~/devpilot/scripts/persona_manager.sh show
+~/softsensorai/scripts/persona_manager.sh show
 
 # Remove conflicting persona
-~/devpilot/scripts/persona_manager.sh remove [persona-name]
+~/softsensorai/scripts/persona_manager.sh remove [persona-name]
 ```
 
 ### Performance Issues
@@ -343,11 +343,11 @@ Too many personas can slow down AI responses:
 
 ```bash
 # Limit to 3-4 active personas
-~/devpilot/scripts/persona_manager.sh show | wc -l
+~/softsensorai/scripts/persona_manager.sh show | wc -l
 
 # Switch to essential personas only
-~/devpilot/scripts/persona_manager.sh switch software-architect
-~/devpilot/scripts/persona_manager.sh add backend-developer
+~/softsensorai/scripts/persona_manager.sh switch software-architect
+~/softsensorai/scripts/persona_manager.sh add backend-developer
 ```
 
 ## Examples
@@ -360,17 +360,17 @@ mkdir ~/projects/sentiment-analysis
 cd ~/projects/sentiment-analysis
 
 # Initialize with repo wizard
-~/devpilot/setup/repo_wizard.sh
+~/softsensorai/setup/repo_wizard.sh
 
 # Set profile for ML
-~/devpilot/scripts/apply_profile.sh --skill l2 --phase mvp
+~/softsensorai/scripts/apply_profile.sh --skill l2 --phase mvp
 
 # Add ML personas
-~/devpilot/scripts/persona_manager.sh add data-scientist
-~/devpilot/scripts/persona_manager.sh add backend-developer
+~/softsensorai/scripts/persona_manager.sh add data-scientist
+~/softsensorai/scripts/persona_manager.sh add backend-developer
 
 # Install frameworks
-~/devpilot/scripts/setup_ai_frameworks.sh
+~/softsensorai/scripts/setup_ai_frameworks.sh
 
 # Start development
 claude "create a sentiment analysis pipeline with transformers"
@@ -383,7 +383,7 @@ claude "create a sentiment analysis pipeline with transformers"
 cd ~/projects/existing-api
 
 # Add specialized support
-~/devpilot/scripts/persona_manager.sh add software-architect
+~/softsensorai/scripts/persona_manager.sh add software-architect
 
 # Get architecture advice
 claude /design-review "suggest improvements for this REST API structure"
@@ -398,11 +398,11 @@ cd ~/projects/dashboard
 
 # Add all relevant personas
 for persona in frontend-developer backend-developer devops-engineer security-engineer; do
-  ~/devpilot/scripts/persona_manager.sh add $persona
+  ~/softsensorai/scripts/persona_manager.sh add $persona
 done
 
 # Verify setup
-~/devpilot/scripts/persona_manager.sh show
+~/softsensorai/scripts/persona_manager.sh show
 
 # Use combined expertise
 claude "setup React frontend with Express backend and JWT auth"

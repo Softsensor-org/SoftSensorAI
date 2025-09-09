@@ -22,8 +22,8 @@ Codex is fully integrated with:
 cd /your/project
 
 # Copy Codex templates
-cp ~/devpilot/templates/CODEX.md .
-cp -r ~/devpilot/.codex .
+cp ~/softsensorai/templates/CODEX.md .
+cp -r ~/softsensorai/.codex .
 
 # Apply personas (shared with Claude)
 ./scripts/persona_manager.sh add data-scientist

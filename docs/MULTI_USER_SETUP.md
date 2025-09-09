@@ -418,7 +418,7 @@ dp-admin help
 
 | Feature               | Single-User       | Multi-User                                      |
 | --------------------- | ----------------- | ----------------------------------------------- |
-| Installation Location | `~/devpilot`      | `/opt/devpilot` (system) + `~/.devpilot` (user) |
+| Installation Location | `~/softsensorai`      | `/opt/devpilot` (system) + `~/.devpilot` (user) |
 | Installation Rights   | User              | Root/Admin                                      |
 | Disk Usage            | ~500MB per user   | ~200MB shared + ~100MB per user                 |
 | Updates               | Each user updates | Admin updates for all                           |

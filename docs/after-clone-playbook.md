@@ -303,8 +303,8 @@ jobs:
       - name: Setup SoftSensorAI
         run: |
           # Note: For private repo, clone first:
-          # git clone git@github.com:Softsensor-org/SoftSensorAI.git ~/devpilot
-          ~/devpilot/scripts/doctor.sh
+          # git clone git@github.com:Softsensor-org/SoftSensorAI.git ~/softsensorai
+          ~/softsensorai/scripts/doctor.sh
           ./scripts/apply_profile.sh --skill l2 --phase beta
 
       - name: Run Repository Review

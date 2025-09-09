@@ -11,10 +11,10 @@ structure and user workflow.
 
 ### User Workflow
 
-1. **SoftSensorAI is installed to `~/devpilot`** - Users clone the repo once to their home directory
-2. **Scripts run FROM SoftSensorAI directory** - Commands like `~/devpilot/setup/repo_wizard.sh`
+1. **SoftSensorAI is installed to `~/softsensorai`** - Users clone the repo once to their home directory
+2. **Scripts run FROM SoftSensorAI directory** - Commands like `~/softsensorai/setup/repo_wizard.sh`
 3. **Configuration applied TO other repos** - SoftSensorAI configures projects without moving them
-4. **`dp` CLI is the main interface** - Located at `~/devpilot/bin/dp`
+4. **`dp` CLI is the main interface** - Located at `~/softsensorai/bin/dp`
 
 ### Command Structure
 
@@ -29,7 +29,7 @@ The `dp` CLI provides these main commands:
 
 ### Installation Paths
 
-All installation scripts are in `~/devpilot/install/`:
+All installation scripts are in `~/softsensorai/install/`:
 
 - `key_software_linux.sh` - Linux/WSL tools
 - `key_software_macos.sh` - macOS tools
@@ -98,11 +98,11 @@ Since the repository is private:
 ## Recommendations
 
 1. **For Public Release**: Update curl commands when repo becomes public
-2. **For Users**: Always clone to `~/devpilot` for consistency
+2. **For Users**: Always clone to `~/softsensorai` for consistency
 3. **For Documentation**: Keep paths absolute to avoid confusion
 
 ## Conclusion
 
 The documentation accurately reflects the repository structure and intended user workflow. The
-system is designed to be installed once in `~/devpilot` and then used to configure multiple projects
+system is designed to be installed once in `~/softsensorai` and then used to configure multiple projects
 without reorganizing the user's directory structure.

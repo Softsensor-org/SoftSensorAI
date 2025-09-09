@@ -54,8 +54,8 @@ project needs.
 
 ```bash
 # Install SoftSensorAI
-git clone https://github.com/Softsensor-org/SoftSensorAI.git ~/devpilot
-cd ~/devpilot
+git clone https://github.com/Softsensor-org/SoftSensorAI.git ~/softsensorai
+cd ~/softsensorai
 ./setup_all.sh
 
 # Create your first project
@@ -78,13 +78,13 @@ cp -r ~/.claude ~/.claude.backup
 cp -r ~/.gemini ~/.gemini.backup
 
 # 2. Install SoftSensorAI 2.0
-cd ~/devpilot
+cd ~/softsensorai
 git pull origin main
 ./setup_all.sh
 
 # 3. Update existing projects
 cd your-project
-~/devpilot/setup/agents_repo.sh --force
+~/softsensorai/setup/agents_repo.sh --force
 ```
 
 ## 📋 Complete Feature List

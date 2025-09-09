@@ -12,7 +12,7 @@ SoftSensorAI separates global tooling from project-specific configuration:
 ```
 ┌─────────────────────────────────────────────────────────┐
 │                    GLOBAL LAYER (once)                   │
-│  ~/devpilot/         - Scripts, wizards, templates       │
+│  ~/softsensorai/         - Scripts, wizards, templates       │
 │  ~/.claude/          - Claude global settings            │
 │  ~/.gemini/          - Gemini configuration              │
 │  ~/.grok/            - Grok settings                     │
@@ -142,12 +142,12 @@ grok --prompt .claude/commands/patterns/bug-fix.md "fix null pointer issue"
 
 ```bash
 # 1. Clone and install globally (one time only)
-git clone https://github.com/Softsensor-org/SoftSensorAI.git ~/devpilot
-cd ~/devpilot
+git clone https://github.com/Softsensor-org/SoftSensorAI.git ~/softsensorai
+cd ~/softsensorai
 ./setup_all.sh
 
 # 2. Verify installation
-~/devpilot/scripts/doctor.sh
+~/softsensorai/scripts/doctor.sh
 ```
 
 ### B) Make a Repo "AI-Ready"
@@ -156,10 +156,10 @@ cd ~/devpilot
 
 ```bash
 # Interactive wizard
-~/devpilot/setup/repo_wizard.sh
+~/softsensorai/setup/repo_wizard.sh
 
 # Or one-liner
-~/devpilot/setup/repo_wizard.sh \
+~/softsensorai/setup/repo_wizard.sh \
   --url git@github.com:org/repo.git \
   --org work \
   --category backend \
@@ -174,13 +174,13 @@ cd ~/devpilot
 cd /path/to/your/repo
 
 # Run setup for existing repo
-~/devpilot/setup/existing_repo_setup.sh \
+~/softsensorai/setup/existing_repo_setup.sh \
   --skill l2 \
   --phase beta
 
 # Add personas
-~/devpilot/scripts/persona_manager.sh add backend-developer
-~/devpilot/scripts/persona_manager.sh add devops-engineer
+~/softsensorai/scripts/persona_manager.sh add backend-developer
+~/softsensorai/scripts/persona_manager.sh add devops-engineer
 ```
 
 ### C) Daily Development Flow
@@ -214,7 +214,7 @@ codex --system .claude/commands/patterns/arch-spike.md \
   "design multi-tenant SaaS platform"
 
 # 2. Review with architect persona
-~/devpilot/scripts/persona_manager.sh add software-architect
+~/softsensorai/scripts/persona_manager.sh add software-architect
 claude --system-prompt system/active.md "/architecture-review proposed-design.md"
 
 # 3. Generate IaC
@@ -262,10 +262,10 @@ Start all projects with:
 
 | Project Type        | Recommended Personas                 | Command                                                                                                                                  |
 | ------------------- | ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| **Backend API**     | architect, backend, devops           | `for p in software-architect backend-developer devops-engineer; do ~/devpilot/scripts/persona_manager.sh add $p; done`                   |
-| **Microservices**   | architect, backend, devops, security | `for p in software-architect backend-developer devops-engineer security-engineer; do ~/devpilot/scripts/persona_manager.sh add $p; done` |
-| **ML/Data Science** | data-scientist, backend, devops      | `for p in data-scientist backend-developer devops-engineer; do ~/devpilot/scripts/persona_manager.sh add $p; done`                       |
-| **Full Stack**      | frontend, backend, devops            | `for p in frontend-developer backend-developer devops-engineer; do ~/devpilot/scripts/persona_manager.sh add $p; done`                   |
+| **Backend API**     | architect, backend, devops           | `for p in software-architect backend-developer devops-engineer; do ~/softsensorai/scripts/persona_manager.sh add $p; done`                   |
+| **Microservices**   | architect, backend, devops, security | `for p in software-architect backend-developer devops-engineer security-engineer; do ~/softsensorai/scripts/persona_manager.sh add $p; done` |
+| **ML/Data Science** | data-scientist, backend, devops      | `for p in data-scientist backend-developer devops-engineer; do ~/softsensorai/scripts/persona_manager.sh add $p; done`                       |
+| **Full Stack**      | frontend, backend, devops            | `for p in frontend-developer backend-developer devops-engineer; do ~/softsensorai/scripts/persona_manager.sh add $p; done`                   |
 
 ### 3. CI Gates by Phase
 
@@ -295,10 +295,10 @@ Top 5 daily commands teams should use:
 
 ```bash
 # Morning: Global install
-~/devpilot/setup_all.sh
+~/softsensorai/setup_all.sh
 
 # Afternoon: Setup first project
-~/devpilot/setup/repo_wizard.sh
+~/softsensorai/setup/repo_wizard.sh
 
 # Explore commands
 ls .claude/commands/
@@ -321,7 +321,7 @@ claude --system-prompt .claude/commands/security-review.md \
 
 ```bash
 # Add architect persona
-~/devpilot/scripts/persona_manager.sh add software-architect
+~/softsensorai/scripts/persona_manager.sh add software-architect
 
 # Design review
 claude --system-prompt system/active.md \
@@ -360,9 +360,9 @@ claude --system-prompt .claude/commands/patterns/api-contract.md \
 # Apply consistent setup across repos
 for repo in api-gateway user-service payment-service; do
   cd ~/projects/work/backend/$repo
-  ~/devpilot/scripts/apply_profile.sh --skill l2 --phase beta
-  ~/devpilot/scripts/persona_manager.sh add backend-developer
-  ~/devpilot/scripts/persona_manager.sh add devops-engineer
+  ~/softsensorai/scripts/apply_profile.sh --skill l2 --phase beta
+  ~/softsensorai/scripts/persona_manager.sh add backend-developer
+  ~/softsensorai/scripts/persona_manager.sh add devops-engineer
 done
 ```
 
@@ -388,7 +388,7 @@ claude --system-prompt .claude/commands/custom-deploy.md "deploy feature-xyz"
 
 ```bash
 # Install git hooks
-~/devpilot/setup/install_hooks.sh
+~/softsensorai/setup/install_hooks.sh
 
 # Configure commit template
 git config commit.template .gitmessage
@@ -424,7 +424,7 @@ scripts/apply_profile.sh --skill l1 --phase mvp
 
 ```bash
 # Check active personas
-~/devpilot/scripts/persona_manager.sh show
+~/softsensorai/scripts/persona_manager.sh show
 
 # Verify command installation
 ls .claude/commands/personas/
@@ -458,8 +458,8 @@ cat .github/workflows/ci.yml | grep "exit-code"
 
 3. **Scale Adoption**:
    - **Always preview first**:
-     `~/devpilot/scripts/repo_plan.sh [base] [org] [category] [name] [url]`
-   - Use `--dry-run` flags: `~/devpilot/setup/repo_wizard.sh --dry-run`
+     `~/softsensorai/scripts/repo_plan.sh [base] [org] [category] [name] [url]`
+   - Use `--dry-run` flags: `~/softsensorai/setup/repo_wizard.sh --dry-run`
    - Batch apply with `find` and `xargs`
    - Monitor with `validation/validate_agents.sh`
 

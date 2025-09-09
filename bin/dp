@@ -3,11 +3,11 @@
 # DevPilot meta-CLI: beautiful defaults for init, tickets, and review.
 set -euo pipefail
 # Detect if running in multi-user mode
-if [[ -f "/opt/devpilot/etc/devpilot.conf" ]]; then
+if [[ -f "/opt/softsensorai/etc/softsensorai.conf" ]]; then
     # Multi-user installation detected
-    source /opt/devpilot/etc/devpilot.conf
-    ROOT="${DEVPILOT_ROOT:-/opt/devpilot}"
-    ART="${DEVPILOT_USER_DIR:-$HOME/.devpilot}/artifacts"
+    source /opt/softsensorai/etc/softsensorai.conf
+    ROOT="${SOFTSENSORAI_ROOT:-/opt/softsensorai}"
+    ART="${SOFTSENSORAI_USER_DIR:-$HOME/.softsensorai}/artifacts"
     USER_MODE=true
 else
     # Single-user installation

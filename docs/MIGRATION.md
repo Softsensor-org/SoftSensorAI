@@ -14,7 +14,7 @@ cp -r ~/.gemini ~/.gemini.v1.backup
 cp -r ~/.grok ~/.grok.v1.backup
 
 # 2. Get SoftSensorAI 2.0
-cd ~/devpilot  # or wherever you installed it
+cd ~/softsensorai  # or wherever you installed it
 git fetch origin
 git checkout v2.0.0
 
@@ -25,7 +25,7 @@ git checkout v2.0.0
 for project in ~/projects/*/*; do
   if [ -d "$project/.git" ]; then
     echo "Updating $project"
-    (cd "$project" && ~/devpilot/setup/agents_repo.sh --force)
+    (cd "$project" && ~/softsensorai/setup/agents_repo.sh --force)
   fi
 done
 ```
@@ -94,7 +94,7 @@ Set your skill level for each project:
 
 ```bash
 cd your-project
-~/devpilot/scripts/apply_profile.sh --skill beginner --teach-mode on
+~/softsensorai/scripts/apply_profile.sh --skill beginner --teach-mode on
 # or: --skill l1, --skill l2, --skill expert
 ```
 
@@ -103,7 +103,7 @@ cd your-project
 Configure project maturity:
 
 ```bash
-~/devpilot/scripts/apply_profile.sh --phase mvp
+~/softsensorai/scripts/apply_profile.sh --phase mvp
 # or: --phase poc, --phase beta, --phase scale
 ```
 
@@ -171,7 +171,7 @@ grep -r "setup_agents_global.sh" ~/projects
 
 ```bash
 # Fix permissions
-chmod +x ~/devpilot/**/*.sh
+chmod +x ~/softsensorai/**/*.sh
 ```
 
 ### Issue: Configuration conflicts
@@ -179,7 +179,7 @@ chmod +x ~/devpilot/**/*.sh
 ```bash
 # Reset to defaults
 rm -rf ~/.claude ~/.gemini ~/.grok
-~/devpilot/setup/agents_global.sh
+~/softsensorai/setup/agents_global.sh
 ```
 
 ## Rollback Plan
@@ -194,7 +194,7 @@ cp -r ~/.gemini.v1.backup ~/.gemini
 cp -r ~/.grok.v1.backup ~/.grok
 
 # 2. Checkout old version
-cd ~/devpilot
+cd ~/softsensorai
 git checkout v1.5.0
 
 # 3. Note: Some features will be unavailable
@@ -216,7 +216,7 @@ git checkout v1.5.0
 
 ### Q: What about my existing projects?
 
-**A:** Run `~/devpilot/setup/agents_repo.sh --force` in each project to update.
+**A:** Run `~/softsensorai/setup/agents_repo.sh --force` in each project to update.
 
 ### Q: Is the migration reversible?
 
@@ -233,8 +233,8 @@ git checkout v1.5.0
 
 ## Need Help?
 
-1. Check validation: `~/devpilot/validation/validate_agents.sh`
-2. Review docs: `~/devpilot/docs/`
+1. Check validation: `~/softsensorai/validation/validate_agents.sh`
+2. Review docs: `~/softsensorai/docs/`
 3. Open issue: https://github.com/Softsensor-org/SoftSensorAI/issues
 
 ---

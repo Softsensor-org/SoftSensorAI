@@ -10,9 +10,9 @@ all platforms.
 
 ```bash
 # 1. Install SoftSensorAI (one-time)
-git clone https://github.com/Softsensor-org/SoftSensorAI.git ~/devpilot
-cd ~/devpilot && ./setup_all.sh
-export PATH="$HOME/devpilot/bin:$PATH"  # Add to ~/.bashrc
+git clone https://github.com/Softsensor-org/SoftSensorAI.git ~/softsensorai
+cd ~/softsensorai && ./setup_all.sh
+export PATH="$HOME/softsensorai/bin:$PATH"  # Add to ~/.bashrc
 # dp is the main command, ss is a compatibility alias
 
 # 2. Setup your project - ONE command!
@@ -50,9 +50,9 @@ details.
 One command setup - automatically detects context:
 
 ```bash
-git clone https://github.com/Softsensor-org/SoftSensorAI.git ~/devpilot
-cd ~/devpilot && ./setup_all.sh
-export PATH="$HOME/devpilot/bin:$PATH"  # Add to ~/.bashrc
+git clone https://github.com/Softsensor-org/SoftSensorAI.git ~/softsensorai
+cd ~/softsensorai && ./setup_all.sh
+export PATH="$HOME/softsensorai/bin:$PATH"  # Add to ~/.bashrc
 ```
 
 Then for any project:

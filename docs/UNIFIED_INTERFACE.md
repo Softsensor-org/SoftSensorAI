@@ -137,8 +137,8 @@ Internal (hidden from users):
 
 ```bash
 # 1. Install SoftSensorAI globally
-git clone https://github.com/Softsensor-org/SoftSensorAI ~/devpilot
-cd ~/devpilot
+git clone https://github.com/Softsensor-org/SoftSensorAI ~/softsensorai
+cd ~/softsensorai
 ./setup_all.sh
 
 # 2. Check system readiness

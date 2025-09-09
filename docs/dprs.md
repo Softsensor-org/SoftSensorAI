@@ -13,7 +13,7 @@ understand their progress and identify improvement areas.
 dp score
 
 # Or use the script directly
-~/devpilot/scripts/dprs.sh
+~/softsensorai/scripts/dprs.sh
 
 # Generate detailed report
 dp score --verbose --output artifacts/
