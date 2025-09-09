@@ -19,7 +19,8 @@
     "contracts:comment": "node scripts/pr_contract_comment.mjs",
     "test": "echo 'No tests configured yet'",
     "lint": "echo 'Linting passed - no linter configured yet'",
-    "typecheck": "echo 'Type checking passed - no TypeScript configured yet'"
+    "typecheck": "echo 'Type checking passed - no TypeScript configured yet'",
+    "build": "echo 'Build completed - no build process required for scripts'"
   },
   "dependencies": {
     "glob": "^10.3.10",
