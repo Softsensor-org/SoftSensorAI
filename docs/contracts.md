@@ -1,7 +1,14 @@
-# Contract-Driven Development Policy
+# Contract-Driven Development Guide
 
 ## Overview
 This repository uses a contract-driven development approach where every change must be tied to a specific contract that defines its scope, acceptance criteria, and testing requirements.
+
+## Quick Start
+1. **Explore**: `dp vibe start "new feature"` - Start with exploration
+2. **Formalize**: `dp vibe promote` - Generate contract from exploration
+3. **Implement**: Make changes within contract scope
+4. **Commit**: Include `Contract-Id` and `Contract-Hash` trailers
+5. **Pass CI**: Automated scope and budget checks
 
 ## What is a Contract?
 A contract is a markdown file in the `contracts/` directory that specifies:
@@ -81,8 +88,111 @@ echo "WARN" > .softsensor/mode
 git checkout -b vibe/exploration
 ```
 
+## Complete Workflow Example
+
+### Step 1: Start with Exploration
+```bash
+# Begin vibe session for experimentation
+dp vibe start "Add user authentication"
+
+# Work freely - WARN mode won't block commits
+vim src/auth.js
+npm test
+
+# Take snapshots at milestones
+dp vibe snapshot "Basic auth working"
+dp vibe snapshot "Added JWT tokens"
+
+# End session and review impact
+dp vibe end
+```
+
+### Step 2: Promote to Contract
+```bash
+# Auto-generate contract from exploration
+dp vibe promote
+
+# Output:
+# ✅ Created contract: contracts/F-M4K8-A9B2.contract.md
+# ✅ Created test scaffolds: tests/contract/F-M4K8-A9B2/*.spec.ts
+# ✅ Updated active task
+# ✅ Switched mode to BLOCK
+```
+
+### Step 3: Review and Refine Contract
+```yaml
+# contracts/F-M4K8-A9B2.contract.md
+---
+id: F-M4K8-A9B2
+title: Add user authentication
+status: in_progress
+owner: developer
+version: 0.1.0
+allowed_globs:
+  - src/auth/**
+  - tests/auth/**
+  - config/auth.json
+forbidden_globs:
+  - src/legacy/**
+budgets:                      # Optional performance budgets
+  latency_ms_p50: 100
+  bundle_kb_delta_max: 25
+telemetry:                    # Optional telemetry events
+  events:
+    - "auth.login"
+    - "auth.logout"
+acceptance_criteria:
+  - id: AC-1
+    must: MUST authenticate users
+    text: Implement JWT-based authentication
+    tests:
+      - tests/contract/F-M4K8-A9B2/auth.spec.ts
+---
+```
+
+### Step 4: Implement and Test
+```bash
+# Work within contract scope (BLOCK mode active)
+vim src/auth/jwt.js  # ✅ Allowed
+vim src/legacy.js    # ❌ Blocked by pre-commit hook
+
+# Run contract validation
+npm run contracts:validate
+
+# Check budgets if defined
+npm run budgets:check
+```
+
+### Step 5: Commit with Trailers
+```bash
+git add .
+git commit -m "feat: Implement JWT authentication
+
+- Add JWT token generation and validation
+- Configure auth middleware
+- Add login/logout endpoints
+
+Contract-Id: F-M4K8-A9B2
+Contract-Hash: abc12345"
+```
+
+### Step 6: Create Pull Request
+The PR template guides you through:
+- Declaring Contract-Id and Hash
+- Mapping acceptance criteria to files
+- Confirming scope compliance
+
+### Step 7: CI Validation
+GitHub Actions automatically:
+1. Validates contract format
+2. Verifies commit trailers
+3. Checks file changes against scope
+4. Runs touchpoint tests
+5. Checks performance budgets
+6. Verifies telemetry events
+
 ## Contract Format
-```markdown
+```yaml
 ---
 id: UNIQUE-ID
 title: Human-readable title
@@ -94,12 +204,23 @@ allowed_globs:
   - tests/feature/**
 forbidden_globs:
   - src/legacy/**
+budgets:                      # Optional
+  latency_ms_p50: 200
+  bundle_kb_delta_max: 50
+telemetry:                    # Optional
+  events:
+    - "event.name"
 acceptance_criteria:
   - id: AC-1
     must: MUST do something specific
     text: Detailed requirement description
     tests:
       - tests/feature.test.js
+checkpoints:                  # Optional progress tracking
+  - id: CP-1
+    date: 2024-12-09
+    status: completed
+    notes: Initial implementation
 ---
 
 # Contract Title

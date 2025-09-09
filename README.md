@@ -6,6 +6,31 @@ Transform how you work with AI coding assistants. SoftSensorAI automatically con
 Codex, Gemini, Grok, and Copilot for your skill level and project needs - with full parity across
 all platforms.
 
+## 📋 Contract-Driven Development
+
+SoftSensorAI uses a **contract-driven development** system to ensure quality and scope control:
+
+- **[Contract Workflow Guide](docs/contracts.md)** - Complete guide to authoring and using contracts
+- **[Vibe Lane Exploration](docs/vibe-lane.md)** - Start exploring, then formalize with contracts
+
+### Quick Contract Workflow
+```bash
+# 1. Start exploration (WARN mode)
+dp vibe start "new feature idea"
+
+# 2. Work freely and take snapshots
+dp vibe snapshot "milestone reached"
+
+# 3. Generate contract from exploration
+dp vibe promote
+
+# 4. Commit with contract trailers
+git commit -m "feat: implement feature
+
+Contract-Id: F-ABC123
+Contract-Hash: def45678"
+```
+
 ## 🚀 Quick Start (3 Steps)
 
 ```bash

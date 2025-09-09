@@ -2,6 +2,24 @@
 
 Contracts define features as human-readable markdown files with YAML front-matter. They serve as the single source of truth for all features.
 
+## 📚 Documentation
+
+- **[Complete Contract Guide](../docs/contracts.md)** - Full workflow and best practices
+- **[Vibe Lane Guide](../docs/vibe-lane.md)** - Exploration-first development
+
+## 🎯 Implemented Contracts
+
+| Contract ID | Title | Status | Description |
+|------------|-------|--------|-------------|
+| APC-CORE | Contract schema and validator | achieved | Core contract system with YAML validation |
+| APC-GUARD | Pre-commit scope guard | achieved | WARN/BLOCK modes for development |
+| APC-ENFORCER | CI contract enforcer | achieved | GitHub Actions workflow for PRs |
+| APC-PR | PR template and policy | achieved | Standardized PR process |
+| APC-VIBE | Vibe lane exploration | achieved | Exploration workflow with auto-promotion |
+| APC-AGENT | Agent wrapper | achieved | Contract-bound AI agent |
+| APC-BUDGETS | Performance budgets | achieved | Budget and telemetry checks |
+| APC-DOCS | Documentation | achieved | This documentation |
+
 ## Format
 
 Each contract lives at `contracts/<ID>.contract.md` with required YAML front-matter:
@@ -18,6 +36,12 @@ allowed_globs:
   - tests/feature/**
 forbidden_globs:  # optional
   - src/legacy/**
+budgets:  # optional (new!)
+  latency_ms_p50: 200
+  bundle_kb_delta_max: 50
+telemetry:  # optional (new!)
+  events:
+    - "event.name"
 acceptance_criteria:
   - id: AC-1
     must: MUST do something specific
@@ -36,6 +60,23 @@ checkpoints:  # optional
 Full markdown documentation of the feature...
 ```
 
+## Quick Reference
+
+### Required Fields
+- `id` - Unique identifier
+- `title` - Human-readable name
+- `status` - Current state
+- `owner` - Responsible party
+- `version` - Semantic version
+- `allowed_globs` - Permitted file patterns
+- `acceptance_criteria` - Requirements with tests
+
+### Optional Fields
+- `forbidden_globs` - Blocked file patterns
+- `budgets` - Performance constraints
+- `telemetry` - Required event tracking
+- `checkpoints` - Progress milestones
+
 ## Example Contract
 
 ```yaml
@@ -51,6 +92,14 @@ allowed_globs:
   - contracts/auth/**
 forbidden_globs:
   - src/legacy/auth/**
+budgets:
+  latency_ms_p50: 100
+  bundle_kb_delta_max: 20
+telemetry:
+  events:
+    - "auth.login"
+    - "auth.logout"
+    - "auth.refresh"
 acceptance_criteria:
   - id: AC-AUTH-1
     must: MUST validate JWT tokens
@@ -84,9 +133,58 @@ npm run contracts:validate
 This will:
 1. Validate all contract files for required fields
 2. Check for duplicate IDs
-3. Ensure acceptance criteria are not empty
-4. Compute and store Contract-Hash in `.softsensor/<ID>.hash`
+3. Validate budgets and telemetry if present
+4. Ensure acceptance criteria are not empty
+5. Compute and store Contract-Hash in `.softsensor/<ID>.hash`
 
 ## Contract-Hash
 
-The Contract-Hash is computed as `sha256(JSON.stringify({id, allowed_globs, acceptance_criteria}))` and stored in `.softsensor/<ID>.hash`. This provides a stable fingerprint of the contract's core requirements.
+The Contract-Hash is computed as:
+```javascript
+sha256(JSON.stringify({
+  id,
+  allowed_globs,
+  acceptance_criteria,
+  budgets,     // included if defined
+  telemetry    // included if defined
+}))
+```
+
+Stored in `.softsensor/<ID>.hash`, this provides a stable fingerprint of the contract's core requirements.
+
+## Workflow Commands
+
+### Create Contract from Exploration
+```bash
+dp vibe start "new feature"   # Start exploring
+# ... work ...
+dp vibe promote               # Generate contract
+```
+
+### Validate Contracts
+```bash
+npm run contracts:validate    # Check all contracts
+```
+
+### Check Scope (Pre-commit)
+```bash
+npm run hooks:install         # Install pre-commit hook
+# Automatically checks on commit
+```
+
+### Enforce in CI
+```bash
+# Automatic on PR with Contract-Id trailer
+```
+
+### Check Budgets
+```bash
+CONTRACT_IDS="AUTH-CORE" npm run budgets:check
+```
+
+### Use with Agent
+```bash
+# Set active task
+echo '{"contract_id":"AUTH-CORE"}' > .softsensor/active-task.json
+npm run agent:task "implement refresh token logic"
+```
