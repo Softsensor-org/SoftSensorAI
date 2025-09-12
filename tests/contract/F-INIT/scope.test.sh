@@ -1,4 +1,5 @@
 #!/bin/bash
+# SPDX-License-Identifier: GPL-3.0-only
 # Test: dp init does not write outside system/ and artifacts/
 
 set -e

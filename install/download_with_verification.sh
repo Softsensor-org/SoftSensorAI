@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: GPL-3.0-only
 # Example script showing how to use checksum verification for downloads
 set -euo pipefail
 

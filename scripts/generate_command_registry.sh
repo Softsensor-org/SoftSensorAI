@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: GPL-3.0-only
 # Generate Command Registry from Justfile and scripts
 # Creates a searchable command palette for DevPilot
 set -euo pipefail

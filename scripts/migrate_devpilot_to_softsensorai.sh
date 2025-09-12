@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: GPL-3.0-only
 # Migrate DevPilot → SoftSensorAI (brand, env, paths, entrypoints)
 # - Dry-run by default. Use --execute to apply.
 # - BSD/macOS & GNU safe. Requires: bash, sed, git (optional).

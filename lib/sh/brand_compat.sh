@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: GPL-3.0-only
 # Brand compatibility: DevPilot ↔ SoftSensorAI
 # Always source this early inside bin/dp and other entrypoints.
 # Env mapping (new takes precedence; old kept for compat):

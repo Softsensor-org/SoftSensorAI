@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: GPL-3.0-only
 # Apply skill level and project phase profiles to configure the repository
 set -euo pipefail
 

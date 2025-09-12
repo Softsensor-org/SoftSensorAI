@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: GPL-3.0-only
 # Install and configure OpenAI Codex CLI
 set -euo pipefail
 

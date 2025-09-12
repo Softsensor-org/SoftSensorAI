@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: GPL-3.0-only
 # Add teach_mode configuration to profiles
 set -euo pipefail
 

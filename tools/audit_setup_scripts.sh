@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: GPL-3.0-only
 # Lints shell scripts, validates JSON/YAML, checks shebangs/CRLF/exec bits, and basic idempotency hints.
 set -euo pipefail
 

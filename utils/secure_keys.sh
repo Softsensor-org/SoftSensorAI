@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: GPL-3.0-only
 # Encrypt/decrypt user API keys for secure storage
 set -euo pipefail
 

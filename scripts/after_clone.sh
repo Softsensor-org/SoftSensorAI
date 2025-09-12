@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: GPL-3.0-only
 # Legacy wrapper: after_clone -> dp init
 # Maintained for backward compatibility
 

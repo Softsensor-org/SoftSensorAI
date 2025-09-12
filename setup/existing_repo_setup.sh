@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: GPL-3.0-only
 # Setup script for existing repositories - adds agent configurations without cloning
 set -euo pipefail
 

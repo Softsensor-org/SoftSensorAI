@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: GPL-3.0-only
 set -euo pipefail
 
 say(){ printf "\033[1;36m==> %s\033[0m\n" "$*"; }

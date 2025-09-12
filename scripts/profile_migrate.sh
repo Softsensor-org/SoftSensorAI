@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: GPL-3.0-only
 # Profile migration system - handles versioning and migrations for profiles
 set -euo pipefail
 

@@ -1,4 +1,5 @@
 #!/bin/bash
+# SPDX-License-Identifier: GPL-3.0-only
 # Example: Complete feature development workflow
 
 echo "🚀 Feature Development Workflow Example"

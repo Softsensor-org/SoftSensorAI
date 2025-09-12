@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: GPL-3.0-only
 # Repository Reorganization Script
 # Safely reorganizes the repository structure while maintaining all functionality
 

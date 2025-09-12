@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: GPL-3.0-only
 # OS compatibility functions for cross-platform support
 
 # Get OS codename (replacement for lsb_release -sc)

@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: GPL-3.0-only
 # Migration template - copy this file to create new migrations
 set -euo pipefail
 

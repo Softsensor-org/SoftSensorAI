@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: GPL-3.0-only
 # Manage repository access for Softsensor org members
 # This script helps configure appropriate access levels
 

@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: GPL-3.0-only
 # Cross-distro installer for key developer and agent tools (Linux)
 set -euo pipefail
 

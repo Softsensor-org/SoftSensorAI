@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: GPL-3.0-only
 # Utility functions for download verification with checksums
 set -euo pipefail
 

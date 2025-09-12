@@ -1,4 +1,5 @@
 #!/bin/bash
+# SPDX-License-Identifier: GPL-3.0-only
 # Example: Bug fix workflow with contract
 
 echo "🐛 Bug Fix Workflow Example"

@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: GPL-3.0-only
 # Display current profile status and progress toward graduation
 set -euo pipefail
 

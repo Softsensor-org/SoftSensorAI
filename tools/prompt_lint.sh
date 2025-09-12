@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: GPL-3.0-only
 # Lint a prompt file for required sections
 set -euo pipefail
 f="${1:-CLAUDE.md}"

@@ -1,4 +1,5 @@
 #!/bin/bash
+# SPDX-License-Identifier: GPL-3.0-only
 # Test: dp setup uses correct paths (softsensorai not devpilot)
 
 set -e

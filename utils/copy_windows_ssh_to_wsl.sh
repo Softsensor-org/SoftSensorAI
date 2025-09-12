@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: GPL-3.0-only
 # copy_windows_ssh_to_wsl.sh
 # Copy Windows ~/.ssh to WSL ~/.ssh safely, fix perms, load agent.
 set -euo pipefail

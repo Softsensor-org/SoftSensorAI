@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: GPL-3.0-only
 # OS Compatibility Test Suite
 # This script tests OS detection and compatibility functions across different platforms
 

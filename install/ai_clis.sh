@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: GPL-3.0-only
 set -euo pipefail
 # Require Node >= 20
 if ! command -v node >/dev/null; then echo "Node not found. Install Node (nvm LTS) first."; exit 1; fi

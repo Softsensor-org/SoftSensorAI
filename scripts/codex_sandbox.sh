@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: GPL-3.0-only
 # Sandboxed Codex execution for Linux/WSL - keeps runs contained to repo
 set -euo pipefail
 

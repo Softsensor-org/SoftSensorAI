@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: GPL-3.0-only
 # DevPilot user-specific setup (for multi-user installations)
 # Run as regular user to configure personal settings
 set -euo pipefail

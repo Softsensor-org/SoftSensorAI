@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: GPL-3.0-only
 # Documentation Requirements Checker
 # This script checks if code changes have corresponding documentation updates
 

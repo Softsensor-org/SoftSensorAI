@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: GPL-3.0-only
 # Track and manage graduation criteria for skill levels and project phases
 set -euo pipefail
 

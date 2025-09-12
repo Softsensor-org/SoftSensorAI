@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: GPL-3.0-only
 # Apply Anthropic's official best practices for Claude development
 set -euo pipefail
 

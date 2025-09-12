@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: GPL-3.0-only
 # Extract and format preview logs for AI review context
 # Usage: preview_logs.sh [lines] [format]
 set -euo pipefail

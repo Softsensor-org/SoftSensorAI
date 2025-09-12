@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: GPL-3.0-only
 # Upgrade: prompt scaffold + linter + /secure-fix + Makefile hooks + repo seeder refresh
 set -euo pipefail
 

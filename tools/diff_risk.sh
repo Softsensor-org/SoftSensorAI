@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: GPL-3.0-only
 # Heuristic diff risk tagging: prints comma-separated tags (auth,db,infra,ml,security)
 set -euo pipefail
 BASE="${1:-origin/main}"

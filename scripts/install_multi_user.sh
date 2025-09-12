@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: GPL-3.0-only
 # Multi-user SoftSensorAI installation script (run as root)
 set -euo pipefail
 

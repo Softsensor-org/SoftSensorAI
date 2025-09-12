@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: GPL-3.0-only
 # Multi-persona manager - allows combining multiple personas per repository
 set -euo pipefail
 

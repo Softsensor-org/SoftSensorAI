@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: GPL-3.0-only
 # setup_agents_repo.sh — DevPilot repository setup script
 # Configures AI agents and development tools for individual repositories
 # Part of DevPilot: Learning-aware AI development platform

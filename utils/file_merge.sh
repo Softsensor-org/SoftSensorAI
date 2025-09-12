@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: GPL-3.0-only
 # File merge utility - handles conflicts when setting up DevPilot in existing repos
 set -euo pipefail
 

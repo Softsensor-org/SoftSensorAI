@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: GPL-3.0-only
 # Portable AI CLI shim: runs Claude/Codex/Gemini/Grok via installed CLIs.
 # No raw API usage. Exits with the underlying CLI exit code, or 127 if not found.
 set -euo pipefail
