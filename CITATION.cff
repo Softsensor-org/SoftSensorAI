@@ -1,0 +1,44 @@
+# SPDX-License-Identifier: GPL-3.0-only
+cff-version: 1.2.0
+title: "SoftSensorAI"
+message: "If you use this software, please cite it as below."
+type: software
+authors:
+  - given-names: "Vivek"
+    family-names: "Gupta"
+    email: "98120789+VivekLmd@users.noreply.github.com"
+    affiliation: "Softsensor.AI"
+    orcid: "https://orcid.org/0009-0009-3837-5409"
+repository-code: "https://github.com/Softsensor-org/SoftSensorAI"
+url: "https://github.com/Softsensor-org/SoftSensorAI"
+abstract: >-
+  SoftSensorAI is an advanced setup and automation framework for 
+  software development environments. It provides intelligent project 
+  initialization, contract-driven development workflows, and 
+  comprehensive tooling for modern software engineering practices.
+keywords:
+  - "software development"
+  - "automation"
+  - "development environment"
+  - "contract-driven development"
+  - "setup scripts"
+  - "AI-assisted development"
+  - "developer tools"
+license: "GPL-3.0-only"
+license-url: "https://www.gnu.org/licenses/gpl-3.0.html"
+version: "0.1.0"
+date-released: "2025-09-12"
+preferred-citation:
+  type: software
+  title: "SoftSensorAI: Intelligent Development Environment Automation"
+  authors:
+    - given-names: "Vivek"
+      family-names: "Gupta"
+      email: "98120789+VivekLmd@users.noreply.github.com"
+      affiliation: "Softsensor.AI"
+      orcid: "https://orcid.org/0009-0009-3837-5409"
+  version: "0.1.0"
+  date-released: "2025-09-12"
+  license: "GPL-3.0-only"
+  repository-code: "https://github.com/Softsensor-org/SoftSensorAI"
+  url: "https://github.com/Softsensor-org/SoftSensorAI"
