@@ -9,16 +9,16 @@
 git clone https://github.com/Softsensor-org/SoftSensorAI.git ~/softsensorai
 cd ~/softsensorai && ./setup_all.sh
 
-# 2. Add dp command to PATH
-export PATH="$HOME/devpilot/bin:$PATH"  # Add to ~/.bashrc
+# 2. Add ssai command to PATH
+export PATH="$HOME/softsensorai/bin:$PATH"  # Add to ~/.bashrc
 
 # 3. Setup your project
 cd your-project
-dp setup   # Smart detection for any project
-dp init    # Initialize with full configuration
+ssai setup   # Smart detection for any project
+ssai init    # Initialize with full configuration
 
 # 4. Start using SoftSensorAI
-dp palette  # Discover all available commands
+ssai palette  # Discover all available commands
 ```
 
 ### Option 2: Multi-User / Team Installation
@@ -30,8 +30,8 @@ For shared servers and team deployments:
 sudo ./scripts/install_multi_user.sh
 
 # Users then run:
-/opt/devpilot/scripts/user_setup.sh
-dp init
+/opt/softsensorai/scripts/user_setup.sh
+ssai init
 ```
 
 See [Multi-User Guide](./MULTI_USER.md) for details.

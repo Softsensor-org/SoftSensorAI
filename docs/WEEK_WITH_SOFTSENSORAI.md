@@ -16,12 +16,12 @@ the essential workflows.
 ```bash
 # For existing repo (most common)
 cd /path/to/your/project
-dp setup
-dp init --skill l1 --phase mvp
+ssai setup
+ssai init --skill l1 --phase mvp
 
 # Verify setup and explore commands
-dp project  # Shows current configuration
-dp palette  # Browse all available commands
+ssai project  # Shows current configuration
+ssai palette  # Browse all available commands
 ```
 
 ### Afternoon: First Feature with AI

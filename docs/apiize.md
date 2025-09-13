@@ -4,7 +4,7 @@ Convert ML models into production-ready FastAPI services with a single command.
 
 ## Overview
 
-`dp apiize` transforms trained machine learning models into fully-functional REST APIs with:
+`ssai apiize` transforms trained machine learning models into fully-functional REST APIs with:
 
 - Automatic framework detection (PyTorch, ONNX, TensorFlow, Scikit-learn, XGBoost)
 - FastAPI service with validation and error handling
@@ -17,13 +17,13 @@ Convert ML models into production-ready FastAPI services with a single command.
 
 ```bash
 # Convert a PyTorch model
-dp apiize from-model model.pt api_service
+ssai apiize from-model model.pt api_service
 
 # Convert an ONNX model
-dp apiize from-model model.onnx my_api
+ssai apiize from-model model.onnx my_api
 
 # Convert a Scikit-learn model
-dp apiize from-model model.pkl prediction_service
+ssai apiize from-model model.pkl prediction_service
 ```
 
 ## Supported Frameworks
@@ -214,10 +214,10 @@ async def update_model(version: str):
 
 ```bash
 # Create agent task for model deployment
-dp agent new "Deploy the trained model as an API service"
+ssai agent new "Deploy the trained model as an API service"
 
 # Agent will use apiize automatically
-dp agent run --id <task-id>
+ssai agent run --id <task-id>
 ```
 
 ### In CI/CD Pipeline
@@ -226,7 +226,7 @@ dp agent run --id <task-id>
 # .github/workflows/deploy-model.yml
 steps:
   - name: Convert Model to API
-    run: dp apiize from-model model.pt api_service
+    run: ssai apiize from-model model.pt api_service
 
   - name: Build Docker Image
     run: docker build -f api_service/docker/Dockerfile -t model-api:${{ github.sha }}
@@ -326,13 +326,13 @@ async def predict(request: PredictRequest):
 
 ## Related Commands
 
-- `dp agent` - Create tasks for model training/deployment
-- `dp review` - Review API implementation
-- `dp sandbox` - Test API in isolated environment
+- `ssai agent` - Create tasks for model training/deployment
+- `ssai review` - Review API implementation
+- `ssai sandbox` - Test API in isolated environment
 
 ## Support
 
 For issues or feature requests, see:
 
-- [GitHub Issues](https://github.com/devpilot/devpilot/issues)
-- [Documentation](https://devpilot.dev/docs)
+- [GitHub Issues](https://github.com/softsensorai/softsensorai/issues)
+- [Documentation](https://softsensorai.dev/docs)

@@ -37,7 +37,7 @@ done
 **Before (v1.x):**
 
 ```
-devpilot/
+softsensorai/
 ├── install_key_software_wsl.sh
 ├── install_ai_clis.sh
 ├── setup_agents_global.sh
@@ -49,7 +49,7 @@ devpilot/
 **After (v2.0):**
 
 ```
-devpilot/
+softsensorai/
 ├── setup_all.sh              # Single entry point
 ├── install/                  # All installers
 │   ├── key_software_linux.sh # Merged WSL+Linux

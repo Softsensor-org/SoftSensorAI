@@ -33,8 +33,8 @@
 
 2. **Updated Repository References**:
 
-   - Fixed references from `VivekLmd/devpilot` → `Softsensor-org/SoftSensorAI`
-   - Fixed references from `yourusername/devpilot` → `Softsensor-org/SoftSensorAI`
+   - Fixed references from `VivekLmd/softsensorai` → `Softsensor-org/SoftSensorAI`
+   - Fixed references from `yourusername/softsensorai` → `Softsensor-org/SoftSensorAI`
    - Updated in: README.md, RELEASE_NOTES.md, TROUBLESHOOTING.md, RELEASE_MANAGEMENT.md,
      MIGRATION.md
 
@@ -98,7 +98,7 @@ docs/
 
 ```
 docs/
-├── WEEK_WITH_DEVPILOT.md      # Daily workflow guide
+├── WEEK_WITH_SOFTSENSORAI.md      # Daily workflow guide
 ├── ARCHITECTURE_OVERVIEW.md    # System architecture
 ├── TROUBLESHOOTING.md          # Problem solving
 ├── BENEFITS.md                 # ROI analysis

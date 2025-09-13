@@ -15,17 +15,17 @@ installations. This guide covers the multi-user model for teams.
 ### Multi-User Mode (Teams)
 
 - SoftSensorAI installed system-wide at `/opt/softsensorai`
-- Per-user artifacts in `~/.devpilot/artifacts/`
+- Per-user artifacts in `~/.softsensorai/artifacts/`
 - Shared templates and tools
 - Centralized updates by admins
 
 ## How Mode Detection Works
 
-The `dp` command automatically detects multi-user installations by checking for
+The `ssai` command automatically detects multi-user installations by checking for
 `/opt/softsensorai/etc/softsensorai.conf`:
 
 ```bash
-# Mode detection in bin/dp
+# Mode detection in bin/ssai
 if [[ -f "/opt/softsensorai/etc/softsensorai.conf" ]]; then
     # Multi-user mode
     source /opt/softsensorai/etc/softsensorai.conf
@@ -99,7 +99,7 @@ Each user needs to initialize their personal SoftSensorAI environment:
 
 ```bash
 # 1. Create user directories
-mkdir -p ~/.devpilot/{artifacts,cache,logs,config}
+mkdir -p ~/.softsensorai/{artifacts,cache,logs,config}
 
 # 2. Set up API keys (if not using shared keys)
 export ANTHROPIC_API_KEY="sk-ant-..."
@@ -108,10 +108,10 @@ export ANTHROPIC_API_KEY="sk-ant-..."
 
 # 3. Initialize a project
 cd ~/my-project
-dp init
+ssai init
 
 # 4. Verify setup
-dp doctor
+ssai doctor
 ```
 
 ## Configuration File Reference
@@ -135,7 +135,7 @@ SOFTSENSORAI_TOOLS=/opt/softsensorai/tools
 SOFTSENSORAI_SCRIPTS=/opt/softsensorai/scripts
 ```
 
-### User Configuration (`~/.devpilot/config/user.conf`)
+### User Configuration (`~/.softsensorai/config/user.conf`)
 
 Users can override team defaults:
 
@@ -152,7 +152,7 @@ EDITOR=nvim                             # Preferred editor
 
 ```
 /opt/softsensorai/
-├── bin/                # Executables (dp, dp-agent)
+├── bin/                # Executables (ssai, ssai-agent)
 ├── tools/              # Utility scripts
 ├── templates/          # Project templates
 ├── scripts/            # Setup and maintenance scripts
@@ -164,7 +164,7 @@ EDITOR=nvim                             # Preferred editor
 ### User Directories (user-owned)
 
 ```
-~/.devpilot/
+~/.softsensorai/
 ├── artifacts/          # Task outputs
 │   ├── agent/          # Agent task results
 │   ├── review/         # Code review results
@@ -181,12 +181,12 @@ EDITOR=nvim                             # Preferred editor
 When running SoftSensorAI commands, the mode and paths are displayed:
 
 ```bash
-$ dp init
+$ ssai init
 ✓ SoftSensorAI initialized for project: my-app
   Version      : 2.0.0
   Mode         : Multi-user
   System root  : /opt/softsensorai
-  Your artifacts: /home/alice/.devpilot/artifacts
+  Your artifacts: /home/alice/.softsensorai/artifacts
 ```
 
 ## Team Workflows
@@ -217,7 +217,7 @@ Admins can add team-specific templates:
 sudo cp company-template.md /opt/softsensorai/templates/
 
 # Users can use it
-dp init --template company-template
+ssai init --template company-template
 ```
 
 ## Team Doctor Command
@@ -225,15 +225,15 @@ dp init --template company-template
 Check multi-user setup health:
 
 ```bash
-$ dp team doctor
+$ ssai team doctor
 
 SoftSensorAI Team Setup Check
 -------------------------
 ✓ Multi-user mode active
 ✓ System config readable: /opt/softsensorai/etc/softsensorai.conf
 ✓ System root valid: /opt/softsensorai
-✓ User directory writable: ~/.devpilot
-✓ Artifacts directory exists: ~/.devpilot/artifacts
+✓ User directory writable: ~/.softsensorai
+✓ Artifacts directory exists: ~/.softsensorai/artifacts
 ✓ AI CLI available: anthropic
 ✓ Git configured: user.name = Alice Smith
 ✓ SSH key exists for GitHub
@@ -265,19 +265,19 @@ Regular backups should include:
 
 - `/opt/softsensorai/etc/` - Configuration
 - `/opt/softsensorai/templates/` - Custom templates
-- `~/.devpilot/` - User data (each user)
+- `~/.softsensorai/` - User data (each user)
 
 ### Monitoring Usage
 
 ```bash
 # Check active users
-ls -la /home/*/.devpilot/artifacts/agent/task-* 2>/dev/null | wc -l
+ls -la /home/*/.softsensorai/artifacts/agent/task-* 2>/dev/null | wc -l
 
 # Disk usage per user
-du -sh /home/*/.devpilot/artifacts 2>/dev/null
+du -sh /home/*/.softsensorai/artifacts 2>/dev/null
 
 # Recent agent tasks
-find /home -path "*/.devpilot/artifacts/agent/task-*" -mtime -7 2>/dev/null
+find /home -path "*/.softsensorai/artifacts/agent/task-*" -mtime -7 2>/dev/null
 ```
 
 ## Troubleshooting
@@ -292,19 +292,19 @@ sudo chmod 755 /opt/softsensorai/{bin,tools,scripts}/*
 sudo chmod 644 /opt/softsensorai/etc/softsensorai.conf
 
 # User should own their directory
-chown -R $USER:$USER ~/.devpilot
+chown -R $USER:$USER ~/.softsensorai
 ```
 
 ### Mode Not Detected
 
-If `dp` doesn't detect multi-user mode:
+If `ssai` doesn't detect multi-user mode:
 
 ```bash
 # Check config exists and is readable
 ls -la /opt/softsensorai/etc/softsensorai.conf
 
 # Verify it's being sourced
-grep "softsensorai.conf" $(which dp)
+grep "softsensorai.conf" $(which ssai)
 
 # Test manually
 source /opt/softsensorai/etc/softsensorai.conf
@@ -317,13 +317,13 @@ If artifacts aren't where expected:
 
 ```bash
 # Check which mode is active
-dp init | grep Mode
+ssai init | grep Mode
 
 # Verify artifact path
 echo $ART
 
 # Ensure directory exists
-mkdir -p ~/.devpilot/artifacts
+mkdir -p ~/.softsensorai/artifacts
 ```
 
 ## Security Considerations
@@ -341,7 +341,7 @@ mkdir -p ~/.devpilot/artifacts
 /opt/softsensorai/**: root:root 755 (dirs), 644 (files), 755 (executables)
 
 # User files (user-owned, user-only)
-~/.devpilot/**: $USER:$USER 700 (dirs), 600 (files)
+~/.softsensorai/**: $USER:$USER 700 (dirs), 600 (files)
 ```
 
 ### Audit Logging
@@ -350,12 +350,12 @@ Enable audit logging for compliance:
 
 ```bash
 # Add to softsensorai.conf
-SOFTSENSORAI_AUDIT_LOG=/var/log/devpilot/audit.log
+SOFTSENSORAI_AUDIT_LOG=/var/log/softsensorai/audit.log
 
 # Create log directory
-sudo mkdir -p /var/log/devpilot
-sudo touch /var/log/devpilot/audit.log
-sudo chmod 666 /var/log/devpilot/audit.log
+sudo mkdir -p /var/log/softsensorai
+sudo touch /var/log/softsensorai/audit.log
+sudo chmod 666 /var/log/softsensorai/audit.log
 ```
 
 ## Migration Guide
@@ -367,13 +367,13 @@ sudo chmod 666 /var/log/devpilot/audit.log
 sudo ./scripts/install_multi_user.sh
 
 # 2. Users migrate their artifacts
-mv ./artifacts/* ~/.devpilot/artifacts/
+mv ./artifacts/* ~/.softsensorai/artifacts/
 
 # 3. Remove local installation
 rm -rf bin/ tools/ scripts/ templates/
 
 # 4. Verify multi-user mode
-dp doctor
+ssai doctor
 ```
 
 ### From Multi-User to Single-User
@@ -383,13 +383,13 @@ dp doctor
 git clone https://github.com/Softsensor-org/SoftSensorAI.git .
 
 # 2. Copy artifacts back
-cp -r ~/.devpilot/artifacts/* ./artifacts/
+cp -r ~/.softsensorai/artifacts/* ./artifacts/
 
 # 3. Remove multi-user config (admin)
 sudo rm /opt/softsensorai/etc/softsensorai.conf
 
 # 4. Verify single-user mode
-./bin/dp doctor
+./bin/ssai doctor
 ```
 
 ## See Also

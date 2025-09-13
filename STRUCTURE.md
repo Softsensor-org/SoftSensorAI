@@ -1,4 +1,4 @@
-# DevPilot Directory Structure
+# SoftSensorAI Directory Structure
 
 ## Root Directory
 
@@ -20,7 +20,7 @@
 
 Executable scripts and CLI tools
 
-- `dp` - Main DevPilot CLI
+- `ssai` - Main SoftSensorAI CLI
 
 ### `/config/`
 

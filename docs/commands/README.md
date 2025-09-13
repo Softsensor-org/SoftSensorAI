@@ -8,12 +8,12 @@ Complete documentation for all SoftSensorAI commands with examples, use cases, a
 
 | Command                       | Purpose                           | Documentation               |
 | ----------------------------- | --------------------------------- | --------------------------- |
-| [`dp setup`](dp/setup.md)     | Add SoftSensorAI to any project   | [Full Guide](dp/setup.md)   |
-| [`dp init`](dp/init.md)       | Initialize and configure project  | [Full Guide](dp/init.md)    |
-| [`dp doctor`](dp/doctor.md)   | Check system health               | [Full Guide](dp/doctor.md)  |
-| [`dp palette`](dp/palette.md) | Browse all commands interactively | [Full Guide](dp/palette.md) |
-| [`dp review`](dp/review.md)   | AI code review                    | [Full Guide](dp/review.md)  |
-| [`dp tickets`](dp/tickets.md) | Generate backlog from code        | [Full Guide](dp/tickets.md) |
+| [`ssai setup`](ssai/setup.md)     | Add SoftSensorAI to any project   | [Full Guide](ssai/setup.md)   |
+| [`ssai init`](ssai/init.md)       | Initialize and configure project  | [Full Guide](ssai/init.md)    |
+| [`ssai doctor`](ssai/doctor.md)   | Check system health               | [Full Guide](ssai/doctor.md)  |
+| [`ssai palette`](ssai/palette.md) | Browse all commands interactively | [Full Guide](ssai/palette.md) |
+| [`ssai review`](ssai/review.md)   | AI code review                    | [Full Guide](ssai/review.md)  |
+| [`ssai tickets`](ssai/tickets.md) | Generate backlog from code        | [Full Guide](ssai/tickets.md) |
 
 ## 📚 Command Categories
 
@@ -21,52 +21,52 @@ Complete documentation for all SoftSensorAI commands with examples, use cases, a
 
 | Command                       | Description                 | Examples & Details                      |
 | ----------------------------- | --------------------------- | --------------------------------------- |
-| [`dp setup`](dp/setup.md)     | Smart repository setup      | [View Examples](dp/setup.md#examples)   |
-| [`dp init`](dp/init.md)       | Full project initialization | [View Examples](dp/init.md#examples)    |
-| [`dp project`](dp/project.md) | View/modify project config  | [View Examples](dp/project.md#examples) |
+| [`ssai setup`](ssai/setup.md)     | Smart repository setup      | [View Examples](ssai/setup.md#examples)   |
+| [`ssai init`](ssai/init.md)       | Full project initialization | [View Examples](ssai/init.md#examples)    |
+| [`ssai project`](ssai/project.md) | View/modify project config  | [View Examples](ssai/project.md#examples) |
 
 ### Health & Diagnostics
 
 | Command                                   | Description                       | Examples & Details                            |
 | ----------------------------------------- | --------------------------------- | --------------------------------------------- |
-| [`dp doctor`](dp/doctor.md)               | System health check               | [View Examples](dp/doctor.md#example-output)  |
-| [`dp score`](dp/score.md)                 | Repository readiness score (DPRS) | [View Examples](dp/score.md#examples)         |
-| [`dp release-check`](dp/release-check.md) | Release readiness assessment      | [View Examples](dp/release-check.md#examples) |
+| [`ssai doctor`](ssai/doctor.md)               | System health check               | [View Examples](ssai/doctor.md#example-output)  |
+| [`ssai score`](ssai/score.md)                 | Repository readiness score (DPRS) | [View Examples](ssai/score.md#examples)         |
+| [`ssai release-check`](ssai/release-check.md) | Release readiness assessment      | [View Examples](ssai/release-check.md#examples) |
 
 ### AI & Development
 
 | Command                       | Description                | Examples & Details                      |
 | ----------------------------- | -------------------------- | --------------------------------------- |
-| [`dp review`](dp/review.md)   | AI code review             | [View Examples](dp/review.md#examples)  |
-| [`dp tickets`](dp/tickets.md) | Generate tickets from code | [View Examples](dp/tickets.md#examples) |
-| [`dp ai`](dp/ai.md)           | Unified AI CLI interface   | [View Examples](dp/ai.md#examples)      |
-| [`dp sandbox`](dp/sandbox.md) | Sandboxed code execution   | [View Examples](dp/sandbox.md#examples) |
+| [`ssai review`](ssai/review.md)   | AI code review             | [View Examples](ssai/review.md#examples)  |
+| [`ssai tickets`](ssai/tickets.md) | Generate tickets from code | [View Examples](ssai/tickets.md#examples) |
+| [`ssai ai`](ssai/ai.md)           | Unified AI CLI interface   | [View Examples](ssai/ai.md#examples)      |
+| [`ssai sandbox`](ssai/sandbox.md) | Sandboxed code execution   | [View Examples](ssai/sandbox.md#examples) |
 
 ### Personas & Profiles
 
 | Command                       | Description                     | Examples & Details                      |
 | ----------------------------- | ------------------------------- | --------------------------------------- |
-| [`dp persona`](dp/persona.md) | Manage AI personas              | [View Examples](dp/persona.md#examples) |
-| [`dp profile`](dp/profile.md) | View/change skill level & phase | [View Examples](dp/profile.md#examples) |
-| [`dp config`](dp/config.md)   | Interactive configuration       | [View Examples](dp/config.md#examples)  |
+| [`ssai persona`](ssai/persona.md) | Manage AI personas              | [View Examples](ssai/persona.md#examples) |
+| [`ssai profile`](ssai/profile.md) | View/change skill level & phase | [View Examples](ssai/profile.md#examples) |
+| [`ssai config`](ssai/config.md)   | Interactive configuration       | [View Examples](ssai/config.md#examples)  |
 
 ### Analysis & Planning
 
 | Command                       | Description                | Examples & Details                      |
 | ----------------------------- | -------------------------- | --------------------------------------- |
-| [`dp tickets`](dp/tickets.md) | Create JIRA/GitHub tickets | [View Examples](dp/tickets.md#examples) |
-| [`dp detect`](dp/detect.md)   | Detect tech stack          | [View Examples](dp/detect.md#examples)  |
-| [`dp plan`](dp/plan.md)       | Preview setup changes      | [View Examples](dp/plan.md#examples)    |
-| [`dp risk`](dp/risk.md)       | Analyze PR risk            | [View Examples](dp/risk.md#examples)    |
+| [`ssai tickets`](ssai/tickets.md) | Create JIRA/GitHub tickets | [View Examples](ssai/tickets.md#examples) |
+| [`ssai detect`](ssai/detect.md)   | Detect tech stack          | [View Examples](ssai/detect.md#examples)  |
+| [`ssai plan`](ssai/plan.md)       | Preview setup changes      | [View Examples](ssai/plan.md#examples)    |
+| [`ssai risk`](ssai/risk.md)       | Analyze PR risk            | [View Examples](ssai/risk.md#examples)    |
 
 ### Utilities & Tools
 
 | Command                         | Description              | Examples & Details                       |
 | ------------------------------- | ------------------------ | ---------------------------------------- |
-| [`dp palette`](dp/palette.md)   | Command browser with fzf | [View Examples](dp/palette.md#examples)  |
-| [`dp chain`](dp/chain.md)       | Execute command chains   | [View Examples](dp/chain.md#examples)    |
-| [`dp patterns`](dp/patterns.md) | Browse design patterns   | [View Examples](dp/patterns.md#examples) |
-| [`dp worktree`](dp/worktree.md) | Git worktree management  | [View Examples](dp/worktree.md#examples) |
+| [`ssai palette`](ssai/palette.md)   | Command browser with fzf | [View Examples](ssai/palette.md#examples)  |
+| [`ssai chain`](ssai/chain.md)       | Execute command chains   | [View Examples](ssai/chain.md#examples)    |
+| [`ssai patterns`](ssai/patterns.md) | Browse design patterns   | [View Examples](ssai/patterns.md#examples) |
+| [`ssai worktree`](ssai/worktree.md) | Git worktree management  | [View Examples](ssai/worktree.md#examples) |
 
 ## 🎯 Common Workflows
 
@@ -82,26 +82,26 @@ export PATH="$HOME/softsensorai/bin:$PATH"
 
 # 3. Setup your project
 cd your-project
-dp setup        # Add SoftSensorAI files
-dp init         # Configure and build
+ssai setup        # Add SoftSensorAI files
+ssai init         # Configure and build
 
 # 4. Explore commands
-dp palette      # Interactive browser
+ssai palette      # Interactive browser
 ```
 
 ### Daily Development
 
 ```bash
 # Morning setup
-dp doctor       # Check health
-dp project      # View config
+ssai doctor       # Check health
+ssai project      # View config
 
 # During development
-dp review       # Before commits
-dp tickets      # Generate tasks
+ssai review       # Before commits
+ssai tickets      # Generate tasks
 
 # Interactive discovery
-dp palette      # Find commands
+ssai palette      # Find commands
 ```
 
 ### Team Onboarding
@@ -109,11 +109,11 @@ dp palette      # Find commands
 ```bash
 # New team member
 cd team-project
-dp setup
-dp init --skill l1 --phase beta
+ssai setup
+ssai init --skill l1 --phase beta
 
 # Match team configuration
-dp project      # View settings
+ssai project      # View settings
 ```
 
 ## 📖 Understanding Command Documentation
@@ -137,7 +137,7 @@ Each command documentation includes:
 
 ### Basic Usage
 
-\`\`\`bash dp command
+\`\`\`bash ssai command
 
 # Output shown here
 
@@ -145,7 +145,7 @@ Each command documentation includes:
 
 ### Advanced Usage
 
-\`\`\`bash dp command --option value
+\`\`\`bash ssai command --option value
 
 # Different output
 
@@ -156,32 +156,32 @@ Each command documentation includes:
 
 ### By Category
 
-- **Setup**: `dp setup`, `dp init`, `dp project`
-- **Health**: `dp doctor`, `dp score`
-- **AI**: `dp review`, `dp tickets`, `dp ai`
-- **Analysis**: `dp tickets`, `dp detect`, `dp plan`
+- **Setup**: `ssai setup`, `ssai init`, `ssai project`
+- **Health**: `ssai doctor`, `ssai score`
+- **AI**: `ssai review`, `ssai tickets`, `ssai ai`
+- **Analysis**: `ssai tickets`, `ssai detect`, `ssai plan`
 
 ### By Use Case
 
-- **Starting new project**: [`dp setup`](dp/setup.md)
-- **Checking environment**: [`dp doctor`](dp/doctor.md)
-- **Code review**: [`dp review`](dp/review.md)
-- **Generate backlog**: [`dp tickets`](dp/tickets.md)
+- **Starting new project**: [`ssai setup`](ssai/setup.md)
+- **Checking environment**: [`ssai doctor`](ssai/doctor.md)
+- **Code review**: [`ssai review`](ssai/review.md)
+- **Generate backlog**: [`ssai tickets`](ssai/tickets.md)
 
 ### Interactive Search
 
 ```bash
 # Use the command palette
-dp palette
+ssai palette
 
 # Search for specific functionality
-dp palette review    # Find review commands
-dp palette test      # Find test commands
+ssai palette review    # Find review commands
+ssai palette test      # Find test commands
 ```
 
 ## 📝 Command Naming Conventions
 
-### dp Commands
+### ssai Commands
 
 - Short, verb-based names
 - Common developer actions
@@ -190,38 +190,38 @@ dp palette test      # Find test commands
 ### Internal Scripts (Not User-Facing)
 
 - Located in scripts/ and tools/ directories
-- Called internally by dp commands
-- Users should use dp interface instead
+- Called internally by ssai commands
+- Users should use ssai interface instead
 
 ## 🚀 Getting Started
 
-1. **New to SoftSensorAI?** Start with [`dp setup`](dp/setup.md)
-2. **Need help?** Run [`dp doctor`](dp/doctor.md)
-3. **Want to explore?** Use [`dp palette`](dp/palette.md)
-4. **Ready to code?** Check [`dp review`](dp/review.md)
+1. **New to SoftSensorAI?** Start with [`ssai setup`](ssai/setup.md)
+2. **Need help?** Run [`ssai doctor`](ssai/doctor.md)
+3. **Want to explore?** Use [`ssai palette`](ssai/palette.md)
+4. **Ready to code?** Check [`ssai review`](ssai/review.md)
 
 ## 📚 Learning Path
 
 ### Beginner
 
-1. [`dp setup`](dp/setup.md) - Add SoftSensorAI
-2. [`dp init`](dp/init.md) - Configure project
-3. [`dp doctor`](dp/doctor.md) - Verify setup
-4. [`dp palette`](dp/palette.md) - Explore commands
+1. [`ssai setup`](ssai/setup.md) - Add SoftSensorAI
+2. [`ssai init`](ssai/init.md) - Configure project
+3. [`ssai doctor`](ssai/doctor.md) - Verify setup
+4. [`ssai palette`](ssai/palette.md) - Explore commands
 
 ### Intermediate
 
-1. [`dp profile`](dp/profile.md) - Adjust skill level
-2. [`dp review`](dp/review.md) - AI code review
-3. [`dp tickets`](dp/tickets.md) - Generate tasks
-4. [`dp score`](dp/score.md) - Check readiness
+1. [`ssai profile`](ssai/profile.md) - Adjust skill level
+2. [`ssai review`](ssai/review.md) - AI code review
+3. [`ssai tickets`](ssai/tickets.md) - Generate tasks
+4. [`ssai score`](ssai/score.md) - Check readiness
 
 ### Advanced
 
-1. [`dp persona`](dp/persona.md) - Multiple personas
-2. [`dp chain`](dp/chain.md) - Command chains
-3. [`dp worktree`](dp/worktree.md) - Parallel work
-4. [`dp release-check`](dp/release-check.md) - Production prep
+1. [`ssai persona`](ssai/persona.md) - Multiple personas
+2. [`ssai chain`](ssai/chain.md) - Command chains
+3. [`ssai worktree`](ssai/worktree.md) - Parallel work
+4. [`ssai release-check`](ssai/release-check.md) - Production prep
 
 ## 🔧 Contributing
 
@@ -229,7 +229,7 @@ To add documentation for a new command:
 
 1. Create file in appropriate directory:
 
-   - `docs/commands/dp/` for dp commands
+   - `docs/commands/ssai/` for ssai commands
    - `docs/commands/scripts/` for scripts
    - `docs/commands/tools/` for tools
 

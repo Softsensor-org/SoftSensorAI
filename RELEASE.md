@@ -25,7 +25,7 @@ We're excited to announce the first open-source release of SoftSensorAI! This ma
 ### 🛠 Developer Tools
 - **Command Registry**: Centralized command documentation and validation
 - **Profile Management**: Configurable development personas and workflows
-- **Brand Compatibility**: DevPilot → SoftSensorAI migration support
+- **Brand Compatibility**: Legacy → SoftSensorAI migration support
 - **OS Compatibility**: Cross-platform support (Linux, macOS, Windows/WSL)
 
 ### 🔒 Security & Compliance
@@ -79,12 +79,12 @@ npm run test:contracts
 - **Contract Guide**: See [docs/contracts.md](docs/contracts.md) for contract-driven development
 - **Vibe Lane**: See [docs/vibe-lane.md](docs/vibe-lane.md) for exploration workflows
 
-## 🔄 Migration from DevPilot
+## 🔄 Migration from Legacy Systems
 
-Existing DevPilot users can migrate seamlessly:
+Existing legacy users can migrate seamlessly:
 
 ```bash
-./scripts/migrate_devpilot_to_softsensorai.sh
+./scripts/migrate_legacy_to_softsensorai.sh
 ```
 
 This will:
@@ -116,7 +116,7 @@ We welcome contributions! Please see our contributing guidelines for:
 
 ## 🐛 Known Issues
 
-- Some legacy DevPilot references may remain in older configurations
+- Some legacy system references may remain in older configurations
 - Contract validation requires Node.js environment
 - Phase graduation requires manual approval for production deployment
 

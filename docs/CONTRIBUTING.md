@@ -8,7 +8,7 @@ Before contributing, please review our comprehensive documentation:
 
 - **[Architecture Overview](docs/ARCHITECTURE_OVERVIEW.md)** - Understanding SoftSensorAI's design
 - **[Quickstart Guide](docs/quickstart.md)** - Getting SoftSensorAI running
-- **[Week with SoftSensorAI](docs/WEEK_WITH_DEVPILOT.md)** - Daily workflow examples
+- **[Week with SoftSensorAI](docs/WEEK_WITH_SOFTSENSORAI.md)** - Daily workflow examples
 
 ## 🚀 Quick Start for Contributors
 

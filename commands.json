@@ -8,7 +8,7 @@
   {"command":"dp review","description":"AI review of local changes before commit","category":"review","source":"dp"},
   {"command":"dp review --preview","description":"AI review with preview logs","category":"review","source":"dp"},
   {"command":"dp tickets","description":"Generate structured backlog (JSON/CSV)","category":"planning","source":"dp"},
-  {"command":"dp score","description":"DevPilot Readiness Score (DPRS)","category":"diagnostics","source":"dp"},
+  {"command":"dp score","description":"SoftSensorAI Readiness Score (DPRS)","category":"diagnostics","source":"dp"},
   {"command":"dp detect","description":"Detect technology stack in repository","category":"analysis","source":"dp"},
   {"command":"dp plan","description":"Preview what setup would create (dry run)","category":"planning","source":"dp"},
   {"command":"dp palette","description":"Open command palette","category":"meta","source":"dp"},

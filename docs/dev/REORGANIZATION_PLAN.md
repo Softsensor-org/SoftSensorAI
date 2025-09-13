@@ -9,7 +9,7 @@
 ## Proposed New Structure
 
 ```
-devpilot/
+softsensorai/
 ├── README.md                    # Keep in root (essential)
 ├── LICENSE                      # Keep in root (essential)
 ├── VERSION                      # Keep in root (essential)
@@ -23,7 +23,7 @@ devpilot/
 │   └── documentation-requirements.json
 │
 ├── bin/                         # Executable scripts (unchanged)
-│   └── dp                       # Main CLI
+│   └── ssai                       # Main CLI
 │
 ├── config/                      # Configuration files (NEW)
 │   ├── profiles/                # Move from root
@@ -66,7 +66,7 @@ devpilot/
 │
 └── workspace/                   # Working directories (NEW)
     ├── examples/               # Move from root
-    └── devpilot/              # Move from root
+    └── softsensorai/              # Move from root
 ```
 
 ## Migration Steps

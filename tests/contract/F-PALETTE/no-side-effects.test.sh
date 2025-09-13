@@ -1,10 +1,10 @@
 #!/bin/bash
 # SPDX-License-Identifier: GPL-3.0-only
-# Test: dp palette has no side effects when fzf missing
+# Test: ssai palette has no side effects when fzf missing
 
 set -e
 
-echo "Testing: dp palette side effects"
+echo "Testing: ssai palette side effects"
 
 # Create temp directory for test
 TEST_DIR=$(mktemp -d)
@@ -24,8 +24,8 @@ fi
 # Get directory state before
 FILES_BEFORE=$(find . -type f | sort)
 
-# Run dp palette (should fail gracefully)
-dp palette > /dev/null 2>&1 || true
+# Run ssai palette (should fail gracefully)
+ssai palette > /dev/null 2>&1 || true
 
 # Get directory state after
 FILES_AFTER=$(find . -type f | sort)

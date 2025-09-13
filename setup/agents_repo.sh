@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # SPDX-License-Identifier: GPL-3.0-only
-# setup_agents_repo.sh — DevPilot repository setup script
+# setup_agents_repo.sh — SoftSensorAI repository setup script
 # Configures AI agents and development tools for individual repositories
-# Part of DevPilot: Learning-aware AI development platform
+# Part of SoftSensorAI: Learning-aware AI development platform
 #
 # Flags:
 #   --force         overwrite existing files

@@ -19,13 +19,13 @@ SoftSensorAI automatically detects if you're in an existing repository:
 cd /path/to/your/project
 
 # Run setup - automatically detects existing repo
-dp setup
+ssai setup
 
 # Initialize with your preferences
-dp init --skill l1 --phase mvp
+ssai init --skill l1 --phase mvp
 
 # That's it! SoftSensorAI is configured for your project
-dp palette  # Browse available commands
+ssai palette  # Browse available commands
 ```
 
 ## What Gets Added
@@ -327,7 +327,7 @@ setup_my_project ~/projects/new-service
 After setup, explore:
 
 - [ARCHITECTURE_OVERVIEW.md](ARCHITECTURE_OVERVIEW.md) - Understand the full system
-- [WEEK_WITH_DEVPILOT.md](WEEK_WITH_DEVPILOT.md) - Daily workflow examples
+- [WEEK_WITH_SOFTSENSORAI.md](WEEK_WITH_SOFTSENSORAI.md) - Daily workflow examples
 - [agent-commands.md](agent-commands.md) - Browse all available commands
 - [PERSONAS_GUIDE.md](PERSONAS_GUIDE.md) - Add specialized expertise
 

@@ -1,36 +1,36 @@
-# DevPilot Multi-User Configuration Template
+# SoftSensorAI Multi-User Configuration Template
 #
-# This file configures DevPilot for multi-user/team installations.
-# Location: /opt/devpilot/etc/devpilot.conf
+# This file configures SoftSensorAI for multi-user/team installations.
+# Location: /opt/softsensorai/etc/softsensorai.conf
 #
-# After modifying, restart your shell or source /etc/profile.d/devpilot.sh
+# After modifying, restart your shell or source /etc/profile.d/softsensorai.sh
 
 # ============================================================================
 # CORE PATHS (Required)
 # ============================================================================
 
-# System installation root (where DevPilot is installed)
-DEVPILOT_ROOT=/opt/devpilot
+# System installation root (where SoftSensorAI is installed)
+SOFTSENSORAI_ROOT=/opt/softsensorai
 
 # Per-user data directory (artifacts, cache, logs)
 # Use $HOME to make it user-specific
-DEVPILOT_USER_DIR=$HOME/.devpilot
+SOFTSENSORAI_USER_DIR=$HOME/.softsensorai
 
-# DevPilot version (updated by installer)
-DEVPILOT_VERSION=2.0.0
+# SoftSensorAI version (updated by installer)
+SOFTSENSORAI_VERSION=2.0.0
 
 # ============================================================================
 # COMPONENT PATHS (Optional - defaults shown)
 # ============================================================================
 
 # Templates directory for project initialization
-DEVPILOT_TEMPLATES=/opt/devpilot/templates
+SOFTSENSORAI_TEMPLATES=/opt/softsensorai/templates
 
 # Utility scripts and tools
-DEVPILOT_TOOLS=/opt/devpilot/tools
+SOFTSENSORAI_TOOLS=/opt/softsensorai/tools
 
 # Setup and maintenance scripts
-DEVPILOT_SCRIPTS=/opt/devpilot/scripts
+SOFTSENSORAI_SCRIPTS=/opt/softsensorai/scripts
 
 # ============================================================================
 # TEAM DEFAULTS (Optional - users can override)
@@ -60,9 +60,9 @@ DEVPILOT_SCRIPTS=/opt/devpilot/scripts
 # SECURITY & COMPLIANCE (Optional)
 # ============================================================================
 
-# Audit logging (track all DevPilot commands)
+# Audit logging (track all SoftSensorAI commands)
 # Uncomment to enable audit logging
-# DEVPILOT_AUDIT_LOG=/var/log/devpilot/audit.log
+# SOFTSENSORAI_AUDIT_LOG=/var/log/softsensorai/audit.log
 
 # Require API key encryption (force secure storage)
 # REQUIRE_ENCRYPTED_KEYS=false
@@ -135,18 +135,18 @@ DEVPILOT_SCRIPTS=/opt/devpilot/scripts
 # ============================================================================
 #
 # 1. User Overrides:
-#    Users can override team defaults in ~/.devpilot/config/user.conf
+#    Users can override team defaults in ~/.softsensorai/config/user.conf
 #
 # 2. API Keys:
 #    Never store API keys in this file. Users should set them in:
 #    - Environment variables (ANTHROPIC_API_KEY, etc.)
-#    - Encrypted storage via: /opt/devpilot/utils/secure_keys.sh
+#    - Encrypted storage via: /opt/softsensorai/utils/secure_keys.sh
 #
 # 3. Updates:
-#    To update DevPilot:
-#    cd /opt/devpilot/src && sudo git pull
-#    sudo /opt/devpilot/scripts/install_multi_user.sh
+#    To update SoftSensorAI:
+#    cd /opt/softsensorai/src && sudo git pull
+#    sudo /opt/softsensorai/scripts/install_multi_user.sh
 #
 # 4. Support:
-#    Documentation: /opt/devpilot/src/docs/MULTI_USER.md
-#    Issues: https://github.com/Softsensor-org/DevPilot/issues
+#    Documentation: /opt/softsensorai/src/docs/MULTI_USER.md
+#    Issues: https://github.com/Softsensor-org/SoftSensorAI/issues

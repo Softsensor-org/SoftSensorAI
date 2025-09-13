@@ -1,11 +1,11 @@
-# dp sandbox
+# ssai sandbox
 
 Sandboxed code execution environment for safely running AI-generated code.
 
 ## Usage
 
 ```bash
-dp sandbox [code-file]
+ssai sandbox [code-file]
 ```
 
 ## Description
@@ -23,10 +23,10 @@ The sandbox command provides a secure execution environment for testing code, pa
 
 ```bash
 # Run a script in sandbox
-dp sandbox test_script.py
+ssai sandbox test_script.py
 
 # Execute code with timeout
-dp sandbox --timeout 30 compute.py
+ssai sandbox --timeout 30 compute.py
 ```
 
 ## Security

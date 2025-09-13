@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: GPL-3.0-only
-"""Integration tests for DevPilot setup scripts."""
+"""Integration tests for SoftSensorAI setup scripts."""
 
 import json
 import os

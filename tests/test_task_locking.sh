@@ -26,7 +26,7 @@ setup() {
   mkdir -p "$LOCK_DIR"
 }
 
-# Helper function to simulate the lock acquisition logic from dp-agent
+# Helper function to simulate the lock acquisition logic from ssai-agent
 acquire_lock() {
   local task_id="$1"
   local lock_file="$LOCK_DIR/${task_id}.lock"
@@ -117,7 +117,7 @@ test_lock_cleanup() {
   (
     acquire_lock "$task_id"
     # The lock should be automatically removed when the subshell exits
-    # due to the trap in the real dp-agent script
+    # due to the trap in the real ssai-agent script
   )
 
   # Simulate trap cleanup by manually removing

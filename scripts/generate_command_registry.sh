@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # SPDX-License-Identifier: GPL-3.0-only
 # Generate Command Registry from Justfile and scripts
-# Creates a searchable command palette for DevPilot
+# Creates a searchable command palette for SoftSensorAI
 set -euo pipefail
 
 # Parse arguments
@@ -153,7 +153,7 @@ parse_dp_commands() {
     "review:AI review of local changes before commit:review"
     "review --preview:AI review with preview logs:review"
     "tickets:Generate structured backlog (JSON/CSV):planning"
-    "score:DevPilot Readiness Score (DPRS):diagnostics"
+    "score:SoftSensorAI Readiness Score (DPRS):diagnostics"
     "detect:Detect technology stack in repository:analysis"
     "plan:Preview what setup would create (dry run):planning"
     "palette:Open command palette:meta"
@@ -174,7 +174,7 @@ parse_dp_commands() {
 
 # Initialize output files
 cat > "$OUTPUT" <<'EOF'
-# DevPilot Command Registry
+# SoftSensorAI Command Registry
 
 Quick reference for all available commands. Use `dp palette` or `just palette` to search interactively.
 

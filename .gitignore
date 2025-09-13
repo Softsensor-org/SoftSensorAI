@@ -47,7 +47,7 @@ PROFILE.md
 !/var/logs/.gitkeep
 
 # Workspace
-/workspace/devpilot/*
+/workspace/softsensorai/*
 /workspace/examples/output/*
 
 # Old compatibility symlinks

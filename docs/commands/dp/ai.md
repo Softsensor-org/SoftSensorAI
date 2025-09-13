@@ -1,11 +1,11 @@
-# dp ai
+# ssai ai
 
 Unified AI CLI interface for interacting with various AI providers.
 
 ## Usage
 
 ```bash
-dp ai --provider <provider> --model <model> --prompt-file <file>
+ssai ai --provider <provider> --model <model> --prompt-file <file>
 ```
 
 ## Providers
@@ -19,10 +19,10 @@ dp ai --provider <provider> --model <model> --prompt-file <file>
 
 ```bash
 # Use Claude for a task
-dp ai --provider claude --model claude-3-sonnet --prompt-file prompt.txt
+ssai ai --provider claude --model claude-3-sonnet --prompt-file prompt.txt
 
 # Use Gemini
-dp ai --provider gemini --model gemini-pro --prompt-file prompt.txt
+ssai ai --provider gemini --model gemini-pro --prompt-file prompt.txt
 ```
 
 ## Environment Variables

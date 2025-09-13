@@ -1,4 +1,4 @@
-# dp setup
+# ssai setup
 
 ## Overview
 
@@ -8,7 +8,7 @@ any project.
 ## Usage
 
 ```bash
-dp setup [URL] [OPTIONS]
+ssai setup [URL] [OPTIONS]
 ```
 
 ## What It Does
@@ -25,7 +25,7 @@ dp setup [URL] [OPTIONS]
 
 ```bash
 cd ~/my-project
-dp setup
+ssai setup
 # ✓ Detected existing repository: my-project
 # ✓ Creating CLAUDE.md...
 # ✓ Setting up .claude/ directory...
@@ -35,7 +35,7 @@ dp setup
 ### New Repository (with URL)
 
 ```bash
-dp setup https://github.com/user/new-project
+ssai setup https://github.com/user/new-project
 # ✓ Cloning repository...
 # ✓ Entering new-project/
 # ✓ Creating SoftSensorAI files...
@@ -46,7 +46,7 @@ dp setup https://github.com/user/new-project
 
 ```bash
 mkdir new-app && cd new-app
-dp setup
+ssai setup
 # ? What would you like to do?
 # > 1) Initialize new git repository here
 #   2) Clone a repository
@@ -82,9 +82,9 @@ your-project/
 
 ## What Happens Next
 
-After `dp setup`, run `dp init` to:
+After `ssai setup`, run `ssai init` to:
 
-- Check system health (`dp doctor`)
+- Check system health (`ssai doctor`)
 - Configure skill level and project phase
 - Install dependencies and build
 
@@ -95,9 +95,9 @@ After `dp setup`, run `dp init` to:
 ```bash
 # Option 1: Skip setup (files already exist)
 # Option 2: Force overwrite
-dp setup --force
+ssai setup --force
 # Option 3: See what would change
-dp setup --dry-run
+ssai setup --dry-run
 ```
 
 ### "Not a git repository"
@@ -105,19 +105,19 @@ dp setup --dry-run
 ```bash
 # Initialize git first
 git init
-dp setup
+ssai setup
 # Or clone a repository
-dp setup https://github.com/user/repo
+ssai setup https://github.com/user/repo
 ```
 
 ## Related Commands
 
-- [`dp init`](init.md) - Initialize and configure after setup
-- [`dp doctor`](doctor.md) - Check system health
-- [`dp project`](project.md) - View/modify project configuration
+- [`ssai init`](init.md) - Initialize and configure after setup
+- [`ssai doctor`](doctor.md) - Check system health
+- [`ssai project`](project.md) - View/modify project configuration
 
 ## Implementation
 
-- **Script**: `bin/dp` (cmd_setup function)
+- **Script**: `bin/ssai` (cmd_setup function)
 - **Calls**: `setup/repo_wizard.sh` or `setup/existing_repo_setup.sh`
 - **Smart Detection**: Checks for `.git/`, URL parameter, or empty directory

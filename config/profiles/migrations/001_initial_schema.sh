@@ -28,7 +28,7 @@ migrate_up() {
   cat > profiles/schemas/v1.0.0.json <<'EOF'
 {
   "version": "1.0.0",
-  "description": "Initial DevPilot profile schema",
+  "description": "Initial SoftSensorAI profile schema",
   "profile": {
     "type": "object",
     "properties": {

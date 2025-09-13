@@ -1,10 +1,10 @@
 #!/bin/bash
 # SPDX-License-Identifier: GPL-3.0-only
-# Test: dp setup uses correct paths (softsensorai not devpilot)
+# Test: ssai setup uses correct paths (softsensorai not softsensorai)
 
 set -e
 
-echo "Testing: dp setup path correctness"
+echo "Testing: ssai setup path correctness"
 
 # Create temp directory for test
 TEST_DIR=$(mktemp -d)
@@ -13,8 +13,8 @@ cd "$TEST_DIR"
 # Initialize as git repo
 git init > /dev/null 2>&1
 
-# Run dp setup and capture output
-OUTPUT=$(dp setup 2>&1 || true)
+# Run ssai setup and capture output
+OUTPUT=$(ssai setup 2>&1 || true)
 
 ERRORS=0
 
@@ -27,8 +27,8 @@ else
 fi
 
 # Check that old paths are not present
-if echo "$OUTPUT" | grep -i "/devpilot\|/.devpilot" | grep -v "devpilot.project.yml" > /dev/null 2>&1; then
-    echo "❌ Found legacy devpilot paths"
+if echo "$OUTPUT" | grep -i "/softsensorai\|/.softsensorai" | grep -v "softsensorai.project.yml" > /dev/null 2>&1; then
+    echo "❌ Found legacy softsensorai paths"
     ERRORS=$((ERRORS + 1))
 else
     echo "✅ No legacy paths found"

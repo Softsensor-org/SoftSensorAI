@@ -2,13 +2,13 @@
 
 ## Overview
 
-The task locking mechanism is implemented in the `dp-agent` script to prevent concurrent operations
+The task locking mechanism is implemented in the `ssai-agent` script to prevent concurrent operations
 on the same task. It uses file-based locking with the `noclobber` option for atomic file creation to
 ensure exclusive access to a task.
 
 ## Implementation
 
-The locking mechanism is implemented in the `cmd_run` function of the `bin/dp-agent` script:
+The locking mechanism is implemented in the `cmd_run` function of the `bin/ssai-agent` script:
 
 ```bash
 # Add locking to prevent concurrent operations

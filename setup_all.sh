@@ -174,7 +174,7 @@ install_tools() {
 run_installation() {
   local platform="$1"
 
-  say "Starting DevPilot installation..."
+  say "Starting SoftSensorAI installation..."
 
   # 1. Install key software
   if [[ $SKIP_TOOLS -eq 0 ]]; then
@@ -236,8 +236,8 @@ show_next_steps() {
   echo "Next steps:"
   echo ""
   echo "1. Set up your first project:"
-  echo "   ${GREEN}dp setup${NC}          # Interactive setup (single or multi-repo)"
-  echo "   ${GREEN}dp setup git@github.com:org/repo${NC} # Direct with URL"
+  echo "   ${GREEN}ssai setup${NC}          # Interactive setup (single or multi-repo)"
+  echo "   ${GREEN}ssai setup git@github.com:org/repo${NC} # Direct with URL"
   echo ""
   echo "2. Add API keys (optional):"
   echo "   Add to ~/.bashrc or ~/.zshrc:"

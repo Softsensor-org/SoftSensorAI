@@ -21,7 +21,7 @@ This guide covers the multi-user installation model, ideal for:
 ┌──────────────────────────────────────────────────────┐
 │                   System Level (Root)                 │
 ├──────────────────────────────────────────────────────┤
-│  /opt/devpilot/                                      │
+│  /opt/softsensorai/                                      │
 │  ├── bin/           # Shared binaries (read-only)    │
 │  ├── lib/           # Core libraries & scripts       │
 │  ├── share/         # Shared resources               │
@@ -29,7 +29,7 @@ This guide covers the multi-user installation model, ideal for:
 │  │   ├── commands/  # System commands                │
 │  │   └── personas/  # Default personas               │
 │  └── etc/           # System configuration           │
-│      └── devpilot.conf                               │
+│      └── softsensorai.conf                               │
 └──────────────────────────────────────────────────────┘
                            ↓
                     Shared by all users
@@ -37,7 +37,7 @@ This guide covers the multi-user installation model, ideal for:
 ┌──────────────────────────────────────────────────────┐
 │                   User Level (Personal)               │
 ├──────────────────────────────────────────────────────┤
-│  ~/.devpilot/                                        │
+│  ~/.softsensorai/                                        │
 │  ├── config/        # Personal settings              │
 │  │   ├── settings.json                               │
 │  │   ├── api_keys.env.enc  # Encrypted keys         │
@@ -65,10 +65,10 @@ sudo ./install/multi_user_setup.sh
 This will:
 
 - Install system dependencies (git, jq, ripgrep, fd, direnv)
-- Create `/opt/devpilot` directory structure
+- Create `/opt/softsensorai` directory structure
 - Install SoftSensorAI core components
 - Set up system-wide configuration
-- Create admin utilities (`dp-admin`)
+- Create admin utilities (`ssai-admin`)
 - Configure logging and auditing
 
 ### Step 2: User Setup (Run as Regular User)
@@ -80,12 +80,12 @@ Each user runs their personal setup:
 curl -L https://github.com/Softsensor-org/SoftSensorAI/raw/main/install/user_setup.sh | bash
 
 # Or if SoftSensorAI is already installed system-wide
-dp setup-user
+ssai setup-user
 ```
 
 This will:
 
-- Create `~/.devpilot` directory structure
+- Create `~/.softsensorai` directory structure
 - Configure personal settings (skill level, phase, AI provider)
 - Set up API keys template
 - Create personal personas
@@ -98,7 +98,7 @@ Each user must configure their personal API keys:
 
 ```bash
 # Edit API keys file
-vi ~/.devpilot/config/api_keys.env
+vi ~/.softsensorai/config/api_keys.env
 
 # Add your keys:
 ANTHROPIC_API_KEY="sk-ant-..."
@@ -106,7 +106,7 @@ OPENAI_API_KEY="sk-..."
 GITHUB_TOKEN="ghp_..."
 
 # Encrypt the keys for security
-dp secure-keys encrypt
+ssai secure-keys encrypt
 ```
 
 ## Security Features
@@ -121,26 +121,26 @@ Three encryption methods supported:
 
 ```bash
 # Encrypt keys
-dp secure-keys encrypt
+ssai secure-keys encrypt
 
 # Decrypt keys (when needed)
-dp secure-keys decrypt
+ssai secure-keys decrypt
 
 # Check security status
-dp secure-keys status
+ssai secure-keys status
 
 # Rotate encryption
-dp secure-keys rotate
+ssai secure-keys rotate
 ```
 
 ### 2. Resource Limits
 
-Per-user limits configured in `/opt/devpilot/etc/devpilot.conf`:
+Per-user limits configured in `/opt/softsensorai/etc/softsensorai.conf`:
 
 ```bash
-DEVPILOT_MAX_ARTIFACTS_MB=1000    # Max artifacts storage
-DEVPILOT_MAX_CACHE_MB=500         # Max cache size
-DEVPILOT_MAX_CONCURRENT_AGENTS=3  # Max parallel agents
+SOFTSENSORAI_MAX_ARTIFACTS_MB=1000    # Max artifacts storage
+SOFTSENSORAI_MAX_CACHE_MB=500         # Max cache size
+SOFTSENSORAI_MAX_CONCURRENT_AGENTS=3  # Max parallel agents
 ```
 
 ### 3. Sandboxing
@@ -154,7 +154,7 @@ All AI-generated code runs in sandboxed environment:
 
 ### 4. Audit Logging
 
-All operations logged to `/var/log/devpilot/`:
+All operations logged to `/var/log/softsensorai/`:
 
 - User actions
 - AI interactions
@@ -165,36 +165,36 @@ All operations logged to `/var/log/devpilot/`:
 
 ### Admin Commands
 
-System administrators can use `dp-admin`:
+System administrators can use `ssai-admin`:
 
 ```bash
 # List all SoftSensorAI users
-sudo dp-admin list-users
+sudo ssai-admin list-users
 
 # Show usage statistics
-sudo dp-admin stats
+sudo ssai-admin stats
 
 # Clean all user caches
-sudo dp-admin clean-cache
+sudo ssai-admin clean-cache
 
 # Update SoftSensorAI system-wide
-sudo dp-admin update
+sudo ssai-admin update
 
 # Monitor real-time usage
-sudo dp-admin monitor
+sudo ssai-admin monitor
 ```
 
 ### User Management
 
 ```bash
 # Add new user (creates user directory)
-sudo dp-admin add-user username
+sudo ssai-admin add-user username
 
 # Remove user (preserves data, disables access)
-sudo dp-admin disable-user username
+sudo ssai-admin disable-user username
 
 # Set user limits
-sudo dp-admin set-limits username --artifacts 2000 --cache 1000
+sudo ssai-admin set-limits username --artifacts 2000 --cache 1000
 ```
 
 ### Monitoring
@@ -203,44 +203,44 @@ View logs and usage:
 
 ```bash
 # System logs
-sudo tail -f /var/log/devpilot/system.log
+sudo tail -f /var/log/softsensorai/system.log
 
 # User activity
-sudo grep username /var/log/devpilot/access.log
+sudo grep username /var/log/softsensorai/access.log
 
 # Resource usage
-sudo dp-admin stats --detailed
+sudo ssai-admin stats --detailed
 ```
 
 ## Configuration
 
 ### System Configuration
 
-Edit `/opt/devpilot/etc/devpilot.conf`:
+Edit `/opt/softsensorai/etc/softsensorai.conf`:
 
 ```bash
 # Installation paths
-DEVPILOT_ROOT="/opt/devpilot"
-DEVPILOT_USER_DIR="$HOME/.devpilot"
+SOFTSENSORAI_ROOT="/opt/softsensorai"
+SOFTSENSORAI_USER_DIR="$HOME/.softsensorai"
 
 # Features
-DEVPILOT_MULTI_USER=true
-DEVPILOT_SANDBOX_ENABLED=true
-DEVPILOT_AUDIT_ENABLED=true
+SOFTSENSORAI_MULTI_USER=true
+SOFTSENSORAI_SANDBOX_ENABLED=true
+SOFTSENSORAI_AUDIT_ENABLED=true
 
 # Resource limits
-DEVPILOT_MAX_ARTIFACTS_MB=1000
-DEVPILOT_MAX_CACHE_MB=500
-DEVPILOT_MAX_CONCURRENT_AGENTS=3
+SOFTSENSORAI_MAX_ARTIFACTS_MB=1000
+SOFTSENSORAI_MAX_CACHE_MB=500
+SOFTSENSORAI_MAX_CONCURRENT_AGENTS=3
 
 # Security
-DEVPILOT_REQUIRE_ENCRYPTION=false  # Set true to enforce key encryption
-DEVPILOT_ALLOWED_AI_PROVIDERS="anthropic,openai,google,grok"
+SOFTSENSORAI_REQUIRE_ENCRYPTION=false  # Set true to enforce key encryption
+SOFTSENSORAI_ALLOWED_AI_PROVIDERS="anthropic,openai,google,grok"
 ```
 
 ### User Configuration
 
-Each user's `~/.devpilot/config/settings.json`:
+Each user's `~/.softsensorai/config/settings.json`:
 
 ```json
 {
@@ -264,7 +264,7 @@ Each user's `~/.devpilot/config/settings.json`:
 
 - Single installation to maintain
 - Consistent versions across all users
-- Easy updates via `dp-admin update`
+- Easy updates via `ssai-admin update`
 - System-wide security policies
 
 ### 2. Resource Efficiency
@@ -304,10 +304,10 @@ To migrate existing single-user installation:
 sudo ./install/multi_user_setup.sh
 
 # As user: Migrate personal config
-dp migrate-to-multiuser
+ssai migrate-to-multiuser
 
 # This will:
-# - Copy your settings to ~/.devpilot
+# - Copy your settings to ~/.softsensorai
 # - Migrate your API keys (re-encrypt)
 # - Preserve your personas and preferences
 # - Update shell configuration
@@ -317,28 +317,28 @@ dp migrate-to-multiuser
 
 ### Common Issues
 
-1. **Permission denied accessing /opt/devpilot**
+1. **Permission denied accessing /opt/softsensorai**
 
    ```bash
    # Fix: Ensure proper permissions
-   sudo chmod -R 755 /opt/devpilot
+   sudo chmod -R 755 /opt/softsensorai
    ```
 
 2. **User config not initializing**
 
    ```bash
    # Fix: Manually run init
-   /opt/devpilot/lib/core/init_user.sh
+   /opt/softsensorai/lib/core/init_user.sh
    ```
 
 3. **API keys not loading**
 
    ```bash
    # Check encryption status
-   dp secure-keys status
+   ssai secure-keys status
 
    # Re-encrypt if needed
-   dp secure-keys rotate
+   ssai secure-keys rotate
    ```
 
 4. **Commands not found**
@@ -348,24 +348,24 @@ dp migrate-to-multiuser
    export PATH="/usr/local/bin:$PATH"
 
    # Or create symlink
-   sudo ln -s /opt/devpilot/bin/dp /usr/local/bin/dp
+   sudo ln -s /opt/softsensorai/bin/ssai /usr/local/bin/ssai
    ```
 
 ### Getting Help
 
 ```bash
 # Check system status
-sudo dp-admin status
+sudo ssai-admin status
 
 # Run diagnostics
-dp doctor
+ssai doctor
 
 # View logs
-sudo tail -f /var/log/devpilot/system.log
+sudo tail -f /var/log/softsensorai/system.log
 
 # Get help
-dp help
-dp-admin help
+ssai help
+ssai-admin help
 ```
 
 ## Best Practices
@@ -374,7 +374,7 @@ dp-admin help
 
 1. **Regular Updates**
 
-   - Schedule weekly updates: `sudo dp-admin update`
+   - Schedule weekly updates: `sudo ssai-admin update`
    - Review changelog before major updates
    - Test in staging environment first
 
@@ -391,8 +391,8 @@ dp-admin help
    - Review and update allowed AI providers
 
 4. **Backup**
-   - Regular backups of `/opt/devpilot/etc/`
-   - User data in `~/.devpilot/` (user responsibility)
+   - Regular backups of `/opt/softsensorai/etc/`
+   - User data in `~/.softsensorai/` (user responsibility)
    - Document custom configurations
 
 ### For Users
@@ -406,7 +406,7 @@ dp-admin help
 2. **Organization**
 
    - Keep workspace organized
-   - Clean cache regularly: `rm -rf ~/.devpilot/cache/*`
+   - Clean cache regularly: `rm -rf ~/.softsensorai/cache/*`
    - Archive old artifacts
 
 3. **Customization**
@@ -418,7 +418,7 @@ dp-admin help
 
 | Feature               | Single-User       | Multi-User                                      |
 | --------------------- | ----------------- | ----------------------------------------------- |
-| Installation Location | `~/softsensorai`      | `/opt/devpilot` (system) + `~/.devpilot` (user) |
+| Installation Location | `~/softsensorai`      | `/opt/softsensorai` (system) + `~/.softsensorai` (user) |
 | Installation Rights   | User              | Root/Admin                                      |
 | Disk Usage            | ~500MB per user   | ~200MB shared + ~100MB per user                 |
 | Updates               | Each user updates | Admin updates for all                           |

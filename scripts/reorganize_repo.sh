@@ -17,7 +17,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 cd "$PROJECT_ROOT"
 
-echo -e "${BLUE}==> DevPilot Repository Reorganization${NC}"
+echo -e "${BLUE}==> SoftSensorAI Repository Reorganization${NC}"
 echo ""
 
 # Function to create directories
@@ -134,9 +134,9 @@ organize_workspace() {
         echo -e "${GREEN}✓ Moved examples${NC}"
     fi
 
-    if [ -d "devpilot" ]; then
-        git mv devpilot workspace/devpilot 2>/dev/null || mv devpilot workspace/devpilot
-        echo -e "${GREEN}✓ Moved devpilot${NC}"
+    if [ -d "softsensorai" ]; then
+        git mv softsensorai workspace/softsensorai 2>/dev/null || mv softsensorai workspace/softsensorai
+        echo -e "${GREEN}✓ Moved softsensorai${NC}"
     fi
 }
 
@@ -191,7 +191,7 @@ update_gitignore() {
 !/var/logs/.gitkeep
 
 # Workspace
-/workspace/devpilot/*
+/workspace/softsensorai/*
 /workspace/examples/output/*
 
 # Old compatibility symlinks
@@ -210,7 +210,7 @@ EOF
 # Function to create README for new structure
 create_structure_readme() {
     cat > STRUCTURE.md <<'EOF'
-# DevPilot Directory Structure
+# SoftSensorAI Directory Structure
 
 ## Root Directory
 ```
@@ -229,7 +229,7 @@ create_structure_readme() {
 
 ### `/bin/`
 Executable scripts and CLI tools
-- `dp` - Main DevPilot CLI
+- `dp` - Main SoftSensorAI CLI
 
 ### `/config/`
 Configuration files and profiles

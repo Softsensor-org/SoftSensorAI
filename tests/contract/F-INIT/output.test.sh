@@ -1,17 +1,17 @@
 #!/bin/bash
 # SPDX-License-Identifier: GPL-3.0-only
-# Test: dp init prints initialization summary
+# Test: ssai init prints initialization summary
 
 set -e
 
-echo "Testing: dp init output contains required sections"
+echo "Testing: ssai init output contains required sections"
 
 # Create temp directory for test
 TEST_DIR=$(mktemp -d)
 cd "$TEST_DIR"
 
-# Run dp init and capture output
-OUTPUT=$(dp init 2>&1 || true)
+# Run ssai init and capture output
+OUTPUT=$(ssai init 2>&1 || true)
 
 # Check for required sections
 ERRORS=0

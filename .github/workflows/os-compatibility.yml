@@ -143,11 +143,11 @@ jobs:
             fi
           done
 
-      - name: Test devpilot CLI
+      - name: Test softsensorai CLI
         run: |
-          echo "Testing devpilot CLI..."
-          bash devpilot --help || true
-          bash devpilot --version || true
+          echo "Testing softsensorai CLI..."
+          bash softsensorai --help || true
+          bash softsensorai --version || true
 
       - name: Generate compatibility report
         if: always()

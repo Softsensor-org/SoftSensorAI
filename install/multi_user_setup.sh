@@ -1,21 +1,21 @@
 #!/usr/bin/env bash
 # SPDX-License-Identifier: GPL-3.0-only
-# Multi-user DevPilot installation for shared servers
+# Multi-user SoftSensorAI installation for shared servers
 # Run as root/sudo for system-wide installation
 set -euo pipefail
 
 # ============================================================================
 # Multi-User Installation Script
 # ============================================================================
-# This script installs DevPilot system-wide for all users on a shared server
-# - System components in /opt/devpilot (read-only for users)
-# - User configs in ~/.devpilot (per-user customization)
-# - Shared tools in /usr/local/bin (or /opt/devpilot/bin with PATH)
+# This script installs SoftSensorAI system-wide for all users on a shared server
+# - System components in /opt/softsensorai (read-only for users)
+# - User configs in ~/.softsensorai (per-user customization)
+# - Shared tools in /usr/local/bin (or /opt/softsensorai/bin with PATH)
 # ============================================================================
 
-VERSION="${DEVPILOT_VERSION:-latest}"
-INSTALL_PREFIX="${INSTALL_PREFIX:-/opt/devpilot}"
-USER_PREFIX="${USER_PREFIX:-\$HOME/.devpilot}"
+VERSION="${SOFTSENSORAI_VERSION:-latest}"
+INSTALL_PREFIX="${INSTALL_PREFIX:-/opt/softsensorai}"
+USER_PREFIX="${USER_PREFIX:-\$HOME/.softsensorai}"
 
 # Color codes
 RED='\033[0;31m'
@@ -118,17 +118,17 @@ create_directories() {
     log_success "System directories created"
 }
 
-# Install DevPilot core
+# Install SoftSensorAI core
 install_core() {
-    log_info "Installing DevPilot core..."
+    log_info "Installing SoftSensorAI core..."
 
     # Clone or update repository
-    local TEMP_DIR="/tmp/devpilot-install-$$"
+    local TEMP_DIR="/tmp/softsensorai-install-$$"
     if [[ -d "$TEMP_DIR" ]]; then
         rm -rf "$TEMP_DIR"
     fi
 
-    git clone https://github.com/Softsensor-org/DevPilot.git "$TEMP_DIR"
+    git clone https://github.com/Softsensor-org/SoftSensorAI.git "$TEMP_DIR"
     cd "$TEMP_DIR"
 
     # Copy core components to system location
@@ -141,78 +141,78 @@ install_core() {
     chmod +x "$INSTALL_PREFIX"/bin/*
 
     # Create system-wide configuration
-    cat > "$INSTALL_PREFIX/etc/devpilot.conf" <<'EOF'
-# DevPilot System Configuration
+    cat > "$INSTALL_PREFIX/etc/softsensorai.conf" <<'EOF'
+# SoftSensorAI System Configuration
 # This file is managed by the system administrator
 
 # Installation paths
-DEVPILOT_ROOT="/opt/devpilot"
-DEVPILOT_USER_DIR="$HOME/.devpilot"
+SOFTSENSORAI_ROOT="/opt/softsensorai"
+SOFTSENSORAI_USER_DIR="$HOME/.softsensorai"
 
 # Shared resources
-DEVPILOT_SHARED_PATTERNS="/opt/devpilot/share/patterns"
-DEVPILOT_SHARED_COMMANDS="/opt/devpilot/share/commands"
-DEVPILOT_SHARED_PERSONAS="/opt/devpilot/share/personas"
+SOFTSENSORAI_SHARED_PATTERNS="/opt/softsensorai/share/patterns"
+SOFTSENSORAI_SHARED_COMMANDS="/opt/softsensorai/share/commands"
+SOFTSENSORAI_SHARED_PERSONAS="/opt/softsensorai/share/personas"
 
 # Multi-user mode
-DEVPILOT_MULTI_USER=true
-DEVPILOT_ALLOW_USER_OVERRIDE=true
+SOFTSENSORAI_MULTI_USER=true
+SOFTSENSORAI_ALLOW_USER_OVERRIDE=true
 
 # Security settings
-DEVPILOT_SANDBOX_ENABLED=true
-DEVPILOT_AUDIT_ENABLED=true
-DEVPILOT_LOG_DIR="/var/log/devpilot"
+SOFTSENSORAI_SANDBOX_ENABLED=true
+SOFTSENSORAI_AUDIT_ENABLED=true
+SOFTSENSORAI_LOG_DIR="/var/log/softsensorai"
 
 # Resource limits (per user)
-DEVPILOT_MAX_ARTIFACTS_MB=1000
-DEVPILOT_MAX_CACHE_MB=500
-DEVPILOT_MAX_CONCURRENT_AGENTS=3
+SOFTSENSORAI_MAX_ARTIFACTS_MB=1000
+SOFTSENSORAI_MAX_CACHE_MB=500
+SOFTSENSORAI_MAX_CONCURRENT_AGENTS=3
 EOF
 
     # Clean up temp directory
     cd /
     rm -rf "$TEMP_DIR"
 
-    log_success "DevPilot core installed"
+    log_success "SoftSensorAI core installed"
 }
 
 # Create wrapper script that handles user separation
 create_wrapper() {
     log_info "Creating multi-user wrapper..."
 
-    cat > "$INSTALL_PREFIX/bin/dp" <<'WRAPPER'
+    cat > "$INSTALL_PREFIX/bin/ssai" <<'WRAPPER'
 #!/usr/bin/env bash
-# DevPilot multi-user wrapper
+# SoftSensorAI multi-user wrapper
 set -euo pipefail
 
 # Load system configuration
-source /opt/devpilot/etc/devpilot.conf
+source /opt/softsensorai/etc/softsensorai.conf
 
 # Ensure user directory exists
-if [[ ! -d "$DEVPILOT_USER_DIR" ]]; then
-    /opt/devpilot/lib/core/init_user.sh
+if [[ ! -d "$SOFTSENSORAI_USER_DIR" ]]; then
+    /opt/softsensorai/lib/core/init_user.sh
 fi
 
 # Set up user environment
-export DEVPILOT_ROOT="${DEVPILOT_ROOT:-/opt/devpilot}"
-export DEVPILOT_USER_DIR="${DEVPILOT_USER_DIR:-$HOME/.devpilot}"
-export DEVPILOT_ARTIFACTS="$DEVPILOT_USER_DIR/artifacts"
-export DEVPILOT_CACHE="$DEVPILOT_USER_DIR/cache"
-export DEVPILOT_CONFIG="$DEVPILOT_USER_DIR/config"
+export SOFTSENSORAI_ROOT="${SOFTSENSORAI_ROOT:-/opt/softsensorai}"
+export SOFTSENSORAI_USER_DIR="${SOFTSENSORAI_USER_DIR:-$HOME/.softsensorai}"
+export SOFTSENSORAI_ARTIFACTS="$SOFTSENSORAI_USER_DIR/artifacts"
+export SOFTSENSORAI_CACHE="$SOFTSENSORAI_USER_DIR/cache"
+export SOFTSENSORAI_CONFIG="$SOFTSENSORAI_USER_DIR/config"
 
 # Load user-specific settings if they exist
-if [[ -f "$DEVPILOT_USER_DIR/config/settings.json" ]]; then
-    export DEVPILOT_USER_SETTINGS="$DEVPILOT_USER_DIR/config/settings.json"
+if [[ -f "$SOFTSENSORAI_USER_DIR/config/settings.json" ]]; then
+    export SOFTSENSORAI_USER_SETTINGS="$SOFTSENSORAI_USER_DIR/config/settings.json"
 fi
 
 # Load user's API keys (encrypted)
-if [[ -f "$DEVPILOT_USER_DIR/config/api_keys.env.enc" ]]; then
+if [[ -f "$SOFTSENSORAI_USER_DIR/config/api_keys.env.enc" ]]; then
     # Decrypt and source (requires user password or key)
-    /opt/devpilot/lib/core/decrypt_keys.sh "$DEVPILOT_USER_DIR/config/api_keys.env.enc"
+    /opt/softsensorai/lib/core/decrypt_keys.sh "$SOFTSENSORAI_USER_DIR/config/api_keys.env.enc"
 fi
 
-# Execute the actual DevPilot command
-exec /opt/devpilot/lib/core/dp_main.sh "$@"
+# Execute the actual SoftSensorAI command
+exec /opt/softsensorai/lib/core/dp_main.sh "$@"
 WRAPPER
 
     chmod +x "$INSTALL_PREFIX/bin/dp"
@@ -229,12 +229,12 @@ create_user_init() {
 
     cat > "$INSTALL_PREFIX/lib/core/init_user.sh" <<'INIT'
 #!/usr/bin/env bash
-# Initialize DevPilot for a new user
+# Initialize SoftSensorAI for a new user
 set -euo pipefail
 
-USER_DIR="${DEVPILOT_USER_DIR:-$HOME/.devpilot}"
+USER_DIR="${SOFTSENSORAI_USER_DIR:-$HOME/.softsensorai}"
 
-echo "Initializing DevPilot for user: $USER"
+echo "Initializing SoftSensorAI for user: $USER"
 
 # Create user directory structure
 mkdir -p "$USER_DIR"/{config,cache,artifacts,workspace}
@@ -253,8 +253,8 @@ cat > "$USER_DIR/config/settings.json" <<EOF
     "editor": "${EDITOR:-vim}"
   },
   "limits": {
-    "max_artifacts_mb": ${DEVPILOT_MAX_ARTIFACTS_MB:-1000},
-    "max_cache_mb": ${DEVPILOT_MAX_CACHE_MB:-500}
+    "max_artifacts_mb": ${SOFTSENSORAI_MAX_ARTIFACTS_MB:-1000},
+    "max_cache_mb": ${SOFTSENSORAI_MAX_CACHE_MB:-500}
   },
   "features": {
     "sandbox_enabled": true,
@@ -266,7 +266,7 @@ EOF
 
 # Create API keys template (user needs to fill this)
 cat > "$USER_DIR/config/api_keys.env.template" <<'EOF'
-# DevPilot API Keys (Personal)
+# SoftSensorAI API Keys (Personal)
 # Copy to api_keys.env and fill in your keys
 # Run: dp secure-keys to encrypt this file
 
@@ -293,7 +293,7 @@ chmod 700 "$USER_DIR"
 chmod 700 "$USER_DIR/config"
 chmod 600 "$USER_DIR/config/api_keys.env.template"
 
-echo "✅ DevPilot initialized for $USER"
+echo "✅ SoftSensorAI initialized for $USER"
 echo ""
 echo "Next steps:"
 echo "1. cd to your project directory"
@@ -314,13 +314,13 @@ create_admin_utils() {
     # User management script
     cat > "$INSTALL_PREFIX/bin/dp-admin" <<'ADMIN'
 #!/usr/bin/env bash
-# DevPilot admin utilities
+# SoftSensorAI admin utilities
 set -euo pipefail
 
 case "${1:-}" in
     list-users)
-        echo "DevPilot Users:"
-        for user_dir in /home/*/.devpilot; do
+        echo "SoftSensorAI Users:"
+        for user_dir in /home/*/.softsensorai; do
             if [[ -d "$user_dir" ]]; then
                 user=$(basename $(dirname "$user_dir"))
                 echo "  - $user"
@@ -329,9 +329,9 @@ case "${1:-}" in
         ;;
 
     stats)
-        echo "DevPilot Usage Statistics:"
+        echo "SoftSensorAI Usage Statistics:"
         echo "========================="
-        for user_dir in /home/*/.devpilot; do
+        for user_dir in /home/*/.softsensorai; do
             if [[ -d "$user_dir" ]]; then
                 user=$(basename $(dirname "$user_dir"))
                 artifacts_size=$(du -sh "$user_dir/artifacts" 2>/dev/null | cut -f1)
@@ -345,7 +345,7 @@ case "${1:-}" in
 
     clean-cache)
         echo "Cleaning all user caches..."
-        for cache_dir in /home/*/.devpilot/cache; do
+        for cache_dir in /home/*/.softsensorai/cache; do
             if [[ -d "$cache_dir" ]]; then
                 rm -rf "$cache_dir"/*
                 echo "  Cleaned: $cache_dir"
@@ -354,26 +354,26 @@ case "${1:-}" in
         ;;
 
     update)
-        echo "Updating DevPilot system-wide..."
+        echo "Updating SoftSensorAI system-wide..."
         cd /tmp
-        git clone https://github.com/Softsensor-org/DevPilot.git devpilot-update
-        cd devpilot-update
-        cp -r bin/* /opt/devpilot/bin/
-        cp -r scripts/* /opt/devpilot/lib/core/
+        git clone https://github.com/Softsensor-org/SoftSensorAI.git softsensorai-update
+        cd softsensorai-update
+        cp -r bin/* /opt/softsensorai/bin/
+        cp -r scripts/* /opt/softsensorai/lib/core/
         cd /tmp
-        rm -rf devpilot-update
-        echo "✅ DevPilot updated"
+        rm -rf softsensorai-update
+        echo "✅ SoftSensorAI updated"
         ;;
 
     *)
-        echo "DevPilot Admin Utilities"
+        echo "SoftSensorAI Admin Utilities"
         echo "Usage: dp-admin <command>"
         echo ""
         echo "Commands:"
-        echo "  list-users    List all DevPilot users"
+        echo "  list-users    List all SoftSensorAI users"
         echo "  stats         Show usage statistics"
         echo "  clean-cache   Clean all user caches"
-        echo "  update        Update DevPilot system-wide"
+        echo "  update        Update SoftSensorAI system-wide"
         ;;
 esac
 ADMIN
@@ -389,12 +389,12 @@ setup_logging() {
     log_info "Setting up logging and auditing..."
 
     # Create log directory
-    mkdir -p /var/log/devpilot
-    chmod 1777 /var/log/devpilot  # Sticky bit so users can write but not delete others' logs
+    mkdir -p /var/log/softsensorai
+    chmod 1777 /var/log/softsensorai  # Sticky bit so users can write but not delete others' logs
 
     # Create logrotate configuration
-    cat > /etc/logrotate.d/devpilot <<'EOF'
-/var/log/devpilot/*.log {
+    cat > /etc/logrotate.d/softsensorai <<'EOF'
+/var/log/softsensorai/*.log {
     weekly
     rotate 4
     compress
@@ -403,8 +403,8 @@ setup_logging() {
     create 0666 root root
     sharedscripts
     postrotate
-        # Signal any running DevPilot processes to reopen log files
-        pkill -USR1 -f devpilot || true
+        # Signal any running SoftSensorAI processes to reopen log files
+        pkill -USR1 -f softsensorai || true
     endscript
 }
 EOF
@@ -415,7 +415,7 @@ EOF
 # Main installation flow
 main() {
     echo "============================================"
-    echo "  DevPilot Multi-User Installation"
+    echo "  SoftSensorAI Multi-User Installation"
     echo "============================================"
     echo ""
 
@@ -435,12 +435,12 @@ main() {
     echo "============================================"
     echo ""
     echo "System-wide installation: $INSTALL_PREFIX"
-    echo "User configs will be in: ~/.devpilot"
+    echo "User configs will be in: ~/.softsensorai"
     echo ""
     echo "For administrators:"
     echo "  dp-admin list-users   # List all users"
     echo "  dp-admin stats        # Show usage stats"
-    echo "  dp-admin update       # Update DevPilot"
+    echo "  dp-admin update       # Update SoftSensorAI"
     echo ""
     echo "For users:"
     echo "  dp setup              # Setup a project"
@@ -451,7 +451,7 @@ main() {
     echo "2. Configure their personal API keys"
     echo "3. Run: dp secure-keys to encrypt them"
     echo ""
-    log_success "DevPilot is ready for multi-user use!"
+    log_success "SoftSensorAI is ready for multi-user use!"
 }
 
 # Run main installation

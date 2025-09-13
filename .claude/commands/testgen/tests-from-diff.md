@@ -21,7 +21,7 @@ GENERATION RULES:
 - Prefer table/parametrized tests; focus on changed public functions & branches.
 - If RISK_TAGS has auth/db → add negative/authz cases & SQL error paths.
 - Add minimal fixtures; avoid network/file writes; mock or temp dirs.
-- Default overwrite: "create_if_absent"; use "DEVPILOT:SAFE-OVERWRITE" marker for overwrite.
+- Default overwrite: "create_if_absent"; use "SOFTSENSORAI:SAFE-OVERWRITE" marker for overwrite.
 - Time budget: ≤60s per suite, use deterministic seeds (PYTHONHASHSEED=0).
 
 OUTPUT (JSON STRICT): { "files": [{ "path": "tests/test_mod_x.py", "content": "<full file>",

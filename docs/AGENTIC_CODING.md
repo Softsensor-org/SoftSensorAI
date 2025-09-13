@@ -5,7 +5,7 @@ controls.
 
 ## Overview
 
-The `dp agent` command provides a structured workflow for AI-assisted development:
+The `ssai agent` command provides a structured workflow for AI-assisted development:
 
 1. **Specification** → Define what needs to be done
 2. **Planning** → AI creates detailed execution plan
@@ -17,32 +17,32 @@ The `dp agent` command provides a structured workflow for AI-assisted developmen
 
 ```bash
 # Create a new task with a goal
-dp agent new --goal "Add rate limiting to the API endpoints"
+ssai agent new --goal "Add rate limiting to the API endpoints"
 
 # Or from a specification file
-dp agent new task_spec.md
+ssai agent new task_spec.md
 
 # This creates a task with ID like: rate-limiting-api-20241203-123456
 # View the generated spec at: artifacts/agent/<task_id>/spec.md
 
 # Run the agent to create and execute a plan
-dp agent run --id <task_id> --auto
+ssai agent run --id <task_id> --auto
 
 # Create a pull request from the changes
-dp agent pr --id <task_id> --title "feat: Add API rate limiting"
+ssai agent pr --id <task_id> --title "feat: Add API rate limiting"
 ```
 
 ## Commands
 
-### `dp agent new`
+### `ssai agent new`
 
 Creates a new agent task with a specification.
 
 **Usage**:
 
 ```bash
-dp agent new --goal "<text>" [--base main]
-dp agent new <spec-file> [--base main]
+ssai agent new --goal "<text>" [--base main]
+ssai agent new <spec-file> [--base main]
 ```
 
 **Parameters**:
@@ -59,18 +59,18 @@ dp agent new <spec-file> [--base main]
 Example:
 
 ```bash
-dp agent new --goal "Add JWT authentication with refresh tokens to the REST API"
+ssai agent new --goal "Add JWT authentication with refresh tokens to the REST API"
 # Output: Created task: jwt-auth-20241203-145632
 # Spec written to: artifacts/agent/jwt-auth-20241203-145632/spec.md
 ```
 
-### `dp agent run --id <task_id> [--auto] [--loops N]`
+### `ssai agent run --id <task_id> [--auto] [--loops N]`
 
 Executes a task by generating a plan and applying changes.
 
 **Parameters**:
 
-- `--id`: Task ID from `dp agent new`
+- `--id`: Task ID from `ssai agent new`
 - `--auto`: Run without manual approval prompts
 - `--loops`: Number of refinement loops (default: 1)
 
@@ -92,13 +92,13 @@ Example:
 
 ```bash
 # Run with manual review at each step
-dp agent run --id jwt-auth-20241203-145632
+ssai agent run --id jwt-auth-20241203-145632
 
 # Run automatically with 2 refinement loops
-dp agent run --id jwt-auth-20241203-145632 --auto --loops 2
+ssai agent run --id jwt-auth-20241203-145632 --auto --loops 2
 ```
 
-### `dp agent pr --id <task_id> [--title ...]`
+### `ssai agent pr --id <task_id> [--title ...]`
 
 Creates a pull request from verified changes.
 
@@ -117,10 +117,10 @@ Creates a pull request from verified changes.
 Example:
 
 ```bash
-dp agent pr --id jwt-auth-20241203-145632 --title "feat: Add JWT authentication"
+ssai agent pr --id jwt-auth-20241203-145632 --title "feat: Add JWT authentication"
 ```
 
-### `dp agent eval <suite.yaml>`
+### `ssai agent eval <suite.yaml>`
 
 Runs an evaluation suite to test agent capabilities.
 
@@ -195,21 +195,21 @@ Results in `artifacts/agent/<task_id>/verify.json`:
 
    ```bash
    # Good
-   dp agent new --goal "Add rate limiting: 100 req/min per user, return 429 status, include retry-after header"
+   ssai agent new --goal "Add rate limiting: 100 req/min per user, return 429 status, include retry-after header"
 
    # Too vague
-   dp agent new --goal "Add rate limiting"
+   ssai agent new --goal "Add rate limiting"
    ```
 
 2. **Set Boundaries**: Specify what NOT to change
 
    ```bash
-   dp agent new --goal "Refactor user service to repository pattern. Don't modify API contracts or database schema"
+   ssai agent new --goal "Refactor user service to repository pattern. Don't modify API contracts or database schema"
    ```
 
 3. **Include Context**: Reference existing patterns
    ```bash
-   dp agent new --goal "Add image upload like we did for documents: S3 storage, CDN delivery, 5MB limit"
+   ssai agent new --goal "Add image upload like we did for documents: S3 storage, CDN delivery, 5MB limit"
    ```
 
 ### Reviewing Plans
@@ -273,10 +273,10 @@ If execution fails:
 
 ```bash
 # Retry with more loops
-dp agent run --id <task_id> --loops 3
+ssai agent run --id <task_id> --loops 3
 
 # Or create new task with refined goal
-dp agent new --goal "Previous goal but with specific constraint..."
+ssai agent new --goal "Previous goal but with specific constraint..."
 ```
 
 ## Configuration
@@ -286,11 +286,11 @@ dp agent new --goal "Previous goal but with specific constraint..."
 ```bash
 # Use specific model for planning
 export AI_MODEL_ANTHROPIC="claude-3-opus-20240229"
-dp agent new --goal "Complex refactoring task"
+ssai agent new --goal "Complex refactoring task"
 
 # Use different model for execution
 export AI_MODEL_ANTHROPIC="claude-3-sonnet-20240229"
-dp agent run --id <task_id>
+ssai agent run --id <task_id>
 ```
 
 ### Resource Limits
@@ -309,46 +309,46 @@ export AGENT_MAX_PARALLEL_TESTS=4
 
 ```bash
 # Create task
-dp agent new --goal "Add JWT authentication to REST API: RS256, refresh tokens, /auth/login and /auth/refresh endpoints, protect existing endpoints, include tests"
+ssai agent new --goal "Add JWT authentication to REST API: RS256, refresh tokens, /auth/login and /auth/refresh endpoints, protect existing endpoints, include tests"
 
 # Review spec (optional)
 cat artifacts/agent/*/spec.md
 
 # Execute with auto-approval
-dp agent run --id jwt-auth-* --auto
+ssai agent run --id jwt-auth-* --auto
 
 # Create PR
-dp agent pr --id jwt-auth-* --title "feat: Add JWT authentication"
+ssai agent pr --id jwt-auth-* --title "feat: Add JWT authentication"
 ```
 
 ### Example 2: Refactor for Testability
 
 ```bash
 # Create task with constraints
-dp agent new --goal "Refactor user service for testability: extract repository layer, add dependency injection, create interfaces, maintain backward compatibility, achieve 80% coverage"
+ssai agent new --goal "Refactor user service for testability: extract repository layer, add dependency injection, create interfaces, maintain backward compatibility, achieve 80% coverage"
 
 # Run with manual review
-dp agent run --id refactor-user-*
+ssai agent run --id refactor-user-*
 
 # Review changes before PR
 cd artifacts/agent/refactor-user-*/work
 git diff --stat
 
 # Create PR
-dp agent pr --id refactor-user-*
+ssai agent pr --id refactor-user-*
 ```
 
 ### Example 3: Fix Bug
 
 ```bash
 # Quick bug fix
-dp agent new --goal "Fix: Users seeing others' private posts in feed. Add privacy filter to post query, include tests for public/private/friend visibility"
+ssai agent new --goal "Fix: Users seeing others' private posts in feed. Add privacy filter to post query, include tests for public/private/friend visibility"
 
 # Auto-execute small fix
-dp agent run --id fix-privacy-* --auto
+ssai agent run --id fix-privacy-* --auto
 
 # Fast PR creation
-dp agent pr --id fix-privacy-*
+ssai agent pr --id fix-privacy-*
 ```
 
 ## Advanced Features

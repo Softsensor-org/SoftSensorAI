@@ -6,32 +6,32 @@ Zero-friction, per-repository defaults (like Xcode's scheme file, but text).
 
 ```bash
 # In any repository
-dp project    # Creates devpilot.project.yml with sensible defaults
-dp init       # Auto-detects and applies the profile
+ssai project    # Creates softsensorai.project.yml with sensible defaults
+ssai init       # Auto-detects and applies the profile
 ```
 
 That's it! No flags, no decisions. It just works.
 
 ## How It Works
 
-1. **Create**: `dp project` generates a `devpilot.project.yml` with smart defaults
+1. **Create**: `ssai project` generates a `softsensorai.project.yml` with smart defaults
 2. **Customize**: Edit the YAML file to match your project needs
-3. **Apply**: `dp init` automatically detects and uses your profile
+3. **Apply**: `ssai init` automatically detects and uses your profile
 4. **Commit**: Check the file into version control for team consistency
 
 ## File Locations (in order of precedence)
 
-- `devpilot.project.yml` (preferred, visible)
-- `devpilot.project.yaml`
-- `.devpilot.yml` (hidden alternative)
-- `.devpilot.yaml`
+- `softsensorai.project.yml` (preferred, visible)
+- `softsensorai.project.yaml`
+- `.softsensorai.yml` (hidden alternative)
+- `.softsensorai.yaml`
 
 ## Profile Structure
 
 ### Minimal Profile
 
 ```yaml
-# devpilot.project.yml
+# softsensorai.project.yml
 profile:
   skill: l2 # Your team's skill level
   phase: mvp # Current project phase
@@ -171,29 +171,29 @@ git clone <repo>
 cd <repo>
 
 # One command setup
-dp init  # Reads devpilot.project.yml, configures everything
+ssai init  # Reads softsensorai.project.yml, configures everything
 ```
 
 ### Changing Project Phase
 
 ```yaml
-# Edit devpilot.project.yml
+# Edit softsensorai.project.yml
 profile:
   phase: beta  # was: mvp
 
 # Apply changes
-dp init  # Updates CI, permissions, etc.
+ssai init  # Updates CI, permissions, etc.
 ```
 
 ### Per-Developer Overrides
 
 ```bash
 # Local override (not committed)
-cp devpilot.project.yml .devpilot.local.yml
-# Edit .devpilot.local.yml with personal preferences
+cp softsensorai.project.yml .softsensorai.local.yml
+# Edit .softsensorai.local.yml with personal preferences
 
 # Add to .gitignore
-echo ".devpilot.local.yml" >> .gitignore
+echo ".softsensorai.local.yml" >> .gitignore
 ```
 
 ## Advanced Features
@@ -204,11 +204,11 @@ echo ".devpilot.local.yml" >> .gitignore
 commands:
   aliases:
     ship: "just build && just deploy"
-    review: "dp review"
+    review: "ssai review"
     clean: "rm -rf node_modules dist"
 ```
 
-Use: `dp ship`, `dp clean`
+Use: `ssai ship`, `ssai clean`
 
 ### Feature Flags
 
@@ -246,7 +246,7 @@ scripts/apply_profile.sh --skill l2 --phase mvp --teach-mode off
 After:
 
 ```bash
-dp init  # Reads from devpilot.project.yml
+ssai init  # Reads from softsensorai.project.yml
 ```
 
 ### From Environment Variables
@@ -254,14 +254,14 @@ dp init  # Reads from devpilot.project.yml
 Before:
 
 ```bash
-export DEVPILOT_SKILL=l2
-export DEVPILOT_PHASE=mvp
+export SOFTSENSORAI_SKILL=l2
+export SOFTSENSORAI_PHASE=mvp
 ```
 
 After:
 
 ```yaml
-# devpilot.project.yml
+# softsensorai.project.yml
 profile:
   skill: l2
   phase: mvp
@@ -269,7 +269,7 @@ profile:
 
 ## Best Practices
 
-1. **Commit the profile**: Include `devpilot.project.yml` in version control
+1. **Commit the profile**: Include `softsensorai.project.yml` in version control
 2. **Start simple**: Begin with minimal profile, add sections as needed
 3. **Document decisions**: Use comments to explain non-obvious choices
 4. **Review regularly**: Update phase/skill as project evolves
@@ -279,7 +279,7 @@ profile:
 
 | Tool             | File                      | Approach                     |
 | ---------------- | ------------------------- | ---------------------------- |
-| **SoftSensorAI** | `devpilot.project.yml`    | Zero-friction, auto-detected |
+| **SoftSensorAI** | `softsensorai.project.yml`    | Zero-friction, auto-detected |
 | Xcode            | `.xcscheme`               | GUI-based, complex           |
 | VS Code          | `.vscode/settings.json`   | Editor-specific              |
 | EditorConfig     | `.editorconfig`           | Format-only                  |
@@ -294,13 +294,13 @@ development environment in one place.
 
 ```bash
 # Check file exists
-ls -la devpilot.project.yml
+ls -la softsensorai.project.yml
 
 # Validate YAML
-python3 -c "import yaml; yaml.safe_load(open('devpilot.project.yml'))"
+python3 -c "import yaml; yaml.safe_load(open('softsensorai.project.yml'))"
 
 # Debug mode
-DEVPILOT_DEBUG=1 dp init
+SOFTSENSORAI_DEBUG=1 ssai init
 ```
 
 ### Settings not applied
@@ -311,7 +311,7 @@ cat PROFILE.md
 
 # Force reapply
 rm -rf .claude/ system/ PROFILE.md
-dp init
+ssai init
 ```
 
 ### CI not updated
@@ -325,4 +325,4 @@ git commit -m "chore: Update CI for beta phase"
 
 ## Examples
 
-See `templates/devpilot.project.yml` for a complete example with all options documented.
+See `templates/softsensorai.project.yml` for a complete example with all options documented.

@@ -7,10 +7,10 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 # Multi-user mode detection (same as dp)
-if [[ -f "/opt/devpilot/etc/devpilot.conf" ]]; then
-    source /opt/devpilot/etc/devpilot.conf
-    ROOT="${DEVPILOT_ROOT:-/opt/devpilot}"
-    ART="${DEVPILOT_USER_DIR:-$HOME/.devpilot}/artifacts"
+if [[ -f "/opt/softsensorai/etc/softsensorai.conf" ]]; then
+    source /opt/softsensorai/etc/softsensorai.conf
+    ROOT="${SOFTSENSORAI_ROOT:-/opt/softsensorai}"
+    ART="${SOFTSENSORAI_USER_DIR:-$HOME/.softsensorai}/artifacts"
 else
     ART="$ROOT/artifacts"
 fi
@@ -93,7 +93,7 @@ if [[ ! -f "$VERIFY_JSON" ]]; then
     WORKTREE="$ART/agent/$TASK_ID/worktree"
     if [[ ! -d "$WORKTREE" ]]; then
         # Try alternate location
-        WORKTREE="$HOME/.devpilot/worktrees/$TASK_ID"
+        WORKTREE="$HOME/.softsensorai/worktrees/$TASK_ID"
         if [[ ! -d "$WORKTREE" ]]; then
             echo "Error: Worktree not found for task $TASK_ID" >&2
             echo "Run 'dp agent run --id $TASK_ID' first" >&2

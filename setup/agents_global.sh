@@ -3,9 +3,9 @@
 set -euo pipefail
 
 # ============================================================================
-# DevPilot Global Agent Setup Script
+# SoftSensorAI Global Agent Setup Script
 # Sets up configurations for all AI CLI agents (Claude, Gemini, Grok, Codex)
-# Part of DevPilot: Learning-aware AI development platform
+# Part of SoftSensorAI: Learning-aware AI development platform
 # Run this once during initial system setup
 # ============================================================================
 

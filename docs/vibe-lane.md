@@ -13,18 +13,18 @@ Vibe Lane is a workflow for exploratory development that lets you experiment fre
 
 ```bash
 # 1. Start exploring
-dp vibe start "Try new caching strategy"
+ssai vibe start "Try new caching strategy"
 
 # 2. Work freely (WARN mode active)
 vim src/cache.js
 npm test
 
 # 3. Take snapshots
-dp vibe snapshot "Redis integration working"
+ssai vibe snapshot "Redis integration working"
 
 # 4. Review and promote
-dp vibe end      # See impact report
-dp vibe promote  # Generate contract
+ssai vibe end      # See impact report
+ssai vibe promote  # Generate contract
 ```
 
 ## Detailed Workflow
@@ -32,7 +32,7 @@ dp vibe promote  # Generate contract
 ### Starting a Vibe Session
 
 ```bash
-dp vibe start "Experiment with WebSockets"
+ssai vibe start "Experiment with WebSockets"
 ```
 
 This command:
@@ -66,9 +66,9 @@ Warnings:
 Capture milestones during exploration:
 
 ```bash
-dp vibe snapshot "Basic connection established"
-dp vibe snapshot "Implemented pub/sub pattern"
-dp vibe snapshot "Added reconnection logic"
+ssai vibe snapshot "Basic connection established"
+ssai vibe snapshot "Implemented pub/sub pattern"
+ssai vibe snapshot "Added reconnection logic"
 ```
 
 Each snapshot:
@@ -80,7 +80,7 @@ Each snapshot:
 ### Ending a Session
 
 ```bash
-dp vibe end
+ssai vibe end
 ```
 
 Generates an impact report:
@@ -110,7 +110,7 @@ Generates an impact report:
 ### Promoting to Contract
 
 ```bash
-dp vibe promote
+ssai vibe promote
 ```
 
 Automatically:
@@ -153,7 +153,7 @@ Next steps:
 - **When**: During formal implementation
 - **Activation**:
   - Default mode
-  - After `dp vibe promote`
+  - After `ssai vibe promote`
   - Manual: `echo "BLOCK" > .softsensor/mode`
 
 ## Common Q&A
@@ -166,23 +166,23 @@ echo "BLOCK" > .softsensor/mode  # Switch to BLOCK
 ```
 
 ### Q: What if I forget to end a vibe session?
-**A:** No problem! `dp vibe promote` will automatically end the session first:
+**A:** No problem! `ssai vibe promote` will automatically end the session first:
 ```bash
-dp vibe promote  # Runs 'dp vibe end' if needed
+ssai vibe promote  # Runs 'ssai vibe end' if needed
 ```
 
 ### Q: Can I have multiple vibe sessions?
 **A:** One at a time. End the current session before starting a new one:
 ```bash
-dp vibe end      # Close current
-dp vibe start "New exploration"
+ssai vibe end      # Close current
+ssai vibe start "New exploration"
 ```
 
 ### Q: How do I resume an interrupted session?
 **A:** Checkout the vibe branch and continue:
 ```bash
 git checkout vibe/my-exploration
-dp vibe snapshot "Resuming work"
+ssai vibe snapshot "Resuming work"
 ```
 
 ### Q: What happens to snapshots after promotion?
@@ -214,41 +214,41 @@ echo "WARN" > .softsensor/mode
 
 ### 1. Use Descriptive Snapshot Notes
 ```bash
-dp vibe snapshot "Added error handling for network failures"
-# Better than: dp vibe snapshot "fixed bugs"
+ssai vibe snapshot "Added error handling for network failures"
+# Better than: ssai vibe snapshot "fixed bugs"
 ```
 
 ### 2. Review Before Promoting
 ```bash
-dp vibe end        # Review impact
+ssai vibe end        # Review impact
 git diff main      # Check all changes
-dp vibe promote    # Then promote
+ssai vibe promote    # Then promote
 ```
 
 ### 3. Clean Up Failed Experiments
 ```bash
-dp vibe end                    # Close session
+ssai vibe end                    # Close session
 git checkout main              # Switch away
 git branch -D vibe/experiment  # Delete branch
 ```
 
 ### 4. Combine with Agent
 ```bash
-dp vibe start "AI-assisted feature"
+ssai vibe start "AI-assisted feature"
 npm run agent:task "implement caching layer"
-dp vibe snapshot "AI implementation"
-dp vibe promote
+ssai vibe snapshot "AI implementation"
+ssai vibe promote
 ```
 
 ### 5. Track Performance During Exploration
 ```bash
-dp vibe start "Performance optimization"
+ssai vibe start "Performance optimization"
 npm run perf:probe
-dp vibe snapshot "Baseline metrics"
+ssai vibe snapshot "Baseline metrics"
 # ... make changes ...
 npm run perf:probe
-dp vibe snapshot "After optimization"
-dp vibe promote  # Contract will include performance data
+ssai vibe snapshot "After optimization"
+ssai vibe promote  # Contract will include performance data
 ```
 
 ## Integration with Other Tools
@@ -261,7 +261,7 @@ npm run hooks:install  # Install hooks
 
 ### With Contract Validation
 ```bash
-dp vibe promote              # Creates contract
+ssai vibe promote              # Creates contract
 npm run contracts:validate   # Validates it
 ```
 
@@ -274,7 +274,7 @@ git push origin vibe/my-feature
 
 ### With Agent Wrapper
 ```bash
-dp vibe promote  # Creates contract and active task
+ssai vibe promote  # Creates contract and active task
 npm run agent:task "implement the remaining criteria"
 # Agent respects the contract scope
 ```
@@ -292,20 +292,20 @@ npm run agent:task "implement the remaining criteria"
 
 ```bash
 # Monday: Start exploration
-dp vibe start "Add real-time notifications"
+ssai vibe start "Add real-time notifications"
 vim src/notifications.js
 npm test
-dp vibe snapshot "WebSocket server setup"
+ssai vibe snapshot "WebSocket server setup"
 
 # Tuesday: Continue development
 vim src/notifications/client.js
-dp vibe snapshot "Client connection logic"
+ssai vibe snapshot "Client connection logic"
 vim tests/notifications.test.js
-dp vibe snapshot "Added integration tests"
+ssai vibe snapshot "Added integration tests"
 
 # Wednesday: Review and formalize
-dp vibe end      # Review 3 days of work
-dp vibe promote  # Generate contract
+ssai vibe end      # Review 3 days of work
+ssai vibe promote  # Generate contract
 
 # Thursday: Polish with structure
 vim contracts/F-M5N9-B2C3.contract.md  # Refine criteria
@@ -323,8 +323,8 @@ git push origin main
 
 ### "Active vibe session already exists"
 ```bash
-dp vibe end  # Close it first
-dp vibe start "new session"
+ssai vibe end  # Close it first
+ssai vibe start "new session"
 ```
 
 ### "No vibe session found"
@@ -332,7 +332,7 @@ dp vibe start "new session"
 # Check if you're on a vibe branch
 git branch --show-current
 # If not, start a new session
-dp vibe start "session name"
+ssai vibe start "session name"
 ```
 
 ### "Changes exceed contract scope" (after promotion)
@@ -352,4 +352,4 @@ Vibe Lane enables:
 - **Smooth transition to structure**
 - **Full development lifecycle support**
 
-Start vibing today: `dp vibe start "your next idea"`!
+Start vibing today: `ssai vibe start "your next idea"`!

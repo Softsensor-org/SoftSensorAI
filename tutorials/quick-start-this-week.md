@@ -5,14 +5,14 @@
 ### Day 1: Monday (30 minutes)
 
 ```bash
-# 1. Install DevPilot
+# 1. Install SoftSensorAI
 # Clone the repository first
-git clone https://github.com/Softsensor-org/DevPilot.git ~/devpilot
-cd ~/devpilot && ./setup_all.sh
+git clone https://github.com/Softsensor-org/SoftSensorAI.git ~/softsensorai
+cd ~/softsensorai && ./setup_all.sh
 
 # 2. Set up your main project
 cd ~/your-main-project
-~/devpilot/setup/existing_repo_setup.sh --skill l1 --phase mvp
+~/softsensorai/setup/existing_repo_setup.sh --skill l1 --phase mvp
 
 # 3. Try your first power command
 claude --system-prompt .claude/commands/tickets-from-code.md \
@@ -114,10 +114,10 @@ claude --system-prompt .claude/commands/tickets-from-code.md \
   "identify top 5 priorities for next sprint"
 
 # Document what you learned
-echo "## Week 1 Wins" >> DEVPILOT_RESULTS.md
-echo "- Setup time: 90min → 15min" >> DEVPILOT_RESULTS.md
-echo "- PR reviews: 2 days → 2 hours" >> DEVPILOT_RESULTS.md
-echo "- Backlog creation: 3 hours → 15 min" >> DEVPILOT_RESULTS.md
+echo "## Week 1 Wins" >> SOFTSENSORAI_RESULTS.md
+echo "- Setup time: 90min → 15min" >> SOFTSENSORAI_RESULTS.md
+echo "- PR reviews: 2 days → 2 hours" >> SOFTSENSORAI_RESULTS.md
+echo "- Backlog creation: 3 hours → 15 min" >> SOFTSENSORAI_RESULTS.md
 ```
 
 **Immediate Win**: Objective metrics to share with team/manager
@@ -176,7 +176,7 @@ Create this simple tracker:
 # Create results tracker
 cat > track_results.sh <<'EOF'
 #!/bin/bash
-echo "=== DevPilot Metrics Week of $(date +%Y-%m-%d) ==="
+echo "=== SoftSensorAI Metrics Week of $(date +%Y-%m-%d) ==="
 echo "PRs reviewed by AI: $(gh pr list --search "reviewed-by:app/github-actions" | wc -l)"
 echo "Tickets generated: $(ls artifacts/tickets_*.json 2>/dev/null | wc -l)"
 echo "Security issues caught: $(git log --grep="security" --since="1 week ago" | wc -l)"
@@ -186,7 +186,7 @@ EOF
 chmod +x track_results.sh
 
 # Run weekly
-./track_results.sh >> DEVPILOT_METRICS.md
+./track_results.sh >> SOFTSENSORAI_METRICS.md
 ```
 
 ## Common Gotchas & Solutions
@@ -194,9 +194,9 @@ chmod +x track_results.sh
 ### "AI CLI not found"
 
 ```bash
-# DevPilot is CLI-first - install any supported CLI:
+# SoftSensorAI is CLI-first - install any supported CLI:
 # From the cloned repository
-bash ~/devpilot/install/ai_clis.sh
+bash ~/softsensorai/install/ai_clis.sh
 
 # Or just one:
 pip install --user anthropic-cli  # for Claude
@@ -217,11 +217,11 @@ cat system/00-global.md system/10-repo.md system/20-task.md > system/active.md
 
 ```bash
 # Start with lightest phase:
-~/devpilot/scripts/apply_profile.sh --phase poc
+~/softsensorai/scripts/apply_profile.sh --phase poc
 
 # CI won't block on anything - fix issues gradually
 # Level up when ready:
-~/devpilot/scripts/apply_profile.sh --phase mvp
+~/softsensorai/scripts/apply_profile.sh --phase mvp
 ```
 
 ## Share Your Success
@@ -229,7 +229,7 @@ cat system/00-global.md system/10-repo.md system/20-task.md > system/active.md
 After one week, you'll have concrete metrics. Share them:
 
 ```markdown
-## DevPilot Week 1 Results
+## SoftSensorAI Week 1 Results
 
 **Time Saved:**
 
@@ -252,9 +252,9 @@ After one week, you'll have concrete metrics. Share them:
 
 ## Get Help
 
-- **Issues**: https://github.com/Softsensor-org/DevPilot/issues
-- **Quick fixes**: `~/devpilot/scripts/doctor.sh`
+- **Issues**: https://github.com/Softsensor-org/SoftSensorAI/issues
+- **Quick fixes**: `~/softsensorai/scripts/doctor.sh`
 - **Command help**: `ls .claude/commands/` to see all available commands
-- **Profile check**: `~/devpilot/scripts/profile_show.sh`
+- **Profile check**: `~/softsensorai/scripts/profile_show.sh`
 
 Remember: Start small, measure everything, share wins early.

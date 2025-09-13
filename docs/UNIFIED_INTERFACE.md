@@ -3,7 +3,7 @@
 ## Philosophy: One Interface, Smart Detection
 
 Instead of exposing multiple shell scripts that confuse users, SoftSensorAI provides a single,
-intelligent interface through the `dp` command.
+intelligent interface through the `ssai` command.
 
 ## Before vs After
 
@@ -26,27 +26,27 @@ Problems:
 - No unified help or discovery
 - Scripts call other scripts (inception!)
 
-### ✅ NEW: Unified `dp` Command (Simple)
+### ✅ NEW: Unified `ssai` Command (Simple)
 
 ```bash
 # Everything through one intelligent interface:
-dp setup          # Smart detection - works for ALL cases
-dp doctor         # System health check
-dp init           # Initialize project
-dp palette        # Discover all commands (alias: dpp)
-dp review         # AI code review
-dp tickets        # Generate backlog
-dp help           # Quick reference (7 essential commands)
+ssai setup          # Smart detection - works for ALL cases
+ssai doctor         # System health check
+ssai init           # Initialize project
+ssai palette        # Discover all commands (alias: dpp)
+ssai review         # AI code review
+ssai tickets        # Generate backlog
+ssai help           # Quick reference (7 essential commands)
 
 # Pro tip: Add this to ~/.bashrc for quick access:
-alias dpp='dp palette'
+alias dpp='ssai palette'
 ```
 
-## How `dp setup` Works
+## How `ssai setup` Works
 
 ```mermaid
 graph TD
-    Start[dp setup] --> Detect{Detect Context}
+    Start[ssai setup] --> Detect{Detect Context}
 
     Detect --> InRepo{In Git Repo?}
     Detect --> HasURL{URL Provided?}
@@ -76,7 +76,7 @@ graph TD
 
 ## Smart Detection Logic
 
-The `dp setup` command automatically:
+The `ssai setup` command automatically:
 
 1. **Detects Repository State**
 
@@ -102,7 +102,7 @@ The `dp setup` command automatically:
 3. **Checks Existing Files**
 
    - CLAUDE.md
-   - devpilot.project.yml
+   - softsensorai.project.yml
    - .claude/
    - .env files
 
@@ -114,7 +114,7 @@ The `dp setup` command automatically:
 ## Command Architecture
 
 ```
-dp (main dispatcher)
+ssai (main dispatcher)
 ├── setup    → Smart repository setup
 ├── doctor   → System health check
 ├── init     → Project initialization
@@ -124,9 +124,9 @@ dp (main dispatcher)
 └── review   → AI code review
 
 Internal (hidden from users):
-├── setup/repo_wizard.sh         # Called by dp setup
-├── setup/existing_repo_setup.sh # Called by dp setup
-├── scripts/doctor.sh            # Called by dp doctor
+├── setup/repo_wizard.sh         # Called by ssai setup
+├── setup/existing_repo_setup.sh # Called by ssai setup
+├── scripts/doctor.sh            # Called by ssai doctor
 ├── utils/file_merge.sh          # Used internally
 └── tools/ai_shim.sh             # AI abstraction layer
 ```
@@ -142,39 +142,39 @@ cd ~/softsensorai
 ./setup_all.sh
 
 # 2. Check system readiness
-dp doctor
+ssai doctor
 
 # 3. Setup any project
 cd my-project
-dp setup
+ssai setup
 
 # 4. Initialize
-dp init
+ssai init
 
 # 5. Start working
-dp palette  # Discover commands
+ssai palette  # Discover commands
 ```
 
 ### Returning User
 
 ```bash
 # Just one command for any situation:
-dp setup                     # Current directory
-dp setup https://github...  # New clone
-dp setup .                   # Explicit current
+ssai setup                     # Current directory
+ssai setup https://github...  # New clone
+ssai setup .                   # Explicit current
 
 # Then:
-dp init      # Configure
-dp review    # Review changes
-dp tickets   # Generate tasks
+ssai init      # Configure
+ssai review    # Review changes
+ssai tickets   # Generate tasks
 ```
 
 ## Benefits of Unified Interface
 
 1. **Discoverability**
 
-   - `dp --help` shows everything
-   - `dp palette` for interactive browsing
+   - `ssai --help` shows everything
+   - `ssai palette` for interactive browsing
    - Tab completion support
 
 2. **Consistency**
@@ -211,7 +211,7 @@ cmd_setup() {
   elif [[ -n "$url" ]]; then
     # URL: clone then setup
     clone_repository "$url"
-    add_devpilot_files
+    add_softsensorai_files
   else
     # Interactive: guide user
     show_interactive_menu
@@ -224,7 +224,7 @@ cmd_setup() {
 Users see:
 
 ```bash
-dp setup
+ssai setup
 ```
 
 Behind the scenes:
@@ -245,9 +245,9 @@ For existing users:
 ./setup/existing_repo_setup.sh
 
 # New way (recommended):
-dp setup
+ssai setup
 
-# The dp command calls the old scripts internally
+# The ssai command calls the old scripts internally
 # for backward compatibility, but users don't
 # need to know that
 ```
@@ -257,32 +257,32 @@ dp setup
 1. **Plugin System**
 
    ```bash
-   dp plugin install security-audit
-   dp plugin list
+   ssai plugin install security-audit
+   ssai plugin list
    ```
 
 2. **Context Awareness**
 
    ```bash
-   dp suggest  # AI suggests next command based on repo state
+   ssai suggest  # AI suggests next command based on repo state
    ```
 
 3. **Workflow Automation**
 
    ```bash
-   dp workflow morning  # Runs: doctor, pull, test, review
+   ssai workflow morning  # Runs: doctor, pull, test, review
    ```
 
 4. **Team Sync**
    ```bash
-   dp team sync  # Share settings with team
+   ssai team sync  # Share settings with team
    ```
 
 ## Conclusion
 
-The unified `dp` interface transforms SoftSensorAI from a collection of scripts into a cohesive
+The unified `ssai` interface transforms SoftSensorAI from a collection of scripts into a cohesive
 development platform. Users interact with one intelligent command that handles all complexity
 internally, making AI-assisted development accessible to everyone.
 
 **Core Principle**: The shell scripts remain as internal implementation details. Users should only
-interact with the `dp` command interface.
+interact with the `ssai` command interface.

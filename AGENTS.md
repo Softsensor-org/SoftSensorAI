@@ -1,4 +1,4 @@
-# DevPilot AI Agent Directives
+# SoftSensorAI AI Agent Directives
 - **Learning-Aware**: Adapt guidance based on detected skill level and project phase
 - **Start Read-Only**: Plan & inspect first; switch to workspace-write once tests pass
 - **Quality First**: `codex exec "lint, typecheck, unit tests; fix failures"`

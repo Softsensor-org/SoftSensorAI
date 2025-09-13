@@ -4,8 +4,8 @@
 
 ### Core Commands
 
-- ✅ `./devpilot --help` - Shows help menu correctly
-- ✅ `./devpilot doctor` - Runs system diagnostics
+- ✅ `./softsensorai --help` - Shows help menu correctly
+- ✅ `./softsensorai doctor` - Runs system diagnostics
 - ✅ `./scripts/doctor.sh` - Direct script execution works
 - ✅ `./setup_all.sh --help` - Shows usage information
 - ✅ `./setup/existing_repo_setup.sh` - Launches setup wizard
@@ -16,7 +16,7 @@
 ### Fixed Issues
 
 1. **profile_show.sh syntax error** - Fixed division by zero when PROFILE.md has no checklist items
-2. **Repository URL references** - Updated from devpilot to SoftSensorAI
+2. **Repository URL references** - Updated from softsensorai to SoftSensorAI
 3. **curl commands** - Updated documentation to reflect that repository may be private
 
 ## ⚠️ Known Limitations

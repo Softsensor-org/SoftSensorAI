@@ -62,7 +62,7 @@ ls -la ~/softsensorai/
 git clone https://github.com/Softsensor-org/SoftSensorAI.git ~/softsensorai
 
 # Add to PATH (optional)
-echo 'export PATH="$HOME/devpilot/bin:$PATH"' >> ~/.bashrc
+echo 'export PATH="$HOME/softsensorai/bin:$PATH"' >> ~/.bashrc
 source ~/.bashrc
 ```
 
@@ -93,7 +93,7 @@ cat .claude/persona.json | grep persona
 
 ```bash
 cd /your/project
-dp profile --skill beginner --phase mvp
+ssai profile --skill beginner --phase mvp
 ```
 
 2. **Reset and reapply**:
@@ -123,10 +123,10 @@ cp ~/softsensorai/templates/CLAUDE.md .
 ls .claude/commands/sets/
 
 # For data scientist
-dp persona add data-scientist
+ssai persona add data-scientist
 
 # For architect
-dp persona add software-architect
+ssai persona add software-architect
 
 # Verify commands installed
 ls .claude/commands/sets/data-science/  # Should see gpu-optimize.md etc
@@ -141,9 +141,9 @@ ls .claude/commands/sets/data-science/  # Should see gpu-optimize.md etc
 grep "Skill Level" PROFILE.md
 
 # Change level
-dp profile
+ssai profile
 # OR
-dp profile --skill l2 --phase beta
+ssai profile --skill l2 --phase beta
 ```
 
 ---
@@ -207,7 +207,7 @@ git pull origin main
 
 # Reinstall scripts
 cd /your/project
-dp persona add data-scientist
+ssai persona add data-scientist
 
 # Test with a dummy process
 python -c "import time; time.sleep(100)" &

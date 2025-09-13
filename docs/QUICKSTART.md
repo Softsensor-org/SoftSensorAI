@@ -24,17 +24,17 @@ Perfect for when you're not sure what you're building yet.
 
 ```bash
 # 1. Start exploring with vibe
-dp vibe start "trying new ideas"
+ssai vibe start "trying new ideas"
 
 # 2. Code freely (WARN mode active)
 vim src/experimental.js
 npm test
 
 # 3. Save progress
-dp vibe snapshot "this approach works"
+ssai vibe snapshot "this approach works"
 
 # 4. When ready, generate a contract
-dp vibe promote
+ssai vibe promote
 
 # 5. You now have a formal contract!
 ls contracts/F-*.contract.md
@@ -82,10 +82,10 @@ npm run contracts:validate
 
 ### Vibe Commands (Exploration)
 ```bash
-dp vibe start "title"    # Start exploration
-dp vibe snapshot "note"  # Save checkpoint  
-dp vibe end             # See what you did
-dp vibe promote         # Create contract
+ssai vibe start "title"    # Start exploration
+ssai vibe snapshot "note"  # Save checkpoint  
+ssai vibe end             # See what you did
+ssai vibe promote         # Create contract
 ```
 
 ### Contract Commands
@@ -106,10 +106,10 @@ echo "BLOCK" > .softsensor/mode  # Strict mode
 
 ```mermaid
 graph TD
-    A[dp vibe start] --> B[Explore & Code]
-    B --> C[dp vibe snapshot]
+    A[ssai vibe start] --> B[Explore & Code]
+    B --> C[ssai vibe snapshot]
     C --> B
-    B --> D[dp vibe promote]
+    B --> D[ssai vibe promote]
     D --> E[Contract Created]
     E --> F[Implement]
     F --> G[git commit with Contract-Id]
@@ -152,19 +152,19 @@ npm run hooks:install
 
 ### Minute 2: Start Exploring
 ```bash
-dp vibe start "my first contract"
+ssai vibe start "my first contract"
 echo "console.log('hello')" > test.js
 ```
 
 ### Minute 3: Snapshot
 ```bash
-dp vibe snapshot "added test file"
-dp vibe end  # See impact
+ssai vibe snapshot "added test file"
+ssai vibe end  # See impact
 ```
 
 ### Minute 4: Promote
 ```bash
-dp vibe promote
+ssai vibe promote
 # Contract generated!
 ```
 
@@ -221,7 +221,7 @@ You now know enough to:
 - ✅ Commit with proper trailers
 - ✅ Switch between modes
 
-**Next step**: Try creating your first contract with `dp vibe start "my feature"`
+**Next step**: Try creating your first contract with `ssai vibe start "my feature"`
 
 ---
 

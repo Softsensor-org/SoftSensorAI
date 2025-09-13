@@ -1,6 +1,6 @@
-# Day in the Life with DevPilot
+# Day in the Life with SoftSensorAI
 
-## Before DevPilot (The Old Way)
+## Before SoftSensorAI (The Old Way)
 
 ```
 Morning: New feature request arrives
@@ -15,7 +15,7 @@ Morning: New feature request arrives
 Total: 3-4 hours before writing any code
 ```
 
-## With DevPilot (The New Way)
+## With SoftSensorAI (The New Way)
 
 ```
 Morning: New feature request arrives
@@ -40,10 +40,10 @@ Total: 18 minutes to productive coding
 4. Review their PRs heavily for 2 weeks
 5. Still inconsistent after a month
 
-**DevPilot Approach:**
+**SoftSensorAI Approach:**
 ```bash
 # Day 1 - New dev runs:
-~/devpilot/setup/existing_repo_setup.sh --skill beginner --phase mvp
+~/softsensorai/setup/existing_repo_setup.sh --skill beginner --phase mvp
 
 # They immediately get:
 - Appropriate commands for their level
@@ -63,7 +63,7 @@ Total: 18 minutes to productive coding
 4. Write report over 2 days
 5. Half the findings are false positives
 
-**DevPilot Approach:**
+**SoftSensorAI Approach:**
 ```bash
 # Run comprehensive security review
 claude --system-prompt .claude/commands/security-review.md \
@@ -86,7 +86,7 @@ claude --system-prompt .claude/commands/security-review.md \
 3. Gives superficial "LGTM"
 4. Bugs slip through to production
 
-**DevPilot Approach:**
+**SoftSensorAI Approach:**
 ```bash
 # AI reviewer runs automatically in CI
 # Provides in 1-2 minutes:
@@ -112,7 +112,7 @@ claude --system-prompt .claude/commands/security-review.md \
 4. Argue about priorities
 5. Still missing half the tech debt
 
-**DevPilot Approach:**
+**SoftSensorAI Approach:**
 ```bash
 # Generate comprehensive backlog
 claude --system-prompt .claude/commands/tickets-from-code.md \
@@ -234,7 +234,7 @@ claude --system-prompt .claude/commands/architect-spike.md \
 ## Adoption Timeline
 
 ### Week 1: Foundation
-- Install DevPilot globally
+- Install SoftSensorAI globally
 - Set up 1 pilot project
 - Run `/tickets-from-code` to see immediate value
 - Enable AI PR reviewer
@@ -310,4 +310,4 @@ which rg fd jq pnpm
 4. **Next Sprint**: Track velocity improvement
 5. **Next Month**: Present ROI to leadership
 
-Remember: DevPilot isn't about replacing developers - it's about amplifying them. A junior with DevPilot ships senior-quality code. A senior with DevPilot becomes a force multiplier for the entire team.
+Remember: SoftSensorAI isn't about replacing developers - it's about amplifying them. A junior with SoftSensorAI ships senior-quality code. A senior with SoftSensorAI becomes a force multiplier for the entire team.

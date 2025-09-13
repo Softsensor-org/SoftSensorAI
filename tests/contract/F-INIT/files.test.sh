@@ -1,17 +1,17 @@
 #!/bin/bash
 # SPDX-License-Identifier: GPL-3.0-only
-# Test: dp init creates or updates system/active.md
+# Test: ssai init creates or updates system/active.md
 
 set -e
 
-echo "Testing: dp init creates system/active.md"
+echo "Testing: ssai init creates system/active.md"
 
 # Create temp directory for test
 TEST_DIR=$(mktemp -d)
 cd "$TEST_DIR"
 
-# Run dp init
-dp init > /dev/null 2>&1 || true
+# Run ssai init
+ssai init > /dev/null 2>&1 || true
 
 # Check if system/active.md was created
 if [ -f "system/active.md" ]; then

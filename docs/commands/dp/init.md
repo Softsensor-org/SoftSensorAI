@@ -1,21 +1,21 @@
-# dp init
+# ssai init
 
 ## Overview
 
 Complete project initialization that runs health checks, applies profiles, and builds your project -
-everything needed after `dp setup`.
+everything needed after `ssai setup`.
 
 ## Usage
 
 ```bash
-dp init [OPTIONS]
+ssai init [OPTIONS]
 ```
 
 ## What It Does
 
 Runs three critical steps in sequence:
 
-1. **System Health Check** - Verifies all tools are installed (`dp doctor`)
+1. **System Health Check** - Verifies all tools are installed (`ssai doctor`)
 2. **Profile Configuration** - Sets your skill level and project phase
 3. **Project Build** - Installs dependencies and runs build commands
 
@@ -24,7 +24,7 @@ Runs three critical steps in sequence:
 ### Interactive Initialization
 
 ```bash
-dp init
+ssai init
 # 🚀 Initializing project with full setup...
 #
 # Step 1/3: Running system health check...
@@ -53,7 +53,7 @@ dp init
 ### Direct Initialization (Skip Prompts)
 
 ```bash
-dp init --skill l2 --phase beta
+ssai init --skill l2 --phase beta
 # Applies mid-level developer profile in beta phase
 ```
 
@@ -121,7 +121,7 @@ bundle install
 
 ## When to Use
 
-- **After `dp setup`** - Always run init after setup
+- **After `ssai setup`** - Always run init after setup
 - **Changing skill level** - As you gain experience
 - **Changing project phase** - As project matures
 - **New team member** - To match team configuration
@@ -132,21 +132,21 @@ bundle install
 ### New Developer Starting
 
 ```bash
-dp init --skill beginner --phase poc
+ssai init --skill beginner --phase poc
 # Maximum guidance, minimal restrictions
 ```
 
 ### Team Project in Beta
 
 ```bash
-dp init --skill l2 --phase beta
+ssai init --skill l2 --phase beta
 # Professional setup with quality gates
 ```
 
 ### Production Deployment Prep
 
 ```bash
-dp init --skill expert --phase scale
+ssai init --skill expert --phase scale
 # Full security, all CI/CD gates active
 ```
 
@@ -164,9 +164,9 @@ fnm use --install-if-missing 20
 
 ```bash
 # Run interactive mode
-dp init
+ssai init
 # Or specify directly
-dp init --skill l1 --phase mvp
+ssai init --skill l1 --phase mvp
 ```
 
 ### "Build failed"
@@ -181,14 +181,14 @@ npm install --verbose
 
 ## Related Commands
 
-- [`dp setup`](setup.md) - Add SoftSensorAI to a project (run before init)
-- [`dp doctor`](doctor.md) - Health check only
-- [`dp project`](project.md) - View current configuration
+- [`ssai setup`](setup.md) - Add SoftSensorAI to a project (run before init)
+- [`ssai doctor`](doctor.md) - Health check only
+- [`ssai project`](project.md) - View current configuration
 - [`scripts/apply_profile.sh`](../../scripts/apply_profile.md) - Change profile later
 
 ## Implementation
 
-- **Script**: `bin/dp` (cmd_init function)
+- **Script**: `bin/ssai` (cmd_init function)
 - **Calls**:
   - `scripts/doctor.sh` - System health check
   - `scripts/apply_profile.sh` - Profile configuration

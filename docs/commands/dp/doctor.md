@@ -1,4 +1,4 @@
-# dp doctor
+# ssai doctor
 
 ## Overview
 
@@ -8,7 +8,7 @@ for SoftSensorAI.
 ## Usage
 
 ```bash
-dp doctor [OPTIONS]
+ssai doctor [OPTIONS]
 ```
 
 ## What It Does
@@ -25,7 +25,7 @@ Performs 15+ checks across:
 ## Example Output
 
 ```bash
-dp doctor
+ssai doctor
 
 🏥 SoftSensorAI Health Check
 ========================
@@ -76,7 +76,7 @@ Summary:
 ✅ 18 passed | ⚠️ 5 warnings | ❌ 0 errors
 
 All critical checks passed! Optional tools can be installed with:
-  dp doctor --install-missing
+  ssai doctor --install-missing
 ```
 
 ## Options
@@ -155,7 +155,7 @@ All critical checks passed! Optional tools can be installed with:
 ### Install Missing Tools
 
 ```bash
-dp doctor --install-missing
+ssai doctor --install-missing
 # Attempts to install:
 # - ripgrep, fd, fzf via package manager
 # - Node.js via fnm
@@ -178,13 +178,13 @@ fnm use --install-if-missing 20
 sudo apt update && sudo apt install python3 python3-pip
 ```
 
-## Integration with dp init
+## Integration with ssai init
 
-`dp doctor` is automatically run as step 1 of `dp init`:
+`ssai doctor` is automatically run as step 1 of `ssai init`:
 
 ```bash
-dp init
-# Step 1/3: Running system health check... (this is dp doctor)
+ssai init
+# Step 1/3: Running system health check... (this is ssai doctor)
 # Step 2/3: Configuring profile...
 # Step 3/3: Building project...
 ```
@@ -192,7 +192,7 @@ dp init
 ## JSON Output Format
 
 ```bash
-dp doctor --json
+ssai doctor --json
 ```
 
 ```json
@@ -219,9 +219,9 @@ dp doctor --json
 
 ```bash
 # Some checks require sudo
-sudo dp doctor
+sudo ssai doctor
 # Or skip those checks
-dp doctor --quick
+ssai doctor --quick
 ```
 
 ### "Package manager not found"
@@ -244,13 +244,13 @@ wsl --version
 
 ## Related Commands
 
-- [`dp init`](init.md) - Runs doctor as first step
-- [`dp setup`](setup.md) - Add SoftSensorAI to project
+- [`ssai init`](init.md) - Runs doctor as first step
+- [`ssai setup`](setup.md) - Add SoftSensorAI to project
 - [`scripts/dprs.sh`](../../scripts/dprs.md) - Repository readiness score
 
 ## Implementation
 
 - **Script**: `scripts/doctor.sh`
-- **Called by**: `dp doctor` command
+- **Called by**: `ssai doctor` command
 - **OS Detection**: `utils/os_compat.sh`
 - **Platform Support**: Linux, macOS, WSL, BSD, Solaris

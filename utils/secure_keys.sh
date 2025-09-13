@@ -3,7 +3,7 @@
 # Encrypt/decrypt user API keys for secure storage
 set -euo pipefail
 
-USER_DIR="${DEVPILOT_USER_DIR:-$HOME/.devpilot}"
+USER_DIR="${SOFTSENSORAI_USER_DIR:-$HOME/.softsensorai}"
 KEY_FILE="$USER_DIR/config/api_keys.env"
 ENC_FILE="$USER_DIR/config/api_keys.env.enc"
 KEY_ID_FILE="$USER_DIR/config/.keyid"
@@ -232,7 +232,7 @@ decrypt_keys() {
 
 # Show status
 show_status() {
-    echo "DevPilot Key Security Status"
+    echo "SoftSensorAI Key Security Status"
     echo "============================"
     echo "User directory: $USER_DIR"
     echo ""
@@ -276,7 +276,7 @@ case "${1:-status}" in
         encrypt_keys
         ;;
     *)
-        echo "DevPilot Secure Keys Utility"
+        echo "SoftSensorAI Secure Keys Utility"
         echo "Usage: dp secure-keys <command>"
         echo ""
         echo "Commands:"

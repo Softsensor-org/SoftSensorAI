@@ -1,10 +1,10 @@
 #!/bin/bash
 # SPDX-License-Identifier: GPL-3.0-only
-# Test: dp setup prints next-steps block
+# Test: ssai setup prints next-steps block
 
 set -e
 
-echo "Testing: dp setup next-steps output"
+echo "Testing: ssai setup next-steps output"
 
 # Create temp directory for test
 TEST_DIR=$(mktemp -d)
@@ -13,8 +13,8 @@ cd "$TEST_DIR"
 # Initialize as git repo
 git init > /dev/null 2>&1
 
-# Run dp setup and capture output
-OUTPUT=$(dp setup 2>&1 || true)
+# Run ssai setup and capture output
+OUTPUT=$(ssai setup 2>&1 || true)
 
 ERRORS=0
 
@@ -35,7 +35,7 @@ else
 fi
 
 # Check for structured guidance (numbered steps or command examples)
-if echo "$OUTPUT" | grep -E "(1\.|2\.|3\.)|dp init|dp palette" > /dev/null 2>&1; then
+if echo "$OUTPUT" | grep -E "(1\.|2\.|3\.)|ssai init|ssai palette" > /dev/null 2>&1; then
     echo "✅ Found structured guidance"
 else
     echo "❌ Missing structured guidance"

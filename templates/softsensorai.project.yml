@@ -1,11 +1,11 @@
-# DevPilot Project Profile
+# SoftSensorAI Project Profile
 # Zero-friction per-repo defaults (like Xcode's scheme file, but text)
 # Place this at your repo root and run: dp init or scripts/apply_profile.sh
 
 # Project metadata
 project:
   name: "${PROJECT_NAME:-MyProject}"
-  description: "AI-first development with DevPilot"
+  description: "AI-first development with SoftSensorAI"
   version: "0.1.0"
 
 # Development profile (auto-applied on init)

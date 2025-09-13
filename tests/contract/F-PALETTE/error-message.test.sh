@@ -1,10 +1,10 @@
 #!/bin/bash
 # SPDX-License-Identifier: GPL-3.0-only
-# Test: dp palette prints actionable install hints
+# Test: ssai palette prints actionable install hints
 
 set -e
 
-echo "Testing: dp palette error message quality"
+echo "Testing: ssai palette error message quality"
 
 # Temporarily hide fzf if it exists
 FZF_PATH=$(which fzf 2>/dev/null || echo "")
@@ -13,8 +13,8 @@ if [ -n "$FZF_PATH" ]; then
     export PATH=$(echo "$PATH" | tr ':' '\n' | grep -v "$(dirname $FZF_PATH)" | tr '\n' ':')
 fi
 
-# Run dp palette and capture output
-OUTPUT=$(dp palette 2>&1 || true)
+# Run ssai palette and capture output
+OUTPUT=$(ssai palette 2>&1 || true)
 
 ERRORS=0
 

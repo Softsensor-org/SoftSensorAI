@@ -80,7 +80,7 @@ jq -r '.tickets[] | [
 ./scripts/dprs.sh                                       # → artifacts/dprs.md
 
 # Run AI review on recent changes
-git diff HEAD~3 | devpilot review --diff -             # Interactive review
+git diff HEAD~3 | softsensorai review --diff -             # Interactive review
 ```
 
 ## 3) Pre-PR Sanity (Local AI Review of Your Diff)
@@ -115,8 +115,8 @@ grok chat --system "$(cat system/active.md)" \
   --input-file artifacts/review_prompt.txt \
   > artifacts/review_local.txt
 
-# Quick one-liner using devpilot CLI
-devpilot review --diff origin/main
+# Quick one-liner using softsensorai CLI
+softsensorai review --diff origin/main
 ```
 
 ## 4) Quick Wins (15 Minutes)
@@ -330,7 +330,7 @@ jobs:
 
 ### Per-Project Overrides
 
-Create `.devpilot/playbook.yml`:
+Create `.softsensorai/playbook.yml`:
 
 ```yaml
 playbook:
@@ -404,7 +404,7 @@ Answer these 6 questions to instantly tailor all commands to your specific repo:
 
 ```bash
 # Run this to generate a custom configuration
-cat > .devpilot/alignment.yml << 'EOF'
+cat > .softsensorai/alignment.yml << 'EOF'
 # Answer these 6 questions for instant customization:
 
 1. Primary goal (next 2-4 weeks)?
@@ -434,7 +434,7 @@ cat > .devpilot/alignment.yml << 'EOF'
 EOF
 
 # Generate custom Justfile based on answers
-./scripts/generate_custom_justfile.sh .devpilot/alignment.yml > Justfile.custom
+./scripts/generate_custom_justfile.sh .softsensorai/alignment.yml > Justfile.custom
 ```
 
 ### Example Configurations
@@ -495,26 +495,26 @@ Based on your answers, we'll customize:
 - **Security gates** - What blocks vs warns
 - **CI/CD config** - What runs automatically
 
-### Use the built-in `dp`
+### Use the built-in `ssai`
 
-SoftSensorAI ships a unified `dp` already. Don't create/overwrite `bin/dp`. Run `dp palette` to
+SoftSensorAI ships a unified `ssai` already. Don't create/overwrite `bin/ssai`. Run `ssai palette` to
 browse commands, or `just palette` if you prefer Just.
 
 ```bash
 # SoftSensorAI's unified interface is already available:
-dp setup        # Smart project setup
-dp init         # Initialize with health check + profile + build
-dp doctor       # System health check
-dp palette      # Browse all commands interactively
-dp review       # AI code review
-dp tickets      # Generate backlog from codebase
+ssai setup        # Smart project setup
+ssai init         # Initialize with health check + profile + build
+ssai doctor       # System health check
+ssai palette      # Browse all commands interactively
+ssai review       # AI code review
+ssai tickets      # Generate backlog from codebase
 
 # For teams preferring Just:
-just tickets    # Same as dp tickets
-just review     # Same as dp review
+just tickets    # Same as ssai tickets
+just review     # Same as ssai review
 ```
 
-The built-in `dp` command handles smart detection and routing to the appropriate scripts internally.
+The built-in `ssai` command handles smart detection and routing to the appropriate scripts internally.
 No need to create your own wrapper - just use the provided CLI.
 
 ## See Also

@@ -143,7 +143,7 @@ if [ ${#MISSING_TOOLS[@]} -gt 0 ]; then
         case "$tool" in
           git) echo "sudo apt-get install -y git" ;;
           jq) echo "sudo apt-get install -y jq" ;;
-          rg) echo "curl -LO https://github.com/BurntSushi/ripgrep/releases/download/14.1.0/ripgrep_14.1.0-1_amd64.deb && sudo dpkg -i ripgrep_14.1.0-1_amd64.deb" ;;
+          rg) echo "curl -LO https://github.com/BurntSushi/ripgrep/releases/download/14.1.0/ripgrep_14.1.0-1_amd64.deb && sudo ssaikg -i ripgrep_14.1.0-1_amd64.deb" ;;
           fd) echo "sudo apt-get install -y fd-find && sudo ln -s \$(which fdfind) /usr/local/bin/fd" ;;
           direnv) echo "sudo apt-get install -y direnv" ;;
           yq) echo "sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 && sudo chmod +x /usr/local/bin/yq" ;;
@@ -214,18 +214,18 @@ printf "\n==> Next steps:\n"
 if [ ${#MISSING_TOOLS[@]} -eq 0 ]; then
   echo " ✅ All core tools installed!"
 else
-  echo " ⚠️  Missing ${#MISSING_TOOLS[@]} tools. Run: dp doctor --install"
+  echo " ⚠️  Missing ${#MISSING_TOOLS[@]} tools. Run: ssai doctor --install"
 fi
-echo " - Setup a project: dp setup [URL]"
-echo " - Initialize: dp init"
-echo " - Browse commands: dp palette (alias: dpp)"
-echo " - Quick help: dp help"
+echo " - Setup a project: ssai setup [URL]"
+echo " - Initialize: ssai init"
+echo " - Browse commands: ssai palette (alias: ssaip)"
+echo " - Quick help: ssai help"
 
 # Shell alias reminder
-if ! alias dpp 2>/dev/null | grep -q 'dp palette'; then
+if ! alias ssaip 2>/dev/null | grep -q 'ssai palette'; then
   echo ""
   echo "💡 Pro tip: Add this to ~/.bashrc for quick access:"
-  echo "   alias dpp='dp palette'"
+  echo "   alias ssaip='ssai palette'"
 fi
 
 exit 0

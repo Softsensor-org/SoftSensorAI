@@ -152,7 +152,7 @@ jobs:
             const docsScore = '${{ steps.dprs.outputs.docs_score }}';
             const dxScore = '${{ steps.dprs.outputs.dx_score }}';
 
-            const body = `## 📊 DevPilot Readiness Score (DPRS)
+            const body = `## 📊 SoftSensorAI Readiness Score (DPRS)
 
             ${badge}
 
@@ -184,7 +184,7 @@ jobs:
 
             const existingComment = comments.find(c =>
               c.user.login === 'github-actions[bot]' &&
-              c.body.includes('📊 DevPilot Readiness Score')
+              c.body.includes('📊 SoftSensorAI Readiness Score')
             );
 
             if (existingComment) {
@@ -229,7 +229,7 @@ jobs:
 
       - name: Set job summary
         run: |
-          echo "## 📊 DevPilot Readiness Score" >> $GITHUB_STEP_SUMMARY
+          echo "## 📊 SoftSensorAI Readiness Score" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Score:** ${{ steps.dprs.outputs.total_score }}/100" >> $GITHUB_STEP_SUMMARY
           echo "**Phase:** ${{ steps.dprs.outputs.phase }}" >> $GITHUB_STEP_SUMMARY

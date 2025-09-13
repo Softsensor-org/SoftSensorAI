@@ -17,7 +17,7 @@ TEACH_MODE=""
 
 # Load from project file if exists and no args provided
 PROJECT_FILE=""
-for pf in devpilot.project.yml devpilot.project.yaml .devpilot.yml .devpilot.yaml; do
+for pf in softsensorai.project.yml softsensorai.project.yaml .softsensorai.yml .softsensorai.yaml; do
   if [ -f "$pf" ]; then
     PROJECT_FILE="$pf"
     break

@@ -15,7 +15,7 @@ SoftSensorAI AI development platform.
 - **[ARCHITECTURE_OVERVIEW.md](ARCHITECTURE_OVERVIEW.md)** - **START HERE** - Complete architecture
   and CLI-first usage guide
 - **[quickstart.md](quickstart.md)** - One-command installation and first steps
-- **[WEEK_WITH_DEVPILOT.md](WEEK_WITH_DEVPILOT.md)** - Day-by-day runbook for your first week
+- **[WEEK_WITH_SOFTSENSORAI.md](WEEK_WITH_SOFTSENSORAI.md)** - Day-by-day runbook for your first week
 
 ### Core Setup
 

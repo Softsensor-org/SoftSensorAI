@@ -417,7 +417,7 @@ main() {
         # Simple structure: org/repo_name (no categories!)
         local target="$BASE/$org/$repo_name"
         mkdir -p "$BASE/$org"
-        
+
         # Clone
         say "Cloning repository..."
         cd "$BASE/$org"

@@ -287,8 +287,8 @@ preview ID="local":
   # Check for compose file
   if [ ! -f "compose.preview.yml" ] && [ ! -f "docker-compose.preview.yml" ]; then
     echo "Creating compose.preview.yml from template..."
-    if [ -f "$HOME/devpilot/templates/compose.preview.yml" ]; then
-      cp "$HOME/devpilot/templates/compose.preview.yml" compose.preview.yml
+    if [ -f "$HOME/softsensorai/templates/compose.preview.yml" ]; then
+      cp "$HOME/softsensorai/templates/compose.preview.yml" compose.preview.yml
     else
       echo "⚠️  No preview compose file found. Creating minimal..."
       cat > compose.preview.yml <<'EOF'
@@ -414,8 +414,8 @@ release-ready PHASE="":
   # Determine phase
   if [ -n "{{PHASE}}" ]; then
     PROJECT_PHASE="{{PHASE}}"
-  elif [ -f "devpilot.project.yml" ]; then
-    PROJECT_PHASE=$(grep "phase:" devpilot.project.yml | head -1 | awk '{print $2}' || echo "mvp")
+  elif [ -f "softsensorai.project.yml" ]; then
+    PROJECT_PHASE=$(grep "phase:" softsensorai.project.yml | head -1 | awk '{print $2}' || echo "mvp")
   else
     PROJECT_PHASE="mvp"
   fi
@@ -657,7 +657,7 @@ commands:
     echo "✓ Command registry updated: docs/agent-commands.md"
   else
     echo "Command registry generator not found"
-    echo "Run: curl -sL https://raw.githubusercontent.com/Softsensor-org/DevPilot/main/scripts/generate_command_registry.sh > scripts/generate_command_registry.sh"
+    echo "Run: curl -sL https://raw.githubusercontent.com/Softsensor-org/SoftSensorAI/main/scripts/generate_command_registry.sh > scripts/generate_command_registry.sh"
   fi
 
 # After-clone playbook: Complete repo review
@@ -869,7 +869,7 @@ tickets-old:
   fi
 
 # Aliases for common commands
-# These provide standardized shortcuts across all DevPilot projects
+# These provide standardized shortcuts across all SoftSensorAI projects
 # Convention: short forms (t, l, f) and common alternatives (fmt for format)
 alias t := test
 alias l := lint

@@ -14,18 +14,18 @@ structure and user workflow.
 1. **SoftSensorAI is installed to `~/softsensorai`** - Users clone the repo once to their home directory
 2. **Scripts run FROM SoftSensorAI directory** - Commands like `~/softsensorai/setup/repo_wizard.sh`
 3. **Configuration applied TO other repos** - SoftSensorAI configures projects without moving them
-4. **`dp` CLI is the main interface** - Located at `~/softsensorai/bin/dp`
+4. **`ssai` CLI is the main interface** - Located at `~/softsensorai/bin/ssai`
 
 ### Command Structure
 
-The `dp` CLI provides these main commands:
+The `ssai` CLI provides these main commands:
 
-- `dp init` - Initialize project with doctor → profile → build
-- `dp project` - Create/show devpilot.project.yml
-- `dp tickets` - Generate structured backlog (JSON → CSV)
-- `dp review` - AI review of code changes
-- `dp review --preview` - Review with preview logs
-- `dp palette` - Interactive command browser (requires fzf)
+- `ssai init` - Initialize project with doctor → profile → build
+- `ssai project` - Create/show softsensorai.project.yml
+- `ssai tickets` - Generate structured backlog (JSON → CSV)
+- `ssai review` - AI review of code changes
+- `ssai review --preview` - Review with preview logs
+- `ssai palette` - Interactive command browser (requires fzf)
 
 ### Installation Paths
 
@@ -63,7 +63,7 @@ All installation scripts are in `~/softsensorai/install/`:
 
 ## Command Palette System
 
-The command palette (`dp palette`) works with:
+The command palette (`ssai palette`) works with:
 
 - **Justfile** - Build commands (if present in user's project)
 - **Command Registry** - Generated from available commands

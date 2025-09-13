@@ -1,4 +1,4 @@
-# DevPilot Makefile
+# SoftSensorAI Makefile
 # Automation for AI development platform setup, auditing, and ticket generation
 
 .PHONY: help install setup audit tickets clean lint test fmt docs-index prompt-audit security-json config-validate test-bats devcontainer-build devcontainer-open doctor
@@ -12,22 +12,22 @@ RED := \033[0;31m
 NC := \033[0m # No Color
 
 help: ## Show this help message
-	@echo "$(CYAN)DevPilot - AI Development Platform$(NC)"
+	@echo "$(CYAN)SoftSensorAI - AI Development Platform$(NC)"
 	@echo ""
 	@echo "$(YELLOW)Usage:$(NC)"
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  $(GREEN)%-15s$(NC) %s\n", $$1, $$2}'
 	@echo ""
 	@echo "$(YELLOW)Examples:$(NC)"
-	@echo "  make install                    # Install DevPilot globally"
+	@echo "  make install                    # Install SoftSensorAI globally"
 	@echo "  make clean                      # Clean up generated files"
 	@echo "  make test                       # Run syntax validation"
 	@echo "  make security-json              # Generate security report"
 	@echo "  make audit                      # Run audit script"
 
-install: ## Install DevPilot global configuration
-	@echo "$(CYAN)Installing DevPilot global setup...$(NC)"
+install: ## Install SoftSensorAI global configuration
+	@echo "$(CYAN)Installing SoftSensorAI global setup...$(NC)"
 	./setup/agents_global.sh
-	@echo "$(GREEN)✓ DevPilot global setup complete$(NC)"
+	@echo "$(GREEN)✓ SoftSensorAI global setup complete$(NC)"
 
 audit\:prompt: ## Open audit template for Claude Code
 	@echo "$(CYAN)Audit commands available:$(NC)"

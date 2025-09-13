@@ -31,7 +31,7 @@ class TestDoctor:
             timeout=60
         )
         # May have non-zero exit if issues found, but shouldn't crash
-        assert "Checking system" in result.stdout or "DevPilot" in result.stdout
+        assert "Checking system" in result.stdout or "SoftSensorAI" in result.stdout
 
     @pytest.mark.slow
     def test_doctor_verbose_mode(self, doctor_script):

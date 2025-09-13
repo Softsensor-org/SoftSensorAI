@@ -22,14 +22,14 @@ Get up and running in 5 minutes:
 npm run hooks:install
 
 # 2. Start exploring a new feature
-dp vibe start "add user authentication"
+ssai vibe start "add user authentication"
 
 # 3. Make changes and snapshot progress
 vim src/auth.js
-dp vibe snapshot "basic auth working"
+ssai vibe snapshot "basic auth working"
 
 # 4. Generate a contract from your exploration
-dp vibe promote
+ssai vibe promote
 
 # 5. Commit with contract trailers
 git commit -m "feat: add authentication
@@ -107,9 +107,9 @@ This contract implements a user profile page with viewing and editing capabiliti
 
 ```bash
 # Use the vibe workflow to auto-generate
-dp vibe start "user profile page"
+ssai vibe start "user profile page"
 # ... make changes ...
-dp vibe promote  # Generates contract automatically
+ssai vibe promote  # Generates contract automatically
 ```
 
 ### Activate the Contract
@@ -136,7 +136,7 @@ Vibe Lane lets you explore freely before committing to a contract.
 
 ```bash
 # Start exploring
-dp vibe start "experiment with caching"
+ssai vibe start "experiment with caching"
 ```
 
 This:
@@ -152,11 +152,11 @@ vim src/cache.js
 npm test
 
 # Snapshot important milestones
-dp vibe snapshot "Redis integration working"
-dp vibe snapshot "Added TTL support"
+ssai vibe snapshot "Redis integration working"
+ssai vibe snapshot "Added TTL support"
 
 # See what you've done
-dp vibe end
+ssai vibe end
 ```
 
 Output:
@@ -179,7 +179,7 @@ Output:
 ### Promoting to Contract
 
 ```bash
-dp vibe promote
+ssai vibe promote
 ```
 
 This automatically:
@@ -323,14 +323,14 @@ Contract-Hash: abc123 def456"
 
 ```bash
 # 1. Start with exploration
-dp vibe start "new feature"
+ssai vibe start "new feature"
 
 # 2. Prototype and experiment
 # ... make changes ...
-dp vibe snapshot "working prototype"
+ssai vibe snapshot "working prototype"
 
 # 3. Formalize into contract
-dp vibe promote
+ssai vibe promote
 
 # 4. Refine the contract
 vim contracts/F-*.contract.md
@@ -374,15 +374,15 @@ Contract-Id: BUG-001"
 
 ```bash
 # 1. Use vibe for exploration
-dp vibe start "refactor data layer"
+ssai vibe start "refactor data layer"
 
 # 2. Try different approaches
-dp vibe snapshot "approach 1: repository pattern"
+ssai vibe snapshot "approach 1: repository pattern"
 git stash
-dp vibe snapshot "approach 2: active record"
+ssai vibe snapshot "approach 2: active record"
 
 # 3. Choose best approach and promote
-dp vibe promote
+ssai vibe promote
 
 # 4. Execute refactoring within contract
 ```
@@ -444,8 +444,8 @@ npm run hooks:install
 
 **Solution**: End current session
 ```bash
-dp vibe end
-dp vibe start "new session"
+ssai vibe end
+ssai vibe start "new session"
 ```
 
 ## Best Practices
@@ -494,4 +494,4 @@ The contract system provides:
 - **Quality** through automation
 - **Traceability** from idea to deployment
 
-Start with `dp vibe start` and let the system guide you!
+Start with `ssai vibe start` and let the system guide you!

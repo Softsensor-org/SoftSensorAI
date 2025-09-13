@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 . "$(dirname "$0")/../lib/sh/brand_compat.sh"
-# DevPilot meta-CLI: beautiful defaults for init, tickets, and review.
+# SoftSensorAI meta-CLI: beautiful defaults for init, tickets, and review.
 set -euo pipefail
 # Detect if running in multi-user mode
 if [[ -f "/opt/softsensorai/etc/softsensorai.conf" ]]; then
@@ -36,7 +36,7 @@ cmd_init() {
 
   # Check for project file
   local project_file=""
-  for pf in devpilot.project.yml devpilot.project.yaml .devpilot.yml .devpilot.yaml; do
+  for pf in softsensorai.project.yml softsensorai.project.yaml .softsensorai.yml .softsensorai.yaml; do
     if [[ -f "$pf" ]]; then
       project_file="$pf"
       say "▸ Found project profile: $pf"
@@ -49,7 +49,7 @@ cmd_init() {
     if [[ -x "$ROOT/scripts/apply_profile.sh" ]]; then "$ROOT/scripts/apply_profile.sh" || true; fi
   else
     say "▸ No project file found. Using defaults (skill=l1, phase=mvp) …"
-    say "  💡 Tip: Create devpilot.project.yml for zero-friction setup"
+    say "  💡 Tip: Create softsensorai.project.yml for zero-friction setup"
     if [[ -x "$ROOT/scripts/apply_profile.sh" ]]; then "$ROOT/scripts/apply_profile.sh" --skill l1 --phase mvp || true; fi
   fi
 
@@ -252,34 +252,34 @@ cmd_review() {
 
 cmd_project() {
   # Create or show project file
-  if [[ -f devpilot.project.yml ]]; then
-    say "✓ Project file exists: devpilot.project.yml"
+  if [[ -f softsensorai.project.yml ]]; then
+    say "✓ Project file exists: softsensorai.project.yml"
     say ""
     say "Current settings:"
-    grep -E "^  (skill|phase|primary):" devpilot.project.yml | head -5
+    grep -E "^  (skill|phase|primary):" softsensorai.project.yml | head -5
   else
-    say "Creating devpilot.project.yml with sensible defaults..."
+    say "Creating softsensorai.project.yml with sensible defaults..."
 
     # Detect current project name
     local project_name
     project_name=$(basename "$PWD")
 
     # Create from template
-    if [[ -f "$ROOT/templates/devpilot.project.yml" ]]; then
+    if [[ -f "$ROOT/templates/softsensorai.project.yml" ]]; then
       sed "s/\${PROJECT_NAME:-MyProject}/$project_name/g" \
-        "$ROOT/templates/devpilot.project.yml" > devpilot.project.yml
-      say "✅ Created devpilot.project.yml"
+        "$ROOT/templates/softsensorai.project.yml" > softsensorai.project.yml
+      say "✅ Created softsensorai.project.yml"
       say ""
       say "Next steps:"
-      say "  1) Edit devpilot.project.yml to customize"
+      say "  1) Edit softsensorai.project.yml to customize"
       say "  2) Run: dp init"
       say ""
       say "Key settings to review:"
-      grep -E "^  (skill|phase|primary):" devpilot.project.yml | head -5
+      grep -E "^  (skill|phase|primary):" softsensorai.project.yml | head -5
     else
       # Minimal fallback
-      cat > devpilot.project.yml <<EOF
-# DevPilot Project Profile
+      cat > softsensorai.project.yml <<EOF
+# SoftSensorAI Project Profile
 project:
   name: $project_name
 
@@ -297,7 +297,7 @@ ci:
     tests: required
     coverage: advisory
 EOF
-      say "✅ Created minimal devpilot.project.yml"
+      say "✅ Created minimal softsensorai.project.yml"
     fi
   fi
 }
@@ -347,7 +347,7 @@ EOF
   local selected
   if [[ -n "$query" ]]; then
     selected=$(fzf --query="$query" --select-1 --exit-0 < "$commands_file" \
-      --prompt="DevPilot ▸ " \
+      --prompt="SoftSensorAI ▸ " \
       --header="Select command (ESC to cancel)" \
       --preview-window=hidden \
       --height=40% \
@@ -355,7 +355,7 @@ EOF
       --border=rounded)
   else
     selected=$(fzf < "$commands_file" \
-      --prompt="DevPilot ▸ " \
+      --prompt="SoftSensorAI ▸ " \
       --header="Select command (ESC to cancel)" \
       --preview-window=hidden \
       --height=40% \
@@ -379,7 +379,7 @@ cmd_setup() {
   local url="${1:-}"
 
   say "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-  say "  DEVPILOT SETUP"
+  say "  SOFTSENSORAI SETUP"
   say "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
   say ""
 
@@ -398,20 +398,20 @@ cmd_setup() {
 
     [[ -n "$project_type" ]] && say "  Project type: $project_type"
 
-    # Check for existing DevPilot files
+    # Check for existing SoftSensorAI files
     local existing_files=""
     [[ -f CLAUDE.md ]] && existing_files="${existing_files}CLAUDE.md "
-    [[ -f devpilot.project.yml ]] && existing_files="${existing_files}devpilot.project.yml "
+    [[ -f softsensorai.project.yml ]] && existing_files="${existing_files}softsensorai.project.yml "
     [[ -d .claude ]] && existing_files="${existing_files}.claude/ "
 
     if [[ -n "$existing_files" ]]; then
-      say "  Existing DevPilot files: $existing_files"
+      say "  Existing SoftSensorAI files: $existing_files"
       say ""
       say "▸ Running setup with merge strategy..."
       "$ROOT/setup/existing_repo_setup.sh"
     else
       say ""
-      say "▸ Adding DevPilot configuration..."
+      say "▸ Adding SoftSensorAI configuration..."
       "$ROOT/setup/existing_repo_setup.sh"
     fi
   elif [[ -n "$url" ]]; then
@@ -492,7 +492,7 @@ cmd_doctor() {
 cmd_team_doctor() {
   # Check multi-user setup health
   echo ""
-  echo "DevPilot Team Setup Check"
+  echo "SoftSensorAI Team Setup Check"
   echo "-------------------------"
 
   local all_good=true
@@ -507,16 +507,16 @@ cmd_team_doctor() {
   fi
 
   # Check system config
-  if [[ -f "/opt/devpilot/etc/devpilot.conf" ]]; then
-    if [[ -r "/opt/devpilot/etc/devpilot.conf" ]]; then
-      echo "✓ System config readable: /opt/devpilot/etc/devpilot.conf"
+  if [[ -f "/opt/softsensorai/etc/softsensorai.conf" ]]; then
+    if [[ -r "/opt/softsensorai/etc/softsensorai.conf" ]]; then
+      echo "✓ System config readable: /opt/softsensorai/etc/softsensorai.conf"
     else
-      echo "✗ System config not readable: /opt/devpilot/etc/devpilot.conf"
-      echo "  → Check permissions: ls -la /opt/devpilot/etc/"
+      echo "✗ System config not readable: /opt/softsensorai/etc/softsensorai.conf"
+      echo "  → Check permissions: ls -la /opt/softsensorai/etc/"
       all_good=false
     fi
   else
-    echo "✗ System config not found: /opt/devpilot/etc/devpilot.conf"
+    echo "✗ System config not found: /opt/softsensorai/etc/softsensorai.conf"
     echo "  → Run multi-user installer: sudo $ROOT/scripts/install_multi_user.sh"
     all_good=false
   fi
@@ -530,7 +530,7 @@ cmd_team_doctor() {
   fi
 
   # Check user directory
-  local user_dir="${DEVPILOT_USER_DIR:-$HOME/.devpilot}"
+  local user_dir="${SOFTSENSORAI_USER_DIR:-$HOME/.softsensorai}"
   if [[ -d "$user_dir" ]]; then
     if [[ -w "$user_dir" ]]; then
       echo "✓ User directory writable: $user_dir"
@@ -748,7 +748,7 @@ cmd_persona() {
 }
 
 cmd_score() {
-  # DevPilot Readiness Score (DPRS)
+  # SoftSensorAI Readiness Score (DPRS)
   if [[ -x "$ROOT/scripts/dprs.sh" ]]; then
     "$ROOT/scripts/dprs.sh" "$@"
   else
@@ -949,7 +949,7 @@ cmd_help() {
 
 show_quick_help() {
   cat <<'QUICK'
-DevPilot Quick Start (7 essential commands):
+SoftSensorAI Quick Start (7 essential commands):
 
   dp doctor              # Check system & install missing tools
   dp doctor --install    # One-liner to install all missing tools
@@ -969,19 +969,19 @@ QUICK
 
 show_full_help() {
   cat <<'HELP'
-DevPilot - Unified AI Development Interface
+SoftSensorAI - Unified AI Development Interface
 
 Setup & Configuration:
   dp setup [URL]       # Smart setup - detects new vs existing repo
   dp customer-project  # Setup customer project with multiple repos
   dp doctor            # System health check and diagnostics
   dp init              # Initialize project after setup
-  dp project           # Create/show devpilot.project.yml
+  dp project           # Create/show softsensorai.project.yml
   dp profile           # Change skill level and project phase
   dp persona           # Manage AI personas (add/remove/show)
 
 Analysis & Planning:
-  dp score             # DevPilot Readiness Score (DPRS)
+  dp score             # SoftSensorAI Readiness Score (DPRS)
   dp detect            # Detect technology stack
   dp plan              # Preview setup changes (dry run)
   dp tickets           # Generate structured backlog from code

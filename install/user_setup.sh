@@ -1,18 +1,18 @@
 #!/usr/bin/env bash
 # SPDX-License-Identifier: GPL-3.0-only
-# DevPilot user-specific setup (for multi-user installations)
+# SoftSensorAI user-specific setup (for multi-user installations)
 # Run as regular user to configure personal settings
 set -euo pipefail
 
 # ============================================================================
-# User Setup Script for Multi-User DevPilot
+# User Setup Script for Multi-User SoftSensorAI
 # ============================================================================
-# This script configures DevPilot for an individual user when DevPilot
+# This script configures SoftSensorAI for an individual user when SoftSensorAI
 # is already installed system-wide (via multi_user_setup.sh)
 # ============================================================================
 
-USER_DIR="${DEVPILOT_USER_DIR:-$HOME/.devpilot}"
-SYSTEM_DIR="${DEVPILOT_ROOT:-/opt/devpilot}"
+USER_DIR="${SOFTSENSORAI_USER_DIR:-$HOME/.softsensorai}"
+SYSTEM_DIR="${SOFTSENSORAI_ROOT:-/opt/softsensorai}"
 
 # Color codes
 GREEN='\033[0;32m'
@@ -24,14 +24,14 @@ NC='\033[0m'
 # Check if system installation exists
 check_system_install() {
     if [[ ! -d "$SYSTEM_DIR" ]]; then
-        echo -e "${RED}[ERROR]${NC} DevPilot is not installed system-wide"
+        echo -e "${RED}[ERROR]${NC} SoftSensorAI is not installed system-wide"
         echo "Please ask your system administrator to run:"
         echo "  sudo /path/to/multi_user_setup.sh"
         exit 1
     fi
 
-    if [[ ! -x "$SYSTEM_DIR/bin/dp" ]] && [[ ! -x "/usr/local/bin/dp" ]]; then
-        echo -e "${RED}[ERROR]${NC} DevPilot binary not found"
+    if [[ ! -x "$SYSTEM_DIR/bin/ssai" ]] && [[ ! -x "/usr/local/bin/ssai" ]]; then
+        echo -e "${RED}[ERROR]${NC} SoftSensorAI binary not found"
         echo "System installation may be incomplete"
         exit 1
     fi
@@ -39,11 +39,11 @@ check_system_install() {
 
 # Initialize user directory
 init_user_dir() {
-    echo -e "${BLUE}[INFO]${NC} Initializing DevPilot for user: $USER"
+    echo -e "${BLUE}[INFO]${NC} Initializing SoftSensorAI for user: $USER"
 
     # Check if already initialized
     if [[ -d "$USER_DIR" ]] && [[ -f "$USER_DIR/config/settings.json" ]]; then
-        echo -e "${YELLOW}[WARN]${NC} DevPilot already initialized for this user"
+        echo -e "${YELLOW}[WARN]${NC} SoftSensorAI already initialized for this user"
         read -p "Reinitialize? This will backup existing config (y/N): " -n 1 -r
         echo
         if [[ ! $REPLY =~ ^[Yy]$ ]]; then
@@ -163,9 +163,9 @@ setup_api_keys() {
 
     # Create API keys template
     cat > "$USER_DIR/config/api_keys.env" <<'EOF'
-# DevPilot API Keys (Personal)
+# SoftSensorAI API Keys (Personal)
 # Fill in your API keys below
-# Run 'dp secure-keys' to encrypt this file after configuration
+# Run 'ssai secure-keys' to encrypt this file after configuration
 
 # AI Providers (at least one required)
 ANTHROPIC_API_KEY=""
@@ -201,7 +201,7 @@ EOF
 
     echo -e "${YELLOW}[!]${NC} API keys file created: $USER_DIR/config/api_keys.env"
     echo "    Please edit this file and add your API keys"
-    echo "    Then run: dp secure-keys"
+    echo "    Then run: ssai secure-keys"
 }
 
 # Create personal personas
@@ -248,41 +248,41 @@ setup_shell_integration() {
     esac
 
     # Check if already configured
-    if grep -q "DEVPILOT_USER_DIR" "$RC_FILE" 2>/dev/null; then
+    if grep -q "SOFTSENSORAI_USER_DIR" "$RC_FILE" 2>/dev/null; then
         echo -e "${YELLOW}[WARN]${NC} Shell integration already configured"
         return 0
     fi
 
-    # Add DevPilot configuration
+    # Add SoftSensorAI configuration
     cat >> "$RC_FILE" <<'EOF'
 
-# DevPilot configuration
-export DEVPILOT_USER_DIR="$HOME/.devpilot"
-export DEVPILOT_ROOT="/opt/devpilot"
+# SoftSensorAI configuration
+export SOFTSENSORAI_USER_DIR="$HOME/.softsensorai"
+export SOFTSENSORAI_ROOT="/opt/softsensorai"
 
 # Aliases
-alias dpp='dp palette'
-alias dpr='dp review'
-alias dpa='dp agent'
-alias dpi='dp init'
+alias ssaip='ssai palette'
+alias ssair='ssai review'
+alias ssaia='ssai agent'
+alias ssaii='ssai init'
 
 # Auto-load project settings when entering a directory
-devpilot_auto_load() {
-    if [[ -f "devpilot.project.yml" ]] || [[ -f ".devpilot.yml" ]]; then
-        if [[ -z "$DEVPILOT_PROJECT_LOADED" ]]; then
-            echo "📂 DevPilot project detected. Run 'dp init' to configure."
-            export DEVPILOT_PROJECT_LOADED=1
+softsensorai_auto_load() {
+    if [[ -f "softsensorai.project.yml" ]] || [[ -f ".softsensorai.yml" ]]; then
+        if [[ -z "$SOFTSENSORAI_PROJECT_LOADED" ]]; then
+            echo "📂 SoftSensorAI project detected. Run 'ssai init' to configure."
+            export SOFTSENSORAI_PROJECT_LOADED=1
         fi
     else
-        unset DEVPILOT_PROJECT_LOADED
+        unset SOFTSENSORAI_PROJECT_LOADED
     fi
 }
 
 # Hook into cd command
 if [[ -n "$BASH_VERSION" ]]; then
-    PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND;}devpilot_auto_load"
+    PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND;}softsensorai_auto_load"
 elif [[ -n "$ZSH_VERSION" ]]; then
-    precmd_functions+=(devpilot_auto_load)
+    precmd_functions+=(softsensorai_auto_load)
 fi
 EOF
 
@@ -297,8 +297,8 @@ create_examples() {
     # Create example project
     mkdir -p "$USER_DIR/workspace/example-project"
 
-    cat > "$USER_DIR/workspace/example-project/devpilot.project.yml" <<EOF
-# DevPilot Project Configuration Example
+    cat > "$USER_DIR/workspace/example-project/softsensorai.project.yml" <<EOF
+# SoftSensorAI Project Configuration Example
 name: example-project
 description: Example project for $USER
 
@@ -325,17 +325,17 @@ commands:
 EOF
 
     cat > "$USER_DIR/workspace/example-project/README.md" <<EOF
-# Example DevPilot Project
+# Example SoftSensorAI Project
 
-This is an example project showing DevPilot configuration.
+This is an example project showing SoftSensorAI configuration.
 
 ## Quick Start
 
 1. \`cd $USER_DIR/workspace/example-project\`
-2. \`dp init\` - Initialize DevPilot for this project
-3. \`dp review\` - Review any changes
-4. \`dp agent new "Add a new feature"\` - Create an agent task
-5. \`dp palette\` - Browse all commands
+2. \`ssai init\` - Initialize SoftSensorAI for this project
+3. \`ssai review\` - Review any changes
+4. \`ssai agent new "Add a new feature"\` - Create an agent task
+5. \`ssai palette\` - Browse all commands
 
 ## Your Settings
 
@@ -351,7 +351,7 @@ EOF
 print_summary() {
     echo ""
     echo "============================================"
-    echo "  DevPilot User Setup Complete!"
+    echo "  SoftSensorAI User Setup Complete!"
     echo "============================================"
     echo ""
     echo "Configuration location: $USER_DIR"
@@ -367,28 +367,28 @@ print_summary() {
     echo "   vi $USER_DIR/config/api_keys.env"
     echo ""
     echo "2. Encrypt your keys:"
-    echo "   dp secure-keys"
+    echo "   ssai secure-keys"
     echo ""
     echo "3. Source your shell config:"
     echo "   source $RC_FILE"
     echo ""
     echo "4. Try the example project:"
     echo "   cd $USER_DIR/workspace/example-project"
-    echo "   dp init"
+    echo "   ssai init"
     echo ""
     echo "Useful aliases now available:"
-    echo "  dpp - dp palette (command browser)"
-    echo "  dpr - dp review (code review)"
-    echo "  dpa - dp agent (AI agent)"
-    echo "  dpi - dp init (initialize project)"
+    echo "  ssaip - ssai palette (command browser)"
+    echo "  ssair - ssai review (code review)"
+    echo "  ssaia - ssai agent (AI agent)"
+    echo "  ssaii - ssai init (initialize project)"
     echo ""
-    echo -e "${GREEN}✅ You're ready to use DevPilot!${NC}"
+    echo -e "${GREEN}✅ You're ready to use SoftSensorAI!${NC}"
 }
 
 # Main flow
 main() {
     echo "============================================"
-    echo "  DevPilot User Setup"
+    echo "  SoftSensorAI User Setup"
     echo "============================================"
     echo ""
 

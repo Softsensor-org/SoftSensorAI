@@ -55,7 +55,7 @@ You'll see an interactive menu:
 
 ```
 ========================================
-        DEVPILOT PROFILE SELECTOR
+        SOFTSENSORAI PROFILE SELECTOR
 ========================================
 
 Select Organization Type:

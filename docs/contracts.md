@@ -4,8 +4,8 @@
 This repository uses a contract-driven development approach where every change must be tied to a specific contract that defines its scope, acceptance criteria, and testing requirements.
 
 ## Quick Start
-1. **Explore**: `dp vibe start "new feature"` - Start with exploration
-2. **Formalize**: `dp vibe promote` - Generate contract from exploration
+1. **Explore**: `ssai vibe start "new feature"` - Start with exploration
+2. **Formalize**: `ssai vibe promote` - Generate contract from exploration
 3. **Implement**: Make changes within contract scope
 4. **Commit**: Include `Contract-Id` and `Contract-Hash` trailers
 5. **Pass CI**: Automated scope and budget checks
@@ -93,24 +93,24 @@ git checkout -b vibe/exploration
 ### Step 1: Start with Exploration
 ```bash
 # Begin vibe session for experimentation
-dp vibe start "Add user authentication"
+ssai vibe start "Add user authentication"
 
 # Work freely - WARN mode won't block commits
 vim src/auth.js
 npm test
 
 # Take snapshots at milestones
-dp vibe snapshot "Basic auth working"
-dp vibe snapshot "Added JWT tokens"
+ssai vibe snapshot "Basic auth working"
+ssai vibe snapshot "Added JWT tokens"
 
 # End session and review impact
-dp vibe end
+ssai vibe end
 ```
 
 ### Step 2: Promote to Contract
 ```bash
 # Auto-generate contract from exploration
-dp vibe promote
+ssai vibe promote
 
 # Output:
 # ✅ Created contract: contracts/F-M4K8-A9B2.contract.md

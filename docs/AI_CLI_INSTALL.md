@@ -5,7 +5,7 @@ SoftSensorAI.
 
 ## Required CLIs by Provider
 
-SoftSensorAI's AI integration (`dp review`, `dp agent`) requires one of these CLI tools installed:
+SoftSensorAI's AI integration (`ssai review`, `ssai agent`) requires one of these CLI tools installed:
 
 ### Claude (Anthropic)
 
@@ -107,10 +107,10 @@ Test the AI integration:
 ```bash
 # Test with a simple review
 echo "def add(a, b): return a + b" > test.py
-dp review test.py
+ssai review test.py
 
 # Test agent functionality
-dp agent new --goal "Add type hints to test.py"
+ssai agent new --goal "Add type hints to test.py"
 ```
 
 ## Troubleshooting

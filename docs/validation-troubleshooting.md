@@ -20,7 +20,7 @@ Fix Common Issues
 
 ```bash
 # In the repo missing files
-<path-to-devpilot>/setup_agents_repo.sh --force   # or rerun from this repo: ./setup_agents_repo.sh
+<path-to-softsensorai>/setup_agents_repo.sh --force   # or rerun from this repo: ./setup_agents_repo.sh
 
 # CRLF or shell nits in this repo
 make fmt && make audit

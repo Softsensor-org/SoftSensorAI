@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: GPL-3.0-only
-"""Tests for DPRS (DevPilot Readiness Score) script."""
+"""Tests for DPRS (SoftSensorAI Readiness Score) script."""
 
 import json
 import os
@@ -39,7 +39,7 @@ class TestDPRS:
             text=True
         )
         assert result.returncode == 0
-        assert "DevPilot Readiness Score" in result.stdout
+        assert "SoftSensorAI Readiness Score" in result.stdout
         assert "Usage:" in result.stdout
 
     def test_dprs_generates_output(self, dprs_script, temp_output_dir):

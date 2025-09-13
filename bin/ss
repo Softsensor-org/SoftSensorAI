@@ -3,13 +3,46 @@ set -euo pipefail
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "$DIR/.." && pwd)"
 
-# Route to softsensorai for main commands
-if [ -x "$ROOT_DIR/softsensorai" ]; then
-    exec "$ROOT_DIR/softsensorai" "$@"
-elif [ -x "$DIR/dp" ] && [ "${0##*/}" = "ss" ]; then
-    # Fallback to dp if softsensorai doesn't exist
-    exec "$DIR/dp" "$@"
-else
-    echo "error: softsensorai not found at $ROOT_DIR"
-    exit 127
-fi
+# Simple command routing
+case "${1:-}" in
+    "setup")
+        shift
+        exec "$ROOT_DIR/setup/user_choice_setup.sh" "$@"
+        ;;
+    "init"|"doctor"|"help"|"version")
+        # Route to full implementation if available
+        if [ -x "$ROOT_DIR/softsensorai" ]; then
+            exec "$ROOT_DIR/softsensorai" "$@"
+        elif [ -x "$DIR/ss-main" ]; then
+            exec "$DIR/ss-main" "$@"
+        else
+            echo "Command not available yet - run setup first"
+            exit 1
+        fi
+        ;;
+    "")
+        echo "SoftSensorAI - AI-powered development tools"
+        echo ""
+        echo "Usage: ssai <command>"
+        echo ""
+        echo "Commands:"
+        echo "  setup     Setup a project with AI tools"
+        echo "  review    AI code review (requires AI CLI)"
+        echo "  tickets   Generate tickets from code (requires AI CLI)"
+        echo "  doctor    Check system health"
+        echo "  help      Show help"
+        echo ""
+        echo "Start with: ssai setup"
+        ;;
+    *)
+        # Route everything else to full implementation
+        if [ -x "$ROOT_DIR/softsensorai" ]; then
+            exec "$ROOT_DIR/softsensorai" "$@"
+        elif [ -x "$DIR/ss-main" ]; then
+            exec "$DIR/ss-main" "$@"
+        else
+            echo "Command '$1' not available - try 'ssai setup' first"
+            exit 1
+        fi
+        ;;
+esac

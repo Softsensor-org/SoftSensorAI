@@ -20,7 +20,7 @@ acceptance_criteria:
       - tests/contract/F-SETUP/banner.test.sh
   - id: AC-2
     must: MUST use correct paths
-    text: Paths point to softsensorai directories, not devpilot
+    text: Paths point to softsensorai directories, not softsensorai
     tests:
       - tests/contract/F-SETUP/paths.test.sh
   - id: AC-3
@@ -49,7 +49,7 @@ This contract ensures the `dp setup` command provides correct branding, paths, a
 ### Path Validation
 - Points to `~/softsensorai` for installation
 - Uses `.softsensor/` for configuration
-- No references to old `devpilot` paths
+- No references to old `softsensorai` paths
 
 ### Next-Steps Guidance
 Structured output block containing:
@@ -76,9 +76,9 @@ mkdir test-project && cd test-project
 dp setup
 
 # Verify output:
-# - Shows "DEVPILOT SETUP" or "SETUP COMPLETE" banner
+# - Shows "SOFTSENSORAI SETUP" or "SETUP COMPLETE" banner
 # - Uses "dp" in command examples
-# - No "devpilot" paths shown
+# - No "softsensorai" paths shown
 
 # Test with repository URL
 dp setup https://github.com/example/repo
@@ -97,7 +97,7 @@ bash tests/contract/F-SETUP/next-steps.test.sh
 ### Setup Banner
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  DEVPILOT SETUP
+  SOFTSENSORAI SETUP
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
@@ -118,9 +118,9 @@ bash tests/contract/F-SETUP/next-steps.test.sh
 
 ### Correct Commands
 All examples use `dp`:
-- `dp init` (not `devpilot init`)
-- `dp setup` (not `devpilot setup`)
-- `dp review` (not `devpilot review`)
+- `dp init` (not `softsensorai init`)
+- `dp setup` (not `softsensorai setup`)
+- `dp review` (not `softsensorai review`)
 
 ### Correct Paths
 - Installation: `~/softsensorai`
@@ -147,7 +147,7 @@ The command detects context and adapts:
 After successful setup:
 - `CLAUDE.md` - Project instructions
 - `.claude/` - Command definitions
-- `devpilot.project.yml` - Project configuration
+- `softsensorai.project.yml` - Project configuration
 - `.softsensor/` - Runtime configuration
 
 ## Performance Budget
@@ -165,7 +165,7 @@ If seeing old names, check:
 - Aliases in shell config
 
 ### Wrong Paths
-If seeing devpilot paths:
+If seeing softsensorai paths:
 - Check installation directory
 - Verify symlinks
 - Review environment variables

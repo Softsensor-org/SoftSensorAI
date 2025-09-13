@@ -16,13 +16,13 @@ SoftSensorAI uses a **contract-driven development** system to ensure quality and
 ### Quick Contract Workflow
 ```bash
 # 1. Start exploration (WARN mode)
-dp vibe start "new feature idea"
+ssai vibe start "new feature idea"
 
 # 2. Work freely and take snapshots
-dp vibe snapshot "milestone reached"
+ssai vibe snapshot "milestone reached"
 
 # 3. Generate contract from exploration
-dp vibe promote
+ssai vibe promote
 
 # 4. Commit with contract trailers
 git commit -m "feat: implement feature
@@ -34,25 +34,25 @@ Contract-Hash: def45678"
 ## 🚀 Quick Start (3 Steps)
 
 ```bash
-# 1. Install SoftSensorAI (one-time)
-git clone https://github.com/Softsensor-org/SoftSensorAI.git ~/softsensorai
-cd ~/softsensorai && ./setup_all.sh
-export PATH="$HOME/softsensorai/bin:$PATH"  # Add to ~/.bashrc
-# dp is the main command, ss is a compatibility alias
+# 1. Install SoftSensorAI (one-time) - clones to current directory
+git clone https://github.com/Softsensor-org/SoftSensorAI.git
+cd SoftSensorAI && chmod +x setup_all.sh && ./setup_all.sh
+export PATH="$(pwd)/bin:$PATH"  # Add to ~/.bashrc
+# ssai is the main command for SoftSensorAI
 
 # 2. Setup your project - ONE command!
-dp setup        # Interactive - just paste GitHub URL
+ssai setup        # Interactive - just paste GitHub URL
 # Or with URL directly:
-dp setup git@github.com:org/repo.git
+ssai setup git@github.com:org/repo.git
 # Or for existing repo:
-cd your-project && dp setup
+cd your-project && ssai setup
 
 # 3. Start using AI features
-dp              # Main command (ss also works as alias)
-dp setup        # Setup repos
-dp review       # AI code review  
-dp tickets      # Generate backlog
-dp help         # Quick reference
+ssai              # Main command
+ssai setup        # Setup repos
+ssai review       # AI code review
+ssai tickets      # Generate backlog
+ssai help         # Quick reference
 ```
 
 That's it! SoftSensorAI is now configured for your project. See [Full Guide](#getting-started) for
@@ -75,14 +75,14 @@ details.
 One command setup - automatically detects context:
 
 ```bash
-git clone https://github.com/Softsensor-org/SoftSensorAI.git ~/softsensorai
-cd ~/softsensorai && ./setup_all.sh
-export PATH="$HOME/softsensorai/bin:$PATH"  # Add to ~/.bashrc
+git clone https://github.com/Softsensor-org/SoftSensorAI.git
+cd SoftSensorAI && chmod +x setup_all.sh && ./setup_all.sh
+export PATH="$(pwd)/bin:$PATH"  # Add to ~/.bashrc or ~/.zshrc
 ```
 
 Then for any project:
 ```bash
-ss setup  # Just paste GitHub URL when prompted
+ssai setup   # Main command - just paste GitHub URL when prompted
 ```
 
 ### Multi-User / Team Installation
@@ -97,6 +97,13 @@ See [Multi-User Guide](docs/MULTI_USER.md) for team deployments.
 
 ## 📋 System Requirements
 
+**Prerequisites (Required):**
+- `bash` 4.0+ (check: `bash --version`)
+- `git` 2.0+ (check: `git --version`)
+- `curl` or `wget` (for downloads)
+- Internet connection
+- 2GB free disk space
+
 **Supported Systems:** ([Full compatibility guide](docs/OS_COMPATIBILITY.md))
 
 - ✅ **Linux** (Ubuntu 20.04+, Debian, Fedora, RHEL/CentOS/Rocky, Arch, Alpine)
@@ -107,12 +114,13 @@ See [Multi-User Guide](docs/MULTI_USER.md) for team deployments.
 - ✅ **Cloud IDEs** (Gitpod, Cloud9, Coder)
 - ✅ **Unix** (Solaris/illumos - experimental)
 
-**Prerequisites:**
+**AI CLIs (Optional but Recommended):**
+- `claude` - Anthropic's Claude CLI
+- `codex` - OpenAI Codex CLI
+- `gemini` - Google Gemini CLI
+- `grok` - xAI Grok CLI
 
-- `bash` 4.0+ (check with `bash --version`)
-- `git` 2.0+ (check with `git --version`)
-- Internet connection for tool downloads
-- 2GB free disk space
+*Note: AI features work neutrally without CLIs - they just won't run if unavailable*
 
 ## 🚀 What SoftSensorAI Actually Unlocks
 
@@ -169,7 +177,7 @@ Your Home Directory:
 
 ### 2️⃣ Per-Project Setup (For EACH project)
 
-After running `dp setup` on a project:
+After running `ssai setup` on a project:
 
 ```
 your-project/
@@ -192,8 +200,8 @@ Before installing, run our diagnostic tool to ensure your system is ready:
 
 ```bash
 # Option 1: If you have access to the repository, clone and run locally
-git clone https://github.com/Softsensor-org/SoftSensorAI.git ~/softsensorai
-cd ~/softsensorai && ./bin/ss doctor
+git clone https://github.com/Softsensor-org/SoftSensorAI.git
+cd SoftSensorAI && ./bin/ssai doctor
 
 # Option 2: Quick download and run (when repository is public)
 # curl -sL https://raw.githubusercontent.com/Softsensor-org/SoftSensorAI/main/scripts/doctor.sh | bash
@@ -219,9 +227,9 @@ All checks passed! Ready for SoftSensorAI installation.
 
 ```bash
 # This installs tools on YOUR computer, not in any project
-git clone https://github.com/Softsensor-org/SoftSensorAI.git ~/softsensorai
-cd ~/softsensorai
-./setup_all.sh
+git clone https://github.com/Softsensor-org/SoftSensorAI.git
+cd SoftSensorAI
+chmod +x setup_all.sh && ./setup_all.sh
 
 # Optional: Only if building AI/ML applications
 # ./scripts/install_ai_frameworks.sh  # Skip for web/backend projects
@@ -277,7 +285,7 @@ What this does:
 ==> Setting up AI agents...
   ✓ Claude configuration
   ✓ Gemini configuration
-==> Setup complete! Next: run 'dp setup' for your projects
+==> Setup complete! Next: run 'ssai setup' for your projects
 ```
 
 ### Step 2: Set Up Your Project
@@ -286,7 +294,7 @@ What this does:
 
 ```mermaid
 graph LR
-    A[Start] --> B[dp setup]
+    A[Start] --> B[ssai setup]
     B --> C{Smart<br/>Detection}
 
     C -->|URL Given| D[Clone Repo]
@@ -304,7 +312,7 @@ graph LR
     I -->|Clone URL| D
 
     J --> G
-    G --> K[dp init]
+    G --> K[ssai init]
     K --> L[✅ AI-Ready<br/>Repository]
 
     style A fill:#e1f5e1
@@ -322,27 +330,27 @@ graph LR
 
 | Scenario          | Command                | What Happens                    |
 | ----------------- | ---------------------- | ------------------------------- |
-| In existing repo  | `dp setup`             | Analyzes → Merges/Creates files |
-| Have repo URL     | `dp setup https://...` | Clones → Creates files          |
-| Empty directory   | `dp setup`             | Interactive wizard              |
-| Need system check | `dp doctor`            | Validates environment           |
+| In existing repo  | `ssai setup`             | Analyzes → Merges/Creates files |
+| Have repo URL     | `ssai setup https://...` | Clones → Creates files          |
+| Empty directory   | `ssai setup`             | Interactive wizard              |
+| Need system check | `ssai doctor`            | Validates environment           |
 
 #### Quick Start: One Command Setup
 
 ```bash
 # SoftSensorAI handles everything with smart detection:
-dp setup
+ssai setup
 
 # Or with a URL:
-dp setup https://github.com/user/repo
+ssai setup https://github.com/user/repo
 
 # Add personas for your project type (e.g., backend API)
-dp persona add software-architect
-dp persona add backend-developer
-dp persona add devops-engineer
+ssai persona add software-architect
+ssai persona add backend-developer
+ssai persona add devops-engineer
 
 # Check what got configured
-dp project
+ssai project
 ```
 
 #### Option B: New Repository (Clone and Setup)
@@ -351,11 +359,11 @@ If you need to clone a repository first:
 
 ```bash
 # Run setup with URL
-dp setup https://github.com/you/your-project
+ssai setup https://github.com/you/your-project
 
 # After setup completes, verify your configuration
 cd /path/to/cloned/project
-dp project
+ssai project
 ```
 
 > **Note**: AI review features require a CLI to be installed (claude, codex, gemini, or grok). If no
@@ -472,12 +480,12 @@ What this does:
 
 | Command            | What it does               | When to use               |
 | ------------------ | -------------------------- | ------------------------- |
-| `dp setup`         | Set up any project         | Starting work on any repo |
-| `dp init`          | Initialize & configure     | After setup               |
-| `dp doctor`        | Check system health        | Troubleshooting           |
-| `dp review`        | AI review of your changes  | Before opening PR         |
-| `dp tickets`       | Generate tickets from code | Planning sprint work      |
-| `dp palette`       | Browse all commands        | Discovering features      |
+| `ssai setup`       | Set up any project         | Starting work on any repo |
+| `ssai init`        | Initialize & configure     | After setup               |
+| `ssai doctor`      | Check system health        | Troubleshooting           |
+| `ssai review`      | AI review of your changes  | Before opening PR         |
+| `ssai tickets`     | Generate tickets from code | Planning sprint work      |
+| `ssai palette`     | Browse all commands        | Discovering features      |
 | `rg "search term"` | Lightning-fast code search | Finding code patterns     |
 | `gh pr create`     | Create pull request        | Ready to merge            |
 
@@ -505,23 +513,23 @@ system/active.md    → Sets baseline behavior (skill level, phase)
 
 ```bash
 cd your-project
-dp setup
-dp init --skill l2 --phase beta
+ssai setup
+ssai init --skill l2 --phase beta
 ```
 
 **For new repos (need to clone):**
 
 ```bash
-dp setup https://github.com/user/repo
+ssai setup https://github.com/user/repo
 # Then initialize with your preferences
-dp init
+ssai init
 ```
 
 ### Changing Settings Later
 
 ```bash
 cd your-project
-dp profile --skill expert --phase scale
+ssai profile --skill expert --phase scale
 ```
 
 ### AI PR Review (Optional)
@@ -582,10 +590,10 @@ assistance.
 
 ```bash
 # Add a single persona
-dp persona add data-scientist
+ssai persona add data-scientist
 
 # View active personas
-dp persona show
+ssai persona show
 ```
 
 ### Persona Starter Stacks
@@ -594,11 +602,11 @@ Quick setup for common project types:
 
 | Project Type        | Personas to Add                      | Setup Commands                                                                          |
 | ------------------- | ------------------------------------ | --------------------------------------------------------------------------------------- |
-| **Backend API**     | architect, backend, devops           | `dp persona add software-architect backend-developer devops-engineer`                   |
-| **Microservices**   | architect, backend, devops, security | `dp persona add software-architect backend-developer devops-engineer security-engineer` |
-| **ML/Data Science** | data-scientist, backend, devops      | `dp persona add data-scientist backend-developer devops-engineer`                       |
-| **Full Stack App**  | frontend, backend, devops            | `dp persona add frontend-developer backend-developer devops-engineer`                   |
-| **Infrastructure**  | devops, security, architect          | `dp persona add devops-engineer security-engineer software-architect`                   |
+| **Backend API**     | architect, backend, devops           | `ssai persona add software-architect backend-developer devops-engineer`                   |
+| **Microservices**   | architect, backend, devops, security | `ssai persona add software-architect backend-developer devops-engineer security-engineer` |
+| **ML/Data Science** | data-scientist, backend, devops      | `ssai persona add data-scientist backend-developer devops-engineer`                       |
+| **Full Stack App**  | frontend, backend, devops            | `ssai persona add frontend-developer backend-developer devops-engineer`                   |
+| **Infrastructure**  | devops, security, architect          | `ssai persona add devops-engineer security-engineer software-architect`                   |
 
 ### Persona-Specific Commands
 
@@ -647,13 +655,13 @@ Quick reference for what gets enforced at each project phase:
 
 - **Default CI** (this repo): Light validation - shellcheck, basic tests
 - **Phase CI** (your projects): Full security gates activated by profile settings
-- Run `dp init --phase beta` to install strict CI with blocking gates
+- Run `ssai init --phase beta` to install strict CI with blocking gates
 
 **Managing Legacy Issues:**
 
 - Set `SEMGREP_BASELINE_REF` repo variable to suppress pre-existing findings
 - Create `.trivyignore` file to suppress known/accepted CVEs
-- Use `dp init --phase beta` to change enforcement level
+- Use `ssai init --phase beta` to change enforcement level
 
 ## 🚀 AI Development Environment **[Optional Module]**
 
@@ -848,8 +856,8 @@ Claude: [Analyzes code, generates prioritized tickets with estimates]
 
 ```bash
 # Use AI command files with CLI-first approach
-dp tickets                           # Uses AI to analyze codebase
-dp tickets --quick                   # Quick analysis mode
+ssai tickets                           # Uses AI to analyze codebase
+ssai tickets --quick                   # Quick analysis mode
 
 # Outputs (integration-ready):
 # tickets/tickets.json      - Raw AI output
@@ -968,7 +976,7 @@ What each category includes:
 Skip the interactive prompts:
 
 ```bash
-dp setup git@github.com:you/repo.git \
+ssai setup git@github.com:you/repo.git \
   --org work \
   --category backend \
   --skill beginner \
@@ -979,7 +987,7 @@ For existing projects (without cloning):
 
 ```bash
 cd /your/existing/project
-dp init --skill expert --phase scale
+ssai init --skill expert --phase scale
 ```
 
 </details>
@@ -1089,11 +1097,11 @@ SoftSensorAI includes many advanced tools not covered above:
 
 ```bash
 # Check your entire environment setup (already covered in Step 0)
-dp doctor
+ssai doctor
 # Output: Shows status of all tools, versions, and configurations
 
 # Show your current profile settings
-dp project
+ssai project
 # Output: Current skill level, phase, and active configurations
 
 # Validate all AI agent configurations across projects (if needed)
@@ -1118,15 +1126,15 @@ scripts/graduate.sh advance     # Graduate to next level
 
 ```bash
 # IMPORTANT: Preview setup without making changes (dry run)
-dp setup --dry-run https://github.com/you/api
+ssai setup --dry-run https://github.com/you/api
 # Shows exactly what files would be created, where they'd go
 
 # Then run actual setup after reviewing the plan
-dp setup --dry-run https://github.com/you/repo  # Preview first
-dp setup https://github.com/you/repo            # Actual setup
+ssai setup --dry-run https://github.com/you/repo  # Preview first
+ssai setup https://github.com/you/repo            # Actual setup
 
 # Generate tickets from codebase (CLI-first, JSON→CSV)
-dp tickets --quick
+ssai tickets --quick
 # Output: tickets/tickets.json, tickets/backlog.csv, tickets/backlog.md
 
 # Or use justfile shortcut
@@ -1262,7 +1270,7 @@ source ~/.bashrc  # or ~/.zshrc for Zsh
 sudo ~/softsensorai/install/key_software_$(uname -s | tr '[:upper:]' '[:lower:]').sh
 ```
 
-**'dp init' fails to configure profile**
+**'ssai init' fails to configure profile**
 
 ```bash
 # Pull latest fixes
@@ -1286,7 +1294,7 @@ python3 -m ensurepip  # Python
 
 - Ensure `.claude/commands/` exists in your project
 - Check `.claude/settings.json` has proper permissions
-- Run `dp init` to reapply configuration
+- Run `ssai init` to reapply configuration
 
 ### Getting Help
 

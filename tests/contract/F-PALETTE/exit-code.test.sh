@@ -1,10 +1,10 @@
 #!/bin/bash
 # SPDX-License-Identifier: GPL-3.0-only
-# Test: dp palette exits with non-zero code when fzf missing
+# Test: ssai palette exits with non-zero code when fzf missing
 
 set -e
 
-echo "Testing: dp palette exit code"
+echo "Testing: ssai palette exit code"
 
 # Temporarily hide fzf if it exists
 FZF_PATH=$(which fzf 2>/dev/null || echo "")
@@ -13,8 +13,8 @@ if [ -n "$FZF_PATH" ]; then
     export PATH=$(echo "$PATH" | tr ':' '\n' | grep -v "$(dirname $FZF_PATH)" | tr '\n' ':')
 fi
 
-# Run dp palette and capture exit code
-dp palette > /dev/null 2>&1
+# Run ssai palette and capture exit code
+ssai palette > /dev/null 2>&1
 EXIT_CODE=$?
 
 # Restore PATH if needed

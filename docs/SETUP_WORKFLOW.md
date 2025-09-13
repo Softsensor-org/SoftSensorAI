@@ -11,7 +11,7 @@ SoftSensorAI provides two main paths for setting up AI-assisted development in y
 
 ```mermaid
 graph TD
-    Start([Start SoftSensorAI Setup]) --> DpSetup[dp setup]
+    Start([Start SoftSensorAI Setup]) --> DpSetup[ssai setup]
 
     %% Smart Detection
     DpSetup --> Detect{Smart Detection}
@@ -43,8 +43,8 @@ graph TD
     CreateFiles[Create Files:<br/>• CLAUDE.md<br/>• .claude/settings.json<br/>• .mcp.json<br/>• .claude/commands/*<br/>• AGENTS.md]
 
     %% Initialize
-    CreateFiles --> DpInit[dp init]
-    DpInit --> Steps[Run 3 Steps:<br/>1. dp doctor<br/>2. Apply profile<br/>3. Build project]
+    CreateFiles --> DpInit[ssai init]
+    DpInit --> Steps[Run 3 Steps:<br/>1. ssai doctor<br/>2. Apply profile<br/>3. Build project]
     Steps --> Success([✅ Setup Complete])
 
     style Start fill:#e1f5e1
@@ -60,7 +60,7 @@ graph TD
 
 ```bash
 # Setup with URL
-dp setup https://github.com/user/repo
+ssai setup https://github.com/user/repo
 ```
 
 #### Step-by-Step Process:
@@ -107,7 +107,7 @@ dp setup https://github.com/user/repo
 cd /path/to/your/repo
 
 # Run setup - automatically detects existing repo
-dp setup
+ssai setup
 ```
 
 #### Step-by-Step Process:

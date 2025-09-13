@@ -1,10 +1,10 @@
 #!/bin/bash
 # SPDX-License-Identifier: GPL-3.0-only
-# Test: dp palette checks for fzf availability
+# Test: ssai palette checks for fzf availability
 
 set -e
 
-echo "Testing: dp palette fzf detection"
+echo "Testing: ssai palette fzf detection"
 
 # Temporarily hide fzf if it exists
 FZF_PATH=$(which fzf 2>/dev/null || echo "")
@@ -15,8 +15,8 @@ if [ -n "$FZF_PATH" ]; then
     export PATH=$(echo "$PATH" | tr ':' '\n' | grep -v "$(dirname $FZF_PATH)" | tr '\n' ':')
 fi
 
-# Run dp palette and capture output
-OUTPUT=$(dp palette 2>&1 || true)
+# Run ssai palette and capture output
+OUTPUT=$(ssai palette 2>&1 || true)
 
 # Check for fzf detection message
 if echo "$OUTPUT" | grep -q "fzf not found"; then

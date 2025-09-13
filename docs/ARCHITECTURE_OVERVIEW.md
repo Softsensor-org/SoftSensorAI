@@ -102,8 +102,8 @@ pip install anthropic
 export ANTHROPIC_API_KEY="sk-ant-..."
 
 # Use with SoftSensorAI
-dp review  # Uses AI for code review
-dp agent new --goal "implement user authentication"  # Creates AI-guided task
+ssai review  # Uses AI for code review
+ssai agent new --goal "implement user authentication"  # Creates AI-guided task
 ```
 
 ### Codex CLI
@@ -465,4 +465,4 @@ cat .github/workflows/ci.yml | grep "exit-code"
 
 ---
 
-_DevPilot: CLI-first AI development that scales with your team._
+_SoftSensorAI: CLI-first AI development that scales with your team._

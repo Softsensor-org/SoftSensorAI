@@ -101,7 +101,7 @@ behavior).
 
 ### 7. SoftSensorAI CLI ✅
 
-**Test Command**: `./bin/dp`
+**Test Command**: `./bin/ssai`
 
 **Results**:
 

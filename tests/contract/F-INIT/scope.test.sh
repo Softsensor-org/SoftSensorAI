@@ -1,10 +1,10 @@
 #!/bin/bash
 # SPDX-License-Identifier: GPL-3.0-only
-# Test: dp init does not write outside system/ and artifacts/
+# Test: ssai init does not write outside system/ and artifacts/
 
 set -e
 
-echo "Testing: dp init scope constraints"
+echo "Testing: ssai init scope constraints"
 
 # Create temp directory for test
 TEST_DIR=$(mktemp -d)
@@ -15,8 +15,8 @@ touch .marker_root
 mkdir -p src && touch src/.marker_src
 mkdir -p bin && touch bin/.marker_bin
 
-# Run dp init
-dp init > /dev/null 2>&1 || true
+# Run ssai init
+ssai init > /dev/null 2>&1 || true
 
 # Check that markers are untouched
 ERRORS=0

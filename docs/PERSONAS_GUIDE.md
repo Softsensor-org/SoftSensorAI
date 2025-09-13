@@ -28,10 +28,10 @@ parallelization, and process management.
 cd ~/projects/ml/your-model
 
 # Apply data scientist persona
-dp persona add data-scientist
+ssai persona add data-scientist
 
 # OR use interactive menu
-dp profile
+ssai profile
 # Select: 3) Data Scientist
 ```
 
@@ -304,10 +304,10 @@ Focused on system design, scalability, performance optimization, and architectur
 
 ```bash
 # Apply architect persona
-dp persona add software-architect
+ssai persona add software-architect
 
 # OR interactive
-dp profile
+ssai profile
 # Select: 2) Software Architect
 ```
 
@@ -477,13 +477,13 @@ You can switch personas based on your current task:
 
 ```bash
 # Morning: Architecture planning
-dp persona add software-architect
+ssai persona add software-architect
 
 # Afternoon: Coding implementation
-dp persona add developer
+ssai persona add developer
 
 # Evening: Training ML model
-dp persona add data-scientist
+ssai persona add data-scientist
 ```
 
 ## Customizing Personas
@@ -552,7 +552,7 @@ scripts/apply_persona.sh my-role
 cat .claude/persona.json
 
 # Reapply
-dp persona add [persona-name]
+ssai persona add [persona-name]
 ```
 
 ### Commands Not Available

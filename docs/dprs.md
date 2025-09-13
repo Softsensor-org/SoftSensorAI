@@ -10,13 +10,13 @@ understand their progress and identify improvement areas.
 
 ```bash
 # Calculate score for current repository
-dp score
+ssai score
 
 # Or use the script directly
 ~/softsensorai/scripts/dprs.sh
 
 # Generate detailed report
-dp score --verbose --output artifacts/
+ssai score --verbose --output artifacts/
 ```
 
 ## Scoring Dimensions
@@ -116,16 +116,16 @@ DPRS can automatically suggest appropriate skill level and phase:
 
 ```bash
 # Calculate and apply recommended settings
-dprs_score=$(devpilot dprs --json | jq -r '.total_score')
+dprs_score=$(softsensorai dprs --json | jq -r '.total_score')
 
 if [[ $dprs_score -ge 90 ]]; then
-    devpilot profile --skill expert --phase scale
+    softsensorai profile --skill expert --phase scale
 elif [[ $dprs_score -ge 75 ]]; then
-    devpilot profile --skill l2 --phase beta
+    softsensorai profile --skill l2 --phase beta
 elif [[ $dprs_score -ge 60 ]]; then
-    devpilot profile --skill l1 --phase mvp
+    softsensorai profile --skill l1 --phase mvp
 else
-    devpilot profile --skill beginner --phase poc
+    softsensorai profile --skill beginner --phase poc
 fi
 ```
 
@@ -292,7 +292,7 @@ check_custom_metric() {
 
    ```bash
    # Add to daily standup notes
-   devpilot dprs --brief
+   softsensorai dprs --brief
    ```
 
 3. **Gate deployments:**
@@ -300,7 +300,7 @@ check_custom_metric() {
    # In CI/CD pipeline
    - name: Check DPRS threshold
      run: |
-       score=$(devpilot dprs --json | jq -r '.total_score')
+       score=$(softsensorai dprs --json | jq -r '.total_score')
        if [[ $score -lt 75 ]]; then
          echo "DPRS too low for production: $score < 75"
          exit 1

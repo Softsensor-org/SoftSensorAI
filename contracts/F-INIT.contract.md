@@ -1,11 +1,11 @@
 ---
 id: F-INIT
-title: CLI dp init bootstrap summary
+title: CLI ssai init bootstrap summary
 status: maintained
 owner: system
 version: 1.0.0
 allowed_globs:
-  - bin/dp
+  - bin/ssai
   - scripts/doctor.sh
   - scripts/apply_profile.sh
   - scripts/system_build.sh
@@ -36,9 +36,9 @@ checkpoints:
     notes: Core functionality preserved
 ---
 
-# F-INIT: dp init Bootstrap
+# F-INIT: ssai init Bootstrap
 
-This contract ensures the `dp init` command correctly initializes a project with proper configuration and output.
+This contract ensures the `ssai init` command correctly initializes a project with proper configuration and output.
 
 ## Features
 
@@ -67,7 +67,7 @@ Creates or updates `system/active.md` containing:
 ### Manual Testing
 ```bash
 # Run init command
-dp init
+ssai init
 
 # Verify output contains:
 # - "INITIALIZATION COMPLETE" banner
@@ -108,10 +108,10 @@ bash tests/contract/F-INIT/scope.test.sh
 
   Next Steps
   ──────────
-  1. dp tickets    → Generate structured backlog
-  2. dp review     → Review your changes with AI
+  1. ssai tickets    → Generate structured backlog
+  2. ssai review     → Review your changes with AI
   3. just dev      → Start development server
-  4. dp palette    → Browse all commands
+  4. ssai palette    → Browse all commands
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
@@ -122,7 +122,7 @@ project/
 ├── system/
 │   └── active.md      # Generated system prompt
 ├── artifacts/         # Working directory for outputs
-└── devpilot.project.yml  # Optional project config
+└── softsensorai.project.yml  # Optional project config
 ```
 
 ## Implementation Notes

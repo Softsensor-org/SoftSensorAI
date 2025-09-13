@@ -1,4 +1,4 @@
-# DevPilot Preview Environment
+# SoftSensorAI Preview Environment
 # Minimal skeleton for PR preview and testing
 # Usage: docker-compose -f compose.preview.yml up
 
