@@ -1,13 +1,12 @@
 #!/usr/bin/env bash
 # SPDX-License-Identifier: GPL-3.0-only
 set -euo pipefail
- say(){ printf "\033[1;36m==> %s\033[0m\n" "$*"; }
- warn(){ printf "\033[1;33m[warn]\033[0m %s\n" "$*"; }
- err(){ printf "\033[1;31m[err]\033[0m %s\n" "$*"; }
-has(){ command -v "$1" >/dev/null 2>&1; }
 
-# Script directory (portable)
+# Load shared utilities
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/../lib/sh/common.sh"
+
+# Script directory is already defined in common.sh
 
 # Parse command-line arguments
 LITE=0; NO_HOOKS=0; NO_SCRIPTS=0; NO_BOOTSTRAP=0; NON_INTERACTIVE=0; WITH_CODEX=0
@@ -117,15 +116,16 @@ require_tools(){
   else
     tools=(git gh curl jq)
   fi
-  local m=(); local t
-  for t in "${tools[@]}"; do has "$t" || m+=("$t"); done
-  if ((${#m[@]})); then
-    err "Missing required tools: ${m[*]}"
+  local missing=()
+  for tool in "${tools[@]}"; do
+    has "$tool" || missing+=("$tool")
+  done
+  if ((${#missing[@]})); then
+    error "Missing required tools: ${missing[*]}"
     echo "Install with: ./install/key_software_linux.sh (Linux/WSL) or ./install/key_software_macos.sh (macOS)"
     exit 1
   fi
 }
-ensure_dir(){ mkdir -p "$1"; }
 to_ssh_url(){ local u="$1"; if [[ "$u" =~ ^https?://github\.com/([^/]+)/([^/]+?)/?$ ]]; then local repo="${BASH_REMATCH[2]}"; repo="${repo%.git}"; echo "git@github.com:${BASH_REMATCH[1]}/${repo}.git"; else echo "$u"; fi; }
 select_menu(){ local PS3="Select a number: "; select opt in "$@"; do [[ -n "$opt" ]] && { echo "$opt"; return; }; echo "Invalid. Try again."; done; }
 
@@ -313,7 +313,7 @@ RC
 
 # Function to check if we're in an existing repo
 check_existing_repo() {
-  if [ -d ".git" ] || [ -f "package.json" ] || [ -f "requirements.txt" ] || [ -f "pyproject.toml" ]; then
+  if is_git_repo || [ -f "package.json" ] || [ -f "requirements.txt" ] || [ -f "pyproject.toml" ]; then
     return 0
   fi
   return 1

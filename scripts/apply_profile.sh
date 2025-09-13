@@ -3,12 +3,9 @@
 # Apply skill level and project phase profiles to configure the repository
 set -euo pipefail
 
-# Colors
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-NC='\033[0m' # No Color
+# Load shared utilities
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/../lib/sh/common.sh"
 
 # Default values
 SKILL="beginner"
@@ -152,13 +149,13 @@ VALID_SKILLS="vibe beginner l1 l2 expert custom"
 VALID_PHASES="poc mvp beta scale"
 
 if ! echo "$VALID_SKILLS" | grep -w "$SKILL" > /dev/null; then
-  echo -e "${RED}Invalid skill level: $SKILL${NC}"
+  error "Invalid skill level: $SKILL"
   echo "Valid options: $VALID_SKILLS"
   exit 1
 fi
 
 if ! echo "$VALID_PHASES" | grep -w "$PHASE" > /dev/null; then
-  echo -e "${RED}Invalid phase: $PHASE${NC}"
+  error "Invalid phase: $PHASE"
   echo "Valid options: $VALID_PHASES"
   exit 1
 fi
@@ -178,11 +175,10 @@ if [ -z "$TEACH_MODE" ]; then
   esac
 fi
 
-echo -e "${BLUE}=== Applying Profile ===${NC}"
-echo -e "Skill Level: ${GREEN}$SKILL${NC}"
-echo -e "Project Phase: ${GREEN}$PHASE${NC}"
-echo -e "Teach Mode: ${GREEN}$TEACH_MODE${NC}"
-echo ""
+log "Applying Profile"
+info "Skill Level: $SKILL"
+info "Project Phase: $PHASE"
+info "Teach Mode: $TEACH_MODE"
 
 # Function to merge JSON files
 merge_json() {
@@ -198,13 +194,13 @@ merge_json() {
     fi
   else
     # Fallback without jq - just copy overlay
-    echo -e "${YELLOW}Warning: jq not installed, using simple copy${NC}"
+    warn "jq not installed, using simple copy"
     cp "$overlay" "$output"
   fi
 }
 
 # 1. Apply permissions
-echo -e "${BLUE}1. Configuring permissions...${NC}"
+log "1. Configuring permissions..."
 PERM_FILE="$SETUP_SCRIPTS_DIR/profiles/skills/permissions-${SKILL}.json"
 
 if [ -f "$PERM_FILE" ]; then
@@ -231,11 +227,11 @@ if [ -f "$PERM_FILE" ]; then
     mv .claude/settings.json.tmp .claude/settings.json
   fi
 else
-  echo -e "${RED}  ✗ Permissions file not found: $PERM_FILE${NC}"
+  error "Permissions file not found: $PERM_FILE"
 fi
 
 # 2. Setup command sets
-echo -e "${BLUE}2. Installing command sets...${NC}"
+log "2. Installing command sets..."
 COMMANDS_DIR="$SETUP_SCRIPTS_DIR/.claude/commands/sets/$SKILL"
 
 if [ -d "$COMMANDS_DIR" ]; then
@@ -253,11 +249,11 @@ if [ -d "$COMMANDS_DIR" ]; then
     fi
   done
 else
-  echo -e "${YELLOW}  ⚠ No command set found for skill level: $SKILL${NC}"
+  warn "No command set found for skill level: $SKILL"
 fi
 
 # 3. Configure CI workflow
-echo -e "${BLUE}3. Configuring CI workflow...${NC}"
+log "3. Configuring CI workflow..."
 CI_FILE="$SETUP_SCRIPTS_DIR/profiles/phases/ci-${PHASE}.yml"
 
 if [ -f "$CI_FILE" ]; then
@@ -265,11 +261,11 @@ if [ -f "$CI_FILE" ]; then
   cp "$CI_FILE" .github/workflows/ci.yml
   echo "  ✓ Installed CI workflow for $PHASE phase"
 else
-  echo -e "${RED}  ✗ CI workflow not found: $CI_FILE${NC}"
+  error "CI workflow not found: $CI_FILE"
 fi
 
 # 4. Create PROFILE.md
-echo -e "${BLUE}4. Creating profile documentation...${NC}"
+log "4. Creating profile documentation..."
 cat > PROFILE.md <<EOF
 # Repository Profile
 
@@ -563,7 +559,7 @@ EOF
 echo "  ✓ Created PROFILE.md"
 
 # 5. System prompt layering
-echo -e "${BLUE}5. System prompt layering...${NC}"
+log "5. System prompt layering..."
 mkdir -p system
 if [ -f "$SETUP_SCRIPTS_DIR/templates/system/00-global.md" ]; then
   cp -n "$SETUP_SCRIPTS_DIR/templates/system/00-global.md" system/00-global.md || true
@@ -584,9 +580,7 @@ fi
 echo "  ✓ Wrote system/active.md"
 
 # 6. Summary
-echo ""
-echo -e "${GREEN}=== Profile Applied Successfully ===${NC}"
-echo ""
+success "Profile Applied Successfully"
 echo "Summary of changes:"
 echo "  • Permissions: Configured for $SKILL level"
 echo "  • Commands: Installed for $SKILL level"
@@ -597,7 +591,6 @@ echo "Next steps:"
 echo "  1. Review PROFILE.md for your capabilities and restrictions"
 echo "  2. Check graduation criteria to advance"
 echo "  3. Run 'scripts/profile_show.sh' to see current status"
-echo ""
 
 # 7. Git ignore entries
 if [ -f .gitignore ]; then

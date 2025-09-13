@@ -12,6 +12,10 @@
 #   --no-gitignore  skip appending to .gitignore
 set -euo pipefail
 
+# Load shared utilities
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/../lib/sh/common.sh"
+
 FORCE=0; DO_MCP=1; DO_CMDS=1; DO_DIRENV=1; DO_GITIGNORE=1
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -24,8 +28,9 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-git rev-parse --is-inside-work-tree >/dev/null 2>&1 || { echo "Not in a git repo"; exit 1; }
-mkdir -p .claude .claude/commands
+is_git_repo || { error "Not in a git repo"; exit 1; }
+ensure_dir .claude
+ensure_dir .claude/commands
 
 write_if_absent() { # $1=path ; body from heredoc follows
   local p="$1"
@@ -486,9 +491,9 @@ vendor/
 SEM
 
 # ---------- Validate JSON ----------
-command -v jq >/dev/null 2>&1 && {
-  jq -e type .claude/settings.json >/dev/null && echo "[ok] .claude/settings.json JSON"
-  [[ -f .mcp.json ]] && jq -e type .mcp.json >/dev/null && echo "[ok] .mcp.json JSON" || true
-}
+if has jq; then
+  jq -e type .claude/settings.json >/dev/null && success ".claude/settings.json JSON valid"
+  [[ -f .mcp.json ]] && jq -e type .mcp.json >/dev/null && success ".mcp.json JSON valid" || true
+fi
 
 echo "Done."

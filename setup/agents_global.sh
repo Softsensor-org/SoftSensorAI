@@ -9,19 +9,21 @@ set -euo pipefail
 # Run this once during initial system setup
 # ============================================================================
 
+# Load shared utilities
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-echo "==> Setting up global agent configurations"
+source "$SCRIPT_DIR/../lib/sh/common.sh"
+
+log "Setting up global agent configurations"
 
 # Create all necessary directories
-mkdir -p \
-  ~/.claude \
-  ~/.gemini \
-  ~/.grok \
-  ~/.codex \
-  ~/templates/agent-setup
+ensure_dir ~/.claude
+ensure_dir ~/.gemini
+ensure_dir ~/.grok
+ensure_dir ~/.codex
+ensure_dir ~/templates/agent-setup
 
 # ---------- Claude Global Configuration ----------
-echo "  • Configuring Claude CLI (minimal global permissions)"
+info "Configuring Claude CLI (minimal global permissions)"
 cat > ~/.claude/settings.json <<'JSON'
 {
   "permissions": {
@@ -51,7 +53,7 @@ cat > ~/.claude/settings.json <<'JSON'
 JSON
 
 # ---------- Gemini CLI Global Configuration ----------
-echo "  • Configuring Gemini CLI"
+info "Configuring Gemini CLI"
 cat > ~/.gemini/settings.json <<'JSON'
 {
   "defaultModel": "gemini-2.5-pro",
@@ -61,7 +63,7 @@ cat > ~/.gemini/settings.json <<'JSON'
 JSON
 
 # ---------- Grok CLI Global Configuration ----------
-echo "  • Configuring Grok CLI"
+info "Configuring Grok CLI"
 cat > ~/.grok/user-settings.json <<'JSON'
 {
   "defaultModel": "grok-4-latest",
@@ -70,7 +72,7 @@ cat > ~/.grok/user-settings.json <<'JSON'
 JSON
 
 # ---------- Codex Global Configuration ----------
-echo "  • Configuring Codex CLI (YAML)"
+info "Configuring Codex CLI (YAML)"
 mkdir -p ~/.codex
 if [ ! -f ~/.codex/config.yaml ]; then
   cat > ~/.codex/config.yaml <<'YAML'
@@ -82,16 +84,16 @@ notify: true
 # Sandbox settings
 # sandbox: docker
 YAML
-  echo "    ✓ Wrote ~/.codex/config.yaml"
+  success "Wrote ~/.codex/config.yaml"
 else
-  echo "    • Keeping existing ~/.codex/config.yaml"
+  info "Keeping existing ~/.codex/config.yaml"
 fi
 if [ -f ~/.codex/config.toml ]; then
-  echo "    ⚠ Found legacy ~/.codex/config.toml (YAML is preferred)."
+  warn "Found legacy ~/.codex/config.toml (YAML is preferred)."
 fi
 
 # ---------- Template Files for Repository Setup ----------
-echo "  • Creating repository template files"
+info "Creating repository template files"
 
 # Template for CLAUDE.md (repo-specific guardrails)
 cat > ~/templates/agent-setup/CLAUDE.md <<'MD'
@@ -175,9 +177,7 @@ cat > ~/templates/agent-setup/mcp.json <<'JSON'
 }
 JSON
 
-echo ""
-echo "==> Global agent setup complete!"
-echo ""
+success "Global agent setup complete!"
 echo "Configured locations:"
 echo "  • ~/.claude/settings.json       - Claude global settings"
 echo "  • ~/.gemini/settings.json       - Gemini global settings"

@@ -11,27 +11,24 @@ set -euo pipefail
 # is already installed system-wide (via multi_user_setup.sh)
 # ============================================================================
 
+# Load shared utilities
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/../lib/sh/common.sh"
+
 USER_DIR="${SOFTSENSORAI_USER_DIR:-$HOME/.softsensorai}"
 SYSTEM_DIR="${SOFTSENSORAI_ROOT:-/opt/softsensorai}"
-
-# Color codes
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-RED='\033[0;31m'
-NC='\033[0m'
 
 # Check if system installation exists
 check_system_install() {
     if [[ ! -d "$SYSTEM_DIR" ]]; then
-        echo -e "${RED}[ERROR]${NC} SoftSensorAI is not installed system-wide"
+        error "SoftSensorAI is not installed system-wide"
         echo "Please ask your system administrator to run:"
         echo "  sudo /path/to/multi_user_setup.sh"
         exit 1
     fi
 
     if [[ ! -x "$SYSTEM_DIR/bin/ssai" ]] && [[ ! -x "/usr/local/bin/ssai" ]]; then
-        echo -e "${RED}[ERROR]${NC} SoftSensorAI binary not found"
+        error "SoftSensorAI binary not found"
         echo "System installation may be incomplete"
         exit 1
     fi
@@ -39,34 +36,31 @@ check_system_install() {
 
 # Initialize user directory
 init_user_dir() {
-    echo -e "${BLUE}[INFO]${NC} Initializing SoftSensorAI for user: $USER"
+    info "Initializing SoftSensorAI for user: $USER"
 
     # Check if already initialized
     if [[ -d "$USER_DIR" ]] && [[ -f "$USER_DIR/config/settings.json" ]]; then
-        echo -e "${YELLOW}[WARN]${NC} SoftSensorAI already initialized for this user"
-        read -p "Reinitialize? This will backup existing config (y/N): " -n 1 -r
-        echo
-        if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+        warn "SoftSensorAI already initialized for this user"
+        if ! confirm "Reinitialize? This will backup existing config"; then
             echo "Keeping existing configuration"
             return 0
         fi
 
         # Backup existing configuration
-        backup_dir="$USER_DIR.backup.$(date +%Y%m%d_%H%M%S)"
-        mv "$USER_DIR" "$backup_dir"
-        echo -e "${GREEN}[✓]${NC} Existing config backed up to: $backup_dir"
+        backup "$USER_DIR"
+        success "Existing config backed up"
     fi
 
     # Create user directories
-    mkdir -p "$USER_DIR"/{config,cache,artifacts,workspace,logs}
-    mkdir -p "$USER_DIR"/config/{personas,commands,projects}
+    ensure_dir "$USER_DIR"/{config,cache,artifacts,workspace,logs}
+    ensure_dir "$USER_DIR"/config/{personas,commands,projects}
 
-    echo -e "${GREEN}[✓]${NC} User directories created"
+    success "User directories created"
 }
 
 # Configure user settings
 configure_settings() {
-    echo -e "${BLUE}[INFO]${NC} Configuring user settings..."
+    info "Configuring user settings..."
 
     # Detect skill level
     echo "Select your skill level:"
@@ -154,12 +148,12 @@ configure_settings() {
 }
 EOF
 
-    echo -e "${GREEN}[✓]${NC} Settings configured"
+    success "Settings configured"
 }
 
 # Set up API keys
 setup_api_keys() {
-    echo -e "${BLUE}[INFO]${NC} Setting up API keys..."
+    info "Setting up API keys..."
 
     # Create API keys template
     cat > "$USER_DIR/config/api_keys.env" <<'EOF'
@@ -199,14 +193,14 @@ EOF
     # Set secure permissions
     chmod 600 "$USER_DIR/config/api_keys.env"
 
-    echo -e "${YELLOW}[!]${NC} API keys file created: $USER_DIR/config/api_keys.env"
+    warn "API keys file created: $USER_DIR/config/api_keys.env"
     echo "    Please edit this file and add your API keys"
     echo "    Then run: ssai secure-keys"
 }
 
 # Create personal personas
 setup_personas() {
-    echo -e "${BLUE}[INFO]${NC} Setting up personal personas..."
+    info "Setting up personal personas..."
 
     # Create a default personal persona based on skill level
     cat > "$USER_DIR/config/personas/default.json" <<EOF
@@ -229,12 +223,12 @@ setup_personas() {
 }
 EOF
 
-    echo -e "${GREEN}[✓]${NC} Personal personas configured"
+    success "Personal personas configured"
 }
 
 # Set up shell integration
 setup_shell_integration() {
-    echo -e "${BLUE}[INFO]${NC} Setting up shell integration..."
+    info "Setting up shell integration..."
 
     # Detect shell
     SHELL_NAME=$(basename "$SHELL")
@@ -249,7 +243,7 @@ setup_shell_integration() {
 
     # Check if already configured
     if grep -q "SOFTSENSORAI_USER_DIR" "$RC_FILE" 2>/dev/null; then
-        echo -e "${YELLOW}[WARN]${NC} Shell integration already configured"
+        warn "Shell integration already configured"
         return 0
     fi
 
@@ -286,16 +280,16 @@ elif [[ -n "$ZSH_VERSION" ]]; then
 fi
 EOF
 
-    echo -e "${GREEN}[✓]${NC} Shell integration added to: $RC_FILE"
+    success "Shell integration added to: $RC_FILE"
     echo "    Run: source $RC_FILE"
 }
 
 # Create workspace examples
 create_examples() {
-    echo -e "${BLUE}[INFO]${NC} Creating example workspace..."
+    info "Creating example workspace..."
 
     # Create example project
-    mkdir -p "$USER_DIR/workspace/example-project"
+    ensure_dir "$USER_DIR/workspace/example-project"
 
     cat > "$USER_DIR/workspace/example-project/softsensorai.project.yml" <<EOF
 # SoftSensorAI Project Configuration Example
@@ -344,7 +338,7 @@ This is an example project showing SoftSensorAI configuration.
 - AI Provider: $AI_PROVIDER
 EOF
 
-    echo -e "${GREEN}[✓]${NC} Example workspace created"
+    success "Example workspace created"
 }
 
 # Print summary
@@ -382,7 +376,7 @@ print_summary() {
     echo "  ssaia - ssai agent (AI agent)"
     echo "  ssaii - ssai init (initialize project)"
     echo ""
-    echo -e "${GREEN}✅ You're ready to use SoftSensorAI!${NC}"
+    success "You're ready to use SoftSensorAI!"
 }
 
 # Main flow
