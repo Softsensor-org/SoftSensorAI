@@ -2,19 +2,9 @@
 # Simple SoftSensorAI Setup - Multi-user or Single-user installation
 set -euo pipefail
 
-# Colors
-GREEN='\033[0;32m'
-BLUE='\033[0;34m'
-RED='\033[0;31m'
-YELLOW='\033[1;33m'
-NC='\033[0m'
-
-say() { echo -e "${BLUE}==>${NC} $*"; }
-success() { echo -e "${GREEN}✓${NC} $*"; }
-err() { echo -e "${RED}✗${NC} $*"; }
-warn() { echo -e "${YELLOW}⚠${NC} $*"; }
-
+# Load shared utilities
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/lib/sh/common.sh"
 
 # Global variables
 MULTI_USER=false
@@ -60,7 +50,7 @@ main() {
 
     # Check if sudo is needed and available for multi-user install
     if [[ "$MULTI_USER" == "true" ]]; then
-        if ! command -v sudo >/dev/null 2>&1; then
+        if ! has sudo; then
             err "Multi-user installation requires sudo, but sudo is not available"
             exit 1
         fi
@@ -94,6 +84,27 @@ main() {
 
     # 4. Show completion message
     show_completion_message
+}
+
+# Add placeholder functions to prevent errors
+install_tools() {
+    warn "install_tools function not implemented in this file"
+}
+
+install_ai_tools() {
+    warn "install_ai_tools function not implemented in this file"
+}
+
+setup_ai_configs() {
+    warn "setup_ai_configs function not implemented in this file"
+}
+
+install_binaries() {
+    warn "install_binaries function not implemented in this file"
+}
+
+show_completion_message() {
+    warn "show_completion_message function not implemented in this file"
 }
 
 main

@@ -7,21 +7,9 @@ set -euo pipefail
 # Quick installation of AI-powered development environment
 # ============================================================================
 
-# Color codes
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-RED='\033[0;31m'
-NC='\033[0m' # No Color
-
-# Configuration
+# Load common utilities
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
-# Helper functions
-say() { echo -e "${BLUE}==>${NC} $*"; }
-success() { echo -e "${GREEN}✓${NC} $*"; }
-warn() { echo -e "${YELLOW}⚠${NC} $*"; }
-err() { echo -e "${RED}✗${NC} $*"; }
+source "$SCRIPT_DIR/lib/sh/common.sh"
 
 show_help() {
   cat <<EOF

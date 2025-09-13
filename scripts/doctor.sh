@@ -2,11 +2,13 @@
 # SPDX-License-Identifier: GPL-3.0-only
 set -euo pipefail
 
-ok() { printf "\033[0;32m[OK]\033[0m %s\n" "$*"; }
-warn() { printf "\033[1;33m[WARN]\033[0m %s\n" "$*"; }
-bad() { printf "\033[0;31m[FAIL]\033[0m %s\n" "$*"; }
+# Load common utilities
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/../lib/sh/common.sh"
 
-has() { command -v "$1" >/dev/null 2>&1; }
+# Doctor-specific logging functions
+ok() { printf "\033[0;32m[OK]\033[0m %s\n" "$*"; }
+bad() { printf "\033[0;31m[FAIL]\033[0m %s\n" "$*"; }
 
 # Track missing tools for actionable output
 MISSING_TOOLS=()
@@ -116,7 +118,7 @@ if [ ${#MISSING_TOOLS[@]} -gt 0 ]; then
   printf "\n==> Quick install commands:\n"
 
   # Check OS for appropriate commands
-  if [[ "$(uname -s)" == "Darwin" ]]; then
+  if is_macos; then
     # macOS
     if ! has brew; then
       echo "First install Homebrew: /bin/bash -c \"\$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\""
@@ -134,16 +136,17 @@ if [ ${#MISSING_TOOLS[@]} -gt 0 ]; then
         python3) echo "brew install python@3" ;;
       esac
     done
-  elif [[ "$(uname -s)" == "Linux" ]] || [[ "$(uname -s)" == *"BSD"* ]]; then
+  elif is_linux || [[ "$(uname -s)" == *"BSD"* ]]; then
     # Linux/BSD/WSL
     # Detect package manager
-    if has apt-get; then
+    local pkg_mgr="$(get_package_manager)"
+    if [[ "$pkg_mgr" == "apt" ]]; then
       # Debian/Ubuntu
       for tool in "${MISSING_TOOLS[@]}"; do
         case "$tool" in
           git) echo "sudo apt-get install -y git" ;;
           jq) echo "sudo apt-get install -y jq" ;;
-          rg) echo "curl -LO https://github.com/BurntSushi/ripgrep/releases/download/14.1.0/ripgrep_14.1.0-1_amd64.deb && sudo ssaikg -i ripgrep_14.1.0-1_amd64.deb" ;;
+          rg) echo "curl -LO https://github.com/BurntSushi/ripgrep/releases/download/14.1.0/ripgrep_14.1.0-1_amd64.deb && sudo dpkg -i ripgrep_14.1.0-1_amd64.deb" ;;
           fd) echo "sudo apt-get install -y fd-find && sudo ln -s \$(which fdfind) /usr/local/bin/fd" ;;
           direnv) echo "sudo apt-get install -y direnv" ;;
           yq) echo "sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 && sudo chmod +x /usr/local/bin/yq" ;;
@@ -152,7 +155,7 @@ if [ ${#MISSING_TOOLS[@]} -gt 0 ]; then
           python3) echo "sudo apt-get install -y python3 python3-pip python3-venv" ;;
         esac
       done
-    elif has dnf; then
+    elif [[ "$pkg_mgr" == "dnf" ]]; then
       # Fedora/RHEL
       for tool in "${MISSING_TOOLS[@]}"; do
         case "$tool" in
@@ -165,7 +168,7 @@ if [ ${#MISSING_TOOLS[@]} -gt 0 ]; then
           python3) echo "sudo dnf install -y python3 python3-pip" ;;
         esac
       done
-    elif has pacman; then
+    elif [[ "$pkg_mgr" == "pacman" ]]; then
       # Arch Linux
       for tool in "${MISSING_TOOLS[@]}"; do
         case "$tool" in
@@ -201,9 +204,8 @@ if [ ${#MISSING_TOOLS[@]} -gt 0 ]; then
 
   echo ""
   echo "Or run the automated installer:"
-  SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-  PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
-  if [[ "$(uname -s)" == "Darwin" ]]; then
+  PROJECT_ROOT="$(get_project_root)"
+  if is_macos; then
     echo "  $PROJECT_ROOT/install/key_software_macos.sh"
   else
     echo "  $PROJECT_ROOT/install/key_software_linux.sh"

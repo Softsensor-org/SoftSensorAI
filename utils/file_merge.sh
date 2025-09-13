@@ -3,20 +3,9 @@
 # File merge utility - handles conflicts when setting up SoftSensorAI in existing repos
 set -euo pipefail
 
-# Colors
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-CYAN='\033[0;36m'
-BOLD='\033[1m'
-NC='\033[0m' # No Color
-
-# Helpers
-info() { printf "${CYAN}ℹ ${NC}%s\n" "$*"; }
-warn() { printf "${YELLOW}⚠ ${NC}%s\n" "$*"; }
-error() { printf "${RED}✗ ${NC}%s\n" "$*"; }
-success() { printf "${GREEN}✓ ${NC}%s\n" "$*"; }
+# Load common utilities
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/../lib/sh/common.sh"
 
 # Merge strategies
 STRATEGY_SKIP="skip"          # Skip if file exists
@@ -51,10 +40,9 @@ has_softsensorai_markers() {
 # Create backup
 create_backup() {
   local file="$1"
-  local backup="${file}.backup.$(date +%Y%m%d_%H%M%S)"
-  cp "$file" "$backup"
-  info "Created backup: $backup"
-  echo "$backup"
+  local backup_file="${file}.backup.$(date +%Y%m%d_%H%M%S)"
+  backup "$file"
+  echo "$backup_file"
 }
 
 # Merge CLAUDE.md files
@@ -155,7 +143,7 @@ merge_package_json() {
   local output="$3"
 
   # Requires jq for JSON manipulation
-  if ! command -v jq &> /dev/null; then
+  if ! has jq; then
     warn "jq not installed, cannot merge package.json intelligently"
     return 1
   fi
@@ -183,7 +171,7 @@ show_diff_prompt() {
   echo ""
 
   # Show diff if available
-  if command -v diff &> /dev/null; then
+  if has diff; then
     echo "${BOLD}Differences:${NC}"
     diff -u "$existing" "$new" | head -50 || true
     echo ""

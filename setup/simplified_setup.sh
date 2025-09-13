@@ -5,22 +5,9 @@ set -euo pipefail
 # Simplified setup with smart defaults and minimal questions
 # Usage: softsensorai setup [URL] [--advanced]
 
-# Colors
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-CYAN='\033[0;36m'
-BOLD='\033[1m'
-NC='\033[0m'
-
-say() { printf "${CYAN}→ %s${NC}\n" "$*"; }
-success() { printf "${GREEN}✓ %s${NC}\n" "$*"; }
-warn() { printf "${YELLOW}⚠ %s${NC}\n" "$*"; }
-err() { printf "${RED}✗ %s${NC}\n" "$*" >&2; }
-
-# Script directory
+# Load common utilities
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/../lib/sh/common.sh"
 SETUP_ROOT="$(dirname "$SCRIPT_DIR")"
 
 # Smart defaults

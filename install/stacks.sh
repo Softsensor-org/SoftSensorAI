@@ -7,17 +7,9 @@ set -euo pipefail
 # Provides flag-based installation of tool categories
 # ============================================================================
 
-# Color codes
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-NC='\033[0m' # No Color
-
-# Helper functions
-has() { command -v "$1" >/dev/null 2>&1; }
-log() { printf "\n${BLUE}==> %s${NC}\n" "$*"; }
-success() { printf "${GREEN}✓${NC} %s\n" "$*"; }
-warn() { printf "${YELLOW}⚠${NC} %s\n" "$*"; }
+# Load shared utilities
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/../lib/sh/common.sh"
 
 # Parse flags
 INSTALL_API=0

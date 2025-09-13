@@ -2,27 +2,21 @@
 # SPDX-License-Identifier: GPL-3.0-only
 set -euo pipefail
 
+# Load common utilities
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/../lib/sh/common.sh"
+
 # ============================================================================
 # Productivity Extras Installer - Agent Multiplier Tools
 # Installs advanced tooling for backend, frontend, DS/ML, and deployment
 # All installations are idempotent (safe to run multiple times)
 # ============================================================================
 
-# Color codes
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-NC='\033[0m' # No Color
-
-# Helper functions
-has() { command -v "$1" >/dev/null 2>&1; }
-log() { printf "\n${BLUE}==> %s${NC}\n" "$*"; }
-success() { printf "${GREEN}✓${NC} %s\n" "$*"; }
-warn() { printf "${YELLOW}⚠${NC} %s\n" "$*"; }
-
 # Update package list
 log "Updating package list"
-sudo apt-get update -qq
+if has apt-get; then
+    sudo apt-get update -qq
+fi
 
 # ============================================================================
 # Core Agent Multipliers
@@ -74,9 +68,24 @@ fi
 log "Installing API & Contract Tools"
 
 # OpenAPI toolchain
-has redocly || { npm install -g @redocly/cli && success "Redocly CLI installed"; }
-has spectral || { npm install -g @stoplight/spectral-cli && success "Spectral CLI installed"; }
-has openapi-typescript || { npm install -g openapi-typescript && success "openapi-typescript installed"; }
+if ! has redocly; then
+    npm install -g @redocly/cli
+    success "Redocly CLI installed"
+else
+    success "Redocly CLI already installed"
+fi
+if ! has spectral; then
+    npm install -g @stoplight/spectral-cli
+    success "Spectral CLI installed"
+else
+    success "Spectral CLI already installed"
+fi
+if ! has openapi-typescript; then
+    npm install -g openapi-typescript
+    success "openapi-typescript installed"
+else
+    success "openapi-typescript already installed"
+fi
 
 # GraphQL tools
 if ! has rover; then
@@ -87,8 +96,18 @@ else
   success "Rover already installed"
 fi
 
-has graphql-codegen || { npm install -g @graphql-codegen/cli && success "GraphQL Codegen installed"; }
-has newman || { npm install -g newman && success "Newman installed"; }
+if ! has graphql-codegen; then
+    npm install -g @graphql-codegen/cli
+    success "GraphQL Codegen installed"
+else
+    success "GraphQL Codegen already installed"
+fi
+if ! has newman; then
+    npm install -g newman
+    success "Newman installed"
+else
+    success "Newman already installed"
+fi
 
 # ============================================================================
 # Databases, SQL & Analytics
@@ -100,14 +119,42 @@ log "Installing Database & Analytics Tools"
 pipx ensurepath >/dev/null 2>&1 || true
 
 # Data tools
-has dbt || { pipx install dbt-core && success "dbt-core installed"; }
-has sqlfluff || { pipx install sqlfluff && success "sqlfluff installed"; }
-has pgcli || { pipx install pgcli && success "pgcli installed"; }
-has sqlite-utils || { pipx install sqlite-utils && success "sqlite-utils installed"; }
+if ! has dbt; then
+    pipx install dbt-core
+    success "dbt-core installed"
+else
+    success "dbt-core already installed"
+fi
+if ! has sqlfluff; then
+    pipx install sqlfluff
+    success "sqlfluff installed"
+else
+    success "sqlfluff already installed"
+fi
+if ! has pgcli; then
+    pipx install pgcli
+    success "pgcli installed"
+else
+    success "pgcli already installed"
+fi
+if ! has sqlite-utils; then
+    pipx install sqlite-utils
+    success "sqlite-utils installed"
+else
+    success "sqlite-utils already installed"
+fi
 
 # TypeScript ORMs
-has prisma || { npm install -g prisma && success "Prisma CLI installed"; } || true
-has drizzle-kit || { npm install -g drizzle-kit && success "Drizzle Kit installed"; } || true
+if ! has prisma; then
+    npm install -g prisma && success "Prisma CLI installed" || warn "Failed to install Prisma CLI"
+else
+    success "Prisma CLI already installed"
+fi
+if ! has drizzle-kit; then
+    npm install -g drizzle-kit && success "Drizzle Kit installed" || warn "Failed to install Drizzle Kit"
+else
+    success "Drizzle Kit already installed"
+fi
 
 # ============================================================================
 # DS/ML Workflow
@@ -116,7 +163,12 @@ has drizzle-kit || { npm install -g drizzle-kit && success "Drizzle Kit installe
 log "Installing Data Science & ML Tools"
 
 # DVC - Data Version Control
-has dvc || { pipx install 'dvc[s3]' && success "DVC installed"; }
+if ! has dvc; then
+    pipx install 'dvc[s3]'
+    success "DVC installed"
+else
+    success "DVC already installed"
+fi
 
 # Git LFS
 if ! has git-lfs; then
@@ -128,15 +180,27 @@ else
 fi
 
 # ML experiment tracking
-has wandb || { pipx install wandb && success "Weights & Biases CLI installed"; }
-has mlflow || { pipx install mlflow && success "MLflow installed"; }
+if ! has wandb; then
+    pipx install wandb
+    success "Weights & Biases CLI installed"
+else
+    success "Weights & Biases CLI already installed"
+fi
+if ! has mlflow; then
+    pipx install mlflow
+    success "MLflow installed"
+else
+    success "MLflow already installed"
+fi
 
 # Notebook tools
-has nbstripout || {
-  pipx install nbstripout
-  nbstripout --install --global
-  success "nbstripout installed"
-}
+if ! has nbstripout; then
+    pipx install nbstripout
+    nbstripout --install --global
+    success "nbstripout installed"
+else
+    success "nbstripout already installed"
+fi
 
 # ============================================================================
 # Security & Quality Gates
@@ -147,10 +211,7 @@ log "Installing Security & Quality Tools"
 # Container/dependency scanning
 if ! has trivy; then
   log "Installing Trivy"
-  # Source compatibility functions
-  source "$(dirname "${BASH_SOURCE[0]}")/../utils/os_compat.sh" 2>/dev/null || true
-
-  if command -v apt-get >/dev/null 2>&1; then
+  if has apt-get; then
     sudo apt-get install -y wget apt-transport-https gnupg
     wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
     echo "deb https://aquasecurity.github.io/trivy-repo/deb $(get_os_codename 2>/dev/null || echo "stable") main" | sudo tee /etc/apt/sources.list.d/trivy.list
@@ -167,7 +228,12 @@ else
 fi
 
 # SAST tools
-has semgrep || { pipx install semgrep && success "Semgrep installed"; }
+if ! has semgrep; then
+    pipx install semgrep
+    success "Semgrep installed"
+else
+    success "Semgrep already installed"
+fi
 
 # Secret scanning
 if ! has gitleaks; then
@@ -198,13 +264,38 @@ else
 fi
 
 # Python quality tools
-has ruff || { pipx install ruff && success "Ruff installed"; }
-has black || { pipx install black && success "Black installed"; }
-has mypy || { pipx install mypy && success "mypy installed"; }
+if ! has ruff; then
+    pipx install ruff
+    success "Ruff installed"
+else
+    success "Ruff already installed"
+fi
+if ! has black; then
+    pipx install black
+    success "Black installed"
+else
+    success "Black already installed"
+fi
+if ! has mypy; then
+    pipx install mypy
+    success "mypy installed"
+else
+    success "mypy already installed"
+fi
 
 # Commit quality
-has commitlint || { npm install -g @commitlint/cli @commitlint/config-conventional && success "commitlint installed"; }
-has cz || { npm install -g commitizen && success "commitizen installed"; }
+if ! has commitlint; then
+    npm install -g @commitlint/cli @commitlint/config-conventional
+    success "commitlint installed"
+else
+    success "commitlint already installed"
+fi
+if ! has cz; then
+    npm install -g commitizen
+    success "commitizen installed"
+else
+    success "commitizen already installed"
+fi
 
 # ============================================================================
 # Containers & Kubernetes Dev-Loop
@@ -271,7 +362,12 @@ fi
 log "Installing Release & Tunnel Tools"
 
 # Changesets
-has changeset || { npm install -g @changesets/cli && success "Changesets installed"; }
+if ! has changeset; then
+    npm install -g @changesets/cli
+    success "Changesets installed"
+else
+    success "Changesets already installed"
+fi
 
 # Cloudflared tunnel
 if ! has cloudflared; then
@@ -299,21 +395,46 @@ fi
 log "Installing Quality of Life Tools"
 
 # Benchmarking
-has hyperfine || { sudo apt-get install -y hyperfine && success "hyperfine installed"; }
+if ! has hyperfine; then
+    if has apt-get; then
+        sudo apt-get install -y hyperfine
+        success "hyperfine installed"
+    else
+        warn "hyperfine requires apt package manager"
+    fi
+else
+    success "hyperfine already installed"
+fi
 
 # File watching
-has entr || { sudo apt-get install -y entr && success "entr installed"; }
-has watchexec || {
-  if has cargo; then
-    cargo install watchexec-cli
-    success "watchexec installed"
-  else
-    warn "watchexec requires Rust/cargo"
-  fi
-}
+if ! has entr; then
+    if has apt-get; then
+        sudo apt-get install -y entr
+        success "entr installed"
+    else
+        warn "entr requires apt package manager"
+    fi
+else
+    success "entr already installed"
+fi
+if ! has watchexec; then
+    if has cargo; then
+        cargo install watchexec-cli
+        success "watchexec installed"
+    else
+        warn "watchexec requires Rust/cargo"
+    fi
+else
+    success "watchexec already installed"
+fi
 
 # Project scaffolding
-has cookiecutter || { pipx install cookiecutter && success "cookiecutter installed"; }
+if ! has cookiecutter; then
+    pipx install cookiecutter
+    success "cookiecutter installed"
+else
+    success "cookiecutter already installed"
+fi
 
 # ============================================================================
 # Summary

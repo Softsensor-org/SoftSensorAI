@@ -5,18 +5,9 @@ set -euo pipefail
 # Multi-Repository Review Tool
 # Reviews all repos in a project folder and creates GitHub issues for findings
 
-# Colors
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-CYAN='\033[0;36m'
-NC='\033[0m'
-
-say() { echo -e "${CYAN}→${NC} $*"; }
-success() { echo -e "${GREEN}✓${NC} $*"; }
-warn() { echo -e "${YELLOW}⚠${NC} $*"; }
-err() { echo -e "${RED}✗${NC} $*" >&2; }
+# Load shared utilities
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/../lib/sh/common.sh"
 
 # Check if we're in a multi-repo project
 check_project_context() {

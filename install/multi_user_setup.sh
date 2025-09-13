@@ -4,6 +4,10 @@
 # Run as root/sudo for system-wide installation
 set -euo pipefail
 
+# Load common utilities
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/../lib/sh/common.sh"
+
 # ============================================================================
 # Multi-User Installation Script
 # ============================================================================
@@ -17,18 +21,11 @@ VERSION="${SOFTSENSORAI_VERSION:-latest}"
 INSTALL_PREFIX="${INSTALL_PREFIX:-/opt/softsensorai}"
 USER_PREFIX="${USER_PREFIX:-\$HOME/.softsensorai}"
 
-# Color codes
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-NC='\033[0m'
-
-# Logging functions
-log_info() { echo -e "${BLUE}[INFO]${NC} $*"; }
-log_success() { echo -e "${GREEN}[✓]${NC} $*"; }
-log_warn() { echo -e "${YELLOW}[WARN]${NC} $*"; }
-log_error() { echo -e "${RED}[ERROR]${NC} $*" >&2; }
+# Multi-user specific logging functions
+log_info() { info "$*"; }
+log_success() { success "$*"; }
+log_warn() { warn "$*"; }
+log_error() { error "$*"; }
 
 # Check if running as root
 check_root() {
@@ -42,24 +39,11 @@ check_root() {
 # Detect OS and package manager
 detect_system() {
     OS_TYPE="unknown"
-    PKG_MGR="unknown"
+    PKG_MGR="$(get_package_manager)"
 
     if [[ -f /etc/os-release ]]; then
         . /etc/os-release
         OS_TYPE="$ID"
-    fi
-
-    # Detect package manager
-    if command -v apt-get >/dev/null; then
-        PKG_MGR="apt"
-    elif command -v dnf >/dev/null; then
-        PKG_MGR="dnf"
-    elif command -v yum >/dev/null; then
-        PKG_MGR="yum"
-    elif command -v pacman >/dev/null; then
-        PKG_MGR="pacman"
-    elif command -v apk >/dev/null; then
-        PKG_MGR="apk"
     fi
 
     log_info "Detected: OS=$OS_TYPE, Package Manager=$PKG_MGR"
@@ -71,6 +55,8 @@ install_dependencies() {
 
     local DEPS=(git jq curl wget bash)
     local DEV_DEPS=(ripgrep fd-find direnv)
+
+    require git
 
     case "$PKG_MGR" in
         apt)
@@ -212,13 +198,13 @@ if [[ -f "$SOFTSENSORAI_USER_DIR/config/api_keys.env.enc" ]]; then
 fi
 
 # Execute the actual SoftSensorAI command
-exec /opt/softsensorai/lib/core/dp_main.sh "$@"
+exec /opt/softsensorai/lib/core/ssai_main.sh "$@"
 WRAPPER
 
-    chmod +x "$INSTALL_PREFIX/bin/dp"
+    chmod +x "$INSTALL_PREFIX/bin/ssai"
 
     # Create symlink in /usr/local/bin for PATH access
-    ln -sf "$INSTALL_PREFIX/bin/dp" /usr/local/bin/dp
+    ln -sf "$INSTALL_PREFIX/bin/ssai" /usr/local/bin/ssai
 
     log_success "Multi-user wrapper created"
 }
@@ -312,7 +298,7 @@ create_admin_utils() {
     log_info "Creating admin utilities..."
 
     # User management script
-    cat > "$INSTALL_PREFIX/bin/dp-admin" <<'ADMIN'
+    cat > "$INSTALL_PREFIX/bin/ssai-admin" <<'ADMIN'
 #!/usr/bin/env bash
 # SoftSensorAI admin utilities
 set -euo pipefail
@@ -378,8 +364,8 @@ case "${1:-}" in
 esac
 ADMIN
 
-    chmod +x "$INSTALL_PREFIX/bin/dp-admin"
-    ln -sf "$INSTALL_PREFIX/bin/dp-admin" /usr/local/bin/dp-admin
+    chmod +x "$INSTALL_PREFIX/bin/ssai-admin"
+    ln -sf "$INSTALL_PREFIX/bin/ssai-admin" /usr/local/bin/ssai-admin
 
     log_success "Admin utilities created"
 }
@@ -438,18 +424,18 @@ main() {
     echo "User configs will be in: ~/.softsensorai"
     echo ""
     echo "For administrators:"
-    echo "  dp-admin list-users   # List all users"
-    echo "  dp-admin stats        # Show usage stats"
-    echo "  dp-admin update       # Update SoftSensorAI"
+    echo "  ssai-admin list-users   # List all users"
+    echo "  ssai-admin stats        # Show usage stats"
+    echo "  ssai-admin update       # Update SoftSensorAI"
     echo ""
     echo "For users:"
-    echo "  dp setup              # Setup a project"
-    echo "  dp help               # Show help"
+    echo "  ssai setup              # Setup a project"
+    echo "  ssai help               # Show help"
     echo ""
     echo "Each user should:"
-    echo "1. Run any dp command to auto-initialize"
+    echo "1. Run any ssai command to auto-initialize"
     echo "2. Configure their personal API keys"
-    echo "3. Run: dp secure-keys to encrypt them"
+    echo "3. Run: ssai secure-keys to encrypt them"
     echo ""
     log_success "SoftSensorAI is ready for multi-user use!"
 }

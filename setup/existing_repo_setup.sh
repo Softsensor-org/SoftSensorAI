@@ -3,28 +3,12 @@
 # Setup script for existing repositories - adds agent configurations without cloning
 set -euo pipefail
 
-# Colors and helpers
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-CYAN='\033[0;36m'
-BOLD='\033[1m'
-NC='\033[0m' # No Color
-
-say(){ printf "${CYAN}==> %s${NC}\n" "$*"; }
-warn(){ printf "${YELLOW}[warn]${NC} %s\n" "$*"; }
-err(){ printf "${RED}[err]${NC} %s\n" "$*"; }
-success(){ printf "${GREEN}✓ %s${NC}\n" "$*"; }
-
-# Script directory
+# Load common utilities
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SETUP_SCRIPTS_DIR="$(dirname "$SCRIPT_DIR")"
+source "$SCRIPT_DIR/../lib/sh/common.sh"
 
-# Check if current directory is a git repo
-is_git_repo() {
-  git rev-parse --is-inside-work-tree >/dev/null 2>&1
-}
+# Setup scripts directory
+SETUP_SCRIPTS_DIR="$(dirname "$SCRIPT_DIR")"
 
 # Check if directory has a project structure
 has_project_structure() {
@@ -58,7 +42,7 @@ detect_project_type() {
 setup_agent_configs() {
   local target_dir="$1"
 
-  say "Setting up agent configurations..."
+  log "Setting up agent configurations..."
 
   # Create .claude directory
   mkdir -p "$target_dir/.claude"
@@ -129,7 +113,7 @@ apply_profile() {
   local phase="${3:-}"
 
   if [ -n "$skill" ] || [ -n "$phase" ]; then
-    say "Applying profile configuration..."
+    log "Applying profile configuration..."
     cd "$target_dir"
 
     local profile_args=""
@@ -226,7 +210,7 @@ main() {
 
   # Detect project type
   echo
-  say "Analyzing repository..."
+  log "Analyzing repository..."
   local project_type
   project_type=$(detect_project_type "$target_dir")
   echo -e "  ${BOLD}Repository:${NC} $(basename "$target_dir")"
